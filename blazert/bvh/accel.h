@@ -1,17 +1,42 @@
+#pragma once
+#ifndef BLAZERT_BVH_ACCEL_H_
+#define BLAZERT_BVH_ACCEL_H_
 
-///
-/// @brief Bounding Volume Hierarchy acceleration.
-///
-/// BVHAccel is central part of ray tracing(ray traversal).
-/// BVHAccel takes an input geometry(primitive) information and build a data structure
-/// for efficient ray tracing(`O(log2 N)` in theory, where N is the number of primitive in the scene).
-///
-/// @tparam T real value type(float or double).
-///
-template <typename T>
-class BVHAccel {
- public:
-  BVHAccel() : pad0_(0) { (void)pad0_; }
+#include <atomic>
+#include <limits>
+#include <queue>
+
+#include <blazert/bvh/aabb.h>
+#include <blazert/bvh/bbox.h>
+#include <blazert/bvh/binbuffer.h>
+#include <blazert/bvh/node.h>
+#include <blazert/bvh/statistics.h>
+#include <blazert/datatypes.h>
+#include <blazert/defines.h>
+#include <blazert/stack.h>
+
+namespace blazert {
+
+/**
+ * @brief Bounding Volume Hierarchy acceleration.
+ *
+ * BVHAccel is central part of ray tracing(ray traversal).
+ * BVHAccel takes an input geometry(primitive) information and build a data structure
+ * for efficient ray tracing(`O(log2 N)` in theory, where N is the number of primitive in the scene).
+ *
+ * @tparam T real value type(float or double).
+ */
+template<typename T>
+class alignas(sizeof(Vec3r<T>)) BVHAccel {
+private:
+  std::vector<BVHNode<T>> nodes_;
+  std::vector<unsigned int> indices_;// max 4G triangles.
+  std::vector<BBox<T>> bboxes_;
+  BVHBuildOptions<T> options_;
+  BVHBuildStatistics stats_;
+
+public:
+  BVHAccel() {}
   ~BVHAccel() {}
 
   ///
@@ -26,9 +51,8 @@ class BVHAccel {
   ///
   /// @return true upon success.
   ///
-  template <class Prim, class Pred>
-  bool Build(const unsigned int num_primitives, const Prim &p, const Pred &pred,
-             const BVHBuildOptions<T> &options = BVHBuildOptions<T>());
+  template<class Prim, class Pred>
+  bool Build(const Prim &p, const Pred &pred, const BVHBuildOptions<T> &options = BVHBuildOptions<T>());
 
   ///
   /// Get statistics of built BVH tree. Valid after `Build()`
@@ -41,14 +65,14 @@ class BVHAccel {
   ///
   /// Dump built BVH to the file.
   ///
-  bool Dump(const char *filename) const;
-  bool Dump(FILE *fp) const;
+  //bool Dump(const char *filename) const;
+  //bool Dump(FILE *fp) const;
 
   ///
   /// Load BVH binary
   ///
-  bool Load(const char *filename);
-  bool Load(FILE *fp);
+  //bool Load(const char *filename);
+  //bool Load(FILE *fp);
 #endif
 
   void Debug();
@@ -67,20 +91,9 @@ class BVHAccel {
   ///
   /// @return true if any hit point found
   ///
-  template <class I, class H>
-  bool Traverse(const Ray<T> &ray, const I &intersector, H *isect,
+  template<class I, class H>
+  bool Traverse(const Ray<T> &ray, const I &intersector, H &isect,
                 const BVHTraceOptions &options = BVHTraceOptions()) const;
-
-#if 0
-  /// Multi-hit ray traversal
-  /// Returns `max_intersections` frontmost intersections
-  template<class I, class H, class Comp>
-  bool MultiHitTraverse(const Ray<T> &ray,
-                        int max_intersections,
-                        const I &intersector,
-                        StackVector<H, 128> *isects,
-                        const BVHTraceOptions &options = BVHTraceOptions()) const;
-#endif
 
   ///
   /// List up nodes which intersects along the ray.
@@ -91,35 +104,31 @@ class BVHAccel {
   ///
   ///
   ///
-  template <class I>
-  bool ListNodeIntersections(const Ray<T> &ray, int max_intersections,
+  template<class I>
+  bool ListNodeIntersections(const Ray<T> &ray, unsigned int max_intersections,
                              const I &intersector,
-                             StackVector<NodeHit<T>, 128> *hits) const;
+                             StackVector<NodeHit<T>, 128> &hits) const;
 
-  const std::vector<BVHNode<T> > &GetNodes() const { return nodes_; }
+  const std::vector<BVHNode<T>> &GetNodes() const { return nodes_; }
   const std::vector<unsigned int> &GetIndices() const { return indices_; }
 
   ///
   /// Returns bounding box of built BVH.
   ///
-  void BoundingBox(T bmin[3], T bmax[3]) const {
+  void BoundingBox(Vec3r<T> &bmin, Vec3r<T> &bmax) const {
     if (nodes_.empty()) {
-      bmin[0] = bmin[1] = bmin[2] = std::numeric_limits<T>::max();
-      bmax[0] = bmax[1] = bmax[2] = -std::numeric_limits<T>::max();
+      bmin = std::numeric_limits<T>::max();
+      bmax = -std::numeric_limits<T>::max();
     } else {
-      bmin[0] = nodes_[0].bmin[0];
-      bmin[1] = nodes_[0].bmin[1];
-      bmin[2] = nodes_[0].bmin[2];
-      bmax[0] = nodes_[0].bmax[0];
-      bmax[1] = nodes_[0].bmax[1];
-      bmax[2] = nodes_[0].bmax[2];
+      bmin = nodes_.bmin;
+      bmax = nodes_.bmax;
     }
   }
 
   bool IsValid() const { return nodes_.size() > 0; }
 
- private:
-#if defined(BLAZERT_ENABLE_PARALLEL_BUILD)
+private:
+  //#if defined(BLAZERT_ENABLE_PARALLEL_BUILD)
   typedef struct {
     unsigned int left_idx;
     unsigned int right_idx;
@@ -130,56 +139,45 @@ class BVHAccel {
   std::vector<ShallowNodeInfo> shallow_node_infos_;
 
   /// Builds shallow BVH tree recursively.
-  template <class P, class Pred>
-  unsigned int BuildShallowTree(std::vector<BVHNode<T> > *out_nodes,
+  template<class P, class Pred>
+  unsigned int BuildShallowTree(std::vector<BVHNode<T>> &out_nodes,
                                 unsigned int left_idx, unsigned int right_idx,
                                 unsigned int depth,
                                 unsigned int max_shallow_depth, const P &p,
                                 const Pred &pred);
-#endif
+  //#endif
 
   /// Builds BVH tree recursively.
-  template <class P, class Pred>
-  unsigned int BuildTree(BVHBuildStatistics *out_stat,
-                         std::vector<BVHNode<T> > *out_nodes,
+  template<class P, class Pred>
+  unsigned int BuildTree(BVHBuildStatistics &out_stat,
+                         std::vector<BVHNode<T>> &out_nodes,
                          unsigned int left_idx, unsigned int right_idx,
                          unsigned int depth, const P &p, const Pred &pred);
 
-  template <class I>
+  template<class I>
   bool TestLeafNode(const BVHNode<T> &node, const Ray<T> &ray,
                     const I &intersector) const;
 
-  template <class I>
+  template<class I>
   bool TestLeafNodeIntersections(
       const BVHNode<T> &node, const Ray<T> &ray, const int max_intersections,
       const I &intersector,
-      std::priority_queue<NodeHit<T>, std::vector<NodeHit<T> >,
-                          NodeHitComparator<T> > *isect_pq) const;
+      std::priority_queue<NodeHit<T>, std::vector<NodeHit<T>>,
+                          NodeHitComparator<T>> &isect_pq) const;
 
-#if 0
-  template<class I, class H, class Comp>
-  bool MultiHitTestLeafNode(std::priority_queue<H, std::vector<H>, Comp> *isect_pq,
-                            int max_intersections,
-                            const BVHNode<T> &node, const Ray<T> &ray,
-                            const I &intersector) const;
-#endif
-
-  std::vector<BVHNode<T> > nodes_;
-  std::vector<unsigned int> indices_;  // max 4G triangles.
-  std::vector<BBox<T> > bboxes_;
-  BVHBuildOptions<T> options_;
-  BVHBuildStatistics stats_;
-  unsigned int pad0_;
+  template<class P, class Pred>
+  unsigned int BuildShallowTree(std::vector<T> &out_nodes, unsigned int left_idx, unsigned int right_idx, unsigned int depth, unsigned int max_shallow_depth, const P &p, const Pred &pred);
 };
 
+//
 //
 // --
 //
 
 #if defined(BLAZERT_ENABLE_PARALLEL_BUILD)
-template <typename T>
-template <class P, class Pred>
-unsigned int BVHAccel<T>::BuildShallowTree(std::vector<BVHNode<T> > *out_nodes,
+template<typename T>
+template<class P, class Pred>
+unsigned int BVHAccel<T>::BuildShallowTree(std::vector<BVHNode<T>> &out_nodes,
                                            unsigned int left_idx,
                                            unsigned int right_idx,
                                            unsigned int depth,
@@ -187,43 +185,41 @@ unsigned int BVHAccel<T>::BuildShallowTree(std::vector<BVHNode<T> > *out_nodes,
                                            const P &p, const Pred &pred) {
   assert(left_idx <= right_idx);
 
-  unsigned int offset = static_cast<unsigned int>(out_nodes->size());
+  unsigned int offset = static_cast<unsigned int>(out_nodes.size());
 
   if (stats_.max_tree_depth < depth) {
     stats_.max_tree_depth = depth;
   }
 
-  real3<T> bmin, bmax;
+  Vec3r<T> bmin, bmax;
 
-#if defined(BLAZERT_USE_CPP11_FEATURE) && defined(BLAZERT_ENABLE_PARALLEL_BUILD)
-  ComputeBoundingBoxThreaded(&bmin, &bmax, &indices_.at(0), left_idx, right_idx,
-                             p);
+#ifdef BLAZERT_ENABLE_PARALLEL_BUILD
+#if __cplusplus >= 201103L
+  ComputeBoundingBoxThreaded(bmin, bmax, indices_, left_idx, right_idx, p);
+#elif defined(_OPENMP)
+  ComputeBoundingBoxOMP(bmin, bmax, indices_, left_idx, right_idx, p);
 #else
-  ComputeBoundingBox(&bmin, &bmax, &indices_.at(0), left_idx, right_idx, p);
+  ComputeBoundingBox(bmin, bmax, indices_, left_idx, right_idx, p);
+#endif
+#else
+  ComputeBoundingBox(bmin, bmax, indices_, left_idx, right_idx, p);
 #endif
 
   unsigned int n = right_idx - left_idx;
-  if ((n <= options_.min_leaf_primitives) ||
-      (depth >= options_.max_tree_depth)) {
+  if ((n <= options_.min_leaf_primitives) || (depth >= options_.max_tree_depth)) {
     // Create leaf node.
     BVHNode<T> leaf;
 
-    leaf.bmin[0] = bmin[0];
-    leaf.bmin[1] = bmin[1];
-    leaf.bmin[2] = bmin[2];
-
-    leaf.bmax[0] = bmax[0];
-    leaf.bmax[1] = bmax[1];
-    leaf.bmax[2] = bmax[2];
+    leaf.bmin = bmin;
+    leaf.bmax = bmax;
 
     assert(left_idx < std::numeric_limits<unsigned int>::max());
 
-    leaf.flag = 1;  // leaf
+    leaf.flag = 1;// leaf
     leaf.data[0] = n;
     leaf.data[1] = left_idx;
 
-    out_nodes->push_back(leaf);  // atomic update
-
+    out_nodes.push_back(leaf);// atomic update
     stats_.num_leaf_nodes++;
 
     return offset;
@@ -244,7 +240,7 @@ unsigned int BVHAccel<T>::BuildShallowTree(std::vector<BVHNode<T> > *out_nodes,
     BVHNode<T> node;
     node.axis = -1;
     node.flag = -1;
-    out_nodes->push_back(node);
+    out_nodes.push_back(node);
 
     return offset;
 
@@ -257,29 +253,28 @@ unsigned int BVHAccel<T>::BuildShallowTree(std::vector<BVHNode<T> > *out_nodes,
     //
     // Compute SAH and find best split axis and position
     //
-    int min_cut_axis = 0;
-    T cut_pos[3] = {0.0, 0.0, 0.0};
+    Vec3r<T> cut_pos{0.};
 
-    BinBuffer bins(options_.bin_size);
-    ContributeBinBuffer(&bins, bmin, bmax, &indices_.at(0), left_idx, right_idx,
-                        p);
-    FindCutFromBinBuffer(cut_pos, &min_cut_axis, &bins, bmin, bmax, n,
-                         options_.cost_t_aabb);
+    BinBuffer<T> bins(options_.bin_size);
+    ContributeBinBuffer(bins, bmin, bmax, indices_, left_idx, right_idx, p);
+    int min_cut_axis = FindCutFromBinBuffer<T>(cut_pos, bins, bmin, bmax, n, options_.cost_t_aabb);
 
     // Try all 3 axis until good cut position avaiable.
     unsigned int mid_idx = left_idx;
     int cut_axis = min_cut_axis;
 
+    // TODO: This needs a rework ...
     for (int axis_try = 0; axis_try < 3; axis_try++) {
       unsigned int *begin = &indices_[left_idx];
       unsigned int *end =
-          &indices_[right_idx - 1] + 1;  // mimics end() iterator
+          &indices_[right_idx - 1] + 1;// mimics end() iterator
       unsigned int *mid = 0;
 
       // try min_cut_axis first.
       cut_axis = (min_cut_axis + axis_try) % 3;
 
       pred.Set(cut_axis, cut_pos[cut_axis]);
+
       //
       // Split at (cut_axis, cut_pos)
       // indices_ will be modified.
@@ -304,30 +299,22 @@ unsigned int BVHAccel<T>::BuildShallowTree(std::vector<BVHNode<T> > *out_nodes,
 
     BVHNode<T> node;
     node.axis = cut_axis;
-    node.flag = 0;  // 0 = branch
+    node.flag = 0;// 0 = branch
 
-    out_nodes->push_back(node);
+    out_nodes.push_back(node);
 
     unsigned int left_child_index = 0;
     unsigned int right_child_index = 0;
 
-    left_child_index = BuildShallowTree(out_nodes, left_idx, mid_idx, depth + 1,
-                                        max_shallow_depth, p, pred);
+    left_child_index = BuildShallowTree(out_nodes, left_idx, mid_idx, depth + 1, max_shallow_depth, p, pred);
 
-    right_child_index = BuildShallowTree(out_nodes, mid_idx, right_idx,
-                                         depth + 1, max_shallow_depth, p, pred);
+    right_child_index = BuildShallowTree(out_nodes, mid_idx, right_idx, depth + 1, max_shallow_depth, p, pred);
 
     //std::cout << "shallow[" << offset << "] l and r = " << left_child_index << ", " << right_child_index << std::endl;
-    (*out_nodes)[offset].data[0] = left_child_index;
-    (*out_nodes)[offset].data[1] = right_child_index;
-
-    (*out_nodes)[offset].bmin[0] = bmin[0];
-    (*out_nodes)[offset].bmin[1] = bmin[1];
-    (*out_nodes)[offset].bmin[2] = bmin[2];
-
-    (*out_nodes)[offset].bmax[0] = bmax[0];
-    (*out_nodes)[offset].bmax[1] = bmax[1];
-    (*out_nodes)[offset].bmax[2] = bmax[2];
+    out_nodes[offset].data[0] = left_child_index;
+    out_nodes[offset].data[1] = right_child_index;
+    out_nodes[offset].bmin = bmin;
+    out_nodes[offset].bmax = bmax;
   }
 
   stats_.num_branch_nodes++;
@@ -336,51 +323,44 @@ unsigned int BVHAccel<T>::BuildShallowTree(std::vector<BVHNode<T> > *out_nodes,
 }
 #endif
 
-template <typename T>
-template <class P, class Pred>
-unsigned int BVHAccel<T>::BuildTree(BVHBuildStatistics *out_stat,
-                                    std::vector<BVHNode<T> > *out_nodes,
+template<typename T>
+template<class P, class Pred>
+unsigned int BVHAccel<T>::BuildTree(BVHBuildStatistics &out_stat,
+                                    std::vector<BVHNode<T>> &out_nodes,
                                     unsigned int left_idx,
                                     unsigned int right_idx, unsigned int depth,
                                     const P &p, const Pred &pred) {
   assert(left_idx <= right_idx);
 
-  unsigned int offset = static_cast<unsigned int>(out_nodes->size());
+  unsigned int offset = static_cast<unsigned int>(out_nodes.size());
 
-  if (out_stat->max_tree_depth < depth) {
-    out_stat->max_tree_depth = depth;
+  if (out_stat.max_tree_depth < depth) {
+    out_stat.max_tree_depth = depth;
   }
 
-  real3<T> bmin, bmax;
+  Vec3r<T> bmin, bmax;
   if (!bboxes_.empty()) {
-    GetBoundingBox(&bmin, &bmax, bboxes_, &indices_.at(0), left_idx, right_idx);
+    GetBoundingBox(bmin, bmax, bboxes_, indices_, left_idx, right_idx);
   } else {
-    ComputeBoundingBox(&bmin, &bmax, &indices_.at(0), left_idx, right_idx, p);
+    ComputeBoundingBox(bmin, bmax, indices_, left_idx, right_idx, p);
   }
 
   unsigned int n = right_idx - left_idx;
-  if ((n <= options_.min_leaf_primitives) ||
-      (depth >= options_.max_tree_depth)) {
+  if ((n <= options_.min_leaf_primitives) || (depth >= options_.max_tree_depth)) {
     // Create leaf node.
     BVHNode<T> leaf;
-
-    leaf.bmin[0] = bmin[0];
-    leaf.bmin[1] = bmin[1];
-    leaf.bmin[2] = bmin[2];
-
-    leaf.bmax[0] = bmax[0];
-    leaf.bmax[1] = bmax[1];
-    leaf.bmax[2] = bmax[2];
+    leaf.bmin = bmin;
+    leaf.bmax = bmax;
 
     assert(left_idx < std::numeric_limits<unsigned int>::max());
 
-    leaf.flag = 1;  // leaf
+    leaf.flag = 1;// leaf
     leaf.data[0] = n;
     leaf.data[1] = left_idx;
 
-    out_nodes->push_back(leaf);  // atomic update
+    out_nodes.push_back(leaf);// atomic update
 
-    out_stat->num_leaf_nodes++;
+    out_stat.num_leaf_nodes++;
 
     return offset;
   }
@@ -392,14 +372,11 @@ unsigned int BVHAccel<T>::BuildTree(BVHBuildStatistics *out_stat,
   //
   // Compute SAH and find best split axis and position
   //
-  int min_cut_axis = 0;
-  T cut_pos[3] = {0.0, 0.0, 0.0};
+  Vec3r<T> cut_pos{0.0};
 
-  BinBuffer bins(options_.bin_size);
-  ContributeBinBuffer(&bins, bmin, bmax, &indices_.at(0), left_idx, right_idx,
-                      p);
-  FindCutFromBinBuffer(cut_pos, &min_cut_axis, &bins, bmin, bmax, n,
-                       options_.cost_t_aabb);
+  BinBuffer<T> bins(options_.bin_size);
+  ContributeBinBuffer(bins, bmin, bmax, indices_, left_idx, right_idx, p);
+  int min_cut_axis = FindCutFromBinBuffer<T>(cut_pos, bins, bmin, bmax, n, options_.cost_t_aabb);
 
   // Try all 3 axis until good cut position avaiable.
   unsigned int mid_idx = left_idx;
@@ -407,7 +384,7 @@ unsigned int BVHAccel<T>::BuildTree(BVHBuildStatistics *out_stat,
 
   for (int axis_try = 0; axis_try < 3; axis_try++) {
     unsigned int *begin = &indices_[left_idx];
-    unsigned int *end = &indices_[right_idx - 1] + 1;  // mimics end() iterator.
+    unsigned int *end = &indices_[right_idx - 1] + 1;// mimics end() iterator.
     unsigned int *mid = 0;
 
     // try min_cut_axis first.
@@ -439,9 +416,9 @@ unsigned int BVHAccel<T>::BuildTree(BVHBuildStatistics *out_stat,
 
   BVHNode<T> node;
   node.axis = cut_axis;
-  node.flag = 0;  // 0 = branch
+  node.flag = 0;// 0 = branch
 
-  out_nodes->push_back(node);
+  out_nodes.push_back(node);
 
   unsigned int left_child_index = 0;
   unsigned int right_child_index = 0;
@@ -453,26 +430,21 @@ unsigned int BVHAccel<T>::BuildTree(BVHBuildStatistics *out_stat,
       BuildTree(out_stat, out_nodes, mid_idx, right_idx, depth + 1, p, pred);
 
   {
-    (*out_nodes)[offset].data[0] = left_child_index;
-    (*out_nodes)[offset].data[1] = right_child_index;
+    out_nodes[offset].data[0] = left_child_index;
+    out_nodes[offset].data[1] = right_child_index;
 
-    (*out_nodes)[offset].bmin[0] = bmin[0];
-    (*out_nodes)[offset].bmin[1] = bmin[1];
-    (*out_nodes)[offset].bmin[2] = bmin[2];
-
-    (*out_nodes)[offset].bmax[0] = bmax[0];
-    (*out_nodes)[offset].bmax[1] = bmax[1];
-    (*out_nodes)[offset].bmax[2] = bmax[2];
+    out_nodes[offset].bmin = bmin;
+    out_nodes[offset].bmax = bmax;
   }
 
-  out_stat->num_branch_nodes++;
+  out_stat.num_branch_nodes++;
 
   return offset;
 }
 
-template <typename T>
-template <class Prim, class Pred>
-bool BVHAccel<T>::Build(unsigned int num_primitives, const Prim &p,
+template<typename T>
+template<class Prim, class Pred>
+bool BVHAccel<T>::Build(const Prim &p,
                         const Pred &pred, const BVHBuildOptions<T> &options) {
   options_ = options;
   stats_ = BVHBuildStatistics();
@@ -485,11 +457,11 @@ bool BVHAccel<T>::Build(unsigned int num_primitives, const Prim &p,
 
   assert(options_.bin_size > 1);
 
-  if (num_primitives == 0) {
+  if (p.size() == 0) {
     return false;
   }
 
-  unsigned int n = num_primitives;
+  unsigned int n = p.size();
 
   //
   // 1. Create triangle indices(this will be permutated in BuildTree)
@@ -525,23 +497,22 @@ bool BVHAccel<T>::Build(unsigned int num_primitives, const Prim &p,
     }
   }
 
-
   //
   // 2. Compute bounding box (optional).
   //
-  real3<T> bmin, bmax;
+  Vec3r<T> bmin, bmax;
 
   if (options.cache_bbox) {
-    bmin[0] = bmin[1] = bmin[2] = std::numeric_limits<T>::max();
-    bmax[0] = bmax[1] = bmax[2] = -std::numeric_limits<T>::max();
+    bmin = std::numeric_limits<T>::max();
+    bmax = -std::numeric_limits<T>::max();
 
     bboxes_.resize(n);
 
-    for (size_t i = 0; i < n; i++) {  // for each primitive
+    for (size_t i = 0; i < n; i++) {// for each primitive
       unsigned int idx = indices_[i];
 
       BBox<T> bbox;
-      p.BoundingBox(&(bbox.bmin), &(bbox.bmax), static_cast<unsigned int>(i));
+      p.BoundingBox(bbox.bmin, bbox.bmax, static_cast<unsigned int>(i));
       bboxes_[idx] = bbox;
 
       // xyz
@@ -552,30 +523,29 @@ bool BVHAccel<T>::Build(unsigned int num_primitives, const Prim &p,
     }
 
   } else {
-#if defined(BLAZERT_USE_CPP11_FEATURE)
-    ComputeBoundingBoxThreaded(&bmin, &bmax, &indices_.at(0), 0, n, p);
+#if __cplusplus >= 201103L
+    ComputeBoundingBoxThreaded(bmin, bmax, indices_, 0, n, p);
 #elif defined(_OPENMP)
-    ComputeBoundingBoxOMP(&bmin, &bmax, &indices_.at(0), 0, n, p);
+    ComputeBoundingBoxOMP(bmin, bmax, indices_, 0, n, p);
 #else
-    ComputeBoundingBox(&bmin, &bmax, &indices_.at(0), 0, n, p);
+    ComputeBoundingBox(bmin, bmax, indices_, 0, n, p);
 #endif
   }
 
 //
 // 3. Build tree
 //
-#if defined(BLAZERT_ENABLE_PARALLEL_BUILD)
-#if defined(BLAZERT_USE_CPP11_FEATURE)
+#ifdef BLAZERT_ENABLE_PARALLEL_BUILD
+#if __cplusplus >= 201103L
 
   // Do parallel build for large enough datasets.
   if (n > options.min_primitives_for_parallel_build) {
-    BuildShallowTree(&nodes_, 0, n, /* root depth */ 0, options.shallow_depth,
-                     p, pred);  // [0, n)
+    BuildShallowTree(nodes_, 0, n, /* root depth */ 0, options.shallow_depth, p, pred);// [0, n)
 
     assert(shallow_node_infos_.size() > 0);
 
     // Build deeper tree in parallel
-    std::vector<std::vector<BVHNode<T> > > local_nodes(
+    std::vector<std::vector<BVHNode<T>>> local_nodes(
         shallow_node_infos_.size());
     std::vector<BVHBuildStatistics> local_stats(shallow_node_infos_.size());
 
@@ -598,8 +568,7 @@ bool BVHAccel<T>::Build(unsigned int num_primitives, const Prim &p,
           const Pred local_pred = pred;
           unsigned int left_idx = shallow_node_infos_[size_t(idx)].left_idx;
           unsigned int right_idx = shallow_node_infos_[size_t(idx)].right_idx;
-          BuildTree(&(local_stats[size_t(idx)]), &(local_nodes[size_t(idx)]),
-                    left_idx, right_idx, options.shallow_depth, p, local_pred);
+          BuildTree(local_stats[size_t(idx)], local_nodes[size_t(idx)], left_idx, right_idx, options.shallow_depth, p, local_pred);
         }
       }));
     }
@@ -615,7 +584,7 @@ bool BVHAccel<T>::Build(unsigned int num_primitives, const Prim &p,
 
       // Add offset to child index (for branch node).
       for (size_t j = 0; j < local_nodes[ii].size(); j++) {
-        if (local_nodes[ii][j].flag == 0) {  // branch
+        if (local_nodes[ii][j].flag == 0) {// branch
           local_nodes[ii][j].data[0] += offset - 1;
           local_nodes[ii][j].data[1] += offset - 1;
         }
@@ -639,21 +608,19 @@ bool BVHAccel<T>::Build(unsigned int num_primitives, const Prim &p,
 
   } else {
     // Single thread.
-    BuildTree(&stats_, &nodes_, 0, n,
-              /* root depth */ 0, p, pred);  // [0, n)
+    BuildTree(stats_, nodes_, 0, n, /* root depth */ 0, p, pred);// [0, n)
   }
 
 #elif defined(_OPENMP)
 
   // Do parallel build for large enough datasets.
   if (n > options.min_primitives_for_parallel_build) {
-    BuildShallowTree(&nodes_, 0, n, /* root depth */ 0, options.shallow_depth,
-                     p, pred);  // [0, n)
+    BuildShallowTree(nodes_, 0, n, /* root depth */ 0, options.shallow_depth, p, pred);// [0, n)
 
     assert(shallow_node_infos_.size() > 0);
 
     // Build deeper tree in parallel
-    std::vector<std::vector<BVHNode<T> > > local_nodes(
+    std::vector<std::vector<BVHNode<T>>> local_nodes(
         shallow_node_infos_.size());
     std::vector<BVHBuildStatistics> local_stats(shallow_node_infos_.size());
 
@@ -662,8 +629,7 @@ bool BVHAccel<T>::Build(unsigned int num_primitives, const Prim &p,
       unsigned int left_idx = shallow_node_infos_[size_t(i)].left_idx;
       unsigned int right_idx = shallow_node_infos_[size_t(i)].right_idx;
       const Pred local_pred = pred;
-      BuildTree(&(local_stats[size_t(i)]), &(local_nodes[size_t(i)]), left_idx,
-                right_idx, options.shallow_depth, p, local_pred);
+      BuildTree(local_stats[size_t(i)], local_nodes[size_t(i)], left_idx, right_idx, options.shallow_depth, p, local_pred);
     }
 
     // Join local nodes
@@ -673,7 +639,7 @@ bool BVHAccel<T>::Build(unsigned int num_primitives, const Prim &p,
 
       // Add offset to child index (for branch node).
       for (size_t j = 0; j < local_nodes[i].size(); j++) {
-        if (local_nodes[i][j].flag == 0) {  // branch
+        if (local_nodes[i][j].flag == 0) {// branch
           local_nodes[i][j].data[0] += offset - 1;
           local_nodes[i][j].data[1] += offset - 1;
         }
@@ -697,29 +663,25 @@ bool BVHAccel<T>::Build(unsigned int num_primitives, const Prim &p,
 
   } else {
     // Single thread
-    BuildTree(&stats_, &nodes_, 0, n,
-              /* root depth */ 0, p, pred);  // [0, n)
+    BuildTree(stats_, nodes_, 0, n, /* root depth */ 0, p, pred);// [0, n)
   }
 
-#else  // !BLAZERT_ENABLE_PARALLEL_BUILD
+#else// !BLAZERT_ENABLE_PARALLEL_BUILD
   {
-    BuildTree(&stats_, &nodes_, 0, n,
-              /* root depth */ 0, p, pred);  // [0, n)
+    BuildTree(stats_, nodes_, 0, n, /* root depth */ 0, p, pred);// [0, n)
   }
 #endif
-#else  // !_OPENMP
+#else// !_OPENMP
 
   // Single thread BVH build
   {
-    BuildTree(&stats_, &nodes_, 0, n,
-              /* root depth */ 0, p, pred);  // [0, n)
+    BuildTree(stats_, nodes_, 0, n, /* root depth */ 0, p, pred);// [0, n)
   }
 #endif
-
   return true;
 }
 
-template <typename T>
+template<typename T>
 void BVHAccel<T>::Debug() {
   for (size_t i = 0; i < indices_.size(); i++) {
     printf("index[%d] = %d\n", int(i), int(indices_[i]));
@@ -731,122 +693,123 @@ void BVHAccel<T>::Debug() {
            nodes_[i].bmax[0], nodes_[i].bmax[1], nodes_[i].bmax[1]);
   }
 }
+//
+//#if defined(BLAZERT_ENABLE_SERIALIZATION)
+//template<typename T>
+//bool BVHAccel<T>::Dump(const char *filename) const {
+//  FILE *fp = fopen(filename, "wb");
+//  if (!fp) {
+//    // fprintf(stderr, "[BVHAccel] Cannot write a file: %s\n", filename);
+//    return false;
+//  }
+//
+//  size_t numNodes = nodes_.size();
+//  assert(nodes_.size() > 0);
+//
+//  size_t numIndices = indices_.size();
+//
+//  size_t r = 0;
+//  r = fwrite(&numNodes, sizeof(size_t), 1, fp);
+//  assert(r == 1);
+//
+//  r = fwrite(&nodes_.at(0), sizeof(BVHNode<T>), numNodes, fp);
+//  assert(r == numNodes);
+//
+//  r = fwrite(&numIndices, sizeof(size_t), 1, fp);
+//  assert(r == 1);
+//
+//  r = fwrite(&indices_.at(0), sizeof(unsigned int), numIndices, fp);
+//  assert(r == numIndices);
+//
+//  fclose(fp);
+//
+//  return true;
+//}
+//
+//template<typename T>
+//bool BVHAccel<T>::Dump(FILE *fp) const {
+//  size_t numNodes = nodes_.size();
+//  assert(nodes_.size() > 0);
+//
+//  size_t numIndices = indices_.size();
+//
+//  size_t r = 0;
+//  r = fwrite(&numNodes, sizeof(size_t), 1, fp);
+//  assert(r == 1);
+//
+//  r = fwrite(&nodes_.at(0), sizeof(BVHNode<T>), numNodes, fp);
+//  assert(r == numNodes);
+//
+//  r = fwrite(&numIndices, sizeof(size_t), 1, fp);
+//  assert(r == 1);
+//
+//  r = fwrite(&indices_.at(0), sizeof(unsigned int), numIndices, fp);
+//  assert(r == numIndices);
+//
+//  return true;
+//}
+//
+//template<typename T>
+//bool BVHAccel<T>::Load(const char *filename) {
+//  FILE *fp = fopen(filename, "rb");
+//  if (!fp) {
+//    // fprintf(stderr, "Cannot open file: %s\n", filename);
+//    return false;
+//  }
+//
+//  size_t numNodes;
+//  size_t numIndices;
+//
+//  size_t r = 0;
+//  r = fread(&numNodes, sizeof(size_t), 1, fp);
+//  assert(r == 1);
+//  assert(numNodes > 0);
+//
+//  nodes_.resize(numNodes);
+//  r = fread(&nodes_.at(0), sizeof(BVHNode<T>), numNodes, fp);
+//  assert(r == numNodes);
+//
+//  r = fread(&numIndices, sizeof(size_t), 1, fp);
+//  assert(r == 1);
+//
+//  indices_.resize(numIndices);
+//
+//  r = fread(&indices_.at(0), sizeof(unsigned int), numIndices, fp);
+//  assert(r == numIndices);
+//
+//  fclose(fp);
+//
+//  return true;
+//}
+//
+//template<typename T>
+//bool BVHAccel<T>::Load(FILE *fp) {
+//  size_t numNodes;
+//  size_t numIndices;
+//
+//  size_t r = 0;
+//  r = fread(&numNodes, sizeof(size_t), 1, fp);
+//  assert(r == 1);
+//  assert(numNodes > 0);
+//
+//  nodes_.resize(numNodes);
+//  r = fread(&nodes_.at(0), sizeof(BVHNode<T>), numNodes, fp);
+//  assert(r == numNodes);
+//
+//  r = fread(&numIndices, sizeof(size_t), 1, fp);
+//  assert(r == 1);
+//
+//  indices_.resize(numIndices);
+//
+//  r = fread(&indices_.at(0), sizeof(unsigned int), numIndices, fp);
+//  assert(r == numIndices);
+//
+//  return true;
+//}
+//#endif
 
-#if defined(BLAZERT_ENABLE_SERIALIZATION)
-template <typename T>
-bool BVHAccel<T>::Dump(const char *filename) const {
-  FILE *fp = fopen(filename, "wb");
-  if (!fp) {
-    // fprintf(stderr, "[BVHAccel] Cannot write a file: %s\n", filename);
-    return false;
-  }
-
-  size_t numNodes = nodes_.size();
-  assert(nodes_.size() > 0);
-
-  size_t numIndices = indices_.size();
-
-  size_t r = 0;
-  r = fwrite(&numNodes, sizeof(size_t), 1, fp);
-  assert(r == 1);
-
-  r = fwrite(&nodes_.at(0), sizeof(BVHNode<T>), numNodes, fp);
-  assert(r == numNodes);
-
-  r = fwrite(&numIndices, sizeof(size_t), 1, fp);
-  assert(r == 1);
-
-  r = fwrite(&indices_.at(0), sizeof(unsigned int), numIndices, fp);
-  assert(r == numIndices);
-
-  fclose(fp);
-
-  return true;
-}
-
-template <typename T>
-bool BVHAccel<T>::Dump(FILE *fp) const {
-  size_t numNodes = nodes_.size();
-  assert(nodes_.size() > 0);
-
-  size_t numIndices = indices_.size();
-
-  size_t r = 0;
-  r = fwrite(&numNodes, sizeof(size_t), 1, fp);
-  assert(r == 1);
-
-  r = fwrite(&nodes_.at(0), sizeof(BVHNode<T>), numNodes, fp);
-  assert(r == numNodes);
-
-  r = fwrite(&numIndices, sizeof(size_t), 1, fp);
-  assert(r == 1);
-
-  r = fwrite(&indices_.at(0), sizeof(unsigned int), numIndices, fp);
-  assert(r == numIndices);
-
-  return true;
-}
-
-template <typename T>
-bool BVHAccel<T>::Load(const char *filename) {
-  FILE *fp = fopen(filename, "rb");
-  if (!fp) {
-    // fprintf(stderr, "Cannot open file: %s\n", filename);
-    return false;
-  }
-
-  size_t numNodes;
-  size_t numIndices;
-
-  size_t r = 0;
-  r = fread(&numNodes, sizeof(size_t), 1, fp);
-  assert(r == 1);
-  assert(numNodes > 0);
-
-  nodes_.resize(numNodes);
-  r = fread(&nodes_.at(0), sizeof(BVHNode<T>), numNodes, fp);
-  assert(r == numNodes);
-
-  r = fread(&numIndices, sizeof(size_t), 1, fp);
-  assert(r == 1);
-
-  indices_.resize(numIndices);
-
-  r = fread(&indices_.at(0), sizeof(unsigned int), numIndices, fp);
-  assert(r == numIndices);
-
-  fclose(fp);
-
-  return true;
-}
-
-template <typename T>
-bool BVHAccel<T>::Load(FILE *fp) {
-  size_t numNodes;
-  size_t numIndices;
-
-  size_t r = 0;
-  r = fread(&numNodes, sizeof(size_t), 1, fp);
-  assert(r == 1);
-  assert(numNodes > 0);
-
-  nodes_.resize(numNodes);
-  r = fread(&nodes_.at(0), sizeof(BVHNode<T>), numNodes, fp);
-  assert(r == numNodes);
-
-  r = fread(&numIndices, sizeof(size_t), 1, fp);
-  assert(r == 1);
-
-  indices_.resize(numIndices);
-
-  r = fread(&indices_.at(0), sizeof(unsigned int), numIndices, fp);
-  assert(r == numIndices);
-
-  return true;
-}
-#endif
-template <typename T>
-template <class I>
+template<typename T>
+template<class I>
 inline bool BVHAccel<T>::TestLeafNode(const BVHNode<T> &node, const Ray<T> &ray,
                                       const I &intersector) const {
   bool hit = false;
@@ -854,17 +817,10 @@ inline bool BVHAccel<T>::TestLeafNode(const BVHNode<T> &node, const Ray<T> &ray,
   unsigned int num_primitives = node.data[0];
   unsigned int offset = node.data[1];
 
-  T t = intersector.GetT();  // current hit distance
+  T t = intersector.GetT();// current hit distance
 
-  real3<T> ray_org;
-  ray_org[0] = ray.org[0];
-  ray_org[1] = ray.org[1];
-  ray_org[2] = ray.org[2];
-
-  real3<T> ray_dir;
-  ray_dir[0] = ray.dir[0];
-  ray_dir[1] = ray.dir[1];
-  ray_dir[2] = ray.dir[2];
+  Vec3r<T> ray_org = ray.org;
+  Vec3r<T> ray_dir = ray.dir;
 
   for (unsigned int i = 0; i < num_primitives; i++) {
     unsigned int prim_idx = indices_[i + offset];
@@ -882,90 +838,12 @@ inline bool BVHAccel<T>::TestLeafNode(const BVHNode<T> &node, const Ray<T> &ray,
   return hit;
 }
 
-#if 0  // TODO(LTE): Implement
-template <typename T> template<class I, class H, class Comp>
-bool BVHAccel<T>::MultiHitTestLeafNode(
-  std::priority_queue<H, std::vector<H>, Comp>  *isect_pq,
-  int max_intersections,
-  const BVHNode<T> &node,
-  const Ray<T> &ray,
-  const I &intersector) const {
-  bool hit = false;
-
-  unsigned int num_primitives = node.data[0];
-  unsigned int offset = node.data[1];
-
-  T t = std::numeric_limits<T>::max();
-  if (isect_pq->size() >= static_cast<size_t>(max_intersections)) {
-    t = isect_pq->top().t;  // current furthest hit distance
-  }
-
-  real3<T> ray_org;
-  ray_org[0] = ray.org[0];
-  ray_org[1] = ray.org[1];
-  ray_org[2] = ray.org[2];
-
-  real3<T> ray_dir;
-  ray_dir[0] = ray.dir[0];
-  ray_dir[1] = ray.dir[1];
-  ray_dir[2] = ray.dir[2];
-
-  for (unsigned int i = 0; i < num_primitives; i++) {
-    unsigned int prim_idx = indices_[i + offset];
-
-    T local_t = t, u = 0.0f, v = 0.0f;
-
-    if (intersector.Intersect(&local_t, &u, &v, prim_idx))
-    {
-      // Update isect state
-      if ((local_t > ray.min_t))
-      {
-        if (isect_pq->size() < static_cast<size_t>(max_intersections))
-        {
-          H isect;
-          t = local_t;
-          isect.t = t;
-          isect.u = u;
-          isect.v = v;
-          isect.prim_id = prim_idx;
-          isect_pq->push(isect);
-
-          // Update t to furthest distance.
-          t = ray.max_t;
-
-          hit = true;
-        }
-        else if (local_t < isect_pq->top().t)
-        {
-          // delete furthest intersection and add new intersection.
-          isect_pq->pop();
-
-          H hit;
-          hit.t = local_t;
-          hit.u = u;
-          hit.v = v;
-          hit.prim_id = prim_idx;
-          isect_pq->push(hit);
-
-          // Update furthest hit distance
-          t = isect_pq->top().t;
-
-          hit = true;
-        }
-      }
-    }
-  }
-
-  return hit;
-}
-#endif
-
-template <typename T>
-template <class I, class H>
-bool BVHAccel<T>::Traverse(const Ray<T> &ray, const I &intersector, H *isect,
+template<typename T>
+template<class I, class H>
+bool BVHAccel<T>::Traverse(const Ray<T> &ray, const I &intersector, H &isect,
                            const BVHTraceOptions &options) const {
   const int kMaxStackDepth = 512;
-  (void)kMaxStackDepth;
+  //(void) kMaxStackDepth;
 
   T hit_t = ray.max_t;
 
@@ -978,23 +856,17 @@ bool BVHAccel<T>::Traverse(const Ray<T> &ray, const I &intersector, H *isect,
 
   intersector.PrepareTraversal(ray, options);
 
-  int dir_sign[3];
+  Vec3i dir_sign;
   dir_sign[0] = ray.dir[0] < static_cast<T>(0.0) ? 1 : 0;
   dir_sign[1] = ray.dir[1] < static_cast<T>(0.0) ? 1 : 0;
   dir_sign[2] = ray.dir[2] < static_cast<T>(0.0) ? 1 : 0;
 
-  real3<T> ray_inv_dir;
-  real3<T> ray_dir;
-  ray_dir[0] = ray.dir[0];
-  ray_dir[1] = ray.dir[1];
-  ray_dir[2] = ray.dir[2];
+  Vec3r<T> ray_inv_dir;
+  Vec3r<T> ray_dir = ray.dir;
 
-  ray_inv_dir = vsafe_inverse(ray_dir);
+  ray_inv_dir = vector_safe_inverse(ray_dir);
 
-  real3<T> ray_org;
-  ray_org[0] = ray.org[0];
-  ray_org[1] = ray.org[1];
-  ray_org[2] = ray.org[2];
+  Vec3r<T> ray_org = ray.org;
 
   T min_t = std::numeric_limits<T>::max();
   T max_t = -std::numeric_limits<T>::max();
@@ -1005,7 +877,7 @@ bool BVHAccel<T>::Traverse(const Ray<T> &ray, const I &intersector, H *isect,
 
     node_stack_index--;
 
-    bool hit = IntersectRayAABB(&min_t, &max_t, ray.min_t, hit_t, node.bmin,
+    bool hit = IntersectRayAABB<T>(&min_t, &max_t, ray.min_t, hit_t, node.bmin,
                                 node.bmax, ray_org, ray_inv_dir, dir_sign);
 
     if (hit) {
@@ -1017,7 +889,7 @@ bool BVHAccel<T>::Traverse(const Ray<T> &ray, const I &intersector, H *isect,
         // Traverse near first.
         node_stack[++node_stack_index] = node.data[order_far];
         node_stack[++node_stack_index] = node.data[order_near];
-      } else if (TestLeafNode(node, ray, intersector)) {  // Leaf node
+      } else if (TestLeafNode(node, ray, intersector)) {// Leaf node
         hit_t = intersector.GetT();
       }
     }
@@ -1031,27 +903,20 @@ bool BVHAccel<T>::Traverse(const Ray<T> &ray, const I &intersector, H *isect,
   return hit;
 }
 
-template <typename T>
-template <class I>
+template<typename T>
+template<class I>
 inline bool BVHAccel<T>::TestLeafNodeIntersections(
     const BVHNode<T> &node, const Ray<T> &ray, const int max_intersections,
     const I &intersector,
-    std::priority_queue<NodeHit<T>, std::vector<NodeHit<T> >,
-                        NodeHitComparator<T> > *isect_pq) const {
+    std::priority_queue<NodeHit<T>, std::vector<NodeHit<T>>,
+                        NodeHitComparator<T>> &isect_pq) const {
   bool hit = false;
 
   unsigned int num_primitives = node.data[0];
   unsigned int offset = node.data[1];
 
-  real3<T> ray_org;
-  ray_org[0] = ray.org[0];
-  ray_org[1] = ray.org[1];
-  ray_org[2] = ray.org[2];
-
-  real3<T> ray_dir;
-  ray_dir[0] = ray.dir[0];
-  ray_dir[1] = ray.dir[1];
-  ray_dir[2] = ray.dir[2];
+  Vec3r<T> ray_org = ray.org;
+  Vec3r<T> ray_dir = ray.dir;
 
   intersector.PrepareTraversal(ray);
 
@@ -1067,13 +932,13 @@ inline bool BVHAccel<T>::TestLeafNodeIntersections(
       isect.t_max = max_t;
       isect.node_id = prim_idx;
 
-      if (isect_pq->size() < static_cast<size_t>(max_intersections)) {
-        isect_pq->push(isect);
-      } else if (min_t < isect_pq->top().t_min) {
+      if (isect_pq.size() < static_cast<size_t>(max_intersections)) {
+        isect_pq.push(isect);
+      } else if (min_t < isect_pq.top().t_min) {
         // delete the furthest intersection and add a new intersection.
-        isect_pq->pop();
+        isect_pq.pop();
 
-        isect_pq->push(isect);
+        isect_pq.push(isect);
       }
     }
   }
@@ -1081,11 +946,11 @@ inline bool BVHAccel<T>::TestLeafNodeIntersections(
   return hit;
 }
 
-template <typename T>
-template <class I>
+template<typename T>
+template<class I>
 bool BVHAccel<T>::ListNodeIntersections(
-    const Ray<T> &ray, int max_intersections, const I &intersector,
-    StackVector<NodeHit<T>, 128> *hits) const {
+    const Ray<T> &ray, unsigned int max_intersections, const I &intersector,
+    StackVector<NodeHit<T>, 128> &hits) const {
   const int kMaxStackDepth = 512;
 
   T hit_t = ray.max_t;
@@ -1095,30 +960,23 @@ bool BVHAccel<T>::ListNodeIntersections(
   node_stack[0] = 0;
 
   // Stores furthest intersection at top
-  std::priority_queue<NodeHit<T>, std::vector<NodeHit<T> >,
-                      NodeHitComparator<T> >
+  std::priority_queue<NodeHit<T>, std::vector<NodeHit<T>>,
+                      NodeHitComparator<T>>
       isect_pq;
 
   (*hits)->clear();
 
-  int dir_sign[3];
+  Vec3i dir_sign[3];
   dir_sign[0] = ray.dir[0] < static_cast<T>(0.0) ? 1 : 0;
   dir_sign[1] = ray.dir[1] < static_cast<T>(0.0) ? 1 : 0;
   dir_sign[2] = ray.dir[2] < static_cast<T>(0.0) ? 1 : 0;
 
-  real3<T> ray_inv_dir;
-  real3<T> ray_dir;
-
-  ray_dir[0] = ray.dir[0];
-  ray_dir[1] = ray.dir[1];
-  ray_dir[2] = ray.dir[2];
+  Vec3r<T> ray_inv_dir;
+  Vec3r<T> ray_dir = ray.dir;
 
   ray_inv_dir = vsafe_inverse(ray_dir);
 
-  real3<T> ray_org;
-  ray_org[0] = ray.org[0];
-  ray_org[1] = ray.org[1];
-  ray_org[2] = ray.org[2];
+  Vec3r<T> ray_org = ray.org;
 
   T min_t, max_t;
 
@@ -1140,24 +998,23 @@ bool BVHAccel<T>::ListNodeIntersections(
         // Traverse near first.
         node_stack[++node_stack_index] = node.data[order_far];
         node_stack[++node_stack_index] = node.data[order_near];
-      } else {  // Leaf node
-        TestLeafNodeIntersections(node, ray, max_intersections, intersector,
-                                  &isect_pq);
+      } else {// Leaf node
+        TestLeafNodeIntersections(node, ray, max_intersections, intersector, isect_pq);
       }
     }
   }
 
   assert(node_stack_index < kMaxStackDepth);
-  (void)kMaxStackDepth;
+  (void) kMaxStackDepth;
 
   if (!isect_pq.empty()) {
     // Store intesection in reverse order (make it frontmost order)
     size_t n = isect_pq.size();
-    (*hits)->resize(n);
+    hits.resize(n);
 
     for (size_t i = 0; i < n; i++) {
       const NodeHit<T> &isect = isect_pq.top();
-      (*hits)[n - i - 1] = isect;
+      hits[n - i - 1] = isect;
       isect_pq.pop();
     }
 
@@ -1166,108 +1023,6 @@ bool BVHAccel<T>::ListNodeIntersections(
 
   return false;
 }
+}// namespace blazert
 
-#if 0  // TODO(LTE): Implement
-template <typename T> template<class I, class H, class Comp>
-bool BVHAccel<T>::MultiHitTraverse(const Ray<T> &ray,
-                                         int max_intersections,
-                                         const I &intersector,
-                                         StackVector<H, 128> *hits,
-                                         const BVHTraceOptions& options) const {
-  const int kMaxStackDepth = 512;
-
-  T hit_t = ray.max_t;
-
-  int node_stack_index = 0;
-  unsigned int node_stack[512];
-  node_stack[0] = 0;
-
-  // Stores furthest intersection at top
-  std::priority_queue<H, std::vector<H>, Comp>  isect_pq;
-
-  (*hits)->clear();
-
-  // Init isect info as no hit
-  intersector.Update(hit_t, static_cast<unsigned int>(-1));
-
-  intersector.PrepareTraversal(ray, options);
-
-  int dir_sign[3];
-  dir_sign[0] = ray.dir[0] < static_cast<T>(0.0) ? static_cast<T>(1) : static_cast<T>(0);
-  dir_sign[1] = ray.dir[1] < static_cast<T>(0.0) ? static_cast<T>(1) : static_cast<T>(0);
-  dir_sign[2] = ray.dir[2] < static_cast<T>(0.0) ? static_cast<T>(1) : static_cast<T>(0);
-
-  real3<T> ray_inv_dir;
-  real3<T> ray_dir;
-
-  ray_dir[0] = ray.dir[0];
-  ray_dir[1] = ray.dir[1];
-  ray_dir[2] = ray.dir[2];
-
-  ray_inv_dir = vsafe_inverse(ray_dir);
-
-  real3<T> ray_org;
-  ray_org[0] = ray.org[0];
-  ray_org[1] = ray.org[1];
-  ray_org[2] = ray.org[2];
-
-  T min_t, max_t;
-
-  while (node_stack_index >= 0)
-  {
-    unsigned int index = node_stack[node_stack_index];
-    const BVHNode<T> &node = nodes_[static_cast<size_t>(index)];
-
-    node_stack_index--;
-
-    bool hit = IntersectRayAABB(&min_t, &max_t, ray.min_t, hit_t, node.bmin,
-                                node.bmax, ray_org, ray_inv_dir, dir_sign);
-
-    // branch node
-    if(hit)
-    {
-      if (node.flag == 0)
-      {
-        int order_near = dir_sign[node.axis];
-        int order_far = 1 - order_near;
-
-        // Traverse near first.
-        node_stack[++node_stack_index] = node.data[order_far];
-        node_stack[++node_stack_index] = node.data[order_near];
-      }
-      else
-      {
-        if (MultiHitTestLeafNode(&isect_pq, max_intersections, node, ray, intersector))
-        {
-          // Only update `hit_t` when queue is full.
-          if (isect_pq.size() >= static_cast<size_t>(max_intersections))
-          {
-            hit_t = isect_pq.top().t;
-          }
-        }
-      }
-    }
-  }
-
-  assert(node_stack_index < kMaxStackDepth);
-  (void)kMaxStackDepth;
-
-  if (!isect_pq.empty())
-  {
-    // Store intesection in reverse order (make it frontmost order)
-    size_t n = isect_pq.size();
-    (*hits)->resize(n);
-
-    for (size_t i = 0; i < n; i++)
-    {
-      const H &isect = isect_pq.top();
-      (*hits)[n - i - 1] = isect;
-      isect_pq.pop();
-    }
-
-    return true;
-  }
-
-  return false;
-}*/
-#endif
+#endif// BLAZERT_BVH_ACCEL_H_

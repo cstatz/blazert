@@ -1,4 +1,13 @@
+#pragma once
+#ifndef BLAZERT_RAY_H_
+#define BLAZERT_RAY_H_
 
+#include <limits>
+
+#include <blazert/datatypes.h>
+#include <blazert/defines.h>
+
+namespace blazert {
 // RayType
 typedef enum {
   RAY_TYPE_NONE = 0x0,
@@ -16,28 +25,20 @@ typedef enum {
 #endif
 #endif
 
-
-template <typename T = float>
-class Ray {
- public:
-  Ray()
-      : min_t(static_cast<T>(0.0)),
-        max_t(std::numeric_limits<T>::max()),
-        type(RAY_TYPE_NONE) {
-    org[0] = static_cast<T>(0.0);
-    org[1] = static_cast<T>(0.0);
-    org[2] = static_cast<T>(0.0);
-    dir[0] = static_cast<T>(0.0);
-    dir[1] = static_cast<T>(0.0);
-    dir[2] = static_cast<T>(-1.0);
-  }
-
-  T org[3];           // must set
-  T dir[3];           // must set
-  T min_t;            // minimum ray hit distance.
-  T max_t;            // maximum ray hit distance.
-  unsigned int type;  // ray type
-
-  // TODO(LTE): Align sizeof(Ray)
+template<typename T>
+class
+alignas(sizeof(Vec3r<T>))
+Ray {
+public:
+  Vec3r<T> org;
+  Vec3r<T> dir;
+  T min_t = 0.;                             // minimum ray hit distance.
+  T max_t = std::numeric_limits<T>::max();  // maximum ray hit distance.
+  unsigned int type = RAY_TYPE_NONE;        // ray type
+public:
+  Ray() {org = 0.; dir = {0., 0., -1.};};
+  Ray(const Vec3r<T> &org_, const Vec3r<T> &dir_) : org(org_), dir(normalize(dir_)) {};
 };
+}// namespace blazert
 
+#endif// BLAZERT_RAY_H_

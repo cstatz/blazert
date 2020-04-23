@@ -5,65 +5,6 @@ class IntersectComparator {
   bool operator()(const H &a, const H &b) const { return a.t < b.t; }
 };
 
-// Predefined SAH predicator for triangle.
-template <typename T = float>
-class TriangleSAHPred {
- public:
-  TriangleSAHPred(
-      const T *vertices, const unsigned int *faces,
-      size_t vertex_stride_bytes)  // e.g. 12 for sizeof(float) * XYZ
-      : axis_(0),
-        pos_(static_cast<T>(0.0)),
-        vertices_(vertices),
-        faces_(faces),
-        vertex_stride_bytes_(vertex_stride_bytes) {}
-
-  TriangleSAHPred(const TriangleSAHPred<T> &rhs)
-      : axis_(rhs.axis_),
-        pos_(rhs.pos_),
-        vertices_(rhs.vertices_),
-        faces_(rhs.faces_),
-        vertex_stride_bytes_(rhs.vertex_stride_bytes_) {}
-
-  TriangleSAHPred<T> &operator=(const TriangleSAHPred<T> &rhs) {
-    axis_ = rhs.axis_;
-    pos_ = rhs.pos_;
-    vertices_ = rhs.vertices_;
-    faces_ = rhs.faces_;
-    vertex_stride_bytes_ = rhs.vertex_stride_bytes_;
-
-    return (*this);
-  }
-
-  void Set(int axis, T pos) const {
-    axis_ = axis;
-    pos_ = pos;
-  }
-
-  bool operator()(unsigned int i) const {
-    int axis = axis_;
-    T pos = pos_;
-
-    unsigned int i0 = faces_[3 * i + 0];
-    unsigned int i1 = faces_[3 * i + 1];
-    unsigned int i2 = faces_[3 * i + 2];
-
-    real3<T> p0(get_vertex_addr<T>(vertices_, i0, vertex_stride_bytes_));
-    real3<T> p1(get_vertex_addr<T>(vertices_, i1, vertex_stride_bytes_));
-    real3<T> p2(get_vertex_addr<T>(vertices_, i2, vertex_stride_bytes_));
-
-    T center = p0[axis] + p1[axis] + p2[axis];
-
-    return (center < pos * static_cast<T>(3.0));
-  }
-
- private:
-  mutable int axis_;
-  mutable T pos_;
-  const T *vertices_;
-  const unsigned int *faces_;
-  const size_t vertex_stride_bytes_;
-};
 
 template <typename T>
 inline void GetBoundingBoxOfTriangle(real3<T> *bmin, real3<T> *bmax,

@@ -1,3 +1,6 @@
+#pragma once
+#ifndef BLAZERT_STACK_H_
+#define BLAZERT_STACK_H_
 
 // ----------------------------------------------------------------------------
 // Small vector class useful for multi-threaded environment.
@@ -26,9 +29,12 @@
 // be sure to reserve() in the container up to the stack buffer size. Otherwise
 // the container will allocate a small array which will "use up" the stack
 // buffer.
-template <typename T, size_t stack_capacity>
+
+namespace blazert {
+
+template<typename T, size_t stack_capacity>
 class StackAllocator : public std::allocator<T> {
- public:
+public:
   typedef typename std::allocator<T>::pointer pointer;
   typedef typename std::allocator<T>::size_type size_type;
 
@@ -62,7 +68,7 @@ class StackAllocator : public std::allocator<T> {
   };
 
   // Used by containers when they want to refer to an allocator of type U.
-  template <typename U>
+  template<typename U>
   struct rebind {
     typedef StackAllocator<U, stack_capacity> other;
   };
@@ -80,10 +86,10 @@ class StackAllocator : public std::allocator<T> {
   // for Us.
   // TODO(Google): If we were fancy pants, perhaps we could share storage
   // iff sizeof(T) == sizeof(U).
-  template <typename U, size_t other_capacity>
+  template<typename U, size_t other_capacity>
   StackAllocator(const StackAllocator<U, other_capacity> &other)
       : source_(NULL) {
-    (void)other;
+    (void) other;
   }
 
   explicit StackAllocator(Source *source) : source_(source) {}
@@ -92,8 +98,7 @@ class StackAllocator : public std::allocator<T> {
   // and the size requested fits. Otherwise, fall through to the standard
   // allocator.
   pointer allocate(size_type n, void *hint = 0) {
-    if (source_ != NULL && !source_->used_stack_buffer_ &&
-        n <= stack_capacity) {
+    if (source_ != NULL && !source_->used_stack_buffer_ && n <= stack_capacity) {
       source_->used_stack_buffer_ = true;
       return source_->stack_buffer();
     } else {
@@ -110,7 +115,7 @@ class StackAllocator : public std::allocator<T> {
       std::allocator<T>::deallocate(p, n);
   }
 
- private:
+private:
   Source *source_;
 };
 
@@ -122,9 +127,9 @@ class StackAllocator : public std::allocator<T> {
 // WATCH OUT: the ContainerType MUST use the proper StackAllocator for this
 // type. This object is really intended to be used only internally. You'll want
 // to use the wrappers below for different types.
-template <typename TContainerType, int stack_capacity>
+template<typename TContainerType, int stack_capacity>
 class StackContainer {
- public:
+public:
   typedef TContainerType ContainerType;
   typedef typename ContainerType::value_type ContainedType;
   typedef StackAllocator<ContainedType, stack_capacity> Allocator;
@@ -157,7 +162,7 @@ class StackContainer {
   const typename Allocator::Source &stack_data() const { return stack_data_; }
 #endif
 
- protected:
+protected:
   typename Allocator::Source stack_data_;
   unsigned char pad_[7];
   Allocator allocator_;
@@ -174,13 +179,13 @@ class StackContainer {
 //   StackVector<int, 16> foo;
 //   foo->push_back(22);  // we have overloaded operator->
 //   foo[0] = 10;         // as well as operator[]
-template <typename T, size_t stack_capacity>
+template<typename T, size_t stack_capacity>
 class StackVector
-    : public StackContainer<std::vector<T, StackAllocator<T, stack_capacity> >,
+    : public StackContainer<std::vector<T, StackAllocator<T, stack_capacity>>,
                             stack_capacity> {
- public:
+public:
   StackVector()
-      : StackContainer<std::vector<T, StackAllocator<T, stack_capacity> >,
+      : StackContainer<std::vector<T, StackAllocator<T, stack_capacity>>,
                        stack_capacity>() {}
 
   // We need to put this in STL containers sometimes, which requires a copy
@@ -188,7 +193,7 @@ class StackVector
   // take the stack buffer from the original. Here, we create an empty object
   // and make a stack buffer of its own.
   StackVector(const StackVector<T, stack_capacity> &other)
-      : StackContainer<std::vector<T, StackAllocator<T, stack_capacity> >,
+      : StackContainer<std::vector<T, StackAllocator<T, stack_capacity>>,
                        stack_capacity>() {
     this->container().assign(other->begin(), other->end());
   }
@@ -206,4 +211,6 @@ class StackVector
     return this->container().operator[](i);
   }
 };
+}// namespace blazert
 
+#endif// BLAZERT_STACK_H_
