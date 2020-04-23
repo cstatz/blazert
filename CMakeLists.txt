@@ -1,7 +1,7 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.7.0)
 PROJECT(blazert)
 
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -Ofast -funroll-loops -march=native -Wall")
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -Ofast -funroll-loops -march=native -Wall -fopenmp")
 
 FIND_PACKAGE(blaze REQUIRED 3.7)
 INCLUDE_DIRECTORIES(${BLAZE_INCLUDE_DIRS})
