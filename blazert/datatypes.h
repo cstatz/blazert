@@ -3,6 +3,7 @@
 #define BLAZERT_DATATYPES_H_
 
 #include <blaze/Math.h>
+#include <blaze/util/AlignedAllocator.h>
 
 using blaze::StaticVector;
 using blaze::DynamicVector;
@@ -15,13 +16,13 @@ using blaze::unpadded;
 
 namespace blazert {
 
-template<class T> using Vec3r = StaticVector<T, 3UL, columnVector, unaligned, padded>;
-template<class T> using Vec2r = StaticVector<T, 2UL, columnVector, unaligned, padded>;
-using Vec3i = StaticVector<unsigned int, 3UL, columnVector, unaligned, padded>;
-using Vec2i = StaticVector<unsigned int, 2UL, columnVector, unaligned, padded>;
+template<class T> using Vec3r = StaticVector<T, 3UL, columnVector, aligned, padded>;
+template<class T> using Vec2r = StaticVector<T, 2UL, columnVector, aligned, padded>;
+using Vec3i = StaticVector<unsigned int, 3UL, columnVector, aligned, padded>;
+using Vec2i = StaticVector<unsigned int, 2UL, columnVector, aligned, padded>;
 
-template<class T> using Vec3rList = std::vector<Vec3r<T>>;
-using Vec3iList = std::vector<Vec3i>;
+template<class T> using Vec3rList = std::vector<Vec3r<T>, blaze::AlignedAllocator<Vec3r<T>>>;
+using Vec3iList = std::vector<Vec3i,  blaze::AlignedAllocator<Vec3i>>;
 
 template<typename T>
 inline Vec3r<T> vector_safe_inverse(const Vec3r<T> v) {
