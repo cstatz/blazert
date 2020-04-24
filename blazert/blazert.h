@@ -50,8 +50,8 @@ public:
     for (unsigned int i = 1; i < 3; i++) {
       const Vec3r<T> vertex = (*vertices_)[face[i]];
       for (int k = 0; k < 3; k++) {
-        bmin[k] = blaze::min(bmin[k], vertex[k]);
-        bmax[k] = blaze::max(bmax[k], vertex[k]);
+        bmin[k] = std::min(bmin[k], vertex[k]);
+        bmax[k] = std::max(bmax[k], vertex[k]);
       }
     }
   }
@@ -94,8 +94,8 @@ public:
 
     const Vec3i face = (*faces_)[prim_id];
     const Vec3r<T> p0 = (*vertices_)[face[0]];
-    const Vec3r<T> p1 = (*vertices_)[face[0]];
-    const Vec3r<T> p2 = (*vertices_)[face[0]];
+    const Vec3r<T> p1 = (*vertices_)[face[1]];
+    const Vec3r<T> p2 = (*vertices_)[face[2]];
 
     const T center = p0[axis_] + p1[axis_] + p2[axis_];
 
