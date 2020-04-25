@@ -32,9 +32,9 @@ public:
   Vec3r<T> bmin;
   Vec3r<T> bmax;
 
-  unsigned int flag;// 1 = leaf node, 0 = branch node
-  unsigned int axis;
-  Vec2i data;
+  unsigned int flag = -1;// 1 = leaf node, 0 = branch node
+  unsigned int axis = -1;
+  vec2ui data;
 };
 
 /**
@@ -80,7 +80,7 @@ public:
 template<typename T>
 class NodeHitComparator {
 public:
-  inline bool operator()(const NodeHit<T> &a, const NodeHit<T> &b) {
+  inline bool operator() (const NodeHit<T> &a, const NodeHit<T> &b) const {
     return a.t_min < b.t_min;
   }
 };

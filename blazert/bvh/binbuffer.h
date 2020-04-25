@@ -39,7 +39,7 @@ inline void ContributeBinBuffer(BinBuffer<T> &bins,// [out]
 
   // Calculate extent
   Vec3r<T> scene_size, scene_inv_size;
-  scene_size = abs(scene_max - scene_min);
+  scene_size = scene_max - scene_min;
   //std::cout << "DEBUG: " << scene_max << " " << scene_min << std::endl;
   for (int i = 0; i < 3; ++i) {
     assert(scene_size[i] >= static_cast<T>(0.0));

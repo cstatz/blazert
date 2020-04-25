@@ -3,59 +3,59 @@
 #define BLAZERT_BVH_OPTIONS_H_
 
 #include <blazert/defines.h>
+#include <blazert/datatypes.h>
 
 namespace blazert {
 
-/// BVH build option.
+/**
+ * @brief BVH Build Options
+ * @tparam T real value (e.g. float, double ...), gets passed into blaze vector types.
+ */
 template<typename T>
-struct BVHBuildOptions {
+struct alignas(sizeof(Vec3r<T>)) BVHBuildOptions {
+public:
   T cost_t_aabb;
+  bool cache_bbox;
   unsigned int min_leaf_primitives;
   unsigned int max_tree_depth;
   unsigned int bin_size;
+#ifdef BLAZERT_PARALLEL_BUILD
   unsigned int shallow_depth;
   unsigned int min_primitives_for_parallel_build;
+#endif
 
-  // Cache bounding box computation.
-  // Requires more memory, but BVHbuild can be faster.
-  bool cache_bbox;
-  unsigned char pad[3];
-
-  // Set default value: Taabb = 0.2
+  // Set default value: T cost_t_aabb = 0.2
   BVHBuildOptions()
       : cost_t_aabb(static_cast<T>(0.2)),
+        cache_bbox(false),
         min_leaf_primitives(4),
         max_tree_depth(256),
-        bin_size(64),
-        shallow_depth(kBLAZERT_SHALLOW_DEPTH),
-        min_primitives_for_parallel_build(
-            kBLAZERT_MIN_PRIMITIVES_FOR_PARALLEL_BUILD),
-        cache_bbox(false) {}
+        bin_size(64)
+#ifdef BLAZERT_PARALLEL_BUILD
+        ,
+        shallow_depth(BLAZERT_SHALLOW_DEPTH),
+        min_primitives_for_parallel_build(BLAZERT_MIN_PRIMITIVES_FOR_PARALLEL_BUILD),
+#endif
+        {}
 };
 
-///
-/// @brief BVH trace option.
-///
-class BVHTraceOptions {
+/**
+ * @brief BVH trace options.
+ */
+template<typename T>
+class alignas(Vec3r<T>) BVHTraceOptions {
 public:
+  // TODO: is this really necessary?
   // Hit only for face IDs in indexRange.
   // This feature is good to mimic something like glDrawArrays()
-  unsigned int prim_ids_range[2];
+  vec2ui prim_ids_range;
 
   // Prim ID to skip for avoiding self-intersection
   // -1 = no skipping
   unsigned int skip_prim_id;
-
   bool cull_back_face;
-  unsigned char pad[3];///< Padding (not used)
 
-  BVHTraceOptions() {
-    prim_ids_range[0] = 0;
-    prim_ids_range[1] = 0x7FFFFFFF;// Up to 2G face IDs.
-
-    skip_prim_id = static_cast<unsigned int>(-1);
-    cull_back_face = false;
-  }
+  BVHTraceOptions() : prim_ids_range({0, 0x7FFFFFFF}), skip_prim_id(-1), cull_back_face(false) {}  // 0x7FFFFFFF -> 2e9 prims.
 };
 }// namespace blazert
 

@@ -4,20 +4,11 @@
 
 #include <memory>
 #include <vector>
+#include <iostream>
 
 #include <blazert/bvh/options.h>
 #include <blazert/datatypes.h>
 #include <blazert/ray.h>
-
-/**
- * BLAZERT_USE_CPP11_FEATURE : Enable C++11 feature
- * BLAZERT_ENABLE_PARALLEL_BUILD : Enable parallel BVH build.
- * BLAZERT_ENABLE_SERIALIZATION : Enable serialization feature for built BVH.
- *
- * Parallelized BVH build is supported on C++11 thread version.
- * OpenMP version is not fully tested.
- * Thus turn off if you face a problem when building BVH in parallel.
- */
 
 namespace blazert {
 
@@ -40,7 +31,7 @@ public:
   }
   inline void BoundingBox(Vec3r<T> &bmin, Vec3r<T> &bmax, unsigned int prim_index) const {
 
-    const Vec3i face = (*faces_)[prim_index];
+    const Vec3ui face = (*faces_)[prim_index];
 
     {
       const Vec3r<T> vertex = (*vertices_)[face[0]];
@@ -92,7 +83,7 @@ public:
   /// The operator returns true, if the triable center is within a margin of 3 time the position along a specified axis
   bool operator()(unsigned int prim_id) const {
 
-    const Vec3i face = (*faces_)[prim_id];
+    const Vec3ui face = (*faces_)[prim_id];
     const Vec3r<T> p0 = (*vertices_)[face[0]];
     const Vec3r<T> p1 = (*vertices_)[face[1]];
     const Vec3r<T> p2 = (*vertices_)[face[2]];
@@ -105,20 +96,6 @@ public:
 };
 
 template<typename T>
-class TriangleIntersection {
-public:
-  Vec2r<T> uv;
-  T t;
-  unsigned int prim_id = -1;
-};
-
-template<typename T>
-struct alignas(sizeof(Vec3r<T>)) RayCoeff {
-  Vec3r<T> S;
-  Vec3i k;
-};
-
-template<typename T, class H = TriangleIntersection<T>>
 class TriangleIntersector {
 private:
   const Vec3rList<T> *vertices_;
@@ -126,7 +103,7 @@ private:
 
   mutable Vec3r<T> ray_org_;
   mutable RayCoeff<T> ray_coeff_;
-  mutable BVHTraceOptions trace_options_;
+  mutable BVHTraceOptions<T> trace_options_;
   mutable T t_min_;
 
   mutable T t_;
@@ -134,7 +111,8 @@ private:
   mutable unsigned int prim_id_;
 
 public:
-  inline TriangleIntersector(const Vec3rList<T> &vertices, const Vec3iList &faces) : vertices_(&vertices), faces_(&faces) {}
+  inline TriangleIntersector(const Vec3rList<T> &vertices, const Vec3iList &faces)
+      : vertices_(&vertices), faces_(&faces), prim_id_(-1) {}
 
   /// Return the closest hit distance
   inline T GetT() const { return t_; }
@@ -150,11 +128,13 @@ public:
    * Fill `isect` if there is a hit.
    * TODO: Is Ray<T> really needed here?
    */
-  inline void PostTraversal(const Ray<T> &ray, bool hit, H &intersection) const {
+  inline void PostTraversal(const Ray<T> &ray, bool hit, RayHit<T> &intersection) const {
     if (hit) {
       intersection.t = t_;
       intersection.uv = uv_;
       intersection.prim_id = prim_id_;
+      // TODO: Only do the normal computation if the prim is hit!
+      //intersection.normal = normal_;
     }
   }
 
@@ -162,34 +142,38 @@ public:
    * Prepare BVH traversal (e.g. compute inverse ray direction).
    * This function is called only once in BVH traversal.
    */
-  inline void PrepareTraversal(const Ray<T> &ray, const BVHTraceOptions &trace_options) const {
-
-    ray_org_ = ray.org;
+  inline void PrepareTraversal(const Ray<T> &ray, const BVHTraceOptions<T> &trace_options) const {
 
     // Calculate dimension where the ray direction is maximal.
-    const Vec3r<T> ray_dir_abs = abs(ray.dir);
-    ray_coeff_.k[2] = argmax(ray_dir_abs);// 0,1,2 -> 2,3,4 % 3 = 2,0,1
-
-    if (ray.dir[ray_coeff_.k[2]] >= 0.) {
-      ray_coeff_.k[0] = ray_coeff_.k[2] + 1;// 1,0,2 ->
-      ray_coeff_.k[1] = ray_coeff_.k[0] + 1;//
-    } else {
-      ray_coeff_.k[1] = ray_coeff_.k[2] + 1;// 1,0,2 ->
-      ray_coeff_.k[0] = ray_coeff_.k[1] + 1;//
+    // TODO: Vectorize this.
+    ray_coeff_.k[2] = 0;
+    T absDir = std::abs(ray.dir[0]);
+    if (absDir < std::abs(ray.dir[1])) {
+      ray_coeff_.k[2] = 1;
+      absDir = std::abs(ray.dir[1]);
+    }
+    if (absDir < std::abs(ray.dir[2])) {
+      ray_coeff_.k[2] = 2;
     }
 
-    for (int i=0; i<3; i++) {
-      ray_coeff_.k[i] %= 3;
-    }
+    ray_coeff_.k[0] = ray_coeff_.k[2] + 1;
+    if (ray_coeff_.k[0] == 3) ray_coeff_.k[0] = 0;
+    ray_coeff_.k[1] = ray_coeff_.k[0] + 1;
+    if (ray_coeff_.k[1] == 3) ray_coeff_.k[0] = 0;
 
+    // Swap kx and ky dimension to preserve winding direction of triangles.
+    if (ray.dir[ray_coeff_.k[2]] < static_cast<T>(0.0))
+      std::swap(ray_coeff_.k[1], ray_coeff_.k[2]);
+
+    // TODO: Removed static_cast. Was it really necessary here?
     ray_coeff_.S[0] = ray.dir[ray_coeff_.k[0]] / ray.dir[ray_coeff_.k[2]];
     ray_coeff_.S[1] = ray.dir[ray_coeff_.k[1]] / ray.dir[ray_coeff_.k[2]];
-    ray_coeff_.S[2] = static_cast<T>(1.0) / ray.dir[ray_coeff_.k[2]];
+    ray_coeff_.S[2] = 1. / ray.dir[ray_coeff_.k[2]];
 
     trace_options_ = trace_options;
 
     t_min_ = ray.min_t;
-    uv_ = 0.;
+    uv_ = {0., 0.};
   }
 
   /**
@@ -198,16 +182,18 @@ public:
    * Returns true if there's intersection.
    */
   inline bool Intersect(T *t_inout, const unsigned int prim_index) const {
-    if ((prim_index < trace_options_.prim_ids_range[0]) || (prim_index >= trace_options_.prim_ids_range[1])) {
-      return false;
-    }
+
+    //if ((prim_index < trace_options_.prim_ids_range[0]) || (prim_index >= trace_options_.prim_ids_range[1])) {
+    //  return false;
+    //}
 
     // Self-intersection test.
-    if (prim_index == trace_options_.skip_prim_id) {
-      return false;
-    }
+    //if (prim_index == trace_options_.skip_prim_id) {
+    //  //std::cout << "FAIL self"<< std::endl;
+    //  return false;
+    //}
 
-    const Vec3i face = (*faces_)[prim_index];
+    const Vec3ui face = (*faces_)[prim_index];
     const Vec3r<T> p0 = (*vertices_)[face[0]];
     const Vec3r<T> p1 = (*vertices_)[face[1]];
     const Vec3r<T> p2 = (*vertices_)[face[2]];
@@ -246,15 +232,20 @@ public:
       W = static_cast<T>(BxAy - ByAx);
     }
 
+    /**
+     * TODO: Investigate this code part.
     if (U < static_cast<T>(0.0) || V < static_cast<T>(0.0) || W < static_cast<T>(0.0)) {
       if (trace_options_.cull_back_face || (U > static_cast<T>(0.0) || V > static_cast<T>(0.0) || W > static_cast<T>(0.0))) {
+        std::cout << "FAIL cull " << U << " " << V << " " << W << std::endl;
         return false;
       }
     }
+    */
 
     T det = U + V + W;
-    if (det == static_cast<T>(0.0))
+    if (det == static_cast<T>(0.0)) {
       return false;
+    }
 
 #ifdef __clang__
 #pragma clang diagnostic pop
@@ -284,8 +275,7 @@ public:
      * We want interp(p) = (1 - u - v) * p0 + u * v1 + v * p2;
      * => u = V, v = W.
      */
-    uv_[0] = V * rcpDet;
-    uv_[1] = W * rcpDet;
+    uv_ = {V * rcpDet, W * rcpDet};
 
 #ifdef __clang__
 #pragma clang diagnostic pop

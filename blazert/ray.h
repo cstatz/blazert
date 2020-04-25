@@ -11,11 +11,11 @@ namespace blazert {
 // RayType
 typedef enum {
   RAY_TYPE_NONE = 0x0,
-  RAY_TYPE_PRIMARY = 0x1,
-  RAY_TYPE_SECONDARY = 0x2,
-  RAY_TYPE_DIFFUSE = 0x4,
-  RAY_TYPE_REFLECTION = 0x8,
-  RAY_TYPE_REFRACTION = 0x10
+  //RAY_TYPE_PRIMARY = 0x1,
+  //RAY_TYPE_SECONDARY = 0x2,
+  //RAY_TYPE_DIFFUSE = 0x4,
+  //RAY_TYPE_REFLECTION = 0x8,
+  //RAY_TYPE_REFRACTION = 0x10
 } RayType;
 
 #ifdef __clang__
@@ -26,19 +26,36 @@ typedef enum {
 #endif
 
 template<typename T>
-class
-alignas(sizeof(Vec3r<T>))
-Ray {
+class alignas(sizeof(Vec3r<T>)) Ray {
 public:
   Vec3r<T> org;
   Vec3r<T> dir;
-  T min_t = 0.;                             // minimum ray hit distance.
-  T max_t = std::numeric_limits<T>::max();  // maximum ray hit distance.
-  unsigned int type = RAY_TYPE_NONE;        // ray type
+  T min_t = 0.;                           // minimum ray hit distance.
+  T max_t = std::numeric_limits<T>::max();// maximum ray hit distance.
+  unsigned int type = RAY_TYPE_NONE;      // ray type
+
 public:
-  Ray() {org = 0.; dir = {0., 0., -1.};};
+  Ray() : org({0., 0., 0.}), dir({0., 0., -1.}) {};
   Ray(const Vec3r<T> &org_, const Vec3r<T> &dir_) : org(org_), dir(normalize(dir_)) {};
 };
+
+template<typename T>
+class alignas(Vec3r<T>) RayHit {
+public:
+  Vec3r<T> normal;
+  Vec2r<T> uv;
+  T t;
+  unsigned int prim_id = -1;
+};
+
+template<typename T>
+struct alignas(sizeof(Vec3r<T>)) RayCoeff {
+  Vec3r<T> S;
+  Vec3ui k;
+};
+
+
+
 }// namespace blazert
 
 #endif// BLAZERT_RAY_H_
