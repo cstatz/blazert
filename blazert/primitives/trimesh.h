@@ -20,6 +20,7 @@ public:
   const Vec3iList *faces_;
 
 public:
+  TriangleMesh() =default;
   TriangleMesh(const Vec3rList<T> &vertices, const Vec3iList &faces) : vertices_(&vertices), faces_(&faces) {}
 
   /**
@@ -58,6 +59,7 @@ private:
   const Vec3iList *faces_;
 
 public:
+  TriangleSAHPred() =default;
   TriangleSAHPred(const Vec3rList<T> &vertices, const Vec3iList &faces)
       : axis_(0), pos_(static_cast<T>(0.0)), vertices_(&vertices), faces_(&faces) {}
 

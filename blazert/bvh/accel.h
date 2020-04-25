@@ -8,6 +8,7 @@
 #include <limits>
 #include <queue>
 
+#include <blazert/bvh/options.h>
 #include <blazert/bvh/aabb.h>
 #include <blazert/bvh/bbox.h>
 #include <blazert/bvh/binbuffer.h>

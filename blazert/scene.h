@@ -2,6 +2,8 @@
 #ifndef BLAZERT_BLAZERT_SCENE_H
 #define BLAZERT_BLAZERT_SCENE_H
 
+
+#include <blazert/primitives/trimesh.h>
 #include <blazert/bvh/accel.h>
 #include <blazert/bvh/options.h>
 #include <blazert/datatypes.h>
@@ -16,7 +18,7 @@ public:
 
 private:
   // A lot of private data ...
-  mutable bool has_been_commited = false;
+  mutable bool has_been_committed = false;
   mutable bool has_mesh = false;
   mutable bool has_sphere = false;
   mutable bool has_plane = false;
@@ -24,8 +26,8 @@ private:
   mutable bool has_cylinder = false;
   mutable unsigned int primitives = 0;
 
-  TriangleMesh<T> trianlges;
-  TriangleMeshSAHPred<T> triangles_sah;
+  TriangleMesh<T> triangles_;
+  TriangleSAHPred<T> triangles_sah_;
 
   BVHAccel<T> mesh_accel;
   //BVHAccel<T> sphere_accel;
@@ -34,8 +36,7 @@ private:
   //BVHAccel<T> cylinder_accel;
 
 public:
-  Scene(){};
-  ~Scene(){};
+  Scene() =default;
 
   // TODO: default arguments ...
   inline unsigned int add_mesh(const Vec3rList<T> &vertices, const Vec3iList &triangles);
@@ -50,29 +51,29 @@ public:
 
     // Build all the BVH ...
     if (has_mesh) {
-      mesh_accesl.Build(triangles, triangles_sah, build_options)
+      mesh_accel.Build(triangles_, triangles_sah_, build_options);
     }
 
     //sphere_accel.Build()
     //place_accel.Build()
     //box_accel.Build()
-    has_been_commited = true;
+    has_been_committed = true;
+    return has_been_committed;
   };
 
   inline bool intersect1(const Ray<T> &ray, RayHit<T> rayhit) const {
 
     // This may not be optimal, but the interface is simple and everything can (and will) be in-lined.
-    RayHit temp_rayhit;
+    RayHit<T> temp_rayhit;
     bool hit = false;
 
     // Do the traversal for all primitives ...
     if (has_mesh) {
-      TriangleIntersector<double> triangle_intersector(mesh->vertices, mesh->triangles);
-      RayHit<double> rayhit;
-      bool mesh_hit = mesh_accel.Traverse(ray, triangle_intersector, temp_rayhit);
-      if (mesh_hit) {
-        ray_hit = temp_rayhit;
-        hit += mesh_hit;
+      TriangleIntersector<double> triangle_intersector(*triangles_.vertices_, *triangles_.faces_);
+      bool meshhit = mesh_accel.Traverse(ray, triangle_intersector, temp_rayhit);
+      if (meshhit) {
+        rayhit = temp_rayhit;
+        hit += meshhit;
       }
     }
 
@@ -82,12 +83,12 @@ public:
 
 // Implementation of the add_ functions goes below ..
 template<typename T>
-inline unsigned int Scene::add_mesh(const Vec3rList<T> &vertices, const Vec3iList &triangles_) {
+inline unsigned int Scene<T>::add_mesh(const Vec3rList<T> &vertices, const Vec3iList &triangles) {
 
   // TODO: For now, only one mesh is supported ...
-  if ((!has_mesh) && (!has_been_commited)) {
-    triangles = TriangleMesh(vertices, triangles_);
-    triangles_sah = TriangleMeshSAHPred(vertices, triangles_);
+  if ((!has_mesh) && (!has_been_committed)) {
+    triangles_ = TriangleMesh(vertices, triangles);
+    triangles_sah_ = TriangleSAHPred(vertices, triangles);
 
     const unsigned int prim_id = primitives;
     primitives += triangles.size();
