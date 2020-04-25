@@ -1,5 +1,5 @@
 #include "tiny_obj_loader.h"
-#include <blazert/blazert.h>
+#include <blazert/primitives/trimesh.h>
 #include <blazert/bvh/accel.h>
 #include <blazert/datatypes.h>
 #include <iostream>
@@ -58,18 +58,14 @@ int main(int argc, char **argv) {
   blazert::BVHBuildOptions<double> build_options;// Use default option
   build_options.cache_bbox = false;
 
-  // unsigned int obj_id = scene.add_triangle_mesh (verts, tris, ...);
-  // unsigned int obj_id = scene.add_sphere(center, size, ...)
   blazert::TriangleMesh<double> triangle_mesh(mesh->vertices, mesh->triangles);   //, sizeof(float) * 3);
   blazert::TriangleSAHPred<double> triangle_pred(mesh->vertices, mesh->triangles);//, sizeof(float) * 3);
 
-  // scene.commit builds accel ...
   blazert::BVHAccel<double> accel;
   accel.Build(triangle_mesh, triangle_pred, build_options);
 
   blazert::BVHBuildStatistics stats = accel.GetStatistics();
-  //accel.print_bvh_as_json(); -> scene.print_bvh_as_json();
-  // scene.print_info -> prints scene info
+  //accel.print_bvh_as_json();
 
 #ifdef _OPENMP
 #pragma omp parallel for schedule(dynamic, 1)
@@ -81,10 +77,6 @@ int main(int argc, char **argv) {
       blazert::TriangleIntersector<double> triangle_intersector(mesh->vertices, mesh->triangles);
       blazert::RayHit<double> rayhit;
 
-      // bool hit = scene.intersect(const &Ray, &intersection)
-      // In scene.intersect the ray triangle intersector is instantiated if everything is call with openmp.
-      // The intersection datastructure is more general. -> set hit normal_vector as well ...
-      // isect -> obj_id and prim_id
       bool hit = accel.Traverse(ray, triangle_intersector, rayhit);
     }
   }
