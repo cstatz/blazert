@@ -47,6 +47,13 @@ public:
       }
     }
   }
+  inline void BoundingBoxAndCenter(Vec3r<T> &bmin, Vec3r<T> &bmax, Vec3r<T> &center, unsigned int prim_index) const {
+    BoundingBox(bmin, bmax, prim_index);
+    const Vec3ui face = (*faces_)[prim_index];
+    center = ((*vertices_)[face[0]] + (*vertices_)[face[1]] + (*vertices_)[face[2]])  / T(3);
+  }
+
+
 };
 
 // Predefined SAH predicator for triangle.

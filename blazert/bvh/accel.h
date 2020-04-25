@@ -351,7 +351,7 @@ unsigned int BVHAccel<T>::BuildTree(BVHBuildStatistics &out_stat, std::vector<BV
 
   BinBuffer<T> bins(options_.bin_size);
   ContributeBinBuffer(bins, bmin, bmax, indices_, left_idx, right_idx, p);
-  int min_cut_axis = FindCutFromBinBuffer<T>(cut_pos, bins, bmin, bmax, n, options_.cost_t_aabb);
+  int min_cut_axis = FindCutFromBinBuffer<T>(cut_pos, bins, bmin, bmax, n);
 
   // Try all 3 axis until good cut position avaiable.
   unsigned int mid_idx = left_idx;
