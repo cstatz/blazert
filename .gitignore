@@ -36,3 +36,6 @@
 
 # CMAKE Config directories
 cmake-buil*
+
+# MACOS
+.DS_Store
