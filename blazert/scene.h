@@ -61,6 +61,7 @@ public:
     return has_been_committed;
   };
 
+  // TODO: Performance critical code should not be a member function (hidden pointer *this), since the compiler will not know how to optimize.
   inline bool intersect1(const Ray<T> &ray, RayHit<T> rayhit) const {
 
     // This may not be optimal, but the interface is simple and everything can (and will) be in-lined.
@@ -70,7 +71,8 @@ public:
     // Do the traversal for all primitives ...
     if (has_mesh) {
       TriangleIntersector<double> triangle_intersector(*triangles_.vertices_, *triangles_.faces_);
-      bool meshhit = mesh_accel.Traverse(ray, triangle_intersector, temp_rayhit);
+      // TODO: Performance critical code should not be a member function (hidden pointer *this), since the compiler will not know how to optimize.
+      const bool meshhit = mesh_accel.Traverse(ray, triangle_intersector, temp_rayhit);
       if (meshhit) {
         rayhit = temp_rayhit;
         hit += meshhit;

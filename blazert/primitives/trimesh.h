@@ -9,6 +9,7 @@
 #include <blazert/bvh/options.h>
 #include <blazert/datatypes.h>
 #include <blazert/ray.h>
+#include <blazert/primitives/trimesh_distance.h>
 
 namespace blazert {
 
@@ -18,18 +19,24 @@ class TriangleMesh {
 public:
   const Vec3rList<T> *vertices_;
   const Vec3iList *faces_;
+  const Vec3rList<T> *center_f_;
+  const Vec3rList<T> *normals_f_;
+  const Vec3rList<T> *normals_v_;
 
 public:
   TriangleMesh() =default;
-  TriangleMesh(const Vec3rList<T> &vertices, const Vec3iList &faces) : vertices_(&vertices), faces_(&faces) {}
+  TriangleMesh(const Vec3rList<T> &vertices, const Vec3iList &faces) : vertices_(&vertices), faces_(&faces) {
+    // Compute centers
+    // Compute face normals
+    // Compute vertex normals
+  }
 
   /**
-   * Compute bounding box for `prim_index`th triangle.
-   * This function is called for each primitive in BVH build
+   * @brief Returns the number of primitives in the triangle mesh
+   * @return unsigned int
    */
-  inline unsigned int size() const {
-    return (*faces_).size();
-  }
+  inline unsigned int size() const {return (*faces_).size();}
+
   inline void BoundingBox(Vec3r<T> &bmin, Vec3r<T> &bmax, unsigned int prim_index) const {
 
     const Vec3ui face = (*faces_)[prim_index];
@@ -89,9 +96,11 @@ public:
     pos_ = pos;
   }
 
-  /// The operator returns true, if the triable center is within a margin of 3 time the position along a specified axis
-  bool operator()(unsigned int prim_id) const {
+  /// The operator returns true, if the triangle center is within a margin of 3 time the position along a specified axis
+  inline bool operator() (unsigned int prim_id) const {
 
+    // use precomputed center.
+    // compute circumference from center and point (+margin), use this as a marker for the sah prediction
     const Vec3ui face = (*faces_)[prim_id];
     const Vec3r<T> p0 = (*vertices_)[face[0]];
     const Vec3r<T> p1 = (*vertices_)[face[1]];
@@ -100,6 +109,7 @@ public:
     const T center = p0[axis_] + p1[axis_] + p2[axis_];
 
     // TODO: What the fuck ...? Where is the ```3.0``` coming from?
+    // -> You could divide center by 3. -> center < pos_ ... WTF
     return (center < pos_ * static_cast<T>(3.0));
   }
 };
@@ -243,6 +253,7 @@ public:
 
     /**
      * TODO: Investigate this code part.
+     *
     if (U < static_cast<T>(0.0) || V < static_cast<T>(0.0) || W < static_cast<T>(0.0)) {
       if (trace_options_.cull_back_face || (U > static_cast<T>(0.0) || V > static_cast<T>(0.0) || W > static_cast<T>(0.0))) {
         std::cout << "FAIL cull " << U << " " << V << " " << W << std::endl;
@@ -295,5 +306,36 @@ public:
 };
 
 }// namespace blazert
+
+//void Mesh_normalize( Mesh *myself )
+//{
+//  precompute face normals, face centers!
+//  Vert     *vert = myself->vert;
+//  Triangle *face = myself->face;
+//
+//  for( int i=0; i<myself->mNumVerts; i++ ) vert[i].normal = vec3(0.0f);
+//
+//  for( int i=0; i<myself->mNumFaces; i++ )
+//  {
+//    const int ia = face[i].v[0];
+//    const int ib = face[i].v[1];
+//    const int ic = face[i].v[2];
+//
+//    const vec3 e1 = vert[ia].pos - vert[ib].pos;
+//    const vec3 e2 = vert[ic].pos - vert[ib].pos;
+//    const vec3 no = cross( e1, e2 );
+//
+//    vert[ia].normal += no;
+//    vert[ib].normal += no;
+//    vert[ic].normal += no;
+//  }
+//
+//  for( i=0; i<myself->mNumVerts; i++ ) verts[i].normal = normalize( verts[i].normal );
+
+//
+
+//}
+
+// Barycentric interpolation: a =  u * a0 + v * a1 + (1-u-v) * a2;
 
 #endif// BLAZERT_PRIMITIVES_TRIMESH_H_

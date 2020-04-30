@@ -35,7 +35,7 @@
 .idea
 
 # CMAKE Config directories
-cmake-buil*
+cmake-*
 
 # MACOS
 .DS_Store

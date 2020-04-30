@@ -8,10 +8,9 @@
 
 namespace blazert {
 
-template<typename T>
-inline T CalculateSurfaceArea(const Vec3r<T> &min, const Vec3r<T> &max) {
-  Vec3r<T> box = max - min;
-  return static_cast<T>(2.0) * (box[0] * box[1] + box[1] * box[2] + box[2] * box[0]);
+template<typename T> inline T calculate_box_surface(const Vec3r<T> &min, const Vec3r<T> &max) {
+  const Vec3r<T> box = max - min;
+  return T(2.0) * (box[0] * box[1] + box[1] * box[2] + box[2] * box[0]);
 }
 
 template <typename T>
@@ -41,11 +40,8 @@ struct alignas(Vec3r<T>) BinBuffer {
 };
 
 template<typename T, class P>
-inline void ContributeBinBuffer(BinBuffer<T> &bins,// [out]
-                                const Vec3r<T> &scene_min,
-                                const Vec3r<T> &scene_max,
-                                std::vector<unsigned int> &indices, unsigned int left_idx,
-                                unsigned int right_idx, const P &p) {
+inline void ContributeBinBuffer(BinBuffer<T> &bins, const Vec3r<T> &scene_min, const Vec3r<T> &scene_max, const std::vector<unsigned int> &indices, const unsigned int left_idx,
+                                const unsigned int right_idx, const P &p) {
 
   T bin_size = static_cast<T>(bins.bin_size);
 
@@ -76,10 +72,6 @@ inline void ContributeBinBuffer(BinBuffer<T> &bins,// [out]
     Vec3r<T> bmin, bmax, center;
 
     p.BoundingBoxAndCenter(bmin, bmax, center, indices[i]);
-    // GetBoundingBoxOfTriangle(&bmin, &bmax, vertices, faces, indices[i]);
-
-    //Vec3r<T> quantized_bmin = (bmin - scene_min) * scene_inv_size;
-    //Vec3r<T> quantized_bmax = (bmax - scene_min) * scene_inv_size;
     Vec3r<T> quantized_center = (center - scene_min) * scene_inv_size;
 
     // idx is now in [0, BIN_SIZE)
@@ -99,9 +91,8 @@ inline void ContributeBinBuffer(BinBuffer<T> &bins,// [out]
 }
 
 template<typename T>
-inline unsigned int FindCutFromBinBuffer(Vec3r<T> &cut_pos,// [out] xyz
-                                         BinBuffer<T> &bins, const Vec3r<T> &bmin,
-                                         const Vec3r<T> &bmax, size_t num_primitives) {// should be in [0.0, 1.0]
+inline unsigned int FindCutFromBinBuffer(Vec3r<T> &cut_pos, BinBuffer<T> &bins, const Vec3r<T> &bmin, const Vec3r<T> &bmax) {// should be in [0.0, 1.0]
+
   int minCostAxis;
   T minCost[3];
 
@@ -118,7 +109,7 @@ inline unsigned int FindCutFromBinBuffer(Vec3r<T> &cut_pos,// [out] xyz
         accumulated_bbox.bmax[k] = std::max(bin.bbox.bmax[k], accumulated_bbox.bmax[k]);
       }
       count += bin.count;
-      bin.cost = count * CalculateSurfaceArea(accumulated_bbox.bmin, accumulated_bbox.bmax);
+      bin.cost = count * calculate_box_surface(accumulated_bbox.bmin, accumulated_bbox.bmax);
     }
 
     // Sweep right to compute the full cost

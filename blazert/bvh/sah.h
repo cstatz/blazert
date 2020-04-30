@@ -19,8 +19,7 @@ namespace blazert {
 template<typename T>
 inline T SAH(size_t ns1, T leftArea, size_t ns2, T rightArea, T invS, T Taabb, T Ttri) {
 
-  // TODO: Is the static_cast really necessary in this case?
-  const T sah = static_cast<T>(2.0) * Taabb + (leftArea * invS) * static_cast<T>(ns1) * Ttri + (rightArea * invS) * static_cast<T>(ns2) * Ttri;
+  const T sah = T(2.0) * Taabb + (leftArea * invS) * T(ns1) * Ttri + (rightArea * invS) * T(ns2) * Ttri;
   return sah;
 }
 }// namespace blazert
