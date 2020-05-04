@@ -14,14 +14,11 @@
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb_image_write.h"
 
-#ifndef M_PI
-#define M_PI 3.141592683
-#endif
-
 using ft = float;
 
-const int uMaxBounces = 10;
-const int SPP = 100;
+constexpr double pi = 3.141592683;
+constexpr size_t uMaxBounces = 10;
+constexpr int SPP = 100;
 //const int SPP = 100;
 
 using namespace blazert;
@@ -35,7 +32,7 @@ template<typename T>
 Vec3r<T> direction_cos_theta(const Vec3r<T> &normal) {
 
   const T u1 = uniform(T(0.), T(1.));
-  const T phi = uniform(T(0.), T(2.) * static_cast<T>(M_PI));
+  const T phi = uniform(T(0.), T(2.) * static_cast<T>(pi));
 
   const T r{std::sqrt(u1)};
 
@@ -62,24 +59,24 @@ struct Mesh {
   Mat3rList<T> facevarying_uvs;    /// [xyz] * 3(triangle) * num_faces -> this may be Mat2rList<T>
 };
 
-template<typename T>
-struct Material {
-  Vec3r<T> ambient;
-  Vec3r<T> diffuse;
-  Vec3r<T> reflection;
-  Vec3r<T> refraction;
-  int id;
-  int diffuse_texid;
-  int reflection_texid;
-  int transparency_texid;
-  int bump_texid;
-  int normal_texid;// normal map
-  int alpha_texid; // alpha map
-
-  Material() : ambient(0.), diffuse(0.5), reflection(0.), refraction(0.), id(-1),
-               diffuse_texid(-1), reflection_texid(-1), transparency_texid(-1),
-               bump_texid(-1), normal_texid(-1), alpha_texid(-1) {}
-};
+//template<typename T>
+//struct Material {
+//  Vec3r<T> ambient;
+//  Vec3r<T> diffuse;
+//  Vec3r<T> reflection;
+//  Vec3r<T> refraction;
+//  int id;
+//  int diffuse_texid;
+//  int reflection_texid;
+//  int transparency_texid;
+//  int bump_texid;
+//  int normal_texid;// normal map
+//  int alpha_texid; // alpha map
+//
+//  Material() : ambient(0.), diffuse(0.5), reflection(0.), refraction(0.), id(-1),
+//               diffuse_texid(-1), reflection_texid(-1), transparency_texid(-1),
+//               bump_texid(-1), normal_texid(-1), alpha_texid(-1) {}
+//};
 
 template<typename T>
 void calc_normal(Vec3r<T> &N, const Vec3r<T> &v0, const Vec3r<T> &v1, const Vec3r<T> &v2) {
@@ -114,7 +111,7 @@ public:
   void sample_direct(const Vec3r<T> &x, T Xi1, T Xi2, Vec3r<T> &dstDir, T &dstDist, T &dstPdf, Vec3r<T> &dstRadiance) const {
     unsigned int num_faces = emissive_faces_.size();
     unsigned int face = std::min(static_cast<unsigned int>(std::floor(Xi1 * num_faces)), num_faces - 1);
-    T lightPickPdf = static_cast<T>(1.0) / T(num_faces);
+    T lightPickPdf = static_cast<T>(1.0) / static_cast<T>(num_faces);
 
     // normalize random number
     Xi1 = Xi1 * num_faces - face;
@@ -196,12 +193,12 @@ bool LoadObj(Mesh<T> &mesh, std::vector<tinyobj::material_t> &materials, const c
   size_t num_vertices = 0;
   size_t num_faces = 0;
   for (size_t i = 0; i < shapes.size(); i++) {
-    printf("  shape[%ld].name = %s\n", i, shapes[i].name.c_str());
-    printf("  shape[%ld].indices: %ld\n", i, shapes[i].mesh.indices.size());
+    std::cout << "  shape[" << i << "].name = " << shapes[i].name.c_str() << "\n";
+    std::cout << "  shape[" << i << "].indices: " << shapes[i].mesh.indices.size() << "\n";
     assert((shapes[i].mesh.indices.size() % 3) == 0);
-    printf("  shape[%ld].vertices: %ld\n", i, shapes[i].mesh.positions.size());
+    std::cout << "  shape[" << i << "].vertices: " << shapes[i].mesh.positions.size() << "\n";
     assert((shapes[i].mesh.positions.size() % 3) == 0);
-    printf("  shape[%ld].normals: %ld\n", i, shapes[i].mesh.normals.size());
+    std::cout << "  shape[" << i << "].normals: " << shapes[i].mesh.normals.size() << "\n";
     assert((shapes[i].mesh.normals.size() % 3) == 0);
 
     num_vertices += shapes[i].mesh.positions.size() / 3;
@@ -280,7 +277,7 @@ bool LoadObj(Mesh<T> &mesh, std::vector<tinyobj::material_t> &materials, const c
         column(n, 0UL) = n0;
         column(n, 1UL) = n1;
         column(n, 2UL) = n2;
-        mesh.facevarying_uvs.push_back(n);
+        mesh.facevarying_uvs.emplace_back(n);
       }
     }
   }
@@ -318,8 +315,9 @@ void progressBar(int tick, int total, int width = 100) {
   float count = width * tick / total;
   std::string bar(width, ' ');
   std::fill(bar.begin(), bar.begin() + count, '+');
-  printf("[ %6.2f %% ] [ %s ]%c", ratio, bar.c_str(),
-         tick == total ? '\n' : '\r');
+  std::cout << "[ " << ratio << "%% ] [ " << bar  << " ]"<< (tick == total ? '\n' : '\r');
+  //printf("[ %6.2f %% ] [ %s ]%c", ratio, bar.c_str(),
+  //       tick == total ? '\n' : '\r');
   std::fflush(stdout);
 }
 
@@ -336,7 +334,7 @@ inline bool check_for_occluder(const Vec3r<T> &p1, const Vec3r<T> &p2, const Mes
 
   blazert::Ray<T> shadow_ray{p1, dir};
   shadow_ray.min_t = ray_eps;
-  shadow_ray.max_t = dist - ray_eps;
+  shadow_ray.max_t = dist + ray_eps;
 
   blazert::TriangleIntersector<T> triangle_intersector{mesh.vertices, mesh.faces};
   blazert::RayHit<T> rayhit{};
@@ -376,23 +374,23 @@ int main(int argc, char **argv) {
   std::vector<tinyobj::material_t> materials;
   ret = LoadObj(*mesh, materials, objFilename.c_str(), scale, mtlPath.c_str());
   if (!ret) {
-    fprintf(stderr, "Failed to load [ %s ]\n", objFilename.c_str());
+    std::cerr << "Failed to load [ " << objFilename.c_str() << " ]\n";
     return -1;
   }
 
   MeshLight lights(*mesh, materials);
 
   blazert::BVHBuildOptions<ft> build_options;// Use default option
-  build_options.cache_bbox = false;
+  build_options.cache_bbox = true;
 
-  printf("  BVH build option:\n");
-  printf("    # of leaf primitives: %d\n", build_options.min_leaf_primitives);
-  printf("    SAH binsize         : %d\n", build_options.bin_size);
+  std::cout << "  BVH build option:\n"
+            << "    # of leaf primitives: " << build_options.min_leaf_primitives << "\n"
+            << "    SAH binsize         : " << build_options.bin_size << "\n";
 
   blazert::TriangleMesh<ft> triangle_mesh(mesh->vertices, mesh->faces);
   blazert::TriangleSAHPred<ft> triangle_pred(mesh->vertices, mesh->faces);
 
-  printf("num_triangles = %lu\n", mesh->faces.size());
+  std::cout << "num_triangles = " << mesh->faces.size() << "\n";
   //printf("faces = %p\n", mesh.faces);
 
   blazert::BVH<ft> accel;
@@ -425,11 +423,8 @@ int main(int argc, char **argv) {
         Vec3r<ft> color{0., 0., 0.};
         Vec3r<ft> weight{1., 1., 1.};
 
-        int b;
-
-        bool do_emmition = true;// just skit emmition if light sampling was
-                                // done on previous event (No MIS)
-        for (b = 0; b < uMaxBounces; ++b) {
+        bool do_emmition = true;// just skit emmition if light sampling was done on previous event (No MIS)
+        for (size_t b = 0; b < uMaxBounces; ++b) {
           // Russian Roulette
           ft rr_fac{1.0};
           if (b > 3) {
@@ -488,7 +483,7 @@ int main(int argc, char **argv) {
           ft n1 = inside < 0 ? static_cast<ft>(1.0) / ior : ior;
           ft n2 = static_cast<ft>(1.0) / n1;
 
-          ft fresnel = fresnel_schlick(Vec3r<ft>{-rayDir}, norm, ft((n1 - n2) / (n1 + n2)));
+          ft fresnel = fresnel_schlick(Vec3r<ft>{-rayDir}, norm, static_cast<ft>((n1 - n2) / (n1 + n2)));
 
           // Compute probabilities for each surface interaction.
           // Specular is just regular reflectiveness * fresnel.
@@ -522,8 +517,8 @@ int main(int argc, char **argv) {
             do_emmition = true;
           }
           // REFLECT diffuse
-          else if (rand < rhoS + rhoD) {
-            Vec3r<ft> brdfEval{static_cast<ft>(1.0) / M_PI * diffuseColor};
+          else if (rand < (rhoS + rhoD)) {
+            Vec3r<ft> brdfEval{static_cast<ft>(1.0) / pi * diffuseColor};
             Vec3r<ft> ldir, ll;
             ft lpdf, ldist;
             lights.sample_direct(rayOrg, uniform(0., 1.), uniform(0., 1.), ldir, ldist, lpdf, ll);
@@ -534,7 +529,7 @@ int main(int argc, char **argv) {
               bool visible = !check_for_occluder(rayOrg, Vec3r<ft>{rayOrg + ldir * ldist}, *mesh, accel, trace_options);
 
               Vec3r<ft> temp_color = directLight * weight;
-              temp_color *= ft(visible);
+              temp_color *= static_cast<ft>(visible);
               color += temp_color;
             }
 
