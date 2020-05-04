@@ -63,10 +63,10 @@ int main(int argc, char **argv) {
   for (int y = 0; y < height; y++) {
     for (int x = 0; x < width; x++) {
 
-      blazert::Ray<double> ray({0.0, 5.0, 20.0}, {(x / double(width)) - 0.5, (y / double(height)) - 0.5, -1.});
+      const blazert::Ray<double> ray{{0.0, 5.0, 20.0}, {(x / double(width)) - 0.5, (y / double(height)) - 0.5, -1.}};
       blazert::RayHit<double> rayhit;
 
-      bool hit = scene.intersect1(ray, rayhit);
+      const bool hit = intersect1(scene, ray, rayhit);
     }
   }
 

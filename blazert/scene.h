@@ -15,8 +15,8 @@ template<typename T>
 class Scene {
 public:
   BVHBuildOptions<T> build_options;
+  BVHTraceOptions<T> trace_options;
 
-private:
   // A lot of private data ...
   mutable bool has_been_committed = false;
   mutable bool has_mesh = false;
@@ -29,14 +29,14 @@ private:
   TriangleMesh<T> triangles_;
   TriangleSAHPred<T> triangles_sah_;
 
-  BVHAccel<T> mesh_accel;
+  BVH<T> bvh_mesh;
   //BVHAccel<T> sphere_accel;
   //BVHAccel<T> plane_accel;
   //BVHAccel<T> box_accel;
   //BVHAccel<T> cylinder_accel;
 
 public:
-  Scene() =default;
+  Scene() = default;
 
   // TODO: default arguments ...
   inline unsigned int add_mesh(const Vec3rList<T> &vertices, const Vec3iList &triangles);
@@ -51,7 +51,7 @@ public:
 
     // Build all the BVH ...
     if (has_mesh) {
-      mesh_accel.Build(triangles_, triangles_sah_, build_options);
+      bvh_mesh.build(triangles_, triangles_sah_, build_options);
     }
 
     //sphere_accel.Build()
@@ -60,28 +60,30 @@ public:
     has_been_committed = true;
     return has_been_committed;
   };
+};
 
   // TODO: Performance critical code should not be a member function (hidden pointer *this), since the compiler will not know how to optimize.
-  inline bool intersect1(const Ray<T> &ray, RayHit<T> rayhit) const {
+template<typename T>
+__attribute__((always_inline)) __attribute__((flatten)) inline bool intersect1(const Scene<T> &scene, const Ray<T> &ray, RayHit<T> &rayhit) {
 
-    // This may not be optimal, but the interface is simple and everything can (and will) be in-lined.
-    RayHit<T> temp_rayhit;
-    bool hit = false;
+  // This may not be optimal, but the interface is simple and everything can (and will) be in-lined.
+  RayHit<T> temp_rayhit;
+  bool hit = false;
 
-    // Do the traversal for all primitives ...
-    if (has_mesh) {
-      TriangleIntersector<double> triangle_intersector(*triangles_.vertices_, *triangles_.faces_);
-      // TODO: Performance critical code should not be a member function (hidden pointer *this), since the compiler will not know how to optimize.
-      const bool meshhit = mesh_accel.Traverse(ray, triangle_intersector, temp_rayhit);
-      if (meshhit) {
-        rayhit = temp_rayhit;
-        hit += meshhit;
-      }
+  // Do the traversal for all primitives ...
+  if (scene.has_mesh) {
+    TriangleIntersector<double> triangle_intersector{*(scene.triangles_.vertices_), *(scene.triangles_.faces_)};
+    // TODO: Performance critical code should not be a member function (hidden pointer *this), since the compiler will not know how to optimize.
+    const bool hit_mesh = traverse(scene.bvh_mesh, ray, triangle_intersector, temp_rayhit, scene.trace_options);
+    if (hit_mesh) {
+      rayhit = temp_rayhit;
+      hit += hit_mesh;
     }
+  }
 
-    return hit;
-  };
+  return hit;
 };
+
 
 // Implementation of the add_ functions goes below ..
 template<typename T>

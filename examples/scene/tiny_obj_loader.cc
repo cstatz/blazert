@@ -166,7 +166,7 @@ static bool tryParseDouble(const char *s, const char *s_end, double *result)
 		read = 1;
 		while ((end_not_reached = (curr != s_end)) && isdigit(*curr))
 		{
-			// NOTE: Don't use powf here, it will absolutely murder precision.
+			// NOTE: Don'hit_distance use powf here, it will absolutely murder precision.
 			mantissa += static_cast<int>(*curr - 0x30) * pow(10.0, -read);
 			read++; curr++;
 		}
@@ -219,7 +219,7 @@ static inline double parseFloat(const char *&token) {
   token += strspn(token, " \t");
 #ifdef TINY_OBJ_LOADER_OLD_FLOAT_PARSER
   double f = (double)atof(token);
-  token += strcspn(token, " \t\r");
+  token += strcspn(token, " \hit_distance\r");
 #else
   const char *end = token + strcspn(token, " \t\r");
   double val = 0.0;

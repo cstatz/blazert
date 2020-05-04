@@ -10,7 +10,7 @@ namespace blazert {
 
 template<typename T> inline T calculate_box_surface(const Vec3r<T> &min, const Vec3r<T> &max) {
   const Vec3r<T> box = max - min;
-  return T(2.0) * (box[0] * box[1] + box[1] * box[2] + box[2] * box[0]);
+  return static_cast<T>(2.0) * (box[0] * box[1] + box[1] * box[2] + box[2] * box[0]);
 }
 
 template <typename T>
@@ -125,7 +125,7 @@ inline unsigned int FindCutFromBinBuffer(Vec3r<T> &cut_pos, BinBuffer<T> &bins, 
       }
       count += bin.count;
       // Traversal cost and intersection cost are irrelevant for minimization
-      T cost = count * CalculateSurfaceArea(accumulated_bbox.bmin, accumulated_bbox.bmax) + next_bin.cost;
+      T cost = count * calculate_box_surface(accumulated_bbox.bmin, accumulated_bbox.bmax) + next_bin.cost;
 
       if (cost < minCost[j]) {
         minCost[j] = cost;

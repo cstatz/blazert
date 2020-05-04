@@ -61,11 +61,10 @@ int main(int argc, char **argv) {
   blazert::TriangleMesh<double> triangle_mesh(mesh->vertices, mesh->triangles);   //, sizeof(float) * 3);
   blazert::TriangleSAHPred<double> triangle_pred(mesh->vertices, mesh->triangles);//, sizeof(float) * 3);
 
-  blazert::BVHAccel<double> accel;
-  accel.Build(triangle_mesh, triangle_pred, build_options);
+  blazert::BVH<double> bvh;
+  bvh.build(triangle_mesh, triangle_pred, build_options);
 
-  blazert::BVHBuildStatistics stats = accel.GetStatistics();
-  //accel.print_bvh_as_json();
+  blazert::BVHTraceOptions<double> trace_options;
 
 #ifdef _OPENMP
 #pragma omp parallel for schedule(dynamic, 1)
@@ -73,11 +72,10 @@ int main(int argc, char **argv) {
   for (int y = 0; y < height; y++) {
     for (int x = 0; x < width; x++) {
 
-      blazert::Ray<double> ray({0.0, 5.0, 20.0}, {(x / double(width)) - 0.5, (y / double(height)) - 0.5, -1.});
-      blazert::TriangleIntersector<double> triangle_intersector(mesh->vertices, mesh->triangles);
-      blazert::RayHit<double> rayhit;
-
-      bool hit = accel.Traverse(ray, triangle_intersector, rayhit);
+      const blazert::Ray<double> ray{{0.0, 5.0, 20.0}, {(x / double(width)) - 0.5, (y / double(height)) - 0.5, -1.}};
+      blazert::TriangleIntersector<double> triangle_intersector{mesh->vertices, mesh->triangles};
+      blazert::RayHit<double> rayhit{};
+      const bool hit = traverse(bvh, ray, triangle_intersector, rayhit, trace_options);
     }
   }
 
