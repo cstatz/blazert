@@ -5,8 +5,10 @@
 #include <iostream>
 #include <vector>
 
+using ft = double;
+
 typedef struct {
-  blazert::Vec3rList<double> vertices;
+  blazert::Vec3rList<ft> vertices;
   blazert::Vec3iList triangles;
 } Mesh;
 
@@ -30,7 +32,7 @@ bool LoadObj(Mesh &mesh, const char *filename) {
     }
 
     for (size_t v = 0; v < shape.mesh.positions.size() / 3; v++) {
-      blazert::Vec3r<double> vv = {shape.mesh.positions[3 * v + 0], shape.mesh.positions[3 * v + 1], shape.mesh.positions[3 * v + 2]};
+      blazert::Vec3r<ft> vv = {shape.mesh.positions[3 * v + 0], shape.mesh.positions[3 * v + 1], shape.mesh.positions[3 * v + 2]};
       mesh.vertices.push_back(vv);
     }
 
@@ -55,16 +57,16 @@ int main(int argc, char **argv) {
   Mesh *mesh = new Mesh();
   LoadObj(*mesh, objFilename.c_str());
 
-  blazert::BVHBuildOptions<double> build_options;// Use default option
+  blazert::BVHBuildOptions<ft> build_options;// Use default option
   build_options.cache_bbox = false;
 
-  blazert::TriangleMesh<double> triangle_mesh(mesh->vertices, mesh->triangles);   //, sizeof(float) * 3);
-  blazert::TriangleSAHPred<double> triangle_pred(mesh->vertices, mesh->triangles);//, sizeof(float) * 3);
+  blazert::TriangleMesh<ft> triangle_mesh(mesh->vertices, mesh->triangles);   //, sizeof(float) * 3);
+  blazert::TriangleSAHPred<ft> triangle_pred(mesh->vertices, mesh->triangles);//, sizeof(float) * 3);
 
-  blazert::BVH<double> bvh;
+  blazert::BVH<ft> bvh;
   bvh.build(triangle_mesh, triangle_pred, build_options);
 
-  blazert::BVHTraceOptions<double> trace_options;
+  blazert::BVHTraceOptions<ft> trace_options;
 
 #ifdef _OPENMP
 #pragma omp parallel for schedule(dynamic, 1)
@@ -72,9 +74,9 @@ int main(int argc, char **argv) {
   for (int y = 0; y < height; y++) {
     for (int x = 0; x < width; x++) {
 
-      const blazert::Ray<double> ray{{0.0, 5.0, 20.0}, {(x / double(width)) - 0.5, (y / double(height)) - 0.5, -1.}};
-      blazert::TriangleIntersector<double> triangle_intersector{mesh->vertices, mesh->triangles};
-      blazert::RayHit<double> rayhit{};
+      const blazert::Ray<ft> ray{{0.0, 5.0, 20.0}, {(x / ft(width)) - 0.5, (y / ft(height)) - 0.5, -1.}};
+      blazert::TriangleIntersector<ft> triangle_intersector{mesh->vertices, mesh->triangles};
+      blazert::RayHit<ft> rayhit{};
       const bool hit = traverse(bvh, ray, triangle_intersector, rayhit, trace_options);
     }
   }
