@@ -35,6 +35,7 @@ class BVH {
 public:  // Private data
   std::vector<BVHNode<T>> nodes_;
   std::vector<unsigned int> indices_;// max 2**32 primitives.
+  // TODO bboxes_ should belong to the primitives and be computed by the primitives.
   std::vector<BBox<T>> bboxes_;
   BVHBuildOptions<T> options_;
   BVHBuildStatistics stats_;
@@ -75,8 +76,6 @@ template<class P, class Pred>
 unsigned int BVH<T>::build_tree(BVHBuildStatistics &out_stat, std::vector<BVHNode<T>> &out_nodes, unsigned int left_idx,
                                     unsigned int right_idx, unsigned int depth, const P &p, const Pred &pred) {
 
-  assert(left_idx <= right_idx);
-
   const auto offset = static_cast<unsigned int>(out_nodes.size());
 
   if (out_stat.max_tree_depth < depth) {
@@ -98,14 +97,11 @@ unsigned int BVH<T>::build_tree(BVHBuildStatistics &out_stat, std::vector<BVHNod
     leaf.bmin = bmin;
     leaf.bmax = bmax;
 
-    assert(left_idx < std::numeric_limits<unsigned int>::max());
-
     leaf.flag = 1;// leaf
     leaf.data[0] = n;
     leaf.data[1] = left_idx;
 
     out_nodes.push_back(leaf);// atomic update
-
     out_stat.num_leaf_nodes++;
 
     return offset;
@@ -127,7 +123,6 @@ unsigned int BVH<T>::build_tree(BVHBuildStatistics &out_stat, std::vector<BVHNod
   // Try all 3 axis until good cut position avaiable.
   unsigned int mid_idx = left_idx;
   int cut_axis = min_cut_axis;
-
 
   for (int axis_try = 0; axis_try < 3; axis_try++) {
 
@@ -151,9 +146,7 @@ unsigned int BVH<T>::build_tree(BVHBuildStatistics &out_stat, std::vector<BVHNod
       // Switch to object median(which may create unoptimized tree, but
       // stable)
       mid_idx = left_idx + (n >> 1);
-
       // Try another axis to find better cut.
-
     }
     else {
       // Found good cut. exit loop.
@@ -198,8 +191,6 @@ bool BVH<T>::build(const Prim &p, const Pred &pred, const BVHBuildOptions<T> &op
   stats_ = BVHBuildStatistics();
   nodes_.clear();
   bboxes_.clear();
-
-  assert(options_.bin_size > 1);
 
   if (p.size() == 0) {
     return false;
@@ -252,8 +243,6 @@ bool BVH<T>::build(const Prim &p, const Pred &pred, const BVHBuildOptions<T> &op
 
   return true;
 }
-
-
 
 template<typename T, class I>
 inline bool test_leaf_node(const BVHNode<T> &node, I &intersector, const std::vector<unsigned int> &indices) {
@@ -326,8 +315,6 @@ __attribute__((flatten)) __attribute__((always_inline)) inline bool traverse(con
       }
     }
   }
-
-  assert(node_stack_index < BLAZERT_MAX_STACK_DEPTH);
 
   bool hit = (intersector.hit_distance < ray.max_t);
   if (hit) {

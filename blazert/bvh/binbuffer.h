@@ -50,7 +50,6 @@ inline void ContributeBinBuffer(BinBuffer<T> &bins, const Vec3r<T> &scene_min, c
   scene_size = scene_max - scene_min;
 
   for (int i = 0; i < 3; ++i) {
-    assert(scene_size[i] >= static_cast<T>(0.0));
 
     if (scene_size[i] > static_cast<T>(0.0)) {
       scene_inv_size[i] = bin_size / scene_size[i];
