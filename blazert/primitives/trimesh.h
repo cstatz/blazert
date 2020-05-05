@@ -262,10 +262,8 @@ __attribute__((always_inline)) inline bool intersect(TriangleIntersector<T> &i, 
     W = static_cast<T>(BxAy - ByAx);
   }
 
-  if (U < static_cast<T>(0.) || V < static_cast<T>(0.) || W < static_cast<T>(0.)) {
-    if (cull_back_face || (U > static_cast<T>(0.) || V > static_cast<T>(0.) || W > static_cast<T>(0.))) {
+  if (((U < static_cast<T>(0.)) | (V < static_cast<T>(0.)) | (W < static_cast<T>(0.))) && (cull_back_face | (U > static_cast<T>(0.)) | (V > static_cast<T>(0.)) | (W > static_cast<T>(0.)))) {
       return false;
-    }
   }
 
   const T det = U + V + W;
@@ -281,11 +279,7 @@ __attribute__((always_inline)) inline bool intersect(TriangleIntersector<T> &i, 
   const T rcpDet = static_cast<T>(1.0) / det;
   const T tt = D * rcpDet;
 
-  if (tt > t_inout) {
-    return false;
-  }
-
-  if (tt < i.t_min_) {
+  if ((tt > t_inout) | (tt < i.t_min_)) {
     return false;
   }
 
