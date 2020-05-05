@@ -15,11 +15,11 @@
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb_image_write.h"
 
-using ft = float;
+using ft = double;
 
-constexpr double pi = 3.141592683;
+constexpr ft pi = 3.141592653589793238462643383279502884;
 constexpr size_t uMaxBounces = 10;
-constexpr int SPP = 100;
+constexpr int SPP = 10000;
 //const int SPP = 100;
 
 using namespace blazert;
@@ -32,22 +32,23 @@ inline T uniform(T min, T max) {
 // Building an Orthonormal Basis, Revisited
 // http://jcgt.org/published/0006/01/01/
 template<typename T>
-void revisedONB(const Vec3r<T> &n, Vec3r<T> &b1, Vec3r<T> &b2) {
-  if (n[2] < static_cast<ft>(0.0f)) {
-    const T a = static_cast<ft>(1.0f) / (static_cast<ft>(1.0f) - n[2]);
+inline void revised_onb(const Vec3r<T> &n, Vec3r<T> &b1, Vec3r<T> &b2) {
+  if (n[2] < static_cast<T>(0.0)) {
+    const T a = static_cast<T>(1.0) / (static_cast<T>(1.0) - n[2]);
     const T b = n[0] * n[1] * a;
-    b1 = Vec3r<T>{static_cast<T>(1.0) - n[0] * n[0] * a, -b, n[0]};
-    b2 = Vec3r<T>{b, n[1] * n[1] * a - static_cast<T>(1.0), -n[1]};
-  } else {
+    b1 = {static_cast<T>(1.0) - n[0] * n[0] * a, -b, n[0]};
+    b2 = {b, n[1] * n[1] * a - static_cast<T>(1.0), -n[1]};
+  }
+  else {
     const T a = static_cast<T>(1.0) / (static_cast<T>(1.0) + n[2]);
     const T b = -n[0] * n[1] * a;
-    b1 = Vec3r<T>{static_cast<T>(1.0) - n[0] * n[0] * a, b, -n[0]};
-    b2 = Vec3r<T>{b, static_cast<T>(1.0) - n[1] * n[1] * a, -n[1]};
+    b1 = {static_cast<T>(1.0) - n[0] * n[0] * a, b, -n[0]};
+    b2 = {b, static_cast<T>(1.0) - n[1] * n[1] * a, -n[1]};
   }
 }
 
 template<typename T>
-Vec3r<T> direction_cos_theta(const Vec3r<T> &normal) {
+inline Vec3r<T> direction_cos_theta(const Vec3r<T> &normal) {
 
   const T u1 = uniform(T(0.), T(1.));
   const T phi = uniform(T(0.), T(2.) * static_cast<T>(pi));
@@ -64,9 +65,9 @@ Vec3r<T> direction_cos_theta(const Vec3r<T> &normal) {
 
   Vec3r<T> xDir;
   Vec3r<T> yDir;
-  revisedONB(normal, xDir, yDir);
+  revised_onb(normal, xDir, yDir);
 
-  return xDir * x + yDir * y + z * normal;
+  return {xDir * x + yDir * y + z * normal};
 }
 
 template<typename T>
@@ -420,9 +421,9 @@ int main(int argc, char **argv) {
 
   std::srand(0);
 
-//  #ifdef _OPENMP
-//  #pragma omp parallel for schedule(dynamic, 1)
-//  #endif
+#ifdef _OPENMP
+#pragma omp parallel for schedule(dynamic, 1)
+#endif
   for (int y = 0; y < height; y++) {
     for (int x = 0; x < width; x++) {
       Vec3r<ft> finalColor{0, 0, 0};
