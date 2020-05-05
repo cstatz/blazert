@@ -7,6 +7,7 @@
 #include <vector>
 
 #include <blazert/blazert.h>
+#include <blaze/math/Column.h>
 
 #define NOMINMAX
 #include "tiny_obj_loader.h"
@@ -28,6 +29,23 @@ inline T uniform(T min, T max) {
   return min + T(std::rand()) / T(RAND_MAX) * (max - min);
 }
 
+// Building an Orthonormal Basis, Revisited
+// http://jcgt.org/published/0006/01/01/
+template<typename T>
+void revisedONB(const Vec3r<T> &n, Vec3r<T> &b1, Vec3r<T> &b2) {
+  if (n[2] < static_cast<ft>(0.0f)) {
+    const T a = static_cast<ft>(1.0f) / (static_cast<ft>(1.0f) - n[2]);
+    const T b = n[0] * n[1] * a;
+    b1 = Vec3r<T>{static_cast<T>(1.0) - n[0] * n[0] * a, -b, n[0]};
+    b2 = Vec3r<T>{b, n[1] * n[1] * a - static_cast<T>(1.0), -n[1]};
+  } else {
+    const T a = static_cast<T>(1.0) / (static_cast<T>(1.0) + n[2]);
+    const T b = -n[0] * n[1] * a;
+    b1 = Vec3r<T>{static_cast<T>(1.0) - n[0] * n[0] * a, b, -n[0]};
+    b2 = Vec3r<T>{b, static_cast<T>(1.0) - n[1] * n[1] * a, -n[1]};
+  }
+}
+
 template<typename T>
 Vec3r<T> direction_cos_theta(const Vec3r<T> &normal) {
 
@@ -40,15 +58,21 @@ Vec3r<T> direction_cos_theta(const Vec3r<T> &normal) {
   const T y{r * std::sin(phi)};
   const T z{std::sqrt(static_cast<T>(1.0) - u1)};
 
-  Vec3r<T> xDir = std::fabs(normal[0]) < std::fabs(normal[1]) ? Vec3r<T>{1., 0., 0.} : Vec3r<T>{0., 1., 0.};
-  const Vec3r<T> yDir = normalize(cross(normal, xDir));
-  xDir = cross(yDir, normal);
+  //  Vec3r<T> xDir = std::fabs(normal[0]) < std::fabs(normal[1]) ? Vec3r<T>{1., 0., 0.} : Vec3r<T>{0., 1., 0.};
+  //  const Vec3r<T> yDir = normalize(cross(normal, xDir));
+  //  xDir = cross(yDir, normal);
+
+  Vec3r<T> xDir;
+  Vec3r<T> yDir;
+  revisedONB(normal, xDir, yDir);
 
   return xDir * x + yDir * y + z * normal;
 }
 
 template<typename T>
-inline T pdf_a_to_w(const T a_pdf_a, const T a_dist, const T a_cos_there) { return a_pdf_a * (a_dist * a_dist) / std::abs(a_cos_there); }
+inline T pdf_a_to_w(const T a_pdf_a, const T a_dist, const T a_cos_there){
+  return a_pdf_a * (a_dist * a_dist) / std::abs(a_cos_there);
+}
 
 template<typename T>
 struct Mesh {
@@ -58,25 +82,6 @@ struct Mesh {
   Mat3rList<T> facevarying_normals;/// [xyz] * 3(triangle) * num_faces
   Mat3rList<T> facevarying_uvs;    /// [xyz] * 3(triangle) * num_faces -> this may be Mat2rList<T>
 };
-
-//template<typename T>
-//struct Material {
-//  Vec3r<T> ambient;
-//  Vec3r<T> diffuse;
-//  Vec3r<T> reflection;
-//  Vec3r<T> refraction;
-//  int id;
-//  int diffuse_texid;
-//  int reflection_texid;
-//  int transparency_texid;
-//  int bump_texid;
-//  int normal_texid;// normal map
-//  int alpha_texid; // alpha map
-//
-//  Material() : ambient(0.), diffuse(0.5), reflection(0.), refraction(0.), id(-1),
-//               diffuse_texid(-1), reflection_texid(-1), transparency_texid(-1),
-//               bump_texid(-1), normal_texid(-1), alpha_texid(-1) {}
-//};
 
 template<typename T>
 void calc_normal(Vec3r<T> &N, const Vec3r<T> &v0, const Vec3r<T> &v1, const Vec3r<T> &v2) {
@@ -235,9 +240,9 @@ bool LoadObj(Mesh<T> &mesh, std::vector<tinyobj::material_t> &materials, const c
         const Vec3r<T> n2{shapes[i].mesh.normals[3 * f2 + 0], shapes[i].mesh.normals[3 * f2 + 1], shapes[i].mesh.normals[3 * f2 + 2]};
 
         Mat3r<ft> n{};
-        column(n, 0UL) = n0;
-        column(n, 1UL) = n1;
-        column(n, 2UL) = n2;
+        blaze::column<0UL>(n) = n0;
+        blaze::column<1UL>(n) = n1;
+        blaze::column<2UL>(n) = n2;
         mesh.facevarying_normals.push_back(n);
       }
     } else {
@@ -255,9 +260,9 @@ bool LoadObj(Mesh<T> &mesh, std::vector<tinyobj::material_t> &materials, const c
         Vec3r<ft> N;
         calc_normal(N, v0, v1, v2);
         Mat3r<ft> n{};
-        column(n, 0UL) = N;
-        column(n, 1UL) = N;
-        column(n, 2UL) = N;
+        blaze::column<0UL>(n) = N;
+        blaze::column<1UL>(n) = N;
+        blaze::column<2UL>(n) = N;
         mesh.facevarying_normals.push_back(n);
       }
     }
@@ -274,9 +279,9 @@ bool LoadObj(Mesh<T> &mesh, std::vector<tinyobj::material_t> &materials, const c
         const Vec3r<ft> n2{shapes[i].mesh.texcoords[2 * f2 + 0], shapes[i].mesh.texcoords[2 * f2 + 1], 0.};
 
         Mat3r<ft> n{};
-        column(n, 0UL) = n0;
-        column(n, 1UL) = n1;
-        column(n, 2UL) = n2;
+        blaze::column<0UL>(n) = n0;
+        blaze::column<1UL>(n) = n1;
+        blaze::column<2UL>(n) = n2;
         mesh.facevarying_uvs.emplace_back(n);
       }
     }
@@ -315,7 +320,7 @@ void progressBar(int tick, int total, int width = 100) {
   float count = width * tick / total;
   std::string bar(width, ' ');
   std::fill(bar.begin(), bar.begin() + count, '+');
-  std::cout << "[ " << ratio << "%% ] [ " << bar  << " ]"<< (tick == total ? '\n' : '\r');
+  std::cout << "[ " << ratio << "%% ] [ " << bar << " ]" << (tick == total ? '\n' : '\r');
   //printf("[ %6.2f %% ] [ %s ]%c", ratio, bar.c_str(),
   //       tick == total ? '\n' : '\r');
   std::fflush(stdout);
@@ -334,7 +339,7 @@ inline bool check_for_occluder(const Vec3r<T> &p1, const Vec3r<T> &p2, const Mes
 
   blazert::Ray<T> shadow_ray{p1, dir};
   shadow_ray.min_t = ray_eps;
-  shadow_ray.max_t = dist + ray_eps;
+  shadow_ray.max_t = dist - ray_eps;
 
   blazert::TriangleIntersector<T> triangle_intersector{mesh.vertices, mesh.faces};
   blazert::RayHit<T> rayhit{};
@@ -356,6 +361,10 @@ int main(int argc, char **argv) {
   std::string objFilename = "../common/cornellbox_suzanne_lucy.obj";
   std::string mtlPath = "../common/";
 
+  // arguments can be supplied via command line:
+  // 1. objectfile
+  // 2. scale
+  // 3. path to material files
   if (argc > 1) {
     objFilename = std::string(argv[1]);
   }
@@ -368,9 +377,16 @@ int main(int argc, char **argv) {
     mtlPath = std::string(argv[3]);
   }
 
+#ifdef _OPENMP
+  std::cout << "using OpenMP: yes!\n";
+#else
+  std::cout << "Using OpenMP: no!\n";
+#endif
+
   bool ret = false;
 
   auto *mesh = new Mesh<ft>;
+
   std::vector<tinyobj::material_t> materials;
   ret = LoadObj(*mesh, materials, objFilename.c_str(), scale, mtlPath.c_str());
   if (!ret) {
@@ -381,7 +397,7 @@ int main(int argc, char **argv) {
   MeshLight lights(*mesh, materials);
 
   blazert::BVHBuildOptions<ft> build_options;// Use default option
-  build_options.cache_bbox = true;
+  build_options.cache_bbox = false;
 
   std::cout << "  BVH build option:\n"
             << "    # of leaf primitives: " << build_options.min_leaf_primitives << "\n"
@@ -404,9 +420,9 @@ int main(int argc, char **argv) {
 
   std::srand(0);
 
-  //#ifdef _OPENMP
-  //#pragma omp parallel for schedule(dynamic, 1)
-  //#endif
+//  #ifdef _OPENMP
+//  #pragma omp parallel for schedule(dynamic, 1)
+//  #endif
   for (int y = 0; y < height; y++) {
     for (int x = 0; x < width; x++) {
       Vec3r<ft> finalColor{0, 0, 0};
@@ -415,15 +431,17 @@ int main(int argc, char **argv) {
         ft py = ft(y) + uniform(ft(-0.5), ft(0.5));
         // Simple camera. change eye pos and direction fit to .obj model.
 
-        Vec3r<ft> rayDir{(px / ft(width)) - static_cast<ft>(0.5), (py / ft(height)) - static_cast<ft>(0.5), static_cast<ft>(-1.0)};
-        rayDir = normalize(rayDir);
-
         Vec3r<ft> rayOrg{0.0, 5.0, 20.0};
+
+        Vec3r<ft> rayDir{(px / static_cast<ft>(width)) - static_cast<ft>(0.5),
+                         (py / static_cast<ft>(height)) - static_cast<ft>(0.5),
+                         static_cast<ft>(-1.0)};
+        rayDir = normalize(rayDir);
 
         Vec3r<ft> color{0., 0., 0.};
         Vec3r<ft> weight{1., 1., 1.};
 
-        bool do_emmition = true;// just skit emmition if light sampling was done on previous event (No MIS)
+        bool do_emission = true;// just skip emission if light sampling was done on previous event (No MIS)
         for (size_t b = 0; b < uMaxBounces; ++b) {
           // Russian Roulette
           ft rr_fac{1.0};
@@ -458,7 +476,7 @@ int main(int argc, char **argv) {
             Mat3r<ft> normals{mesh->facevarying_normals[fid]};
             ft u = rayhit.uv[0];
             ft v = rayhit.uv[1];
-            norm = normalize((1.0 - u - v) * column(normals, 0UL) + u * column(normals, 1UL) + v * column(normals, 2UL));
+            norm = normalize((1.0 - u - v) * blaze::column<0UL>(normals) + u * blaze::column<1UL>(normals) + v * blaze::column<2UL>(normals));
           }
 
           // Flip normal torwards incoming ray for backface shading
@@ -493,7 +511,7 @@ int main(int argc, char **argv) {
           // Mix them based on the dissolve value of the material
           ft rhoD = dot(Vec3r<ft>{1, 1, 1} / static_cast<ft>(3.0), diffuseColor) * (static_cast<ft>(1.0) - fresnel) * (static_cast<ft>(1.0) - mat.dissolve);
           ft rhoR = dot(Vec3r<ft>{1, 1, 1} / static_cast<ft>(3.0), refractionColor) * (static_cast<ft>(1.0) - fresnel) * mat.dissolve;
-          ft rhoE = dot(Vec3r<ft>{1, 1, 1} / 3.0f, emissiveColor);
+          ft rhoE = dot(Vec3r<ft>{1, 1, 1} / static_cast<ft>(3.0), emissiveColor);
 
           // Normalize probabilities so they sum to 1.0
           ft totalrho = rhoS + rhoD + rhoR + rhoE;
@@ -514,7 +532,7 @@ int main(int argc, char **argv) {
           if (rand < rhoS) {
             outDir = reflect(rayDir, norm);
             weight *= specularColor;
-            do_emmition = true;
+            do_emission = true;
           }
           // REFLECT diffuse
           else if (rand < (rhoS + rhoD)) {
@@ -529,31 +547,30 @@ int main(int argc, char **argv) {
               bool visible = !check_for_occluder(rayOrg, Vec3r<ft>{rayOrg + ldir * ldist}, *mesh, accel, trace_options);
 
               Vec3r<ft> temp_color = directLight * weight;
-              temp_color *= static_cast<ft>(visible);
+              temp_color = temp_color * static_cast<ft>(visible);
               color += temp_color;
             }
 
             // Sample cosine weighted hemisphere
             outDir = direction_cos_theta(norm);
             weight *= diffuseColor;
-            do_emmition = false;
+            do_emission = false;
           }
           // REFRACT
-          else if (rand < rhoD + rhoS + rhoR) {
+          else if (rand < (rhoD + rhoS + rhoR)) {
             outDir = refract(rayDir, Vec3r<ft>{-inside * originalNorm}, n1);
             weight *= refractionColor;
-            do_emmition = true;
+            do_emission = true;
           }
           // EMIT
           else {
             // Weight light by cosine factor (surface emits most light in normal
             // direction)
-            if (do_emmition) {
+            if (do_emission) {
               color += std::max(dot(originalNorm, -rayDir), static_cast<ft>(0.0)) * (emissiveColor * weight);
             }
             break;
           }
-
           // Calculate new ray start position and set outgoing direction.
           rayDir = outDir;
         }
