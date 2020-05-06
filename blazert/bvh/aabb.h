@@ -8,7 +8,7 @@
 
 namespace blazert {
 
-// NaN-safe min and max function.
+// NaN-safe min and max function. TODO: constexpr
 template <class T>
 inline const T &safemin(const T &a, const T &b) {
   return (a < b) ? a : b;

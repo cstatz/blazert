@@ -19,7 +19,7 @@ using ft = double;
 
 constexpr ft pi = 3.141592653589793238462643383279502884;
 constexpr size_t uMaxBounces = 10;
-constexpr int SPP = 10000;
+constexpr int SPP = 100;
 //const int SPP = 100;
 
 using namespace blazert;
