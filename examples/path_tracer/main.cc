@@ -548,7 +548,7 @@ int main(int argc, char **argv) {
               bool visible = !check_for_occluder(rayOrg, Vec3r<ft>{rayOrg + ldir * ldist}, *mesh, accel, trace_options);
 
               Vec3r<ft> temp_color = directLight * weight;
-              temp_color = temp_color * static_cast<ft>(visible);
+              temp_color *=  static_cast<ft>(visible);
               color += temp_color;
             }
 
