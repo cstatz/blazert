@@ -116,7 +116,6 @@ public:
 
 template<typename T>
 class TriangleIntersector {
-  //mutable RayCoeff<T> ray_coeff_;
 public:
   const Vec3rList<T> *vertices_;
   const Vec3iList *faces_;
@@ -125,15 +124,15 @@ public:
   mutable Vec3ui k;
 
   mutable Vec3r<T> ray_org_;
-  mutable BVHTraceOptions<T> trace_options_;
   mutable T t_min_;
   mutable Vec2r<T> uv_;
   mutable T hit_distance;
   mutable unsigned int prim_id_;
+  mutable bool cull_back_face;
 
 public:
   inline TriangleIntersector(const Vec3rList<T> &vertices, const Vec3iList &faces)
-      : vertices_(&vertices), faces_(&faces), prim_id_(-1) {}
+      : vertices_(&vertices), faces_(&faces), prim_id_(-1), cull_back_face(false) {}
 };
 
 /// Update is called when initializing intersection and nearest hit is found.
@@ -149,9 +148,9 @@ __attribute__((always_inline)) inline void update_intersector(TriangleIntersecto
    * TODO: Is Ray<T> really needed here?
    */
 template<typename T>
-__attribute__((always_inline)) inline void post_traversal(const TriangleIntersector<T> &i, const Ray<T> &ray, const bool hit, RayHit<T> &intersection) {
+__attribute__((always_inline)) inline void post_traversal(TriangleIntersector<T> &i, const Ray<T> &ray, const bool hit, RayHit<T> &intersection) {
   if (hit) {
-    intersection.t = i.hit_distance;
+    intersection.hit_distance = i.hit_distance;
     intersection.uv = i.uv_;
     intersection.prim_id = i.prim_id_;
     // TODO: Only do the normal computation if the prim is hit!
@@ -166,26 +165,26 @@ __attribute__((always_inline)) inline void post_traversal(const TriangleIntersec
 template<typename T>
 __attribute__((always_inline))  inline void prepare_traversal(TriangleIntersector<T> &i, const Ray<T> &ray, const BVHTraceOptions<T> &trace_options) {
 
-  i.ray_org_ = ray.org;// copy here we'll have an allocate?
-  i.trace_options_ = trace_options;
-  i.t_min_ = ray.min_t;
+  i.ray_org_ = ray.origin;// copy here we'll have an allocate?
+  i.t_min_ = ray.min_hit_distance;
   i.uv_ = {0., 0.};// Here happens an allocate.
+  i.cull_back_face = trace_options.cull_back_face;
 
   Vec3ui &k = i.k;
-  Vec3r<T> &S = i.s;
-  const Vec3r<T> &dir = ray.dir;
+  Vec3r<T> &s = i.s;
+  const Vec3r<T> &dir = ray.direction;
 
   // Calculate dimension where the ray direction is maximal.
   // TODO: Vectorize this.
   k[2] = 0;
-  T abs_dir = std::fabs(dir[0]);
+  T abs_dir = std::abs(dir[0]);
 
-  if (abs_dir < std::fabs(dir[1])) {
+  if (abs_dir < std::abs(dir[1])) {
     k[2] = 1;
-    abs_dir = std::fabs(dir[1]);
+    abs_dir = std::abs(dir[1]);
   }
 
-  if (abs_dir < std::fabs(dir[2]))
+  if (abs_dir < std::abs(dir[2]))
     k[2] = 2;
 
   k[0] = k[2] + 1;
@@ -201,9 +200,9 @@ __attribute__((always_inline))  inline void prepare_traversal(TriangleIntersecto
     std::swap(k[1], k[2]);
 
   // TODO: Removed static_cast. Was it really necessary here?
-  S[0] = dir[k[0]] / dir[k[2]];
-  S[1] = dir[k[1]] / dir[k[2]];
-  S[2] = static_cast<T>(1.) / dir[k[2]];
+  s[0] = - dir[k[0]] / dir[k[2]];
+  s[1] = - dir[k[1]] / dir[k[2]];
+  s[2] = static_cast<T>(1.) / dir[k[2]];
 }
 
 /**
@@ -214,52 +213,61 @@ __attribute__((always_inline))  inline void prepare_traversal(TriangleIntersecto
 template<typename T>
 __attribute__((always_inline)) inline bool intersect(TriangleIntersector<T> &i, T &t_inout, const unsigned int prim_index) {
 
-  //if ((prim_index < trace_options_.prim_ids_range[0]) || (prim_index >= trace_options_.prim_ids_range[1])) {
-  //  return false;
-  //}
-
-  // Self-intersection test.
-  //if (prim_index == trace_options_.skip_prim_id) {
-  //  //std::cout << "FAIL self"<< std::endl;
-  //  return false;
-  //}
   const Vec3ui &k = i.k;
-  const Vec3r<T> &S = i.s;
+  const Vec3r<T> &s = i.s;
   const Vec3r<T> &ray_org = i.ray_org_;
-  const bool cull_back_face = i.trace_options_.cull_back_face;
+  const bool cull_back_face = i.cull_back_face;
 
   const Vec3ui &face = (*(i.faces_))[prim_index];
   const Vec3r<T> &p0 = (*(i.vertices_))[face[0]];
   const Vec3r<T> &p1 = (*(i.vertices_))[face[1]];
   const Vec3r<T> &p2 = (*(i.vertices_))[face[2]];
+
   const Vec3r<T> A = p0 - ray_org;
   const Vec3r<T> B = p1 - ray_org;
   const Vec3r<T> C = p2 - ray_org;
 
-  const T Ax = A[k[0]] - S[0] * A[k[2]];
-  const T Ay = A[k[1]] - S[1] * A[k[2]];
-  const T Bx = B[k[0]] - S[0] * B[k[2]];
-  const T By = B[k[1]] - S[1] * B[k[2]];
-  const T Cx = C[k[0]] - S[0] * C[k[2]];
-  const T Cy = C[k[1]] - S[1] * C[k[2]];
+  /**
+   * TODO: These micro-optimizations need to be benchmarked.
+   * precompute s such that: s[0,1] are inverted.
+   * fma (-s, b, a)
+   */
+
+#ifdef BLAZERT_USE_FMA
+  const T Ax = std::fma(s[0], A[k[2]], A[k[0]]);
+  const T Ay = std::fma(s[1], A[k[2]], A[k[1]]);
+  const T Bx = std::fma(s[0], B[k[2]], B[k[0]]);
+  const T By = std::fma(s[1], B[k[2]], B[k[1]]);
+  const T Cx = std::fma(s[0], C[k[2]], C[k[0]]);
+  const T Cy = std::fma(s[1], C[k[2]], C[k[1]]);
+#else
+  const T Ax = s[0] * A[k[2]] + A[k[0]];
+  const T Ay = s[1] * A[k[2]] + A[k[1]];
+  const T Bx = s[0] * B[k[2]] + B[k[0]];
+  const T By = s[1] * B[k[2]] + B[k[1]];
+  const T Cx = s[0] * C[k[2]] + C[k[0]];
+  const T Cy = s[1] * C[k[2]] + C[k[1]];
+#endif
 
   T U = Cx * By - Cy * Bx;
   T V = Ax * Cy - Ay * Cx;
   T W = Bx * Ay - By * Ax;
 
   // Fall back to test against edges using double precision.
-  if (U == static_cast<T>(0.) || V == static_cast<T>(0.) || W == static_cast<T>(0.)) {
-    double CxBy = static_cast<double>(Cx) * static_cast<double>(By);
-    double CyBx = static_cast<double>(Cy) * static_cast<double>(Bx);
-    U = static_cast<T>(CxBy - CyBx);
+  if constexpr (std::is_same<T, float>::value) {
+    if (U == static_cast<T>(0.) || V == static_cast<T>(0.) || W == static_cast<T>(0.)) {
+      double CxBy = static_cast<double>(Cx) * static_cast<double>(By);
+      double CyBx = static_cast<double>(Cy) * static_cast<double>(Bx);
+      U = static_cast<T>(CxBy - CyBx);
 
-    double AxCy = static_cast<double>(Ax) * static_cast<double>(Cy);
-    double AyCx = static_cast<double>(Ay) * static_cast<double>(Cx);
-    V = static_cast<T>(AxCy - AyCx);
+      double AxCy = static_cast<double>(Ax) * static_cast<double>(Cy);
+      double AyCx = static_cast<double>(Ay) * static_cast<double>(Cx);
+      V = static_cast<T>(AxCy - AyCx);
 
-    double BxAy = static_cast<double>(Bx) * static_cast<double>(Ay);
-    double ByAx = static_cast<double>(By) * static_cast<double>(Ax);
-    W = static_cast<T>(BxAy - ByAx);
+      double BxAy = static_cast<double>(Bx) * static_cast<double>(Ay);
+      double ByAx = static_cast<double>(By) * static_cast<double>(Ax);
+      W = static_cast<T>(BxAy - ByAx);
+    }
   }
 
   if (((U < static_cast<T>(0.)) | (V < static_cast<T>(0.)) | (W < static_cast<T>(0.))) && (cull_back_face | (U > static_cast<T>(0.)) | (V > static_cast<T>(0.)) | (W > static_cast<T>(0.)))) {
@@ -267,14 +275,21 @@ __attribute__((always_inline)) inline bool intersect(TriangleIntersector<T> &i, 
   }
 
   const T det = U + V + W;
+
   if (det == static_cast<T>(0.0)) {
     return false;
   }
 
-  const T Az = S[2] * A[k[2]];
-  const T Bz = S[2] * B[k[2]];
-  const T Cz = S[2] * C[k[2]];
+  const T Az = s[2] * A[k[2]];
+  const T Bz = s[2] * B[k[2]];
+  const T Cz = s[2] * C[k[2]];
+
+  // TODO: This needs to be benchmarked.
+#ifdef BLAZERT_USE_FMA
+  const T D = std::fma(U, Az, std::fma(V, Bz, W*Cz));
+#else
   const T D = U * Az + V * Bz + W * Cz;
+#endif
 
   const T rcpDet = static_cast<T>(1.0) / det;
   const T tt = D * rcpDet;
