@@ -339,8 +339,8 @@ inline bool check_for_occluder(const Vec3r<T> &p1, const Vec3r<T> &p2, const Mes
   dir = normalize(dir);
 
   blazert::Ray<T> shadow_ray{p1, dir};
-  shadow_ray.min_t = ray_eps;
-  shadow_ray.max_t = dist - ray_eps;
+  shadow_ray.min_hit_distance = ray_eps;
+  shadow_ray.max_hit_distance = dist - ray_eps;
 
   blazert::TriangleIntersector<T> triangle_intersector{mesh.vertices, mesh.faces};
   blazert::RayHit<T> rayhit{};
@@ -458,8 +458,8 @@ int main(int argc, char **argv) {
 
           blazert::Ray<ft> ray{rayOrg, rayDir};
           ft kFar{1.0e+30};
-          ray.min_t = ft(0.001);
-          ray.max_t = kFar;
+          ray.min_hit_distance = ft(0.001);
+          ray.max_hit_distance = kFar;
 
           blazert::TriangleIntersector<ft> triangle_intersector{mesh->vertices, mesh->faces};
           blazert::RayHit<ft> rayhit{};
@@ -469,7 +469,7 @@ int main(int argc, char **argv) {
             break;
           }
 
-          rayOrg += (rayDir * rayhit.t);
+          rayOrg += (rayDir * rayhit.hit_distance);
 
           unsigned int fid = rayhit.prim_id;
           Vec3r<ft> norm{0, 0, 0};
