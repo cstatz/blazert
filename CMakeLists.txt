@@ -4,12 +4,12 @@ PROJECT(blazert)
 # Compiler Flags
 set(CMAKE_CXX_STANDARD 17)
 IF(CMAKE_COMPILER_IS_GNUCXX)
-    set(CMAKE_CXX_FLAGS "-std=c++17 -Wall -fPIC -funroll-loops -march=native")
+    set(CMAKE_CXX_FLAGS "-std=c++17 -Ofast -Wall -fPIC -funroll-loops -mfma -march=native -fomit-frame-pointer")
 ELSEIF(MSVC)
     # this currently work but is not really the way to go..
     set(CMAKE_CXX_FLAGS "/std:c++17 /Wall /arch:AVX")
 ELSE()
-    set(CMAKE_CXX_FLAGS "-std=c++17 -Wall -fPIC -funroll-loops -march=native")
+    set(CMAKE_CXX_FLAGS "-std=c++17 -Ofast -Wall -fPIC -funroll-loops -mfma -march=native -fno-signed-zeros -freciprocal-math -ffp-contract=fast -fomit-frame-pointer -fno-finite-math-only")
 ENDIF(CMAKE_COMPILER_IS_GNUCXX)
 
 IF(FORCE_COLOR_OUTPUT)
