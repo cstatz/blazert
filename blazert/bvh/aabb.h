@@ -8,16 +8,6 @@
 
 namespace blazert {
 
-// NaN-safe min and max function. TODO: constexpr
-template <class T>
-inline const T &safemin(const T &a, const T &b) {
-  return (a < b) ? a : b;
-}
-template <class T>
-inline const T &safemax(const T &a, const T &b) {
-  return (a > b) ? a : b;
-}
-
 // TODO: Change signature to Ray<T> and BVHNode<T>. If done correctly there should not be any performance issue and testing will be a lot easier.
 template<typename T>
 inline bool IntersectRayAABB(T &tmin, T &tmax, const T &min_t, const T &max_t, const Vec3r<T> &bmin, const Vec3r<T> &bmax,
@@ -42,17 +32,19 @@ inline bool IntersectRayAABB(T &tmin, T &tmax, const T &min_t, const T &max_t, c
   const T tmin_z = (min_z - ray_org[2]) * ray_inv_dir[2];
   const T tmax_z = (max_z - ray_org[2]) * ray_inv_dir[2] * l1;
 
-  const T temp_min = safemax(tmin_z, safemax(tmin_y, safemax(tmin_x, min_t)));
-  const T temp_max = safemin(tmax_z, safemin(tmax_y, safemin(tmax_x, max_t)));
+  // TODO: Benchmark this:
+  const T temp_min = std::max(tmin_z, std::max(tmin_y, std::max(tmin_x, min_t)));
+  const T temp_max = std::min(tmax_z, std::min(tmax_y, std::min(tmax_x, max_t)));
+  //const T temp_min = std::max({tmin_z, tmin_y, tmin_x, min_t});
+  //const T temp_max = std::min({tmax_z, tmax_y, tmax_x, max_t});
 
-  if (temp_min <= temp_max) {
-    tmin = temp_min;
-    tmax = temp_max;
+  // It is more likely that we hit a box.
+  if (temp_min > temp_max) return false;
 
-    return true;
-  }
+  tmin = temp_min;
+  tmax = temp_max;
 
-  return false;
+  return true;
 }
 }// namespace blazert
 #endif// BLAZERT_BVH_AABB_H
