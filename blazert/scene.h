@@ -39,7 +39,7 @@ public:
   Scene() = default;
 
   // TODO: default arguments ...
-  inline unsigned int add_mesh(const Vec3rList<T> &vertices, const Vec3iList &triangles);
+  unsigned int add_mesh(const Vec3rList<T> &vertices, const Vec3iList &triangles);
   //inline unsigned int add_mesh(const Vec3rList<T> &vertices, const Vec3iList &triangles, Vec3rList &vertex_normals);
   //inline unsigned int add_sphere(const Vec3r<T> &center, const Vec3r<T> &radii, const Matrix3r<T> &rotation);
   //inline unsigned int add_plane(const Vec3r<T> &origin, const Vec3r<T> &bmin, const Vec3r<T> &bmax, const Matrix3r<T> &rotation);
@@ -47,7 +47,7 @@ public:
 
   //template<class X, ...> add_custom_primitive( ... );
 
-  inline bool commit() {
+  bool commit() {
 
     // Build all the BVH ...
     if (has_mesh) {
@@ -87,7 +87,7 @@ __attribute__((always_inline)) __attribute__((flatten)) inline bool intersect1(c
 
 // Implementation of the add_ functions goes below ..
 template<typename T>
-inline unsigned int Scene<T>::add_mesh(const Vec3rList<T> &vertices, const Vec3iList &triangles) {
+unsigned int Scene<T>::add_mesh(const Vec3rList<T> &vertices, const Vec3iList &triangles) {
 
   // TODO: For now, only one mesh is supported ...
   if ((!has_mesh) && (!has_been_committed)) {
