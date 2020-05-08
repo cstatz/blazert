@@ -8,53 +8,28 @@
 #include <blazert/defines.h>
 
 namespace blazert {
-// RayType
-typedef enum {
-  RAY_TYPE_NONE = 0x0,
-  //RAY_TYPE_PRIMARY = 0x1,
-  //RAY_TYPE_SECONDARY = 0x2,
-  //RAY_TYPE_DIFFUSE = 0x4,
-  //RAY_TYPE_REFLECTION = 0x8,
-  //RAY_TYPE_REFRACTION = 0x10
-} RayType;
-
-#ifdef __clang__
-#pragma clang diagnostic push
-#if __has_warning("-Wzero-as-null-pointer-constant")
-#pragma clang diagnostic ignored "-Wzero-as-null-pointer-constant"
-#endif
-#endif
 
 template<typename T>
 class alignas(sizeof(Vec3r<T>)) Ray {
 public:
-  Vec3r<T> org;
-  Vec3r<T> dir;
-  T min_t = 0.;                           // minimum ray hit distance.
-  T max_t = std::numeric_limits<T>::max();// maximum ray hit distance.
-  unsigned int type = RAY_TYPE_NONE;      // ray type
+  const Vec3r<T> origin;
+  const Vec3r<T> direction;  // Direction needs to be always normalized. We ensure this in the constructor.
+  T min_hit_distance;
+  T max_hit_distance;
 
 public:
-  Ray() : org({0., 0., 0.}), dir({0., 0., -1.}) {};
-  Ray(const Vec3r<T> &org_, const Vec3r<T> &dir_) : org(org_), dir(normalize(dir_)) {};
+  Ray() = delete;
+  Ray(const Vec3r<T> &origin, const Vec3r<T> &direction, T min_hit_distance = T(0.), T max_hit_distance = std::numeric_limits<T>::max())
+      : origin(origin), direction(normalize(direction)), min_hit_distance(min_hit_distance), max_hit_distance(max_hit_distance) {};
 };
 
 template<typename T>
-class alignas(Vec3r<T>) RayHit {
-public:
+struct alignas(Vec3r<T>) RayHit {
   Vec3r<T> normal;
   Vec2r<T> uv;
-  T t;
+  T hit_distance;
   unsigned int prim_id = -1;
 };
-
-template<typename T>
-struct alignas(sizeof(Vec3r<T>)) RayCoeff {
-  Vec3r<T> S;
-  Vec3ui k;
-};
-
-
 
 }// namespace blazert
 
