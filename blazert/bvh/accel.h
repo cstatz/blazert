@@ -270,7 +270,7 @@ inline bool test_leaf_node(const BVHNode<T> &node, I &intersector, const std::ve
 }
 
 template<typename T, class I, class H>
-__attribute__((flatten)) __attribute__((always_inline)) inline bool traverse(const BVH<T> &bvh, const Ray<T> &ray, I &intersector, H &isect, const BVHTraceOptions<T> &options) {
+inline bool traverse(const BVH<T> &bvh, const Ray<T> &ray, I &intersector, H &isect, const BVHTraceOptions<T> &options) {
 
   int node_stack_index = 0;
   unsigned int node_stack[BLAZERT_MAX_STACK_DEPTH];

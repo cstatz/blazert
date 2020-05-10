@@ -13,18 +13,32 @@ using blaze::unaligned;
 using blaze::padded;
 using blaze::unpadded;
 
-// You can redefine these types according to you needs by by including the definitions prior to any blazert header and defining BLAZERT_DATATYPES_H_
+#ifdef EMBREE_TRACING
+// Embree will not work if the data is not at least padded.
+#define BLAZERT_USE_PADDED_AND_ALIGNED_TYPES
+#endif
 
+#ifndef BLAZERT_USE_PADDED_AND_ALIGNED_TYPES
+#define P_ unpadded
+#define A_ unaligned
+#define BLAZEALIGN
+#else
+#define P_ padded
+#define A_ aligned
+#define BLAZEALIGN alignas(sizeof(Vec3r<T>))
+#endif
+
+// You can redefine these types according to you needs by by including the definitions prior to any blazert header and defining BLAZERT_DATATYPES_H_
 namespace blazert {
 
 // Vectors
-template<class T> using Vec3r = StaticVector<T, 3UL, columnVector, aligned, padded>;
-template<class T> using Vec2r = StaticVector<T, 2UL, columnVector, aligned, padded>;
-using Vec3ui = StaticVector<unsigned int, 3UL, columnVector, aligned, padded>;
-using vec2ui = StaticVector<unsigned int, 2UL, columnVector, aligned, padded>;
+template<class T> using Vec3r = StaticVector<T, 3UL, columnVector, A_, P_>;
+template<class T> using Vec2r = StaticVector<T, 2UL, columnVector, A_, P_>;
+using Vec3ui = StaticVector<unsigned int, 3UL, columnVector, A_, P_>;
+using vec2ui = StaticVector<unsigned int, 2UL, columnVector, A_, P_>;
 
 // Matrices
-template<class T> using Mat3r = blaze::StaticMatrix<T, 3UL, 3UL, blaze::rowMajor, blaze::aligned, blaze::padded>;
+template<class T> using Mat3r = blaze::StaticMatrix<T, 3UL, 3UL, blaze::rowMajor, A_, P_>;
 
 // Container
 template<class T> using Vec3rList = std::vector<Vec3r<T>, blaze::AlignedAllocator<Vec3r<T>>>;

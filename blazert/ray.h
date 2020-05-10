@@ -10,7 +10,7 @@
 namespace blazert {
 
 template<typename T>
-class alignas(sizeof(Vec3r<T>)) Ray {
+class BLAZEALIGN Ray {
 public:
   const Vec3r<T> origin;
   const Vec3r<T> direction;  // Direction needs to be always normalized. We ensure this in the constructor.
@@ -24,7 +24,7 @@ public:
 };
 
 template<typename T>
-struct alignas(Vec3r<T>) RayHit {
+struct BLAZEALIGN RayHit {
   Vec3r<T> normal;
   Vec2r<T> uv;
   T hit_distance;

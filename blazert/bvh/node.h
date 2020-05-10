@@ -7,7 +7,7 @@
 namespace blazert {
 
 template<typename T>
-class alignas(sizeof(Vec3r<T>)) BVHNode {
+class BLAZEALIGN BVHNode {
 public:
   BVHNode() {}
   BVHNode(const BVHNode &rhs) {
@@ -44,7 +44,7 @@ public:
  * Node traversal is used for two-level ray tracing(efficient ray traversal of a scene hierarchy)
  */
 template<typename T>
-class alignas(sizeof(Vec3r<T>)) NodeHit {
+class BLAZEALIGN NodeHit {
 public:
   NodeHit()
       : t_min(std::numeric_limits<T>::max()),
@@ -77,13 +77,13 @@ public:
  *
  * Comparator object for finding nearest hit point in node traversal.
  */
-template<typename T>
-class NodeHitComparator {
-public:
-  inline bool operator() (const NodeHit<T> &a, const NodeHit<T> &b) const {
-    return a.t_min < b.t_min;
-  }
-};
+//template<typename T>
+//class NodeHitComparator {
+//public:
+//  inline bool operator() (const NodeHit<T> &a, const NodeHit<T> &b) const {
+//    return a.t_min < b.t_min;
+//  }
+//};
 }// namespace blazert
 
 #endif// BLAZERT_BVH_NODE_H
