@@ -3,8 +3,6 @@
 #define BLAZERT_BVH_BINBUFFER_H_
 
 #include <blazert/bvh/sah.h>
-#include <cstring>
-#include <iostream>
 
 namespace blazert {
 
@@ -14,7 +12,7 @@ template<typename T> inline T calculate_box_surface(const Vec3r<T> &min, const V
 }
 
 template <typename T>
-struct alignas(Vec3r<T>) Bin {
+struct BLAZERTALIGN Bin {
   BBox<T> bbox;
   size_t  count;
   T cost;
@@ -23,7 +21,7 @@ struct alignas(Vec3r<T>) Bin {
 };
 
 template<class T>
-struct alignas(Vec3r<T>) BinBuffer {
+struct BLAZERTALIGN BinBuffer {
   explicit BinBuffer(unsigned int size) {
     bin_size = size;
     // TODO: This is not obvious ..

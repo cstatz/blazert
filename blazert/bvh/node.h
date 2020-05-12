@@ -7,7 +7,7 @@
 namespace blazert {
 
 template<typename T>
-class BLAZEALIGN BVHNode {
+class BLAZERTALIGN BVHNode {
 public:
   BVHNode() {}
   BVHNode(const BVHNode &rhs) {
@@ -44,7 +44,7 @@ public:
  * Node traversal is used for two-level ray tracing(efficient ray traversal of a scene hierarchy)
  */
 template<typename T>
-class BLAZEALIGN NodeHit {
+class BLAZERTALIGN NodeHit {
 public:
   NodeHit()
       : t_min(std::numeric_limits<T>::max()),
