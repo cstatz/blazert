@@ -21,11 +21,11 @@ using blaze::unpadded;
 #ifndef BLAZERT_USE_PADDED_AND_ALIGNED_TYPES
 #define P_ unpadded
 #define A_ unaligned
-#define BLAZEALIGN
+#define BLAZERTALIGN
 #else
 #define P_ padded
 #define A_ aligned
-#define BLAZEALIGN alignas(sizeof(Vec3r<T>))
+#define BLAZERTALIGN alignas(sizeof(Vec3r<T>))
 #endif
 
 // You can redefine these types according to you needs by by including the definitions prior to any blazert header and defining BLAZERT_DATATYPES_H_
