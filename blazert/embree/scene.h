@@ -18,10 +18,9 @@ public:
   RTCScene scene;
   BlazertScene<T> b_scene;
   bool has_been_committed;
-  unsigned int primitives;
 
   EmbreeScene() : device(rtcNewDevice("verbose=0,start_threads=1,threads=4,set_affinity=1")),
-                  scene(rtcNewScene(device)), has_been_committed(false), primitives(0) {
+                  scene(rtcNewScene(device)), has_been_committed(false) {
     if constexpr(std::is_same<double, T>::value) {
       std::cout << "-> Attention: Using embree bvh and traversal for float tracing. <-" << std::endl;
       std::cout << "This will also impact double precision tracing by blazert." << std::endl;
@@ -93,10 +92,9 @@ unsigned int EmbreeScene<T>::add_mesh(const Vec3rList<T> &vertices, const Vec3iL
     rtcSetSharedGeometryBuffer(geometry, RTC_BUFFER_TYPE_INDEX, 0, RTC_FORMAT_UINT3, (void *) (triangles.data()), 0, bytestride_int, triangles.size());
     rtcSetSharedGeometryBuffer(geometry, RTC_BUFFER_TYPE_VERTEX, 0, RTC_FORMAT_FLOAT3, (void *) (vertices.data()), 0, bytestride_float, vertices.size());
     rtcCommitGeometry(geometry);
-    auto geomID = rtcAttachGeometry(scene, geometry);
-    id = primitives;
+    auto geom_id = rtcAttachGeometry(scene, geometry);
+    id = geom_id;
 
-    primitives += triangles.size();
   } else {
     id = b_scene.add_mesh(vertices, triangles);
   }

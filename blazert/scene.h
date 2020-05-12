@@ -26,7 +26,7 @@ public:
   mutable bool has_plane = false;
   mutable bool has_box = false;
   mutable bool has_cylinder = false;
-  mutable unsigned int primitives = 0;
+  mutable unsigned int geometries = 0;
 
   TriangleMesh<T> triangles_;
   TriangleSAHPred<T> triangles_sah_;
@@ -110,12 +110,12 @@ unsigned int BlazertScene<T>::add_mesh(const Vec3rList<T> &vertices, const Vec3i
     triangles_ = TriangleMesh(vertices, triangles);
     triangles_sah_ = TriangleSAHPred(vertices, triangles);
 
-    const unsigned int prim_id = primitives;
-    primitives += triangles.size();
+    const unsigned int geom_id = geometries;
+    geometries += 1;
     has_mesh = true;
     has_been_committed = false;
 
-    return prim_id;
+    return geom_id;
   } else {
     return -1;
   }
@@ -128,11 +128,11 @@ unsigned int BlazertScene<T>::add_spheres(const std::vector<Vec3r<T>> &centers, 
     spheres_ = Sphere(centers, radiuss);
     spheres_sah_ = SphereSAHPred(centers, radiuss);
 
-    const unsigned int prim_id = primitives;
-    primitives += 1;
+    const unsigned int geom_id = geometries;
+    geometries += 1;
     has_sphere = true;
     has_been_committed = false;
-    return prim_id;
+    return geom_id;
   } else {
     return -1;
   }
