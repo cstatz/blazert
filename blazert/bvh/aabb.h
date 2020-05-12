@@ -12,6 +12,12 @@ namespace blazert {
 template<typename T>
 inline bool IntersectRayAABB(T &tmin, T &tmax, const T &min_t, const T &max_t, const Vec3r<T> &bmin, const Vec3r<T> &bmax,
                              const Vec3r<T> &ray_org, const Vec3r<T> &ray_inv_dir, const Vec3ui &ray_dir_sign) {
+  // tmin/tmax: max/min distance of ray origin <-> intersections with BB
+  // min_t/max_t: limits of the simulation (max/min relevant distance)
+  // bmin/bmax: limits of the BB
+  // ray_org: origin of the ray
+  // ray_inv_dir: inversed direction of the ray
+  // ray_dir_sign: sign of the ray direction
 
   // TODO: This is ugly, but seems to work. Maybe not the fastest ... How can this be vectorized?
   const T min_x = ray_dir_sign[0] ? bmax[0] : bmin[0];
