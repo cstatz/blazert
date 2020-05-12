@@ -10,6 +10,7 @@
 #include <blazert/datatypes.h>
 #include <blazert/primitives/sphere.h>
 #include <blazert/ray.h>
+#include <memory>
 //#include <blazert/scene.h>
 
 #include "../catch.hpp"
@@ -22,11 +23,14 @@ TEST_CASE("Sphere", "[bounding box, distance to surface, intersections]") {
   SECTION("BOUNDING BOX") {
     const Vec3r<double> center{1.f, 1.f, 1.f};
     float radius = 1.f;
-    std::vector<Vec3r<double>> centers{center};
-    std::vector<double> radiuss{radius};
+
+    auto centers = std::unique_ptr<Vec3rList<double>>();
+    auto radiuss = std::unique_ptr<std::vector<double>>();
+    centers->emplace_back(center);
+    radiuss->emplace_back(radius);
 
     Vec3r<double> bmin, bmax;
-    Sphere<double> sphere(centers, radiuss);
+    Sphere<double> sphere(*centers, *radiuss);
     sphere.BoundingBox(bmin, bmax, 0);
 
     REQUIRE(bmin[0] == Approx(0.f));
@@ -35,6 +39,7 @@ TEST_CASE("Sphere", "[bounding box, distance to surface, intersections]") {
     REQUIRE(bmax[0] == Approx(2.f));
     REQUIRE(bmax[1] == Approx(2.f));
     REQUIRE(bmax[2] == Approx(2.f));
+
   }
 
   //  SECTION("DISTANCE TO SURFACE") {
@@ -75,11 +80,15 @@ TEST_CASE("Sphere", "[bounding box, distance to surface, intersections]") {
       Ray<double> ray{org, dir};
       RayHit<double> rayhit;
 
-      std::vector<Vec3r<double>> centers{center};
-      std::vector<double> radiuss{radius};
+      // Centers and Radii should go on the heap.
+      auto centers = std::unique_ptr<Vec3rList<double>>();
+      auto radiuss = std::unique_ptr<std::vector<double>>();
 
-      Sphere<double> sphere(centers, radiuss);
-      SphereSAHPred<double> sphere_sah(centers, radiuss);
+      centers->emplace_back(center);
+      radiuss->emplace_back(radius);
+
+      Sphere<double> sphere(*centers, *radiuss);
+      SphereSAHPred<double> sphere_sah(*centers, *radiuss);
 
       BVHBuildOptions<double> build_options;
       BVHTraceOptions<double> trace_options;
@@ -87,26 +96,32 @@ TEST_CASE("Sphere", "[bounding box, distance to surface, intersections]") {
       BVH<double> bvh_sphere;
       bvh_sphere.build(sphere, sphere_sah, build_options);
 
-      SphereIntersector<double> sphere_intersector{centers, radiuss};
+      SphereIntersector<double> sphere_intersector{*centers, *radiuss};
       const bool hit_sphere = traverse(bvh_sphere, ray, sphere_intersector, rayhit, trace_options);
 
       // should be in distance of 1
-      REQUIRE(hit_sphere == true);
+      REQUIRE(hit_sphere);
       REQUIRE(rayhit.hit_distance == Approx(static_cast<double>(1.f)));
+
     }
   }
 }
 
 TEST_CASE("Scene with Sphere", "[]") {
   SECTION("Intersection") {
-    std::vector<Vec3r<double>> centers{Vec3r<double>{0.f, 0.f, 0.f}};
-    std::vector<double>radiuss{1.};
+
+
+    auto centers = std::unique_ptr<Vec3rList<double>>();
+    auto radiuss = std::unique_ptr<std::vector<double>>();
+
+    centers->emplace_back(Vec3r<double>{0.});
+    radiuss->emplace_back(1.);
 
     Vec3r<double> org{2.f, 0.f, 0.f};
     Vec3r<double> dir{-1.f, 0.f, 0.f};
 
     Scene<double> scene;
-    unsigned int prim_id = scene.add_spheres(centers, radiuss);
+    unsigned int prim_id = scene.add_spheres(*centers, *radiuss);
     scene.commit();
 
     const Ray<double> ray{org, dir};
@@ -115,7 +130,7 @@ TEST_CASE("Scene with Sphere", "[]") {
     const bool hit = intersect1(scene, ray, rayhit);
 
     REQUIRE(prim_id == 0);
-    REQUIRE(hit == true);
+    REQUIRE(hit);
     REQUIRE(rayhit.hit_distance == Approx(1));
   }
 }
