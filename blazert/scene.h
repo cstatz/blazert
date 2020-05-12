@@ -2,11 +2,13 @@
 #ifndef BLAZERT_BLAZERT_SCENE_H
 #define BLAZERT_BLAZERT_SCENE_H
 
-
-#include <blazert/primitives/trimesh.h>
 #include <blazert/bvh/accel.h>
 #include <blazert/bvh/options.h>
 #include <blazert/datatypes.h>
+
+#include <blazert/primitives/sphere.h>
+#include <blazert/primitives/trimesh.h>
+
 #include <blazert/ray.h>
 
 namespace blazert {
@@ -29,8 +31,11 @@ public:
   TriangleMesh<T> triangles_;
   TriangleSAHPred<T> triangles_sah_;
 
+  Sphere<T> spheres_;                 // default constructed
+  SphereSAHPred<T> spheres_sah_;// default constructed
+
   BVH<T> bvh_mesh;
-  //BVHAccel<T> sphere_accel;
+  BVH<T> bvh_sphere;
   //BVHAccel<T> plane_accel;
   //BVHAccel<T> box_accel;
   //BVHAccel<T> cylinder_accel;
@@ -41,7 +46,7 @@ public:
   // TODO: default arguments ...
   unsigned int add_mesh(const Vec3rList<T> &vertices, const Vec3iList &triangles);
   //inline unsigned int add_mesh(const Vec3rList<T> &vertices, const Vec3iList &triangles, Vec3rList &vertex_normals);
-  //inline unsigned int add_sphere(const Vec3r<T> &center, const Vec3r<T> &radii, const Matrix3r<T> &rotation);
+  inline unsigned int add_spheres(const std::vector<Vec3r<T>> &centers, const std::vector<T> &radiuss);
   //inline unsigned int add_plane(const Vec3r<T> &origin, const Vec3r<T> &bmin, const Vec3r<T> &bmax, const Matrix3r<T> &rotation);
   //inline unsigned int add_box(const Vec3r<T> &center, const Vec3r<T> &size, const Matrix3r<T> &rotation);
 
@@ -54,7 +59,10 @@ public:
       bvh_mesh.build(triangles_, triangles_sah_, build_options);
     }
 
-    //sphere_accel.Build()
+    if (has_sphere) {
+      bvh_sphere.build(spheres_, spheres_sah_, build_options);
+    }
+
     //place_accel.Build()
     //box_accel.Build()
     has_been_committed = true;
@@ -62,7 +70,7 @@ public:
   };
 };
 
-  // TODO: Performance critical code should not be a member function (hidden pointer *this), since the compiler will not know how to optimize.
+// TODO: Performance critical code should not be a member function (hidden pointer *this), since the compiler will not know how to optimize.
 template<typename T>
 inline bool intersect1(const BlazertScene<T> &scene, const Ray<T> &ray, RayHit<T> &rayhit) {
 
@@ -81,9 +89,17 @@ inline bool intersect1(const BlazertScene<T> &scene, const Ray<T> &ray, RayHit<T
     }
   }
 
-  return hit;
-};
+  if (scene.has_sphere) {
+    SphereIntersector<T> sphere_intersector{*(scene.spheres_.centers_), *(scene.spheres_.radiuss_)};
+    const bool hit_sphere = traverse(scene.bvh_sphere, ray, sphere_intersector, temp_rayhit, scene.trace_options);
+    if (hit_sphere) {
+      rayhit = temp_rayhit;
+      hit += hit_sphere;
+    }
+  }
 
+  return hit;
+}
 
 // Implementation of the add_ functions goes below ..
 template<typename T>
@@ -97,13 +113,30 @@ unsigned int BlazertScene<T>::add_mesh(const Vec3rList<T> &vertices, const Vec3i
     const unsigned int prim_id = primitives;
     primitives += triangles.size();
     has_mesh = true;
+    has_been_committed = false;
 
     return prim_id;
-  }
-  else {
+  } else {
     return -1;
   }
-};
+}
+
+template<typename T>
+unsigned int BlazertScene<T>::add_spheres(const std::vector<Vec3r<T>> &centers, const std::vector<T> &radiuss) {
+
+  if ((!has_sphere) && (!has_been_committed)) {
+    spheres_ = Sphere(centers, radiuss);
+    spheres_sah_ = SphereSAHPred(centers, radiuss);
+
+    const unsigned int prim_id = primitives;
+    primitives += 1;
+    has_sphere = true;
+    has_been_committed = false;
+    return prim_id;
+  } else {
+    return -1;
+  }
+}
 
 }// namespace blazert
 
