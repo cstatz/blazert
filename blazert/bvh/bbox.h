@@ -14,7 +14,7 @@ namespace blazert {
  * @brief Bounding box.
  */
 template<typename T>
-class alignas(sizeof(Vec3r<T>)) BBox {
+class BLAZEALIGN BBox {
 public:
   Vec3r<T> bmin;
   Vec3r<T> bmax;

@@ -1,4 +1,7 @@
 include_directories(${BLAZE_INCLUDE_DIRS})
 add_subdirectory(benchmark_blaze)
 add_subdirectory(scene)
+IF(DEFINED EMBREE_INCLUDE_DIRS)
+    add_subdirectory(scene_embree)
+ENDIF()
 add_subdirectory(path_tracer)
