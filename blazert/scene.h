@@ -12,7 +12,7 @@
 namespace blazert {
 
 template<typename T>
-class Scene {
+class BlazertScene {
 public:
   BVHBuildOptions<T> build_options;
   BVHTraceOptions<T> trace_options;
@@ -36,10 +36,10 @@ public:
   //BVHAccel<T> cylinder_accel;
 
 public:
-  Scene() = default;
+  BlazertScene() = default;
 
   // TODO: default arguments ...
-  inline unsigned int add_mesh(const Vec3rList<T> &vertices, const Vec3iList &triangles);
+  unsigned int add_mesh(const Vec3rList<T> &vertices, const Vec3iList &triangles);
   //inline unsigned int add_mesh(const Vec3rList<T> &vertices, const Vec3iList &triangles, Vec3rList &vertex_normals);
   //inline unsigned int add_sphere(const Vec3r<T> &center, const Vec3r<T> &radii, const Matrix3r<T> &rotation);
   //inline unsigned int add_plane(const Vec3r<T> &origin, const Vec3r<T> &bmin, const Vec3r<T> &bmax, const Matrix3r<T> &rotation);
@@ -47,7 +47,7 @@ public:
 
   //template<class X, ...> add_custom_primitive( ... );
 
-  inline bool commit() {
+  bool commit() {
 
     // Build all the BVH ...
     if (has_mesh) {
@@ -64,7 +64,7 @@ public:
 
   // TODO: Performance critical code should not be a member function (hidden pointer *this), since the compiler will not know how to optimize.
 template<typename T>
-__attribute__((always_inline)) __attribute__((flatten)) inline bool intersect1(const Scene<T> &scene, const Ray<T> &ray, RayHit<T> &rayhit) {
+inline bool intersect1(const BlazertScene<T> &scene, const Ray<T> &ray, RayHit<T> &rayhit) {
 
   // This may not be optimal, but the interface is simple and everything can (and will) be in-lined.
   RayHit<T> temp_rayhit;
@@ -72,7 +72,7 @@ __attribute__((always_inline)) __attribute__((flatten)) inline bool intersect1(c
 
   // Do the traversal for all primitives ...
   if (scene.has_mesh) {
-    TriangleIntersector<double> triangle_intersector{*(scene.triangles_.vertices_), *(scene.triangles_.faces_)};
+    TriangleIntersector<T> triangle_intersector{*(scene.triangles_.vertices_), *(scene.triangles_.faces_)};
     // TODO: Performance critical code should not be a member function (hidden pointer *this), since the compiler will not know how to optimize.
     const bool hit_mesh = traverse(scene.bvh_mesh, ray, triangle_intersector, temp_rayhit, scene.trace_options);
     if (hit_mesh) {
@@ -87,7 +87,7 @@ __attribute__((always_inline)) __attribute__((flatten)) inline bool intersect1(c
 
 // Implementation of the add_ functions goes below ..
 template<typename T>
-inline unsigned int Scene<T>::add_mesh(const Vec3rList<T> &vertices, const Vec3iList &triangles) {
+unsigned int BlazertScene<T>::add_mesh(const Vec3rList<T> &vertices, const Vec3iList &triangles) {
 
   // TODO: For now, only one mesh is supported ...
   if ((!has_mesh) && (!has_been_committed)) {

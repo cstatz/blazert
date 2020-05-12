@@ -270,23 +270,23 @@ inline bool test_leaf_node(const BVHNode<T> &node, I &intersector, const std::ve
 }
 
 template<typename T, class I, class H>
-__attribute__((flatten)) __attribute__((always_inline)) inline bool traverse(const BVH<T> &bvh, const Ray<T> &ray, I &intersector, H &isect, const BVHTraceOptions<T> &options) {
+inline bool traverse(const BVH<T> &bvh, const Ray<T> &ray, I &intersector, H &isect, const BVHTraceOptions<T> &options) {
 
   int node_stack_index = 0;
   unsigned int node_stack[BLAZERT_MAX_STACK_DEPTH];
   node_stack[0] = 0;
 
-  const Vec3ui dir_sign {static_cast<unsigned int>(ray.dir[0] < static_cast<T>(0.0) ? 1 : 0),
-                         static_cast<unsigned int>(ray.dir[1] < static_cast<T>(0.0) ? 1 : 0),
-                         static_cast<unsigned int>(ray.dir[2] < static_cast<T>(0.0) ? 1 : 0 )};
+  const Vec3ui dir_sign {static_cast<unsigned int>(ray.direction[0] < static_cast<T>(0.0) ? 1 : 0),
+                         static_cast<unsigned int>(ray.direction[1] < static_cast<T>(0.0) ? 1 : 0),
+                         static_cast<unsigned int>(ray.direction[2] < static_cast<T>(0.0) ? 1 : 0)};
 
-  const Vec3r<T> ray_inv_dir = static_cast<T>(1.)/ray.dir; // Check this is safe inv ..
-  const Vec3r<T> &ray_org = ray.org;
+  const Vec3r<T> ray_inv_dir = static_cast<T>(1.)/ray.direction; // Check this is safe inv ..
+  const Vec3r<T> &ray_org = ray.origin;
 
   const T num_max = std::numeric_limits<T>::max();
   T min_t = num_max;
   T max_t = -num_max;
-  T hit_t = ray.max_t;
+  T hit_t = ray.max_hit_distance;
 
   // Init isect info as no hit
   update_intersector(intersector, hit_t, -1);
@@ -298,7 +298,7 @@ __attribute__((flatten)) __attribute__((always_inline)) inline bool traverse(con
 
     node_stack_index--;
 
-    bool hit = IntersectRayAABB(min_t, max_t, ray.min_t, hit_t, node.bmin, node.bmax, ray_org, ray_inv_dir, dir_sign);
+    bool hit = IntersectRayAABB(min_t, max_t, ray.min_hit_distance, hit_t, node.bmin, node.bmax, ray_org, ray_inv_dir, dir_sign);
 
     if (hit) {
       // Branch node
@@ -316,7 +316,7 @@ __attribute__((flatten)) __attribute__((always_inline)) inline bool traverse(con
     }
   }
 
-  bool hit = (intersector.hit_distance < ray.max_t);
+  bool hit = (intersector.hit_distance < ray.max_hit_distance);
   if (hit) {
     post_traversal(intersector, ray, hit, isect);
   }
