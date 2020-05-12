@@ -18,15 +18,15 @@ template<typename T>
 class TriangleMesh {
 
 public:
-  const Vec3rList<T> *vertices_;
-  const Vec3iList *faces_;
+  const Vec3rList<T> *vertices;
+  const Vec3iList *faces;
   const Vec3rList<T> *center_f_;
   const Vec3rList<T> *normals_f_;
   const Vec3rList<T> *normals_v_;
 
 public:
   TriangleMesh() = default;
-  TriangleMesh(const Vec3rList<T> &vertices, const Vec3iList &faces) : vertices_(&vertices), faces_(&faces) {
+  TriangleMesh(const Vec3rList<T> &vertices, const Vec3iList &faces) : vertices(&vertices), faces(&faces) {
     // Compute centers
     // Compute face normals
     // Compute vertex normals
@@ -36,19 +36,19 @@ public:
    * @brief Returns the number of primitives in the triangle mesh
    * @return unsigned int
    */
-  inline unsigned int size() const { return (*faces_).size(); }
+  inline unsigned int size() const { return (*faces).size(); }
 
   inline void BoundingBox(Vec3r<T> &bmin, Vec3r<T> &bmax, unsigned int prim_index) const {
 
-    const Vec3ui &face = (*faces_)[prim_index];
+    const Vec3ui &face = (*faces)[prim_index];
 
     {
-      const Vec3r<T> &vertex = (*vertices_)[face[0]];
+      const Vec3r<T> &vertex = (*vertices)[face[0]];
       bmin = bmax = vertex;
     }
 
     for (unsigned int i = 1; i < 3; i++) {
-      const Vec3r<T> vertex = (*vertices_)[face[i]];
+      const Vec3r<T> vertex = (*vertices)[face[i]];
       for (int k = 0; k < 3; k++) {
         bmin[k] = std::min(bmin[k], vertex[k]);
         bmax[k] = std::max(bmax[k], vertex[k]);
@@ -58,8 +58,8 @@ public:
 
   inline void BoundingBoxAndCenter(Vec3r<T> &bmin, Vec3r<T> &bmax, Vec3r<T> &center, unsigned int prim_index) const {
     BoundingBox(bmin, bmax, prim_index);
-    const Vec3ui &face = (*faces_)[prim_index];
-    center = ((*vertices_)[face[0]] + (*vertices_)[face[1]] + (*vertices_)[face[2]]) / static_cast<T>(3.);
+    const Vec3ui &face = (*faces)[prim_index];
+    center = ((*vertices)[face[0]] + (*vertices)[face[1]] + (*vertices)[face[2]]) / static_cast<T>(3.);
   }
 };
 
@@ -69,25 +69,25 @@ class TriangleSAHPred {
 private:
   mutable unsigned int axis_;
   mutable T pos_;
-  const Vec3rList<T> *vertices_;
-  const Vec3iList *faces_;
+  const Vec3rList<T> *vertices;
+  const Vec3iList *faces;
 
 public:
   TriangleSAHPred() = default;
   TriangleSAHPred(const Vec3rList<T> &vertices, const Vec3iList &faces)
-      : axis_(0), pos_(static_cast<T>(0.0)), vertices_(&vertices), faces_(&faces) {}
+      : axis_(0), pos_(static_cast<T>(0.0)), vertices(&vertices), faces(&faces) {}
 
   TriangleSAHPred(const TriangleSAHPred<T> &rhs)
       : axis_(rhs.axis_),
         pos_(rhs.pos_),
-        vertices_(rhs.vertices_),
-        faces_(rhs.faces_) {}
+        vertices(rhs.vertices),
+        faces(rhs.faces) {}
 
   TriangleSAHPred<T> &operator=(const TriangleSAHPred<T> &rhs) {
     axis_ = rhs.axis_;
     pos_ = rhs.pos_;
-    vertices_ = rhs.vertices_;
-    faces_ = rhs.faces_;
+    vertices = rhs.vertices;
+    faces = rhs.faces;
     return (*this);
   }
 
@@ -101,10 +101,10 @@ public:
 
     // use precomputed center.
     // compute circumference from center and point (+margin), use this as a marker for the sah prediction
-    const Vec3ui &face = (*faces_)[prim_id];
-    const Vec3r<T> &p0 = (*vertices_)[face[0]];
-    const Vec3r<T> &p1 = (*vertices_)[face[1]];
-    const Vec3r<T> &p2 = (*vertices_)[face[2]];
+    const Vec3ui &face = (*faces)[prim_id];
+    const Vec3r<T> &p0 = (*vertices)[face[0]];
+    const Vec3r<T> &p1 = (*vertices)[face[1]];
+    const Vec3r<T> &p2 = (*vertices)[face[2]];
 
     const T center = p0[axis_] + p1[axis_] + p2[axis_];
 
@@ -117,8 +117,8 @@ public:
 template<typename T>
 class TriangleIntersector {
 public:
-  const Vec3rList<T> *vertices_;
-  const Vec3iList *faces_;
+  const Vec3rList<T> *vertices;
+  const Vec3iList *faces;
 
   mutable Vec3r<T> s;
   mutable Vec3ui k;
@@ -132,7 +132,7 @@ public:
 
 public:
   inline TriangleIntersector(const Vec3rList<T> &vertices, const Vec3iList &faces)
-      : vertices_(&vertices), faces_(&faces), prim_id_(-1), cull_back_face(false) {}
+      : vertices(&vertices), faces(&faces), prim_id_(-1), cull_back_face(false) {}
 };
 
 /// Update is called when initializing intersection and nearest hit is found.
@@ -163,7 +163,7 @@ __attribute__((always_inline)) inline void post_traversal(TriangleIntersector<T>
    * This function is called only once in BVH traversal.
    */
 template<typename T>
-__attribute__((always_inline))  inline void prepare_traversal(TriangleIntersector<T> &i, const Ray<T> &ray, const BVHTraceOptions<T> &trace_options) {
+inline void prepare_traversal(TriangleIntersector<T> &i, const Ray<T> &ray, const BVHTraceOptions<T> &trace_options) {
 
   i.ray_org_ = ray.origin;// copy here we'll have an allocate?
   i.t_min_ = ray.min_hit_distance;
@@ -211,17 +211,17 @@ __attribute__((always_inline))  inline void prepare_traversal(TriangleIntersecto
    * Returns true if there's intersection.
    */
 template<typename T>
-__attribute__((always_inline)) inline bool intersect(TriangleIntersector<T> &i, T &t_inout, const unsigned int prim_index) {
+inline bool intersect(TriangleIntersector<T> &i, T &t_inout, const unsigned int prim_index) {
 
   const Vec3ui &k = i.k;
   const Vec3r<T> &s = i.s;
   const Vec3r<T> &ray_org = i.ray_org_;
   const bool cull_back_face = i.cull_back_face;
 
-  const Vec3ui &face = (*(i.faces_))[prim_index];
-  const Vec3r<T> &p0 = (*(i.vertices_))[face[0]];
-  const Vec3r<T> &p1 = (*(i.vertices_))[face[1]];
-  const Vec3r<T> &p2 = (*(i.vertices_))[face[2]];
+  const Vec3ui &face = (*(i.faces))[prim_index];
+  const Vec3r<T> &p0 = (*(i.vertices))[face[0]];
+  const Vec3r<T> &p1 = (*(i.vertices))[face[1]];
+  const Vec3r<T> &p2 = (*(i.vertices))[face[2]];
 
   const Vec3r<T> A = p0 - ray_org;
   const Vec3r<T> B = p1 - ray_org;
