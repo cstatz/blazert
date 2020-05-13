@@ -12,13 +12,14 @@ Before starting the build process please ensure all dependencies are properly in
  * c++17 capable compiler
  * cmake (>3.11.0)
  * blaze (>3.7)
+ * embree (>3) if ```EMBREE_TRACING``` fallback is desired
 
 ### Build and test
 This is a header-only library. No need to build anything. Just drop it in your source directory and off you go.
 The build step is for the examples.
 We strictly recommend an out-of-source build in a separate directory (here for simplicity ```build```) 
 Starting in the source directory to project is build from the commandline as follows:
-```
+```shell script
 mkdir build
 cd build 
 cmake ../
