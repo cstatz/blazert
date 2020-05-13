@@ -30,6 +30,7 @@ public:
   };
 
   unsigned int add_mesh(const Vec3rList<T> &vertices, const Vec3iList &triangles);
+  //unsigned int add_sphere(const Vec3rList<T> &vertices, const Vec3iList &triangles);
 
   //template<class X, ...> add_custom_primitive( ... );
 
@@ -94,13 +95,14 @@ unsigned int EmbreeScene<T>::add_mesh(const Vec3rList<T> &vertices, const Vec3iL
     rtcCommitGeometry(geometry);
     auto geom_id = rtcAttachGeometry(rtcscene, geometry);
     id = geom_id;
-
   }
   else {
     id = blazertscene.add_mesh(vertices, triangles);
   }
   return id;
 }
+
+
 
 }// namespace blazert
 
