@@ -17,20 +17,20 @@ namespace blazert {
 class EmbreeSphere : public EmbreeGeometryObject
 {
 public:
-  const Vec3f& center;
+  const Vec3r<float>& center;
   const float radius;
 
 public:
-  EmbreeSphere(const EmbreeDevice& device,
-               const EmbreeScene& scene,
-               const Vec3f& center,
+  EmbreeSphere(const RTCDevice& device,
+               const RTCScene& scene,
+               const Vec3r<float>& center,
                float radius);
 
   ~EmbreeSphere() = default;
 
-  inline double distance_to_surface(const Vec3f& point) const
+  inline double distance_to_surface(const Vec3r<float>& point) const
   {
-    const Vec3f& distance = center - point;
+    const Vec3r<float>& distance = center - point;
     return abs(norm(distance) - radius);
   }
 };

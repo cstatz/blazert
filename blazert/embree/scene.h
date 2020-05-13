@@ -5,6 +5,9 @@
 #include <blazert/datatypes.h>
 #include <blazert/ray.h>
 #include <blazert/scene.h>
+
+#include <blazert/embree/primitives/EmbreeSphere.h>
+
 #include <embree3/rtcore.h>
 
 namespace blazert {
@@ -30,7 +33,7 @@ public:
   };
 
   unsigned int add_mesh(const Vec3rList<T> &vertices, const Vec3iList &triangles);
-  //unsigned int add_sphere(const Vec3rList<T> &vertices, const Vec3iList &triangles);
+  unsigned int add_spheres(const Vec3rList<T> &centers, const std::vector<T> &radii);
 
   //template<class X, ...> add_custom_primitive( ... );
 
@@ -65,16 +68,17 @@ inline bool intersect1(const EmbreeScene<T> &scene, const Ray<T> &ray, RayHit<T>
     rh.hit.geomID = RTC_INVALID_GEOMETRY_ID;
     rh.hit.instID[0] = RTC_INVALID_GEOMETRY_ID;
 
-    rtcIntersect1(scene.scene, &context, &rh);
+    rtcIntersect1(scene.rtcscene, &context, &rh);
 
     if (rh.hit.geomID != RTC_INVALID_GEOMETRY_ID) {
       hit = true;
       rayhit.prim_id = rh.hit.primID;
       rayhit.uv = {rh.hit.u, rh.hit.v};
       rayhit.hit_distance = rh.ray.tfar;
+      rayhit.normal = Vec3r<T>{rh.hit.Ng_x, rh.hit.Ng_y, rh.hit.Ng_z};
     }
   } else {
-    hit = intersect1(scene.b_scene, ray, rayhit);
+    hit = intersect1(scene.blazertscene, ray, rayhit);
   }
 
   return hit;
@@ -102,6 +106,30 @@ unsigned int EmbreeScene<T>::add_mesh(const Vec3rList<T> &vertices, const Vec3iL
   return id;
 }
 
+template<typename T>
+unsigned int EmbreeScene<T>::add_spheres(const Vec3rList<T> &centers, const std::vector<T> &radii) {
+
+  unsigned int id = -1;
+
+  if constexpr (std::is_same<float, T>::value) {
+    auto sphere = std::make_unique<EmbreeSphere>(device, rtcscene, centers[0], radii[0]);
+    id = sphere->geomID;
+//    std::map<Vec3r<T>, T> centers_radii;
+//    std::transform(centers.begin(),
+//        centers.end(),
+//        radii.begin(),
+//        std::inserter(centers_radii, centers_radii.end()),
+//        [](double a, std::complex<double> b) { return std::make_pair(a, b); });
+//
+//    for(auto&& [c,r]: centers_radii) {
+//
+//    }
+  }
+  else {
+    id = blazertscene.add_spheres(centers, radii);
+  }
+  return id;
+}
 
 
 }// namespace blazert

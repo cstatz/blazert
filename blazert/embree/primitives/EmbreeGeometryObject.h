@@ -7,18 +7,17 @@
 #ifndef EM_EMBREEGEOMETRYOBJECT_H
 #define EM_EMBREEGEOMETRYOBJECT_H
 
-#include "../../rtcore/EmbreeScene.h"
-#include "../../rtcore/common_types.h"
+#include <blazert/datatypes.h>
 
 namespace blazert {
 
 class EmbreeGeometryObject
 {
 protected:
-  const EmbreeScene& scene;
+  const RTCScene& scene;
 
 public:
-  EmbreeGeometryObject(const EmbreeScene& scene)
+  EmbreeGeometryObject(const RTCScene& scene)
     : scene(scene){};
 
   RTCGeometry geometry;
@@ -39,7 +38,7 @@ public:
  */
 
 void inline setRayHit(RTCRayHit* rh,
-                      const Vec3f& Ng,
+                      const Vec3r<float>& Ng,
                       const float u,
                       const float v,
                       const unsigned int primID,
