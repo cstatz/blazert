@@ -21,6 +21,11 @@ public:
   BVHTraceOptions<T> trace_options;
 
   mutable bool has_been_committed = false;
+  /***
+   * geometries counts the amount of different geometry types
+   * -> each geometry has its own BVH
+   * -> for each geometry, we have various primitives; the hit prim_id will be saved in the RayHit structure
+   ***/
   mutable unsigned int geometries = 0;
 
   TriangleMesh<T> triangles;
@@ -41,10 +46,18 @@ public:
    * @param vertices Vertices need to be allocated on the heap!
    * @param triangles Triangles need to be allocated on the heap!
    * @return Returns the (geometry) id for the mesh.
-   * The geom_id is set in the rayhit structure by the intersection functions.
+   * The prim_id is set in the rayhit structure by the intersection functions.
    */
   unsigned int add_mesh(const Vec3rList<T> &vertices, const Vec3iList &triangles);
-  inline unsigned int add_spheres(const Vec3rList<T> &centers, const std::vector<T> &radii);
+
+  /***
+   * Adds centers.size() spheres to the scene -> results in centers.size() primitive ideas
+   * @brief Adds spheres a centers with radii
+   * @param centers specifies centers of the spheres (needs to be allocated on heap)
+   * @param radii specifies radii of the spheres (needs to be allocated on heap)
+   * @return geometry id of the spheres
+   */
+  unsigned int add_spheres(const Vec3rList<T> &centers, const std::vector<T> &radii);
 
   bool commit() {
 
@@ -103,8 +116,7 @@ unsigned int BlazertScene<T>::add_mesh(const Vec3rList<T> &vertices, const Vec3i
     has_triangles = true;
 
     return geometries++;
-  }
-  else {
+  } else {
     return -1;
   }
 }
@@ -118,8 +130,7 @@ unsigned int BlazertScene<T>::add_spheres(const Vec3rList<T> &centers, const std
     has_spheres = true;
 
     return geometries++;
-  }
-  else {
+  } else {
     return -1;
   }
 }
