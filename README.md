@@ -33,4 +33,4 @@ For now, look at the examples and test cases.
 ## Contributing
 For contributing, please read the [contribution guide][contribution].
                                                      
-[commit]: CONTRIBUTING.md
+[contribution]: CONTRIBUTING.md
