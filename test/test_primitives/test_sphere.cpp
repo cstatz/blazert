@@ -24,8 +24,8 @@ TEST_CASE("Sphere", "[bounding box, distance to surface, intersections]") {
     const Vec3r<double> center{1.f, 1.f, 1.f};
     float radius = 1.f;
 
-    auto centers = std::unique_ptr<Vec3rList<double>>();
-    auto radiuss = std::unique_ptr<std::vector<double>>();
+    auto centers = std::make_unique<Vec3rList<double>>();
+    auto radiuss = std::make_unique<std::vector<double>>();
     centers->emplace_back(center);
     radiuss->emplace_back(radius);
 
@@ -81,8 +81,8 @@ TEST_CASE("Sphere", "[bounding box, distance to surface, intersections]") {
       RayHit<double> rayhit;
 
       // Centers and Radii should go on the heap.
-      auto centers = std::unique_ptr<Vec3rList<double>>();
-      auto radiuss = std::unique_ptr<std::vector<double>>();
+      auto centers = std::make_unique<Vec3rList<double>>();
+      auto radiuss = std::make_unique<std::vector<double>>();
 
       centers->emplace_back(center);
       radiuss->emplace_back(radius);
@@ -111,8 +111,8 @@ TEST_CASE("Scene with Sphere", "[]") {
   SECTION("Intersection") {
 
 
-    auto centers = std::unique_ptr<Vec3rList<double>>();
-    auto radiuss = std::unique_ptr<std::vector<double>>();
+    auto centers = std::make_unique<Vec3rList<double>>();
+    auto radiuss = std::make_unique<std::vector<double>>();
 
     centers->emplace_back(Vec3r<double>{0.});
     radiuss->emplace_back(1.);
@@ -126,6 +126,7 @@ TEST_CASE("Scene with Sphere", "[]") {
 
     const Ray<double> ray{org, dir};
     RayHit<double> rayhit;
+    rayhit.hit_distance = std::numeric_limits<double>::max();
 
     const bool hit = intersect1(scene, ray, rayhit);
 
