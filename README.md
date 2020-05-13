@@ -27,6 +27,10 @@ cmake --build .
 cmake --build . -- install  # If package needs to be installed 
 ctest  # Runs the tests
 ```
-
 ## Usage
 For now, look at the examples and test cases.
+
+## Contributing
+For contributing, please read the [contribution guide][contribution].
+                                                     
+[commit]: CONTRIBUTING.md
