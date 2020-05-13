@@ -44,7 +44,7 @@ public:
    * The geom_id is set in the rayhit structure by the intersection functions.
    */
   unsigned int add_mesh(const Vec3rList<T> &vertices, const Vec3iList &triangles);
-  inline unsigned int add_spheres(const Vec3rList<T> &centers, const std::vector<T> &radii);
+  unsigned int add_spheres(const Vec3rList<T> &centers, const std::vector<T> &radii);
 
   bool commit() {
 

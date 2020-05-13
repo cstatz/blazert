@@ -17,7 +17,7 @@ using namespace blazert;
 
 TEMPLATE_TEST_CASE("Sphere", "[bounding box, distance to surface, intersections]", float, double) {
 
-  SECTION("BOUNDING BOX") {
+  SECTION("bounding box") {
     const Vec3r<TestType> center{1.f, 1.f, 1.f};
     TestType radius = 1.f;
 
