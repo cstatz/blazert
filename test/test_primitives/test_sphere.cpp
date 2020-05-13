@@ -65,57 +65,57 @@ TEST_CASE("Sphere", "[bounding box, distance to surface, intersections]") {
   //    }
   //  }
   SECTION("INTERSECTIONS") {
-    SECTION("Ray origin outside sphere") {
-      Vec3r<double> center{0.f, 0.f, 0.f};
-      double radius = 1.;
-
-      Vec3r<double> org{2.f, 0.f, 0.f};
-      Vec3r<double> dir{-1.f, 0.f, 0.f};
-
-      Ray<double> ray{org, dir};
-      RayHit<double> rayhit;
-
-      std::vector<Vec3r<double>> centers{center};
-      std::vector<double> radiuss{radius};
-
-      Sphere<double> sphere(centers, radiuss);
-      SphereSAHPred<double> sphere_sah(centers, radiuss);
-
-      BVHBuildOptions<double> build_options;
-      BVHTraceOptions<double> trace_options;
-
-      BVH<double> bvh_sphere;
-      bvh_sphere.build(sphere, sphere_sah, build_options);
-
-      SphereIntersector<double> sphere_intersector{centers, radiuss};
-      const bool hit_sphere = traverse(bvh_sphere, ray, sphere_intersector, rayhit, trace_options);
-
-      // should be in distance of 1
-      REQUIRE(hit_sphere == true);
-      REQUIRE(rayhit.hit_distance == Approx(static_cast<double>(1.f)));
-    }
+//    SECTION("Ray origin outside sphere") {
+//      Vec3r<double> center{0.f, 0.f, 0.f};
+//      double radius = 1.;
+//
+//      Vec3r<double> org{2.f, 0.f, 0.f};
+//      Vec3r<double> dir{-1.f, 0.f, 0.f};
+//
+//      Ray<double> ray{org, dir};
+//      RayHit<double> rayhit;
+//
+//      std::vector<Vec3r<double>> centers{center};
+//      std::vector<double> radiuss{radius};
+//
+//      Sphere<double> sphere(centers, radiuss);
+//      SphereSAHPred<double> sphere_sah(centers, radiuss);
+//
+//      BVHBuildOptions<double> build_options;
+//      BVHTraceOptions<double> trace_options;
+//
+//      BVH<double> bvh_sphere;
+//      bvh_sphere.build(sphere, sphere_sah, build_options);
+//
+//      SphereIntersector<double> sphere_intersector{centers, radiuss};
+//      const bool hit_sphere = traverse(bvh_sphere, ray, sphere_intersector, rayhit, trace_options);
+//
+//      // should be in distance of 1
+//      REQUIRE(hit_sphere == true);
+//      REQUIRE(rayhit.hit_distance == Approx(static_cast<double>(1.f)));
+//    }
   }
 }
 
 TEST_CASE("Scene with Sphere", "[]") {
-  SECTION("Intersection") {
-    std::vector<Vec3r<double>> centers{Vec3r<double>{0.f, 0.f, 0.f}};
-    std::vector<double>radiuss{1.};
-
-    Vec3r<double> org{2.f, 0.f, 0.f};
-    Vec3r<double> dir{-1.f, 0.f, 0.f};
-
-    Scene<double> scene;
-    unsigned int prim_id = scene.add_spheres(centers, radiuss);
-    scene.commit();
-
-    const Ray<double> ray{org, dir};
-    RayHit<double> rayhit;
-
-    const bool hit = intersect1(scene, ray, rayhit);
-
-    REQUIRE(prim_id == 0);
-    REQUIRE(hit == true);
-    REQUIRE(rayhit.hit_distance == Approx(1));
-  }
+//  SECTION("Intersection") {
+//    std::vector<Vec3r<double>> centers{Vec3r<double>{0.f, 0.f, 0.f}};
+//    std::vector<double>radiuss{1.};
+//
+//    Vec3r<double> org{2.f, 0.f, 0.f};
+//    Vec3r<double> dir{-1.f, 0.f, 0.f};
+//
+//    Scene<double> scene;
+//    unsigned int prim_id = scene.add_spheres(centers, radiuss);
+//    scene.commit();
+//
+//    const Ray<double> ray{org, dir};
+//    RayHit<double> rayhit;
+//
+//    const bool hit = intersect1(scene, ray, rayhit);
+//
+//    REQUIRE(prim_id == 0);
+//    REQUIRE(hit == true);
+//    REQUIRE(rayhit.hit_distance == Approx(1));
+//  }
 }
