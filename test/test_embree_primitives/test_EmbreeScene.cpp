@@ -1,6 +1,9 @@
 //
 // Created by ogarten on 13/05/2020.
 //
+
+#ifdef EMBREE_TRACING
+
 #include "../catch.hpp"
 #include <blazert/embree/primitives/EmbreeSphere.h>
 #include <blazert/embree/scene.h>
@@ -134,3 +137,4 @@ TEMPLATE_TEST_CASE("EmbreeScene_Sphere", "intersections]", float, double) {
     }
   }
 }
+#endif
