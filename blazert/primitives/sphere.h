@@ -182,6 +182,13 @@ inline bool intersect(SphereIntersector<T> &i, T &t_inout, const unsigned int pr
   return false;
 }
 
+template<typename T>
+double distance_to_surface(Sphere<T> &sphere, const Vec3r<T>& point,  const unsigned int prim_index)
+{
+  const Vec3r<T>& distance = (*sphere.centers)[prim_index] - point;
+  return abs(norm(distance) - (*sphere.radii)[prim_index]);
+}
+
 }// namespace blazert
 
 #endif// BLAZERT_PRIMITIVES_SPHERE_H_
