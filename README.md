@@ -28,7 +28,4 @@ ctest  # Runs the tests
 ```
 
 ## Usage
-For now, look at the examples.
-
-### User-Defined Geometry
-See [user-defined geometry guide](README_USER_GEOMETRY.md) 
+For now, look at the examples and test cases.
