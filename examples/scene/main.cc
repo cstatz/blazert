@@ -3,12 +3,16 @@
 #include <iostream>
 #include <vector>
 
-typedef struct {
-  blazert::Vec3rList<double> vertices;
-  blazert::Vec3iList triangles;
-} Mesh;
+using ft = float;
 
-bool LoadObj(Mesh &mesh, const char *filename) {
+template<typename T>
+struct Mesh {
+  blazert::Vec3rList<T> vertices;
+  blazert::Vec3iList triangles;
+};
+
+template<typename T>
+bool LoadObj(Mesh<T> &mesh, const char *filename) {
 
   std::vector<tinyobj::shape_t> shapes;
   std::string err = tinyobj::LoadObj(shapes, filename);
@@ -28,7 +32,7 @@ bool LoadObj(Mesh &mesh, const char *filename) {
     }
 
     for (size_t v = 0; v < shape.mesh.positions.size() / 3; v++) {
-      blazert::Vec3r<double> vv = {shape.mesh.positions[3 * v + 0], shape.mesh.positions[3 * v + 1], shape.mesh.positions[3 * v + 2]};
+      blazert::Vec3r<T> vv = {T(shape.mesh.positions[3 * v + 0]), T(shape.mesh.positions[3 * v + 1]), T(shape.mesh.positions[3 * v + 2])};
       mesh.vertices.push_back(vv);
     }
 
@@ -50,10 +54,10 @@ int main(int argc, char **argv) {
   }
 
   // The mesh needs to be on the heap
-  Mesh *mesh = new Mesh();
+  auto mesh = new Mesh<ft>();
   LoadObj(*mesh, objFilename.c_str());
 
-  blazert::Scene<double> scene;
+  blazert::Scene<ft> scene;
   unsigned int prim_id = scene.add_mesh(mesh->vertices, mesh->triangles);
   scene.commit();
 
@@ -63,8 +67,8 @@ int main(int argc, char **argv) {
   for (int y = 0; y < height; y++) {
     for (int x = 0; x < width; x++) {
 
-      const blazert::Ray<double> ray{{0.0, 5.0, 20.0}, {(x / double(width)) - 0.5, (y / double(height)) - 0.5, -1.}};
-      blazert::RayHit<double> rayhit;
+      const blazert::Ray<ft> ray{{0.0, 5.0, 20.0}, {static_cast<ft>((x / ft(width)) - 0.5), static_cast<ft>((y / ft(height)) - 0.5), ft(-1.)}};
+      blazert::RayHit<ft> rayhit;
 
       const bool hit = intersect1(scene, ray, rayhit);
     }

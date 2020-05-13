@@ -12,7 +12,7 @@ namespace blazert {
  * @tparam T real value (e.g. float, double ...), gets passed into blaze vector types.
  */
 template<typename T>
-struct BLAZEALIGN BVHBuildOptions {
+struct BLAZERTALIGN BVHBuildOptions {
 public:
   T cost_t_aabb;
   bool cache_bbox;
@@ -43,7 +43,7 @@ public:
  * @brief BVH trace options.
  */
 template<typename T>
-class BLAZEALIGN BVHTraceOptions {
+class BLAZERTALIGN BVHTraceOptions {
 public:
   // TODO: is this really necessary?
   // Hit only for face IDs in indexRange.
