@@ -27,7 +27,7 @@ template<typename T>
 struct BLAZERTALIGN RayHit {
   Vec3r<T> normal;
   Vec2r<T> uv;
-  T hit_distance;
+  T hit_distance = std::numeric_limits<T>::max();
   unsigned int prim_id = -1;
 };
 

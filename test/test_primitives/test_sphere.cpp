@@ -123,7 +123,6 @@ TEMPLATE_TEST_CASE("Scene with Sphere", "[]", float, double) {
 
     const Ray<TestType> ray{org, dir};
     RayHit<TestType> rayhit;
-    rayhit.hit_distance = std::numeric_limits<TestType>::max();
 
     const bool hit = intersect1(scene, ray, rayhit);
 
