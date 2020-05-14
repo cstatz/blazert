@@ -70,27 +70,26 @@ planeBoundsFunc(const RTCBoundsFunctionArguments* args)
   const Vec3r<float> planeCenter = plane.planeCenter;
 
   // vectors describing extent in x direction
-  Vec3r<float> a1{-plane.d1 / 2.f, -plane.d2 / 2.f, 0.f};
-  Vec3r<float> a2{plane.d1 / 2.f, -plane.d2 / 2.f, 0.f};
+  const Vec3r<float> &a1_tmp{-plane.d1 / 2.f, -plane.d2 / 2.f, 0.f};
+  const Vec3r<float> &a2_tmp{plane.d1 / 2.f, -plane.d2 / 2.f, 0.f};
   // vectors describing extent in y direction
-  Vec3r<float> a3{-plane.d1 / 2.f, plane.d2 / 2.f, 0.f};
-  Vec3r<float> a4{plane.d1 / 2.f, plane.d2 / 2.f, 0.f};
+  const Vec3r<float> &a3_tmp{-plane.d1 / 2.f, plane.d2 / 2.f, 0.f};
+  const Vec3r<float> &a4_tmp{plane.d1 / 2.f, plane.d2 / 2.f, 0.f};
 
   // vectors describing extent in y direction
-  Vec3r<float> c1{0.f, 0.f, -plane.thickness};
-  Vec3r<float> c2{0.f, 0.f, plane.thickness};
+  const Vec3r<float> &c1_tmp{0.f, 0.f, -plane.thickness};
+  const Vec3r<float> &c2_tmp{0.f, 0.f, plane.thickness};
 
   // std::cout << rot_internal << std::endl;
   // vectors describing the plane in the global coordinate system
-  a1 = planeCenter + rot * a1;
-  a2 = planeCenter + rot * a2;
-  a3 = planeCenter + rot * a3;
-  a4 = planeCenter + rot * a4;
-  c1 = planeCenter + rot * c1;
-  c2 = planeCenter + rot * c2;
+  const Vec3r<float> &a1 = planeCenter + rot * a1_tmp;
+  const Vec3r<float> &a2 = planeCenter + rot * a2_tmp;
+  const Vec3r<float> &a3 = planeCenter + rot * a3_tmp;
+  const Vec3r<float> &a4 = planeCenter + rot * a4_tmp;
+  const Vec3r<float> &c1 = planeCenter + rot * c1_tmp;
+  const Vec3r<float> &c2 = planeCenter + rot * c2_tmp;
 
   // maximum / minimum is also the max/min of the bounding box
-
   args->bounds_o->lower_x = std::min({ a1[0], a2[0], a3[0], a4[0], c1[0], c2[0] });
   args->bounds_o->lower_y = std::min({ a1[1], a2[1], a3[1], a4[1], c1[1], c2[1] });
   args->bounds_o->lower_z = std::min({ a1[2], a2[2], a3[2], a4[2], c1[2], c2[2] });
@@ -109,14 +108,11 @@ planeBoundsFunc(const RTCBoundsFunctionArguments* args)
 void
 planeIntersectFunc(const RTCIntersectFunctionNArguments* args)
 {
-  // if N != 1, this function is not applicable
-  assert(args->N == 1);
-
   // load correct plane from data ptr
   const EmbreePlane& plane = ((const EmbreePlane*)(args->geometryUserPtr))[args->primID];
 
-  Mat3r<float> rot = plane.rot;
-  transpose(rot);
+  const Mat3r<float> &rot = plane.rot;
+  const Mat3r<float> &inverse_rot = trans(rot);
 
   const unsigned int primID = args->primID;
   const unsigned int instID = args->context->instID[0];
@@ -132,19 +128,16 @@ planeIntersectFunc(const RTCIntersectFunctionNArguments* args)
   RTCRay* ray = &(rayhit->ray);
 
   // transform to local coordinate system
-  const Vec3r<float> org_tmp{ray->org_x, ray->org_y, ray->org_z};
-  const Vec3r<float> dir_tmp{ray->dir_x, ray->dir_y, ray->dir_z};
+  const Vec3r<float> &org_tmp{ray->org_x, ray->org_y, ray->org_z};
+  const Vec3r<float> &dir_tmp{ray->dir_x, ray->dir_y, ray->dir_z};
 
-  const Vec3r<float> org = rot * (org_tmp - plane.planeCenter);
-  const Vec3r<float> dir = rot * dir_tmp;
+  const Vec3r<float> &org = inverse_rot * (org_tmp - plane.planeCenter);
+  const Vec3r<float> &dir = inverse_rot * dir_tmp;
 
-  // back to orignal rotation to calculate correct params
-  // rot.transposeInPlace();
-  transpose(rot);
 
   // calculate interception point
   const float t1 = -org[2] / dir[2];
-  const Vec3r<float> intercept = org + t1 * dir;
+  const Vec3r<float> &intercept = org + t1 * dir;
 
   const float tnear = rayhit->ray.tnear;
   const float tfar = rayhit->ray.tfar;
@@ -159,44 +152,44 @@ planeIntersectFunc(const RTCIntersectFunctionNArguments* args)
   // does it actually hit the plane?
   if ((t1 > tnear) && (t1 < tfar) && (intercept[0] > x_min) && (intercept[0] < x_max) && (intercept[1] > y_min) &&
       (intercept[1] < y_max)) {
-    const Vec3r<float> Ng = rot * Vec3r<float>{0.0, 0.0, 1.f};
+    const Vec3r<float> &Ng = rot * Vec3r<float>{0.0, 0.0, 1.f};
     setRayHit(rayhit, org[2] / abs(org[2]) * Ng, 0.f, 0.f, primID, geomID, instID, norm(t1 * dir));
   }
   // plane edges
   else if ((t1 > tnear) && (t1 < tfar) && (intercept[0] == x_min) && (intercept[0] < x_max) && (intercept[1] > y_min) &&
            (intercept[1] < y_max)) {
-    const Vec3r<float> Ng = rot * Vec3r<float>{-1.f, 0.0, org[2] / abs(org[2])};
+    const Vec3r<float> &Ng = rot * Vec3r<float>{-1.f, 0.0, org[2] / abs(org[2])};
     setRayHit(rayhit, Ng / norm(Ng), 0.f, 0.f, primID, geomID, instID, norm(t1 * dir));
   } else if ((t1 > tnear) && (t1 < tfar) && (intercept[0] > x_min) && (intercept[0] == x_max) &&
              (intercept[1] > y_min) && (intercept[1] < y_max)) {
-    const Vec3r<float> Ng = rot * Vec3r<float>{1.f, 0.0, org[2] / abs(org[2])};
+    const Vec3r<float> &Ng = rot * Vec3r<float>{1.f, 0.0, org[2] / abs(org[2])};
     setRayHit(rayhit, Ng / norm(Ng), 0.f, 0.f, primID, geomID, instID, norm(t1 * dir));
   } else if ((t1 > tnear) && (t1 < tfar) && (intercept[0] > x_min) && (intercept[0] < x_max) &&
              (intercept[1] == y_min) && (intercept[1] < y_max)) {
-    const Vec3r<float> Ng = rot * Vec3r<float>{0.f, -1.f, org[2] / abs(org[2])};
+    const Vec3r<float> &Ng = rot * Vec3r<float>{0.f, -1.f, org[2] / abs(org[2])};
     setRayHit(rayhit, Ng / norm(Ng), 0.f, 0.f, primID, geomID, instID, norm(t1 * dir));
   } else if ((t1 > tnear) && (t1 < tfar) && (intercept[0] > x_min) && (intercept[0] < x_max) &&
              (intercept[1] > y_min) && (intercept[1] == y_max)) {
-    const Vec3r<float> Ng = rot * Vec3r<float>{0.f, 1.f, org[2] / abs(org[2])};
+    const Vec3r<float> &Ng = rot * Vec3r<float>{0.f, 1.f, org[2] / abs(org[2])};
     setRayHit(rayhit, Ng / norm(Ng), 0.f, 0.f, primID, geomID, instID, norm(t1 * dir));
   }
 
   // plane corners
   else if ((t1 > tnear) && (t1 < tfar) && (intercept[0] == x_min) && (intercept[0] < x_max) &&
            (intercept[1] == y_min) && (intercept[1] < y_max)) {
-    const Vec3r<float> Ng = rot * Vec3r<float>{-1.f, -1.f, org[2] / abs(org[2])};
+    const Vec3r<float> &Ng = rot * Vec3r<float>{-1.f, -1.f, org[2] / abs(org[2])};
     setRayHit(rayhit, Ng / norm(Ng), 0.f, 0.f, primID, geomID, instID, norm(t1 * dir));
   } else if ((t1 > tnear) && (t1 < tfar) && (intercept[0] == x_min) && (intercept[0] < x_max) &&
              (intercept[1] > y_min) && (intercept[1] == y_max)) {
-    const Vec3r<float> Ng = rot * Vec3r<float>{-1.f, 1.f, org[2] / abs(org[2])};
+    const Vec3r<float> &Ng = rot * Vec3r<float>{-1.f, 1.f, org[2] / abs(org[2])};
     setRayHit(rayhit, Ng / norm(Ng), 0.f, 0.f, primID, geomID, instID, norm(t1 * dir));
   } else if ((t1 > tnear) && (t1 < tfar) && (intercept[0] > x_min) && (intercept[0] == x_max) &&
              (intercept[1] == y_min) && (intercept[1] < y_max)) {
-    const Vec3r<float> Ng = rot * Vec3r<float>{1.f, -1.f, org[2] / abs(org[2])};
+    const Vec3r<float> &Ng = rot * Vec3r<float>{1.f, -1.f, org[2] / abs(org[2])};
     setRayHit(rayhit, Ng / norm(Ng), 0.f, 0.f, primID, geomID, instID, norm(t1 * dir));
   } else if ((t1 > tnear) && (t1 < tfar) && (intercept[0] > x_min) && (intercept[0] == x_max) &&
              (intercept[1] > y_min) && (intercept[1] == y_max)) {
-    const Vec3r<float> Ng = rot * Vec3r<float>{1.f, 1.f, org[2] / abs(org[2])};
+    const Vec3r<float> &Ng = rot * Vec3r<float>{1.f, 1.f, org[2] / abs(org[2])};
     setRayHit(rayhit, Ng / norm(Ng), 0.f, 0.f, primID, geomID, instID, norm(t1 * dir));
   }
 }
