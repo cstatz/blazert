@@ -41,20 +41,20 @@ public:
   inline void BoundingBox(Vec3r<T> &bmin, Vec3r<T> &bmax, unsigned int prim_index) const {
 
     const Vec3r<T> &center = (*centers)[prim_index];
-    const double dx = (*dxs)[prim_index];
-    const double dy = (*dys)[prim_index];
+    const T dx = (*dxs)[prim_index];
+    const T dy = (*dys)[prim_index];
     const Mat3r<T> &rotation = (*rotations)[prim_index];
 
     // vectors describing extent in x direction
-    const Vec3r<T> &a1_tmp{-dx / 2.f, -dy / 2.f, 0.f};
-    const Vec3r<T> &a2_tmp{dx / 2.f, -dy / 2.f, 0.f};
+    const Vec3r<T> &a1_tmp{-dx / static_cast<T>(2.0), -dy / static_cast<T>(2.0), 0.0};
+    const Vec3r<T> &a2_tmp{dx / static_cast<T>(2.0), -dy / static_cast<T>(2.0), 0.0};
     // vectors describing extent in y direction
-    const Vec3r<T> &a3_tmp{-dx / 2.f, dy / 2.f, 0.f};
-    const Vec3r<T> &a4_tmp{dx / 2.f, dy / 2.f, 0.f};
+    const Vec3r<T> &a3_tmp{-dx / static_cast<T>(2.0), dy / static_cast<T>(2.0), 0.0};
+    const Vec3r<T> &a4_tmp{dx / static_cast<T>(2.0), dy / static_cast<T>(2.0), 0.0};
 
     // vectors describing extent in y direction
-    const Vec3r<T> &c1_tmp{0.f, 0.f, -thickness};
-    const Vec3r<T> &c2_tmp{0.f, 0.f, thickness};
+    const Vec3r<T> &c1_tmp{0.0, 0.0, -thickness};
+    const Vec3r<T> &c2_tmp{0.0, 0.0, thickness};
 
     // std::cout << rot_internal << std::endl;
     // vectors describing the plane in the global coordinate system
@@ -73,7 +73,7 @@ public:
     bmax[0] = std::max({a1[0], a2[0], a3[0], a4[0], c1[0], c2[0]});
     bmax[1] = std::max({a1[1], a2[1], a3[1], a4[1], c1[1], c2[1]});
     bmax[2] = std::max({a1[2], a2[2], a3[2], a4[2], c1[2], c2[2]});
-  }
+  } 
 
   inline void BoundingBoxAndCenter(Vec3r<T> &bmin, Vec3r<T> &bmax, Vec3r<T> &center, unsigned int prim_index) const {
     BoundingBox(bmin, bmax, prim_index);
@@ -199,9 +199,10 @@ template<typename T>
 inline bool intersect(PlaneIntersector<T> &i, T &t_inout, const unsigned int prim_index) {
   // load correct plane from data ptr
 
+
   const Vec3r<T> &center = (*i.centers)[prim_index];
-  const double dx = (*i.dxs)[prim_index];
-  const double dy = (*i.dys)[prim_index];
+  const T dx = (*i.dxs)[prim_index];
+  const T dy = (*i.dys)[prim_index];
   const Mat3r<T> &rotation = (*i.rotations)[prim_index];
   const Mat3r<T> &inverse_rotation = trans(rotation);
 
@@ -227,45 +228,45 @@ inline bool intersect(PlaneIntersector<T> &i, T &t_inout, const unsigned int pri
   // is intercept within ray limits?
   // does it actually hit the plane?
   if ((t1 > tnear) && (t1 < tfar) && (intercept[0] > x_min) && (intercept[0] < x_max) && (intercept[1] > y_min) && (intercept[1] < y_max)) {
-    i.normal = org[2] / abs(org[2]) * (rotation * Vec3r<T>{0.0, 0.0, 1.f});
+    i.normal = org[2] / abs(org[2]) * (rotation * Vec3r<T>{0.0, 0.0, 1.0});
     t_inout = t1;
     return true;
   }
 
   // plane edges
   else if ((t1 > tnear) && (t1 < tfar) && (intercept[0] == x_min) && (intercept[0] < x_max) && (intercept[1] > y_min) && (intercept[1] < y_max)) {
-    i.normal = rotation * Vec3r<T>{-1.f, 0.0, org[2] / abs(org[2])};
+    i.normal = rotation * Vec3r<T>{-1.0, 0.0, org[2] / abs(org[2])};
     t_inout = t1;
     return true;
   } else if ((t1 > tnear) && (t1 < tfar) && (intercept[0] > x_min) && (intercept[0] == x_max) && (intercept[1] > y_min) && (intercept[1] < y_max)) {
-    i.normal = rotation * Vec3r<T>{1.f, 0.0, org[2] / abs(org[2])};
+    i.normal = rotation * Vec3r<T>{1.0, 0.0, org[2] / abs(org[2])};
     t_inout = t1;
     return true;
   } else if ((t1 > tnear) && (t1 < tfar) && (intercept[0] > x_min) && (intercept[0] < x_max) && (intercept[1] == y_min) && (intercept[1] < y_max)) {
-    i.normal = rotation * Vec3r<T>{0.f, -1.f, org[2] / abs(org[2])};
+    i.normal = rotation * Vec3r<T>{0.0, -1.0, org[2] / abs(org[2])};
     t_inout = t1;
     return true;
   } else if ((t1 > tnear) && (t1 < tfar) && (intercept[0] > x_min) && (intercept[0] < x_max) && (intercept[1] > y_min) && (intercept[1] == y_max)) {
-    i.normal = rotation * Vec3r<T>{0.f, 1.f, org[2] / abs(org[2])};
+    i.normal = rotation * Vec3r<T>{0.0, 1.0, org[2] / abs(org[2])};
     t_inout = t1;
     return true;
   }
 
   // plane corners
   else if ((t1 > tnear) && (t1 < tfar) && (intercept[0] == x_min) && (intercept[0] < x_max) && (intercept[1] == y_min) && (intercept[1] < y_max)) {
-    i.normal = rotation * Vec3r<T>{-1.f, -1.f, org[2] / abs(org[2])};
+    i.normal = rotation * Vec3r<T>{-1.0, -1.0, org[2] / abs(org[2])};
     t_inout = t1;
     return true;
   } else if ((t1 > tnear) && (t1 < tfar) && (intercept[0] == x_min) && (intercept[0] < x_max) && (intercept[1] > y_min) && (intercept[1] == y_max)) {
-    i.normal = rotation * Vec3r<T>{-1.f, 1.f, org[2] / abs(org[2])};
+    i.normal = rotation * Vec3r<T>{-1.0, 1.0, org[2] / abs(org[2])};
     t_inout = t1;
     return true;
   } else if ((t1 > tnear) && (t1 < tfar) && (intercept[0] > x_min) && (intercept[0] == x_max) && (intercept[1] == y_min) && (intercept[1] < y_max)) {
-    i.normal = rotation * Vec3r<T>{1.f, -1.f, org[2] / abs(org[2])};
+    i.normal = rotation * Vec3r<T>{1.0, -1.0, org[2] / abs(org[2])};
     t_inout = t1;
     return true;
   } else if ((t1 > tnear) && (t1 < tfar) && (intercept[0] > x_min) && (intercept[0] == x_max) && (intercept[1] > y_min) && (intercept[1] == y_max)) {
-    i.normal = rotation * Vec3r<T>{1.f, 1.f, org[2] / abs(org[2])};
+    i.normal = rotation * Vec3r<T>{1.0, 1.0, org[2] / abs(org[2])};
     t_inout = t1;
     return true;
   }
@@ -273,7 +274,7 @@ inline bool intersect(PlaneIntersector<T> &i, T &t_inout, const unsigned int pri
 }
 
 template<typename T>
-double distance_to_surface(Plane<T> &sphere, const Vec3r<T> &point, const unsigned int prim_index) {
+T distance_to_surface(Plane<T> &sphere, const Vec3r<T> &point, const unsigned int prim_index) {
   //TODO
   return 0;
 }
