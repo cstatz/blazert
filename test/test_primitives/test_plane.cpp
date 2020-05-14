@@ -48,7 +48,7 @@ TEMPLATE_TEST_CASE("Plane", "[bounding box,  intersections]", float, double) {
         REQUIRE(bmax[1] == Approx(1.f));
         REQUIRE(bmax[2] == Approx(std::numeric_limits<TestType>::min()));
       }
-      SECTION("Rotated about y-axis") {
+      SECTION("rotated about y-axis") {
         // matrix which rotates the plane about the y-axis ( x = 0 is now plane eq)
         Mat3r<TestType> rot{{0, 0, 1}, {0, 1, 0}, {-1, 0, 0}};
         rotations->push_back(rot);
@@ -123,7 +123,7 @@ TEMPLATE_TEST_CASE("Plane", "[bounding box,  intersections]", float, double) {
         REQUIRE(bmax[1] == Approx(2.f));
         REQUIRE(bmax[2] == Approx(1.f));
       }
-      SECTION("Rotated about y-axis") {
+      SECTION("rotated about y-axis") {
         // matrix which rotates the plane about the y-axis ( x = 0 is now plane eq)
         Mat3r<TestType> rot{{0, 0, 1}, {0, 1, 0}, {-1, 0, 0}};
         rotations->push_back(rot);
@@ -212,7 +212,7 @@ TEMPLATE_TEST_CASE("Plane", "[bounding box,  intersections]", float, double) {
         REQUIRE(rayhit.normal[1] == Approx(0.f).margin(0.0001));
         REQUIRE(rayhit.normal[2] == Approx(1.f));
       }
-      SECTION("rotated, non-shifted") {
+      SECTION("rotated about (0,1,0)") {
         // matrix which rotates the plane 45 degrees about the z-axis ( x = 0 is now
         // plane eq)
         const Vec3r<TestType> axis{0, 1, 0};
@@ -245,7 +245,7 @@ TEMPLATE_TEST_CASE("Plane", "[bounding box,  intersections]", float, double) {
         REQUIRE(rayhit.normal[1] == Approx(0.f).margin(0.0001));
         REQUIRE(rayhit.normal[2] == Approx(0.f).margin(0.0001));
       }
-      SECTION("rotated about r=normalized(1,1,0), edge hit") {
+      SECTION("rotated about normalized(1,1,0), edge hit") {
         // matrix which rotates the plane about the y-axis ( x = 0 is now plane eq)
         const Vec3r<TestType> axis{static_cast<TestType>(1. / std::sqrt(2.)),
                                    static_cast<TestType>(1. / std::sqrt(2.)),
@@ -281,7 +281,7 @@ TEMPLATE_TEST_CASE("Plane", "[bounding box,  intersections]", float, double) {
         REQUIRE(rayhit.normal[2] == Approx(0.f).margin(0.0001));// for rotated planes, you can expect small numerical error
         // of size 1e16
       }
-      SECTION("non-rotated, non-shifted, ray origin outside plane bounds") {
+      SECTION("non-rotated, ray origin outside plane bounds") {
         // matrix which rotates the plane about the y-axis ( x = 0 is now plane eq)
         Mat3r<TestType> rot = blaze::IdentityMatrix<TestType>(3UL);
         rotations->push_back(rot);
@@ -335,7 +335,7 @@ TEMPLATE_TEST_CASE("Plane", "[bounding box,  intersections]", float, double) {
           REQUIRE(rayhit2.normal[2] == Approx(-1.f));
         }
       }
-      SECTION("non-rotated, non-shifted, edge intersection") {
+      SECTION("non-rotated, edge intersection") {
         // matrix which rotates the plane about the y-axis ( x = 0 is now plane eq)
         Mat3r<TestType> rot = blaze::IdentityMatrix<TestType>(3UL);
         rotations->push_back(rot);
@@ -436,7 +436,7 @@ TEMPLATE_TEST_CASE("Plane", "[bounding box,  intersections]", float, double) {
           REQUIRE(rayhit.normal[2] == Approx(1.f / std::sqrt(2)));
         }
       }
-      SECTION("non-rotated, non-shifted, corner intersection") {
+      SECTION("non-rotated, corner intersection") {
         // matrix which rotates the plane about the y-axis ( x = 0 is now plane eq)
         Mat3r<TestType> rot = blaze::IdentityMatrix<TestType>(3UL);
         rotations->push_back(rot);
@@ -639,7 +639,7 @@ TEMPLATE_TEST_CASE("Plane", "[bounding box,  intersections]", float, double) {
         REQUIRE(rayhit.normal[2] == Approx(0.f).margin(0.0001));// for rotated planes, you can expect small numerical error
         // of size 1e16
       }
-      SECTION("non-rotated, non-shifted, ray origin outside plane bounds") {
+      SECTION("non-rotated, ray origin outside plane bounds") {
         // matrix which rotates the plane about the y-axis ( x = 0 is now plane eq)
         Mat3r<TestType> rot = blaze::IdentityMatrix<TestType>(3UL);
         rotations->push_back(rot);
@@ -648,7 +648,7 @@ TEMPLATE_TEST_CASE("Plane", "[bounding box,  intersections]", float, double) {
         BVHTraceOptions<TestType> trace_options;
         PlaneIntersector<TestType> plane_intersector{*centers, *dxx, *dyy, *rotations};
         SECTION("outside on positive x-axis") {
-          Vec3r<TestType> org1{5.f, 1.f, 4.f};
+          Vec3r<TestType> org1{5.f, 1.f, 5.f};
           Vec3r<TestType> dir1{-1.f, 0.f, -1.f};
           const Ray<TestType> ray{org1, dir1};
           RayHit<TestType> rayhit;
@@ -664,13 +664,13 @@ TEMPLATE_TEST_CASE("Plane", "[bounding box,  intersections]", float, double) {
           // that direction
           REQUIRE(hit_plane);
           REQUIRE(rayhit.prim_id == 0);
-          REQUIRE(rayhit.hit_distance == Approx(3 * std::sqrt(2.f)));
+          REQUIRE(rayhit.hit_distance == Approx(4 * std::sqrt(2.f)));
           REQUIRE(rayhit.normal[0] == Approx(0.f).margin(0.0001));
           REQUIRE(rayhit.normal[1] == Approx(0.f).margin(0.0001));
           REQUIRE(rayhit.normal[2] == Approx(1.f));
         }
         SECTION("outside on negative x-axis") {
-          Vec3r<TestType> org2{-3.f, 1.f, -4.f};
+          Vec3r<TestType> org2{-3.f, 1.f, -3.f};
           Vec3r<TestType> dir2{1.f, 0.f, 1.f};
           const Ray<TestType> ray2{org2, dir2};
           RayHit<TestType> rayhit2;
@@ -687,13 +687,13 @@ TEMPLATE_TEST_CASE("Plane", "[bounding box,  intersections]", float, double) {
           // that direction
           REQUIRE(hit_plane);
           REQUIRE(rayhit2.prim_id == 0);
-          REQUIRE(rayhit2.hit_distance == Approx(5. * std::sqrt(2.f)));
+          REQUIRE(rayhit2.hit_distance == Approx(4. * std::sqrt(2.f)));
           REQUIRE(rayhit2.normal[0] == Approx(0.f).margin(0.0001));
           REQUIRE(rayhit2.normal[1] == Approx(0.f).margin(0.0001));
           REQUIRE(rayhit2.normal[2] == Approx(-1.f));
         }
       }
-      SECTION("non-rotated, non-shifted, edge intersection") {
+      SECTION("non-rotated, edge intersection") {
         // matrix which rotates the plane about the y-axis ( x = 0 is now plane eq)
         Mat3r<TestType> rot = blaze::IdentityMatrix<TestType>(3UL);
         rotations->push_back(rot);
@@ -794,7 +794,7 @@ TEMPLATE_TEST_CASE("Plane", "[bounding box,  intersections]", float, double) {
           REQUIRE(rayhit.normal[2] == Approx(1.f / std::sqrt(2)));
         }
       }
-      SECTION("non-rotated, non-shifted, corner intersection") {
+      SECTION("non-rotated, corner intersection") {
         // matrix which rotates the plane about the y-axis ( x = 0 is now plane eq)
         Mat3r<TestType> rot = blaze::IdentityMatrix<TestType>(3UL);
         rotations->push_back(rot);

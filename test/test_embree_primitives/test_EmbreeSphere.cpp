@@ -2,7 +2,6 @@
 // Created by ogarten on 1/23/19.
 //
 
-#ifdef EMBREE_TRACING
 #include "../catch.hpp"
 #include <blazert/embree/primitives/EmbreeSphere.h>
 
@@ -215,4 +214,3 @@ TEMPLATE_TEST_CASE("EmbreeSphere", "[bounding box, distance to surface, intersec
     }
   }
 }
-#endif

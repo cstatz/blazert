@@ -25,12 +25,12 @@ public:
   const std::vector<T> *dys;
   const Mat3rList<T> *rotations;
 
-  const T thickness = std::numeric_limits<T>::min();
+  constexpr static T thickness = std::numeric_limits<T>::min();
 
 public:
   Plane() = default;
   Plane(const Vec3rList<T> &centers, const std::vector<T> &dxs, const std::vector<T> &dys, const Mat3rList<T> &rotations)
-      : centers(&centers), dxs(&dxs), dys(&dys), rotations(&rotations){};
+      : centers(&centers), dxs(&dxs), dys(&dys), rotations(&rotations) {};
 
   /**
    * @brief Returns the number of primitives in the Plane -> only one sphere
@@ -73,7 +73,7 @@ public:
     bmax[0] = std::max({a1[0], a2[0], a3[0], a4[0], c1[0], c2[0]});
     bmax[1] = std::max({a1[1], a2[1], a3[1], a4[1], c1[1], c2[1]});
     bmax[2] = std::max({a1[2], a2[2], a3[2], a4[2], c1[2], c2[2]});
-  } 
+  }
 
   inline void BoundingBoxAndCenter(Vec3r<T> &bmin, Vec3r<T> &bmax, Vec3r<T> &center, unsigned int prim_index) const {
     BoundingBox(bmin, bmax, prim_index);

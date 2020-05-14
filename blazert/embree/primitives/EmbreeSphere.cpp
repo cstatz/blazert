@@ -70,7 +70,7 @@ sphereIntersectFunc(const RTCIntersectFunctionNArguments* args)
   // load correct sphere from data ptr
   const EmbreeSphere& sphere =
     ((const EmbreeSphere*)(args->geometryUserPtr))[args->primID];
-  const Vec3r<float> center = sphere.center;
+  const Vec3r<float> &center = sphere.center;
 
   const unsigned int primID = args->primID;
   const unsigned int instID = args->context->instID[0];
@@ -85,9 +85,9 @@ sphereIntersectFunc(const RTCIntersectFunctionNArguments* args)
   RTCRayHit* rayhit = (RTCRayHit*)args->rayhit;
   RTCRay* ray = &(rayhit->ray);
 
-  const Vec3r<float> org{ray->org_x, ray->org_y, ray->org_z};
-  const Vec3r<float> dir{ray->dir_x, ray->dir_y, ray->dir_z};
-  const Vec3r<float> v = org - center;
+  const Vec3r<float> &org{ray->org_x, ray->org_y, ray->org_z};
+  const Vec3r<float> &dir{ray->dir_x, ray->dir_y, ray->dir_z};
+  const Vec3r<float> &v = org - center;
 
   // calculate the actual intersections
   const float A = dot(dir, dir);
@@ -107,15 +107,13 @@ sphereIntersectFunc(const RTCIntersectFunctionNArguments* args)
   const float t1 = 0.5f * rcpA * (-B + Q);
 
   // t0 corresponds to the first hit
-  if ((ray->tnear < t0) && (t0 < ray->tfar)) {
-    const Vec3r<float> Ng = normalize(org + t0 * dir - center);
-
+  if ((t0 > ray->tnear) && (t0 < ray->tfar)) {
+    const Vec3r<float> &Ng = normalize(org + t0 * dir - center);
     setRayHit(rayhit, Ng, 0.f, 0.f, primID, geomID, instID, norm(t0 * dir));
   }
   // t1 corresponds to the first hit
-  if ((ray->tnear < t1) && (t1 < ray->tfar)) {
-    const Vec3r<float> Ng = normalize(org + t1 * dir - center);
-
+  if ((t1 > ray->tnear) && (t1 < ray->tfar)) {
+    const Vec3r<float> &Ng = normalize(org + t1 * dir - center);
     setRayHit(rayhit, Ng, 0.f, 0.f, primID, geomID, instID, norm(t1 * dir));
   }
 }
@@ -135,7 +133,7 @@ sphereOccludedFunc(const RTCOccludedFunctionNArguments* args)
   // load correct sphere from data ptr
   const EmbreeSphere& sphere =
     ((EmbreeSphere*)(args->geometryUserPtr))[args->primID];
-  const Vec3r<float> center = sphere.center;
+  const Vec3r<float> &center = sphere.center;
 
   // return if the ray is declared as not valid
   if (!(args->valid[0]))
@@ -145,14 +143,14 @@ sphereOccludedFunc(const RTCOccludedFunctionNArguments* args)
   const float org_x = RTCRayN_org_x(args->ray, 1, 0);
   const float org_y = RTCRayN_org_y(args->ray, 1, 0);
   const float org_z = RTCRayN_org_z(args->ray, 1, 0);
-  const Vec3r<float> org{org_x, org_y, org_z};
+  const Vec3r<float> &org{org_x, org_y, org_z};
 
   const float dir_x = RTCRayN_dir_x(args->ray, 1, 0);
   const float dir_y = RTCRayN_dir_y(args->ray, 1, 0);
   const float dir_z = RTCRayN_dir_z(args->ray, 1, 0);
-  const Vec3r<float> dir{dir_x, dir_y, dir_z};
+  const Vec3r<float> &dir{dir_x, dir_y, dir_z};
 
-  const Vec3r<float> v = org - center;
+  const Vec3r<float> &v = org - center;
 
   const float A = dot(dir, dir);
   const float B = 2.0f * dot(v, dir);

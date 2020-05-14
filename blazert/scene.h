@@ -6,6 +6,7 @@
 #include <blazert/bvh/options.h>
 #include <blazert/datatypes.h>
 
+#include <blazert/primitives/plane.h>
 #include <blazert/primitives/sphere.h>
 #include <blazert/primitives/trimesh.h>
 
@@ -38,6 +39,10 @@ public:
   BVH<T> spheres_bvh;
   mutable bool has_spheres = false;
 
+  Plane<T> planes;
+  PlaneSAHPred<T> planes_sah;
+  BVH<T> planes_bvh;
+  mutable bool has_planes = false;
 public:
   BlazertScene() = default;
 
@@ -52,12 +57,22 @@ public:
 
   /***
    * Adds centers.size() spheres to the scene -> results in centers.size() primitive ideas
-   * @brief Adds spheres a centers with radii
+   * @brief Adds spheres at centers with radii
    * @param centers specifies centers of the spheres (needs to be allocated on heap)
    * @param radii specifies radii of the spheres (needs to be allocated on heap)
    * @return geometry id of the spheres
    */
   unsigned int add_spheres(const Vec3rList<T> &centers, const std::vector<T> &radii);
+
+  /***
+   * @brief Adds planes at centers with dimensions dxs and dys rotated around rotations
+   * @param centers center of planes
+   * @param dxs dimensions in x direction
+   * @param dys dimensions in y direction
+   * @param rotations local rotation matrices
+   * @return
+   */
+  unsigned int add_planes(const Vec3rList<T> &centers, const std::vector<T> &dxs, const std::vector<T> &dys, const Mat3rList<T> &rotations);
 
   bool commit() {
 
@@ -67,6 +82,10 @@ public:
 
     if (has_spheres) {
       spheres_bvh.build(spheres, spheres_sah, build_options);
+    }
+
+    if (has_planes) {
+      planes_bvh.build(planes, planes_sah, build_options);
     }
 
     has_been_committed = true;
@@ -103,6 +122,17 @@ inline bool intersect1(const BlazertScene<T> &scene, const Ray<T> &ray, RayHit<T
     }
   }
 
+  if (scene.has_planes) {
+    PlaneIntersector<T> plane_intersector{*(scene.planes.centers), *(scene.planes.dxs), *(scene.planes.dys), *(scene.planes.rotations)};
+    const bool hit_plane = traverse(scene.planes_bvh, ray, plane_intersector, temp_rayhit, scene.trace_options);
+    if (hit_plane) {
+      if (temp_rayhit.hit_distance < rayhit.hit_distance) {
+        rayhit = temp_rayhit;
+        hit += hit_plane;
+      }
+    }
+  }
+
   return hit;
 }
 
@@ -128,6 +158,20 @@ unsigned int BlazertScene<T>::add_spheres(const Vec3rList<T> &centers, const std
     spheres = Sphere(centers, radii);
     spheres_sah = SphereSAHPred(centers, radii);
     has_spheres = true;
+
+    return geometries++;
+  } else {
+    return -1;
+  }
+}
+
+template<typename T>
+unsigned int BlazertScene<T>::add_planes(const Vec3rList<T> &centers, const std::vector<T> &dxs, const std::vector<T> &dys, const Mat3rList<T> &rotations) {
+
+  if ((!has_planes) && (!has_been_committed)) {
+    planes = Plane(centers, dxs, dys, rotations);
+    planes_sah = PlaneSAHPred(centers, dxs, dys, rotations);
+    has_planes = true;
 
     return geometries++;
   } else {
