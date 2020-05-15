@@ -2,17 +2,18 @@
 // Created by ogarten on 1/23/19.
 //
 
-#include "../catch.hpp"
+#include "../doctest.h"
 #include <blazert/embree/primitives/EmbreeSphere.h>
 
 using namespace blazert;
+using namespace doctest;
 
-TEMPLATE_TEST_CASE("EmbreeSphere", "[bounding box, distance to surface, intersections]", float) {
+TEST_CASE_TEMPLATE("EmbreeSphere", T, float) {
   auto device = rtcNewDevice("verbose=0,start_threads=1,threads=4,set_affinity=1");
   auto rtcscene = rtcNewScene(device);
-  SECTION("BOUNDING BOX") {
-    const Vec3r<float> center{1.f, 1.f, 1.f};
-    float radius = 1.f;
+  SUBCASE("BOUNDING BOX") {
+    const Vec3r<T> center{1.f, 1.f, 1.f};
+    T radius = 1.f;
 
     EmbreeSphere sphere(device, rtcscene, center, radius);
 
@@ -27,10 +28,10 @@ TEMPLATE_TEST_CASE("EmbreeSphere", "[bounding box, distance to surface, intersec
     REQUIRE(bounds.upper_x == Approx(2.f));
     REQUIRE(bounds.upper_x == Approx(2.f));
   }
-  SECTION("DISTANCE TO SURFACE") {
-    Vec3r<float> center{0.f, 0.f, 0.f};
-    SECTION("R = 1") {
-      float radius = 1.f;
+  SUBCASE("DISTANCE TO SURFACE") {
+    Vec3r<T> center{0.f, 0.f, 0.f};
+    SUBCASE("R = 1") {
+      T radius = 1.f;
 
       EmbreeSphere sphere(device, rtcscene, center, radius);
 
@@ -38,49 +39,49 @@ TEMPLATE_TEST_CASE("EmbreeSphere", "[bounding box, distance to surface, intersec
       RTCBounds bounds;
       rtcGetSceneBounds(rtcscene, &bounds);
 
-      REQUIRE(sphere.distance_to_surface(Vec3r<float>{0.f, 0.f, 0.f}) == Approx(1.f));
-      REQUIRE(sphere.distance_to_surface(Vec3r<float>{-1.f, 0.f, 0.f}) == Approx(0.f));
-      REQUIRE(sphere.distance_to_surface(Vec3r<float>{-2.f, 0.f, 0.f}) == Approx(1.f));
-      REQUIRE(sphere.distance_to_surface(Vec3r<float>{-2.f, -2.f, -2.f}) == Approx(std::sqrt(3.f * 4.f) - 1.f));
+      REQUIRE(sphere.distance_to_surface(Vec3r<T>{0.f, 0.f, 0.f}) == Approx(1.f));
+      REQUIRE(sphere.distance_to_surface(Vec3r<T>{-1.f, 0.f, 0.f}) == Approx(0.f));
+      REQUIRE(sphere.distance_to_surface(Vec3r<T>{-2.f, 0.f, 0.f}) == Approx(1.f));
+      REQUIRE(sphere.distance_to_surface(Vec3r<T>{-2.f, -2.f, -2.f}) == Approx(std::sqrt(3.f * 4.f) - 1.f));
     }
-    SECTION("R = 3") {
-      float radius = 3.f;
+    SUBCASE("R = 3") {
+      T radius = 3.f;
       EmbreeSphere sphere(device, rtcscene, center, radius);
 
       rtcCommitScene(rtcscene);
       RTCBounds bounds;
       rtcGetSceneBounds(rtcscene, &bounds);
 
-      REQUIRE(sphere.distance_to_surface(Vec3r<float>{0.f, 0.f, 0.f}) == Approx(3.f));
-      REQUIRE(sphere.distance_to_surface(Vec3r<float>{-1.f, 0.f, 0.f}) == Approx(2.f));
-      REQUIRE(sphere.distance_to_surface(Vec3r<float>{-2.f, 0.f, 0.f}) == Approx(1.f));
-      REQUIRE(sphere.distance_to_surface(Vec3r<float>{-2.f, -2.f, -2.f}) == Approx(std::sqrt(3.f * 4.f) - 3.f));
+      REQUIRE(sphere.distance_to_surface(Vec3r<T>{0.f, 0.f, 0.f}) == Approx(3.f));
+      REQUIRE(sphere.distance_to_surface(Vec3r<T>{-1.f, 0.f, 0.f}) == Approx(2.f));
+      REQUIRE(sphere.distance_to_surface(Vec3r<T>{-2.f, 0.f, 0.f}) == Approx(1.f));
+      REQUIRE(sphere.distance_to_surface(Vec3r<T>{-2.f, -2.f, -2.f}) == Approx(std::sqrt(3.f * 4.f) - 3.f));
     }
   }
 
-  SECTION("INTERSECTIONS") {
-    SECTION("Ray origin outside sphere") {
-      Vec3r<TestType> center1{0.f, 0.f, 0.f};
-      Vec3r<TestType> center2{0.f, 0.f, 5.f};
-      float radius = 1.f;
+  SUBCASE("INTERSECTIONS") {
+    SUBCASE("Ray origin outside sphere") {
+      Vec3r<T> center1{0.f, 0.f, 0.f};
+      Vec3r<T> center2{0.f, 0.f, 5.f};
+      T radius = 1.f;
 
       EmbreeSphere sphere1(device, rtcscene, center1, radius);
       EmbreeSphere sphere2(device, rtcscene, center2, radius);
       rtcCommitScene(rtcscene);
 
-      Vec3r<TestType> org1{2.f, 0.f, 0.f};
-      Vec3r<TestType> dir1{-1.f, 0.f, 0.f};
+      Vec3r<T> org1{2.f, 0.f, 0.f};
+      Vec3r<T> dir1{-1.f, 0.f, 0.f};
 
-      Vec3r<TestType> org2{2.f, 0.f, 2.5f};
-      Vec3r<TestType> dir2{-1.f, 0.f, 0.f};
+      Vec3r<T> org2{2.f, 0.f, 2.5f};
+      Vec3r<T> dir2{-1.f, 0.f, 0.f};
 
-      Vec3r<TestType> org3{3.f, 0.f, 5.f};
-      Vec3r<TestType> dir3{-1.f, 0.f, 0.f};
+      Vec3r<T> org3{3.f, 0.f, 5.f};
+      Vec3r<T> dir3{-1.f, 0.f, 0.f};
 
       RTCIntersectContext context;
       rtcInitIntersectContext(&context);
 
-      RTCRay ray1{org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>().max(),
+      RTCRay ray1{org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<T>().max(),
                   0, 0, 0};
       RTCHit hit1;
       hit1.geomID = RTC_INVALID_GEOMETRY_ID;
@@ -90,7 +91,7 @@ TEMPLATE_TEST_CASE("EmbreeSphere", "[bounding box, distance to surface, intersec
       // should be in distance of 1
       REQUIRE(rayhit1.ray.tfar == Approx(1.f));
 
-      RTCRay ray2{org2[0], org2[1], org2[2], 0, dir2[0], dir2[1], dir2[2], 0, std::numeric_limits<float>().max(),
+      RTCRay ray2{org2[0], org2[1], org2[2], 0, dir2[0], dir2[1], dir2[2], 0, std::numeric_limits<T>().max(),
                   0, 0, 0};
       RTCHit hit2;
       hit2.geomID = RTC_INVALID_GEOMETRY_ID;
@@ -98,9 +99,9 @@ TEMPLATE_TEST_CASE("EmbreeSphere", "[bounding box, distance to surface, intersec
       RTCRayHit rayhit2{ray2, hit2};
       rtcIntersect1(rtcscene, &context, &rayhit2);
       // should not hit, therefore tfar is the same as before
-      REQUIRE(rayhit2.ray.tfar == Approx(std::numeric_limits<float>::max()));
+      REQUIRE(rayhit2.ray.tfar == Approx(std::numeric_limits<T>::max()));
 
-      RTCRay ray3{org3[0], org3[1], org3[2], 0, dir3[0], dir3[1], dir3[2], 0, std::numeric_limits<float>().max(),
+      RTCRay ray3{org3[0], org3[1], org3[2], 0, dir3[0], dir3[1], dir3[2], 0, std::numeric_limits<T>().max(),
                   0, 0, 0};
       RTCHit hit3;
       hit3.geomID = RTC_INVALID_GEOMETRY_ID;
@@ -111,23 +112,23 @@ TEMPLATE_TEST_CASE("EmbreeSphere", "[bounding box, distance to surface, intersec
       REQUIRE(rayhit3.ray.tfar == Approx(2.f));
     }
 
-    SECTION("Ray origin inside sphere") {
-      Vec3r<TestType> center1{0.f, 0.f, 0.f};
-      float radius = 1.f;
+    SUBCASE("Ray origin inside sphere") {
+      Vec3r<T> center1{0.f, 0.f, 0.f};
+      T radius = 1.f;
 
       EmbreeSphere sphere1(device, rtcscene, center1, radius);
       rtcCommitScene(rtcscene);
 
-      Vec3r<TestType> org1{0.f, 0.f, 0.f};
-      Vec3r<TestType> dir1{-1.f, 0.f, 0.f};
+      Vec3r<T> org1{0.f, 0.f, 0.f};
+      Vec3r<T> dir1{-1.f, 0.f, 0.f};
 
-      Vec3r<TestType> org2{0.f, 0.f, 0.5f};
-      Vec3r<TestType> dir2{0.f, 0.f, -1.f};
+      Vec3r<T> org2{0.f, 0.f, 0.5f};
+      Vec3r<T> dir2{0.f, 0.f, -1.f};
 
       RTCIntersectContext context;
       rtcInitIntersectContext(&context);
 
-      RTCRay ray1{org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>().max(),
+      RTCRay ray1{org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<T>().max(),
                   0, 0, 0};
       RTCHit hit1;
       hit1.geomID = RTC_INVALID_GEOMETRY_ID;
@@ -137,7 +138,7 @@ TEMPLATE_TEST_CASE("EmbreeSphere", "[bounding box, distance to surface, intersec
       // should be in distance of 1
       REQUIRE(rayhit1.ray.tfar == Approx(1.f));
 
-      RTCRay ray2{org2[0], org2[1], org2[2], 0, dir2[0], dir2[1], dir2[2], 0, std::numeric_limits<float>().max(),
+      RTCRay ray2{org2[0], org2[1], org2[2], 0, dir2[0], dir2[1], dir2[2], 0, std::numeric_limits<T>().max(),
                   0, 0, 0};
       RTCHit hit2;
       hit2.geomID = RTC_INVALID_GEOMETRY_ID;
@@ -147,25 +148,25 @@ TEMPLATE_TEST_CASE("EmbreeSphere", "[bounding box, distance to surface, intersec
       // should  hit in distance of 1.5
       REQUIRE(rayhit2.ray.tfar == Approx(1.5f));
     }
-    SECTION("Ray origin on sphere")
+    SUBCASE("Ray origin on sphere")
     ///
     {
-      Vec3r<TestType> center1{1.f, 0.f, 0.f};
-      float radius = 1.f;
+      Vec3r<T> center1{1.f, 0.f, 0.f};
+      T radius = 1.f;
 
       EmbreeSphere sphere1(device, rtcscene, center1, radius);
       rtcCommitScene(rtcscene);
 
-      Vec3r<TestType> org1{0.f, 0.f, 0.f};
-      Vec3r<TestType> dir1{1.f, 0.f, 0.f};
+      Vec3r<T> org1{0.f, 0.f, 0.f};
+      Vec3r<T> dir1{1.f, 0.f, 0.f};
 
-      Vec3r<TestType> org2{0.f, 0.f, 0.f};
-      Vec3r<TestType> dir2{-1.f, 0.f, 0.f};
+      Vec3r<T> org2{0.f, 0.f, 0.f};
+      Vec3r<T> dir2{-1.f, 0.f, 0.f};
 
       RTCIntersectContext context;
       rtcInitIntersectContext(&context);
 
-      RTCRay ray1{org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>().max(),
+      RTCRay ray1{org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<T>().max(),
                   0, 0, 0};
       RTCHit hit1;
       hit1.geomID = RTC_INVALID_GEOMETRY_ID;
@@ -175,7 +176,7 @@ TEMPLATE_TEST_CASE("EmbreeSphere", "[bounding box, distance to surface, intersec
       // should hit in distance of 2
       REQUIRE(rayhit1.ray.tfar == Approx(2.f));
 
-      RTCRay ray2{org2[0], org2[1], org2[2], 0, dir2[0], dir2[1], dir2[2], 0, std::numeric_limits<float>().max(),
+      RTCRay ray2{org2[0], org2[1], org2[2], 0, dir2[0], dir2[1], dir2[2], 0, std::numeric_limits<T>().max(),
                   0, 0, 0};
       RTCHit hit2;
       hit2.geomID = RTC_INVALID_GEOMETRY_ID;
@@ -183,22 +184,22 @@ TEMPLATE_TEST_CASE("EmbreeSphere", "[bounding box, distance to surface, intersec
       RTCRayHit rayhit2{ray2, hit2};
       rtcIntersect1(rtcscene, &context, &rayhit2);
       // should not hit, ray points outward
-      REQUIRE(rayhit2.ray.tfar == Approx(std::numeric_limits<float>::max()));
+      REQUIRE(rayhit2.ray.tfar == Approx(std::numeric_limits<T>::max()));
     }
-    SECTION("ray passing through sphere center") {
-      Vec3r<TestType> center1{0.f, 0.f, 0.f};
-      float radius = 2.f;
+    SUBCASE("ray passing through sphere center") {
+      Vec3r<T> center1{0.f, 0.f, 0.f};
+      T radius = 2.f;
 
       EmbreeSphere sphere1(device, rtcscene, center1, radius);
       rtcCommitScene(rtcscene);
 
-      Vec3r<TestType> org1{3.f, 1.f, 0.f};
-      Vec3r<TestType> dir1{-1.f, 0.f, 0.f};
+      Vec3r<T> org1{3.f, 1.f, 0.f};
+      Vec3r<T> dir1{-1.f, 0.f, 0.f};
 
       RTCIntersectContext context;
       rtcInitIntersectContext(&context);
 
-      RTCRay ray1{org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>().max(),
+      RTCRay ray1{org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<T>().max(),
                   0, 0, 0};
       RTCHit hit1;
       hit1.geomID = RTC_INVALID_GEOMETRY_ID;
