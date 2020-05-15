@@ -6,6 +6,7 @@
 #include <blazert/bvh/options.h>
 #include <blazert/datatypes.h>
 
+#include <blazert/primitives/cylinder.h>
 #include <blazert/primitives/plane.h>
 #include <blazert/primitives/sphere.h>
 #include <blazert/primitives/trimesh.h>
@@ -43,6 +44,12 @@ public:
   PlaneSAHPred<T> planes_sah;
   BVH<T> planes_bvh;
   mutable bool has_planes = false;
+
+  Cylinder<T> cylinders;
+  CylinderSAHPred<T> cylinders_sah;
+  BVH<T> cylinders_bvh;
+  mutable bool has_cylinders = false;
+
 public:
   BlazertScene() = default;
 
@@ -70,9 +77,21 @@ public:
    * @param dxs dimensions in x direction
    * @param dys dimensions in y direction
    * @param rotations local rotation matrices
-   * @return
+   * @return geometry id of the planes
    */
   unsigned int add_planes(const Vec3rList<T> &centers, const std::vector<T> &dxs, const std::vector<T> &dys, const Mat3rList<T> &rotations);
+
+  /***
+   * @brief Adds cylinders with the bottom ellipsoid centered at centers, described by two semi_axes and heights.
+   * @param centers 
+   * @param semi_axes_a 
+   * @param semi_axes_b 
+   * @param heights 
+   * @param rotations 
+   * @return geometry id of the cylinders
+   */
+  unsigned int add_cylinders(const Vec3rList<T> &centers, const std::vector<T> &semi_axes_a, const std::vector<T> &semi_axes_b,
+                             const std::vector<T> &heights, const Mat3rList<T> &rotations);
 
   bool commit() {
 
@@ -86,6 +105,10 @@ public:
 
     if (has_planes) {
       planes_bvh.build(planes, planes_sah, build_options);
+    }
+    
+    if (has_cylinders) {
+      cylinders_bvh.build(cylinders, cylinders_sah, build_options);
     }
 
     has_been_committed = true;
@@ -133,6 +156,17 @@ inline bool intersect1(const BlazertScene<T> &scene, const Ray<T> &ray, RayHit<T
     }
   }
 
+  if (scene.has_cylinders) {
+    CylinderIntersector<T> cylinder_intersector{*(scene.cylinders.centers), *(scene.cylinders.semi_axes_a),
+                                                *(scene.cylinders.semi_axes_b), *(scene.cylinders.heights), *(scene.cylinders.rotations)};
+    const bool hit_cylinder = traverse(scene.cylinders_bvh, ray, cylinder_intersector, temp_rayhit, scene.trace_options);
+    if (hit_cylinder) {
+      if (temp_rayhit.hit_distance < rayhit.hit_distance) {
+        rayhit = temp_rayhit;
+        hit += hit_cylinder;
+      }
+    }
+  }
   return hit;
 }
 
@@ -172,6 +206,19 @@ unsigned int BlazertScene<T>::add_planes(const Vec3rList<T> &centers, const std:
     planes = Plane(centers, dxs, dys, rotations);
     planes_sah = PlaneSAHPred(centers, dxs, dys, rotations);
     has_planes = true;
+
+    return geometries++;
+  } else {
+    return -1;
+  }
+}
+template<typename T>
+unsigned int BlazertScene<T>::add_cylinders(const Vec3rList<T> &centers, const std::vector<T> &semi_axes_a, const std::vector<T> &semi_axes_b,
+                                            const std::vector<T> &heights, const Mat3rList<T> &rotations) {
+  if ((!has_cylinders) && (!has_been_committed)) {
+    cylinders = Cylinder(centers, semi_axes_a, semi_axes_b, heights, rotations);
+    cylinders_sah = CylinderSAHPred(centers, semi_axes_a, semi_axes_b, heights, rotations);
+    has_cylinders = true;
 
     return geometries++;
   } else {

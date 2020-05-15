@@ -2,35 +2,36 @@
 // Created by ogarten on 13/05/2020.
 //
 
-#include "../catch.hpp"
+#include "../doctest.h"
 #include <blazert/embree/primitives/EmbreeSphere.h>
 #include <blazert/embree/scene.h>
 
 using namespace blazert;
+using namespace doctest;
 
-TEMPLATE_TEST_CASE("EmbreeScene", "intersections]", float, double) {
-  SECTION("Sphere") {
-    Vec3r<TestType> center{0.f, 0.f, 0.f};
+TEST_CASE_TEMPLATE("EmbreeScene", T, float, double) {
+  SUBCASE("Sphere") {
+    Vec3r<T> center{0.f, 0.f, 0.f};
     float radius = 1.f;
 
-    auto centers = std::make_unique<Vec3rList<TestType>>();
-    auto radii = std::make_unique<std::vector<TestType>>();
+    auto centers = std::make_unique<Vec3rList<T>>();
+    auto radii = std::make_unique<std::vector<T>>();
 
     centers->emplace_back(center);
     radii->emplace_back(radius);
 
-    SECTION("intersections") {
-      SECTION("Ray origin outside sphere") {
-        SECTION("hit in distance 1") {
-          EmbreeScene<TestType> scene;
+    SUBCASE("intersections") {
+      SUBCASE("Ray origin outside sphere") {
+        SUBCASE("hit in distance 1") {
+          EmbreeScene<T> scene;
           unsigned int prim_id = scene.add_spheres(*centers, *radii);
           scene.commit();
 
-          Vec3r<TestType> org1{2.f, 0.f, 0.f};
-          Vec3r<TestType> dir1{-1.f, 0.f, 0.f};
+          Vec3r<T> org1{2.f, 0.f, 0.f};
+          Vec3r<T> dir1{-1.f, 0.f, 0.f};
 
-          const Ray<TestType> ray1{org1, dir1};
-          RayHit<TestType> rayhit1;
+          const Ray<T> ray1{org1, dir1};
+          RayHit<T> rayhit1;
           const bool hit = intersect1(scene, ray1, rayhit1);
           // should be in distance of 1
           REQUIRE(hit);
@@ -40,15 +41,15 @@ TEMPLATE_TEST_CASE("EmbreeScene", "intersections]", float, double) {
           REQUIRE(rayhit1.normal[1] == Approx(0));
           REQUIRE(rayhit1.normal[2] == Approx(0));
         }
-        SECTION("hit in distance 2") {
-          EmbreeScene<TestType> scene;
+        SUBCASE("hit in distance 2") {
+          EmbreeScene<T> scene;
           unsigned int prim_id = scene.add_spheres(*centers, *radii);
           scene.commit();
 
-          Vec3r<TestType> org3{0.f, 0.f, 3.f};
-          Vec3r<TestType> dir3{0.f, 0.f, -1.f};
-          const Ray<TestType> ray3{org3, dir3};
-          RayHit<TestType> rayhit3;
+          Vec3r<T> org3{0.f, 0.f, 3.f};
+          Vec3r<T> dir3{0.f, 0.f, -1.f};
+          const Ray<T> ray3{org3, dir3};
+          RayHit<T> rayhit3;
           const bool hit = intersect1(scene, ray3, rayhit3);
           // should be in distance of 2
           REQUIRE(hit);
@@ -58,33 +59,33 @@ TEMPLATE_TEST_CASE("EmbreeScene", "intersections]", float, double) {
           REQUIRE(rayhit3.normal[1] == Approx(0));
           REQUIRE(rayhit3.normal[2] == Approx(1));
         }
-        SECTION("no hit")
+        SUBCASE("no hit")
         {
-          EmbreeScene<TestType> scene;
+          EmbreeScene<T> scene;
           scene.add_spheres(*centers, *radii);
           scene.commit();
 
-          Vec3r<TestType> org2{2.f, 0.f, 2.5f};
-          Vec3r<TestType> dir2{-1.f, 0.f, 0.f};
-          const Ray<TestType> ray2{org2, dir2};
-          RayHit<TestType> rayhit2;
+          Vec3r<T> org2{2.f, 0.f, 2.5f};
+          Vec3r<T> dir2{-1.f, 0.f, 0.f};
+          const Ray<T> ray2{org2, dir2};
+          RayHit<T> rayhit2;
           const bool hit = intersect1(scene, ray2, rayhit2);
           // should not hit, therefore tfar is the same as before
           REQUIRE(!hit);
-          REQUIRE(rayhit2.hit_distance == Approx(std::numeric_limits<TestType>::max()));
+          REQUIRE(rayhit2.hit_distance == Approx(std::numeric_limits<T>::max()));
         }
       }
-      SECTION("Ray origin inside sphere") {
+      SUBCASE("Ray origin inside sphere") {
 
-        SECTION("origin = sphere center") {
-          EmbreeScene<TestType> scene;
+        SUBCASE("origin = sphere center") {
+          EmbreeScene<T> scene;
           unsigned int prim_id = scene.add_spheres(*centers, *radii);
           scene.commit();
 
-          Vec3r<TestType> org1{0.f, 0.f, 0.f};
-          Vec3r<TestType> dir1{-1.f, 0.f, 0.f};
-          const Ray<TestType> ray1{org1, dir1};
-          RayHit<TestType> rayhit1;
+          Vec3r<T> org1{0.f, 0.f, 0.f};
+          Vec3r<T> dir1{-1.f, 0.f, 0.f};
+          const Ray<T> ray1{org1, dir1};
+          RayHit<T> rayhit1;
           const bool hit = intersect1(scene, ray1, rayhit1);
           // should be in distance of 1
           REQUIRE(hit);
@@ -94,15 +95,15 @@ TEMPLATE_TEST_CASE("EmbreeScene", "intersections]", float, double) {
           REQUIRE(rayhit1.normal[1] == Approx(0));
           REQUIRE(rayhit1.normal[2] == Approx(0));
         }
-        SECTION("origin != sphere center") {
-          EmbreeScene<TestType> scene;
+        SUBCASE("origin != sphere center") {
+          EmbreeScene<T> scene;
           unsigned int prim_id = scene.add_spheres(*centers, *radii);
           scene.commit();
 
-          Vec3r<TestType> org2{0.f, 0.f, 0.5f};
-          Vec3r<TestType> dir2{0.f, 0.f, -1.f};
-          const Ray<TestType> ray2{org2, dir2};
-          RayHit<TestType> rayhit2;
+          Vec3r<T> org2{0.f, 0.f, 0.5f};
+          Vec3r<T> dir2{0.f, 0.f, -1.f};
+          const Ray<T> ray2{org2, dir2};
+          RayHit<T> rayhit2;
           const bool hit = intersect1(scene, ray2, rayhit2);
           // should  hit in distance of 1.5
           REQUIRE(hit);
@@ -114,16 +115,16 @@ TEMPLATE_TEST_CASE("EmbreeScene", "intersections]", float, double) {
 
         }
       }
-      SECTION("Ray origin on sphere") {
-        SECTION("shooting inside") {
-          EmbreeScene<TestType> scene;
+      SUBCASE("Ray origin on sphere") {
+        SUBCASE("shooting inside") {
+          EmbreeScene<T> scene;
           unsigned int prim_id = scene.add_spheres(*centers, *radii);
           scene.commit();
 
-          Vec3r<TestType> org1{1.f, 0.f, 0.f};
-          Vec3r<TestType> dir1{-1.f, 0.f, 0.f};
-          const Ray<TestType> ray1{org1, dir1};
-          RayHit<TestType> rayhit1;
+          Vec3r<T> org1{1.f, 0.f, 0.f};
+          Vec3r<T> dir1{-1.f, 0.f, 0.f};
+          const Ray<T> ray1{org1, dir1};
+          RayHit<T> rayhit1;
           const bool hit = intersect1(scene, ray1, rayhit1);
           // should hit in distance of 2
           REQUIRE(hit);
@@ -133,29 +134,29 @@ TEMPLATE_TEST_CASE("EmbreeScene", "intersections]", float, double) {
           REQUIRE(rayhit1.normal[1] == Approx(0));
           REQUIRE(rayhit1.normal[2] == Approx(0));
         }
-        SECTION("shooting outside") {
-          EmbreeScene<TestType> scene;
+        SUBCASE("shooting outside") {
+          EmbreeScene<T> scene;
           scene.add_spheres(*centers, *radii);
           scene.commit();
 
-          Vec3r<TestType> org2{1.f, 0.f, 0.f};
-          Vec3r<TestType> dir2{1.f, 0.f, 0.f};
-          const Ray<TestType> ray2{org2, dir2};
-          RayHit<TestType> rayhit2;
+          Vec3r<T> org2{1.f, 0.f, 0.f};
+          Vec3r<T> dir2{1.f, 0.f, 0.f};
+          const Ray<T> ray2{org2, dir2};
+          RayHit<T> rayhit2;
           const bool hit = intersect1(scene, ray2, rayhit2);
           REQUIRE(!hit);
-          REQUIRE(rayhit2.hit_distance == Approx(std::numeric_limits<TestType>::max()));
+          REQUIRE(rayhit2.hit_distance == Approx(std::numeric_limits<T>::max()));
         }
       }
-      SECTION("ray not passing through sphere center") {
-        EmbreeScene<TestType> scene;
+      SUBCASE("ray not passing through sphere center") {
+        EmbreeScene<T> scene;
         unsigned int prim_id = scene.add_spheres(*centers, *radii);
         scene.commit();
 
-        Vec3r<TestType> org1{2.f, 0.5f, 0.f};
-        Vec3r<TestType> dir1{-1.f, 0.f, 0.f};
-        const Ray<TestType> ray1{org1, dir1};
-        RayHit<TestType> rayhit1;
+        Vec3r<T> org1{2.f, 0.5f, 0.f};
+        Vec3r<T> dir1{-1.f, 0.f, 0.f};
+        const Ray<T> ray1{org1, dir1};
+        RayHit<T> rayhit1;
         const bool hit = intersect1(scene, ray1, rayhit1);
 
         REQUIRE(hit);
@@ -167,27 +168,27 @@ TEMPLATE_TEST_CASE("EmbreeScene", "intersections]", float, double) {
       }
     }
   }
-  SECTION("Plane") {
-    auto centers = std::make_unique<Vec3rList<TestType>>();
-    auto dxs = std::make_unique<std::vector<TestType>>();
-    auto dys = std::make_unique<std::vector<TestType>>();
-    auto rotations = std::make_unique<Mat3rList<TestType>>();
+  SUBCASE("Plane") {
+    auto centers = std::make_unique<Vec3rList<T>>();
+    auto dxs = std::make_unique<std::vector<T>>();
+    auto dys = std::make_unique<std::vector<T>>();
+    auto rotations = std::make_unique<Mat3rList<T>>();
 
-    centers->emplace_back(Vec3r<TestType>{0., 0., 0.});
+    centers->emplace_back(Vec3r<T>{0., 0., 0.});
     dxs->emplace_back(2.);
     dys->emplace_back(2.);
-    rotations->emplace_back(blaze::IdentityMatrix<TestType>(3UL));
+    rotations->emplace_back(blaze::IdentityMatrix<T>(3UL));
 
-    EmbreeScene<TestType> scene{};
+    EmbreeScene<T> scene{};
     unsigned int prim_id = scene.add_planes(*centers, *dxs, *dys, *rotations);
     scene.commit();
 
-    SECTION("intersections") {
-      Vec3r<TestType> org{0.f, 0.f, 5.f};
-      Vec3r<TestType> dir{0.f, 0.f, -1.f};
+    SUBCASE("intersections") {
+      Vec3r<T> org{0.f, 0.f, 5.f};
+      Vec3r<T> dir{0.f, 0.f, -1.f};
 
-      const Ray<TestType> ray{org, dir};
-      RayHit<TestType> rayhit;
+      const Ray<T> ray{org, dir};
+      RayHit<T> rayhit;
 
       const bool hit = intersect1(scene, ray, rayhit);
 
