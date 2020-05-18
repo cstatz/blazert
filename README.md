@@ -1,8 +1,28 @@
 # blazeRT
+
+1. [Introduction](#introduction)
+2. [Features](#features)
+3. [Installation](#installation)
+    1. [Dependencies](#dependencies)
+    2. [Build and Test](#build-and-test)
+4. [Usage](#usage)
+5. [Contributing](#contributing)
+
 ## Introduction
 A double precision raytracer for physics applications based on a nanort fork using blaze datatypes.
 You can use your own (vector) dataypes (e.g. as provided by eigen3) and it also works in single precision.
 At the moment blazeRT works with triangular meshes and simple primitives, but it should be easy to extend blazeRT to  work on polygons or more complex primitives.
+
+## Features
+- [x] single and double precision ray tracing 
+- [x] Embree fall back for single precision floats
+- [x] currently supported geometry
+    - [x] triangular meshes
+    - [x] spheres
+    - [x] (finite) planes
+    - [x] cylinders
+- [x] BVH accelerated ray racing
+- [x] unit tests
 
 ## Installation
 Installation and build is tested on linux (e.g. ubuntu bionic, arch-linux) and macos.
@@ -31,6 +51,8 @@ ctest  # Runs the tests
 For now, look at the examples and test cases.
 
 ## Contributing
+We appreciate all contributions from issues to pull requests.
+
 For contributing, please read the [contribution guide][contribution].
                                                      
 [contribution]: CONTRIBUTING.md
