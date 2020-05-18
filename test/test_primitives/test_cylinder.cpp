@@ -105,8 +105,994 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
       heights->emplace_back(2);
       SUBCASE("non-rotated") {
         rotations->emplace_back(blaze::IdentityMatrix<T>(3UL));
-        SUBCASE("origin above") {
-          SUBCASE("perpendicular incidence on top") {
+        SUBCASE("hits") {
+          SUBCASE("origin above") {
+            SUBCASE("perpendicular incidence on top") {
+              Vec3r<T> org1{0.f, 0.f, 7.5f};
+              Vec3r<T> dir1{0.f, 0.f, -1.f};
+
+              Ray<T> ray{org1, dir1};
+              RayHit<T> rayhit;
+
+              BVHTraceOptions<T> trace_options;
+
+              CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
+
+              // Test intersections
+              update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
+              prepare_traversal(cylinder_intersector, ray, trace_options);
+              T hit_distance = cylinder_intersector.hit_distance;
+              const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
+              update_intersector(cylinder_intersector, hit_distance, 0);
+              post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
+
+              REQUIRE(hit_cylinder);
+              REQUIRE(rayhit.prim_id == 0);
+              REQUIRE(rayhit.hit_distance == Approx(5.5));
+              REQUIRE(rayhit.normal[0] == Approx(0.f));
+              REQUIRE(rayhit.normal[1] == Approx(0.f));
+              REQUIRE(rayhit.normal[2] == Approx(1.f));
+            }
+            SUBCASE("oblique incidence on top") {
+              Vec3r<T> org1{5.f, 0.f, 7.f};
+              Vec3r<T> dir1{-1.f, 0.f, -1.f};
+
+              Ray<T> ray{org1, dir1};
+              RayHit<T> rayhit;
+
+              BVHTraceOptions<T> trace_options;
+
+              CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
+
+              // Test intersections
+              update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
+              prepare_traversal(cylinder_intersector, ray, trace_options);
+              T hit_distance = cylinder_intersector.hit_distance;
+              const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
+              update_intersector(cylinder_intersector, hit_distance, 0);
+              post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
+
+              REQUIRE(hit_cylinder);
+              REQUIRE(rayhit.prim_id == 0);
+              REQUIRE(rayhit.hit_distance == Approx(std::sqrt(50)));
+              REQUIRE(rayhit.normal[0] == Approx(0.f));
+              REQUIRE(rayhit.normal[1] == Approx(0.f));
+              REQUIRE(rayhit.normal[2] == Approx(1.f));
+            }
+            SUBCASE("oblique incidence on shell 1") {
+              Vec3r<T> org1{5, 0, 5};
+              Vec3r<T> dir1{-1, 0, -1};
+              Ray<T> ray{org1, dir1};
+              RayHit<T> rayhit;
+
+              BVHTraceOptions<T> trace_options;
+
+              CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
+
+              // Test intersections
+              update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
+              prepare_traversal(cylinder_intersector, ray, trace_options);
+              T hit_distance = cylinder_intersector.hit_distance;
+              const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
+              update_intersector(cylinder_intersector, hit_distance, 0);
+              post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
+
+              REQUIRE(hit_cylinder);
+              REQUIRE(rayhit.prim_id == 0);
+              REQUIRE(rayhit.hit_distance == Approx(std::sqrt(32)));
+              REQUIRE(rayhit.normal[0] == Approx(1.f));
+              REQUIRE(rayhit.normal[1] == Approx(0.f));
+              REQUIRE(rayhit.normal[2] == Approx(0.f));
+            }
+            SUBCASE("oblique incidence on shell 2") {
+              Vec3r<T> org1{-5, 0, 5};
+              Vec3r<T> dir1{1, 0, -1};
+              Ray<T> ray{org1, dir1};
+              RayHit<T> rayhit;
+
+              BVHTraceOptions<T> trace_options;
+
+              CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
+
+              // Test intersections
+              update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
+              prepare_traversal(cylinder_intersector, ray, trace_options);
+              T hit_distance = cylinder_intersector.hit_distance;
+              const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
+              update_intersector(cylinder_intersector, hit_distance, 0);
+              post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
+
+              REQUIRE(hit_cylinder);
+              REQUIRE(rayhit.prim_id == 0);
+              REQUIRE(rayhit.hit_distance == Approx(std::sqrt(32)));
+              REQUIRE(rayhit.normal[0] == Approx(-1.f));
+              REQUIRE(rayhit.normal[1] == Approx(0.f));
+              REQUIRE(rayhit.normal[2] == Approx(0.f));
+            }
+            SUBCASE("oblique incidence on shell 3") {
+              Vec3r<T> org1{0, 5, 4};
+              Vec3r<T> dir1{0, -1, -1};
+              Ray<T> ray{org1, dir1};
+              RayHit<T> rayhit;
+
+              BVHTraceOptions<T> trace_options;
+
+              CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
+
+              // Test intersections
+              update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
+              prepare_traversal(cylinder_intersector, ray, trace_options);
+              T hit_distance = cylinder_intersector.hit_distance;
+              const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
+              update_intersector(cylinder_intersector, hit_distance, 0);
+              post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
+
+              REQUIRE(hit_cylinder);
+              REQUIRE(rayhit.prim_id == 0);
+              REQUIRE(rayhit.hit_distance == Approx(std::sqrt(18)));
+              REQUIRE(rayhit.normal[0] == Approx(0.f));
+              REQUIRE(rayhit.normal[1] == Approx(1.f));
+              REQUIRE(rayhit.normal[2] == Approx(0.f));
+            }
+            SUBCASE("oblique incidence on shell 4") {
+              Vec3r<T> org1{0, -5, 4};
+              Vec3r<T> dir1{0, 1, -1};
+              Ray<T> ray{org1, dir1};
+              RayHit<T> rayhit;
+
+              BVHTraceOptions<T> trace_options;
+
+              CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
+
+              // Test intersections
+              update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
+              prepare_traversal(cylinder_intersector, ray, trace_options);
+              T hit_distance = cylinder_intersector.hit_distance;
+              const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
+              update_intersector(cylinder_intersector, hit_distance, 0);
+              post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
+
+              REQUIRE(hit_cylinder);
+              REQUIRE(rayhit.prim_id == 0);
+              REQUIRE(rayhit.hit_distance == Approx(std::sqrt(18)));
+              REQUIRE(rayhit.normal[0] == Approx(0.f));
+              REQUIRE(rayhit.normal[1] == Approx(-1.f));
+              REQUIRE(rayhit.normal[2] == Approx(0.f));
+            }
+          }
+          SUBCASE("origin below") {
+            SUBCASE("perpendicular incidence on bottom") {
+              Vec3r<T> org1{0.f, 0.f, -7.5f};
+              Vec3r<T> dir1{0.f, 0.f, 1.f};
+
+              Ray<T> ray{org1, dir1};
+              RayHit<T> rayhit;
+
+              BVHTraceOptions<T> trace_options;
+
+              CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
+
+              // Test intersections
+              update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
+              prepare_traversal(cylinder_intersector, ray, trace_options);
+              T hit_distance = cylinder_intersector.hit_distance;
+              const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
+              update_intersector(cylinder_intersector, hit_distance, 0);
+              post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
+
+              REQUIRE(hit_cylinder);
+              REQUIRE(rayhit.prim_id == 0);
+              REQUIRE(rayhit.hit_distance == Approx(7.5));
+              REQUIRE(rayhit.normal[0] == Approx(0.f));
+              REQUIRE(rayhit.normal[1] == Approx(0.f));
+              REQUIRE(rayhit.normal[2] == Approx(-1.f));
+            }
+            SUBCASE("oblique incidence on bottom") {
+              Vec3r<T> org1{5.f, 0.f, -5.f};
+              Vec3r<T> dir1{-1.f, 0.f, 1.f};
+
+              Ray<T> ray{org1, dir1};
+              RayHit<T> rayhit;
+
+              BVHTraceOptions<T> trace_options;
+
+              CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
+
+              // Test intersections
+              update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
+              prepare_traversal(cylinder_intersector, ray, trace_options);
+              T hit_distance = cylinder_intersector.hit_distance;
+              const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
+              update_intersector(cylinder_intersector, hit_distance, 0);
+              post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
+
+              REQUIRE(hit_cylinder);
+              REQUIRE(rayhit.prim_id == 0);
+              REQUIRE(rayhit.hit_distance == Approx(std::sqrt(50)));
+              REQUIRE(rayhit.normal[0] == Approx(0.f));
+              REQUIRE(rayhit.normal[1] == Approx(0.f));
+              REQUIRE(rayhit.normal[2] == Approx(-1.f));
+            }
+            SUBCASE("oblique incidence on shell 1") {
+              Vec3r<T> org1{5, 0, -3};
+              Vec3r<T> dir1{-1, 0, 1};
+              Ray<T> ray{org1, dir1};
+              RayHit<T> rayhit;
+
+              BVHTraceOptions<T> trace_options;
+
+              CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
+
+              // Test intersections
+              update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
+              prepare_traversal(cylinder_intersector, ray, trace_options);
+              T hit_distance = cylinder_intersector.hit_distance;
+              const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
+              update_intersector(cylinder_intersector, hit_distance, 0);
+              post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
+
+              REQUIRE(hit_cylinder);
+              REQUIRE(rayhit.prim_id == 0);
+              REQUIRE(rayhit.hit_distance == Approx(std::sqrt(32)));
+              REQUIRE(rayhit.normal[0] == Approx(1.f));
+              REQUIRE(rayhit.normal[1] == Approx(0.f));
+              REQUIRE(rayhit.normal[2] == Approx(0.f));
+            }
+            SUBCASE("oblique incidence on shell 2") {
+              Vec3r<T> org1{-5, 0, -3};
+              Vec3r<T> dir1{1, 0, 1};
+              Ray<T> ray{org1, dir1};
+              RayHit<T> rayhit;
+
+              BVHTraceOptions<T> trace_options;
+
+              CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
+
+              // Test intersections
+              update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
+              prepare_traversal(cylinder_intersector, ray, trace_options);
+              T hit_distance = cylinder_intersector.hit_distance;
+              const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
+              update_intersector(cylinder_intersector, hit_distance, 0);
+              post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
+
+              REQUIRE(hit_cylinder);
+              REQUIRE(rayhit.prim_id == 0);
+              REQUIRE(rayhit.hit_distance == Approx(std::sqrt(32)));
+              REQUIRE(rayhit.normal[0] == Approx(-1.f));
+              REQUIRE(rayhit.normal[1] == Approx(0.f));
+              REQUIRE(rayhit.normal[2] == Approx(0.f));
+            }
+            SUBCASE("oblique incidence on shell 3") {
+              Vec3r<T> org1{0, 5, -2};
+              Vec3r<T> dir1{0, -1, 1};
+              Ray<T> ray{org1, dir1};
+              RayHit<T> rayhit;
+
+              BVHTraceOptions<T> trace_options;
+
+              CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
+
+              // Test intersections
+              update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
+              prepare_traversal(cylinder_intersector, ray, trace_options);
+              T hit_distance = cylinder_intersector.hit_distance;
+              const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
+              update_intersector(cylinder_intersector, hit_distance, 0);
+              post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
+
+              REQUIRE(hit_cylinder);
+              REQUIRE(rayhit.prim_id == 0);
+              REQUIRE(rayhit.hit_distance == Approx(std::sqrt(18)));
+              REQUIRE(rayhit.normal[0] == Approx(0.f));
+              REQUIRE(rayhit.normal[1] == Approx(1.f));
+              REQUIRE(rayhit.normal[2] == Approx(0.f));
+            }
+            SUBCASE("oblique incidence on shell 4") {
+              Vec3r<T> org1{0, -5, -2};
+              Vec3r<T> dir1{0, 1, 1};
+              Ray<T> ray{org1, dir1};
+              RayHit<T> rayhit;
+
+              BVHTraceOptions<T> trace_options;
+
+              CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
+
+              // Test intersections
+              update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
+              prepare_traversal(cylinder_intersector, ray, trace_options);
+              T hit_distance = cylinder_intersector.hit_distance;
+              const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
+              update_intersector(cylinder_intersector, hit_distance, 0);
+              post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
+
+              REQUIRE(hit_cylinder);
+              REQUIRE(rayhit.prim_id == 0);
+              REQUIRE(rayhit.hit_distance == Approx(std::sqrt(18)));
+              REQUIRE(rayhit.normal[0] == Approx(0.f));
+              REQUIRE(rayhit.normal[1] == Approx(-1.f));
+              REQUIRE(rayhit.normal[2] == Approx(0.f));
+            }
+          }
+          SUBCASE("origin around shell") {
+            SUBCASE("perpendicular incidence") {
+              SUBCASE("origin: x+") {
+                Vec3r<T> org1{5, 0, 1};
+                Vec3r<T> dir1{-1, 0, 0};
+                Ray<T> ray{org1, dir1};
+                RayHit<T> rayhit;
+
+                BVHTraceOptions<T> trace_options;
+
+                CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
+
+                // Test intersections
+                update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
+                prepare_traversal(cylinder_intersector, ray, trace_options);
+                T hit_distance = cylinder_intersector.hit_distance;
+                const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
+                update_intersector(cylinder_intersector, hit_distance, 0);
+                post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
+
+                REQUIRE(hit_cylinder);
+                REQUIRE(rayhit.prim_id == 0);
+                REQUIRE(rayhit.hit_distance == Approx(4));
+                REQUIRE(rayhit.normal[0] == Approx(1.f));
+                REQUIRE(rayhit.normal[1] == Approx(0.f));
+                REQUIRE(rayhit.normal[2] == Approx(0.f));
+              }
+              SUBCASE("origin: x-") {
+                Vec3r<T> org1{-5, 0, 1};
+                Vec3r<T> dir1{1, 0, 0};
+                Ray<T> ray{org1, dir1};
+                RayHit<T> rayhit;
+
+                BVHTraceOptions<T> trace_options;
+
+                CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
+
+                // Test intersections
+                update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
+                prepare_traversal(cylinder_intersector, ray, trace_options);
+                T hit_distance = cylinder_intersector.hit_distance;
+                const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
+                update_intersector(cylinder_intersector, hit_distance, 0);
+                post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
+
+                REQUIRE(hit_cylinder);
+                REQUIRE(rayhit.prim_id == 0);
+                REQUIRE(rayhit.hit_distance == Approx(4));
+                REQUIRE(rayhit.normal[0] == Approx(-1.f));
+                REQUIRE(rayhit.normal[1] == Approx(0.f));
+                REQUIRE(rayhit.normal[2] == Approx(0.f));
+              }
+              SUBCASE("origin: y+") {
+                Vec3r<T> org1{0, 5, 1};
+                Vec3r<T> dir1{0, -1, 0};
+                Ray<T> ray{org1, dir1};
+                RayHit<T> rayhit;
+
+                BVHTraceOptions<T> trace_options;
+
+                CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
+
+                // Test intersections
+                update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
+                prepare_traversal(cylinder_intersector, ray, trace_options);
+                T hit_distance = cylinder_intersector.hit_distance;
+                const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
+                update_intersector(cylinder_intersector, hit_distance, 0);
+                post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
+
+                REQUIRE(hit_cylinder);
+                REQUIRE(rayhit.prim_id == 0);
+                REQUIRE(rayhit.hit_distance == Approx(3));
+                REQUIRE(rayhit.normal[0] == Approx(0.f));
+                REQUIRE(rayhit.normal[1] == Approx(1.f));
+                REQUIRE(rayhit.normal[2] == Approx(0.f));
+              }
+              SUBCASE("origin: y-") {
+                Vec3r<T> org1{0, -5, 1};
+                Vec3r<T> dir1{0, 1, 0};
+                Ray<T> ray{org1, dir1};
+                RayHit<T> rayhit;
+
+                BVHTraceOptions<T> trace_options;
+
+                CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
+
+                // Test intersections
+                update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
+                prepare_traversal(cylinder_intersector, ray, trace_options);
+                T hit_distance = cylinder_intersector.hit_distance;
+                const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
+                update_intersector(cylinder_intersector, hit_distance, 0);
+                post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
+
+                REQUIRE(hit_cylinder);
+                REQUIRE(rayhit.prim_id == 0);
+                REQUIRE(rayhit.hit_distance == Approx(3));
+                REQUIRE(rayhit.normal[0] == Approx(0.f));
+                REQUIRE(rayhit.normal[1] == Approx(-1.f));
+                REQUIRE(rayhit.normal[2] == Approx(0.f));
+              }
+            }
+          }
+          SUBCASE("origin inside of cylinder") {
+            SUBCASE("hit top") {
+              Vec3r<T> org1{0, 0, 1};
+              Vec3r<T> dir1{0, 0, 1};
+              Ray<T> ray{org1, dir1};
+              RayHit<T> rayhit;
+
+              BVHTraceOptions<T> trace_options;
+
+              CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
+
+              // Test intersections
+              update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
+              prepare_traversal(cylinder_intersector, ray, trace_options);
+              T hit_distance = cylinder_intersector.hit_distance;
+              const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
+              update_intersector(cylinder_intersector, hit_distance, 0);
+              post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
+
+              REQUIRE(hit_cylinder);
+              REQUIRE(rayhit.prim_id == 0);
+              REQUIRE(rayhit.hit_distance == Approx(1));
+              REQUIRE(rayhit.normal[0] == Approx(0.f));
+              REQUIRE(rayhit.normal[1] == Approx(0.f));
+              REQUIRE(rayhit.normal[2] == Approx(1.f));
+            }
+            SUBCASE("hit bottom") {
+              Vec3r<T> org1{0, 0, 1};
+              Vec3r<T> dir1{0, 0, -1};
+              Ray<T> ray{org1, dir1};
+              RayHit<T> rayhit;
+
+              BVHTraceOptions<T> trace_options;
+
+              CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
+
+              // Test intersections
+              update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
+              prepare_traversal(cylinder_intersector, ray, trace_options);
+              T hit_distance = cylinder_intersector.hit_distance;
+              const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
+              update_intersector(cylinder_intersector, hit_distance, 0);
+              post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
+
+              REQUIRE(hit_cylinder);
+              REQUIRE(rayhit.prim_id == 0);
+              REQUIRE(rayhit.hit_distance == Approx(1));
+              REQUIRE(rayhit.normal[0] == Approx(0.f));
+              REQUIRE(rayhit.normal[1] == Approx(0.f));
+              REQUIRE(rayhit.normal[2] == Approx(-1.f));
+            }
+            SUBCASE("hit shell 1") {
+              Vec3r<T> org1{0, 0, 1};
+              Vec3r<T> dir1{-1, 0, 0};
+              Ray<T> ray{org1, dir1};
+              RayHit<T> rayhit;
+
+              BVHTraceOptions<T> trace_options;
+
+              CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
+
+              // Test intersections
+              update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
+              prepare_traversal(cylinder_intersector, ray, trace_options);
+              T hit_distance = cylinder_intersector.hit_distance;
+              const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
+              update_intersector(cylinder_intersector, hit_distance, 0);
+              post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
+
+              REQUIRE(hit_cylinder);
+              REQUIRE(rayhit.prim_id == 0);
+              REQUIRE(rayhit.hit_distance == Approx(1));
+              REQUIRE(rayhit.normal[0] == Approx(-1.f));
+              REQUIRE(rayhit.normal[1] == Approx(0.f));
+              REQUIRE(rayhit.normal[2] == Approx(0.f));
+            }
+            SUBCASE("hit shell 2") {
+              Vec3r<T> org1{0, 0, 1};
+              Vec3r<T> dir1{1, 0, 0};
+              Ray<T> ray{org1, dir1};
+              RayHit<T> rayhit;
+
+              BVHTraceOptions<T> trace_options;
+
+              CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
+
+              // Test intersections
+              update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
+              prepare_traversal(cylinder_intersector, ray, trace_options);
+              T hit_distance = cylinder_intersector.hit_distance;
+              const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
+              update_intersector(cylinder_intersector, hit_distance, 0);
+              post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
+
+              REQUIRE(hit_cylinder);
+              REQUIRE(rayhit.prim_id == 0);
+              REQUIRE(rayhit.hit_distance == Approx(1));
+              REQUIRE(rayhit.normal[0] == Approx(1.f));
+              REQUIRE(rayhit.normal[1] == Approx(0.f));
+              REQUIRE(rayhit.normal[2] == Approx(0.f));
+            }
+            SUBCASE("hit shell 3") {
+              Vec3r<T> org1{0, 0, 1};
+              Vec3r<T> dir1{0, -1, 0};
+              Ray<T> ray{org1, dir1};
+              RayHit<T> rayhit;
+
+              BVHTraceOptions<T> trace_options;
+
+              CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
+
+              // Test intersections
+              update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
+              prepare_traversal(cylinder_intersector, ray, trace_options);
+              T hit_distance = cylinder_intersector.hit_distance;
+              const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
+              update_intersector(cylinder_intersector, hit_distance, 0);
+              post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
+
+              REQUIRE(hit_cylinder);
+              REQUIRE(rayhit.prim_id == 0);
+              REQUIRE(rayhit.hit_distance == Approx(2));
+              REQUIRE(rayhit.normal[0] == Approx(0.f));
+              REQUIRE(rayhit.normal[1] == Approx(-1.f));
+              REQUIRE(rayhit.normal[2] == Approx(0.f));
+            }
+            SUBCASE("hit shell 4") {
+              Vec3r<T> org1{0, 0, 1};
+              Vec3r<T> dir1{0, 1, 0};
+              Ray<T> ray{org1, dir1};
+              RayHit<T> rayhit;
+
+              BVHTraceOptions<T> trace_options;
+
+              CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
+
+              // Test intersections
+              update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
+              prepare_traversal(cylinder_intersector, ray, trace_options);
+              T hit_distance = cylinder_intersector.hit_distance;
+              const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
+              update_intersector(cylinder_intersector, hit_distance, 0);
+              post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
+
+              REQUIRE(hit_cylinder);
+              REQUIRE(rayhit.prim_id == 0);
+              REQUIRE(rayhit.hit_distance == Approx(2));
+              REQUIRE(rayhit.normal[0] == Approx(0.f));
+              REQUIRE(rayhit.normal[1] == Approx(1.f));
+              REQUIRE(rayhit.normal[2] == Approx(0.f));
+            }
+          }
+        }
+        SUBCASE("no hits") {
+          SUBCASE("origin above (direction inverted)") {
+            SUBCASE("perpendicular incidence on top") {
+
+              Vec3r<T> org1{0.f, 0.f, 7.5f};
+              Vec3r<T> dir1{0.f, 0.f, 1.f};
+
+              Ray<T> ray{org1, dir1};
+              RayHit<T> rayhit;
+
+              BVHTraceOptions<T> trace_options;
+
+              CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
+
+              // Test intersections
+              update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
+              prepare_traversal(cylinder_intersector, ray, trace_options);
+              T hit_distance = cylinder_intersector.hit_distance;
+              const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
+              update_intersector(cylinder_intersector, hit_distance, 0);
+              post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
+
+              REQUIRE_FALSE(hit_cylinder);
+              REQUIRE_FALSE(rayhit.prim_id == 0);
+              REQUIRE(rayhit.hit_distance == std::numeric_limits<T>::max());
+              REQUIRE(rayhit.normal[0] == Approx(0.f));
+              REQUIRE(rayhit.normal[1] == Approx(0.f));
+              REQUIRE(rayhit.normal[2] == Approx(0.f));
+            }
+            SUBCASE("oblique incidence on top") {
+              Vec3r<T> org1{5.f, 0.f, 7.f};
+              Vec3r<T> dir1{1.f, 0.f, 1.f};
+
+              Ray<T> ray{org1, dir1};
+              RayHit<T> rayhit;
+
+              BVHTraceOptions<T> trace_options;
+
+              CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
+
+              // Test intersections
+              update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
+              prepare_traversal(cylinder_intersector, ray, trace_options);
+              T hit_distance = cylinder_intersector.hit_distance;
+              const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
+              update_intersector(cylinder_intersector, hit_distance, 0);
+              post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
+
+              REQUIRE_FALSE(hit_cylinder);
+              REQUIRE_FALSE(rayhit.prim_id == 0);
+              REQUIRE(rayhit.hit_distance == std::numeric_limits<T>::max());
+              REQUIRE(rayhit.normal[0] == Approx(0.f));
+              REQUIRE(rayhit.normal[1] == Approx(0.f));
+              REQUIRE(rayhit.normal[2] == Approx(0.f));
+            }
+            SUBCASE("oblique incidence on shell 1") {
+              Vec3r<T> org1{5, 0, 5};
+              Vec3r<T> dir1{1, 0, 1};
+              Ray<T> ray{org1, dir1};
+              RayHit<T> rayhit;
+
+              BVHTraceOptions<T> trace_options;
+
+              CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
+
+              // Test intersections
+              update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
+              prepare_traversal(cylinder_intersector, ray, trace_options);
+              T hit_distance = cylinder_intersector.hit_distance;
+              const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
+              update_intersector(cylinder_intersector, hit_distance, 0);
+              post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
+
+              REQUIRE_FALSE(hit_cylinder);
+              REQUIRE_FALSE(rayhit.prim_id == 0);
+              REQUIRE(rayhit.hit_distance == std::numeric_limits<T>::max());
+              REQUIRE(rayhit.normal[0] == Approx(0.f));
+              REQUIRE(rayhit.normal[1] == Approx(0.f));
+              REQUIRE(rayhit.normal[2] == Approx(0.f));
+            }
+            SUBCASE("oblique incidence on shell 2") {
+              Vec3r<T> org1{-5, 0, 5};
+              Vec3r<T> dir1{-1, 0, 1};
+              Ray<T> ray{org1, dir1};
+              RayHit<T> rayhit;
+
+              BVHTraceOptions<T> trace_options;
+
+              CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
+
+              // Test intersections
+              update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
+              prepare_traversal(cylinder_intersector, ray, trace_options);
+              T hit_distance = cylinder_intersector.hit_distance;
+              const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
+              update_intersector(cylinder_intersector, hit_distance, 0);
+              post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
+
+              REQUIRE_FALSE(hit_cylinder);
+              REQUIRE_FALSE(rayhit.prim_id == 0);
+              REQUIRE(rayhit.hit_distance == std::numeric_limits<T>::max());
+              REQUIRE(rayhit.normal[0] == Approx(0.f));
+              REQUIRE(rayhit.normal[1] == Approx(0.f));
+              REQUIRE(rayhit.normal[2] == Approx(0.f));
+            }
+            SUBCASE("oblique incidence on shell 3") {
+              Vec3r<T> org1{0, 5, 4};
+              Vec3r<T> dir1{0, 1, 1};
+              Ray<T> ray{org1, dir1};
+              RayHit<T> rayhit;
+
+              BVHTraceOptions<T> trace_options;
+
+              CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
+
+              // Test intersections
+              update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
+              prepare_traversal(cylinder_intersector, ray, trace_options);
+              T hit_distance = cylinder_intersector.hit_distance;
+              const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
+              update_intersector(cylinder_intersector, hit_distance, 0);
+              post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
+
+              REQUIRE_FALSE(hit_cylinder);
+              REQUIRE_FALSE(rayhit.prim_id == 0);
+              REQUIRE(rayhit.hit_distance == std::numeric_limits<T>::max());
+              REQUIRE(rayhit.normal[0] == Approx(0.f));
+              REQUIRE(rayhit.normal[1] == Approx(0.f));
+              REQUIRE(rayhit.normal[2] == Approx(0.f));
+            }
+            SUBCASE("oblique incidence on shell 4") {
+              Vec3r<T> org1{0, -5, 4};
+              Vec3r<T> dir1{0, -1, 1};
+              Ray<T> ray{org1, dir1};
+              RayHit<T> rayhit;
+
+              BVHTraceOptions<T> trace_options;
+
+              CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
+
+              // Test intersections
+              update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
+              prepare_traversal(cylinder_intersector, ray, trace_options);
+              T hit_distance = cylinder_intersector.hit_distance;
+              const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
+              update_intersector(cylinder_intersector, hit_distance, 0);
+              post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
+
+              REQUIRE_FALSE(hit_cylinder);
+              REQUIRE_FALSE(rayhit.prim_id == 0);
+              REQUIRE(rayhit.hit_distance == std::numeric_limits<T>::max());
+              REQUIRE(rayhit.normal[0] == Approx(0.f));
+              REQUIRE(rayhit.normal[1] == Approx(0.f));
+              REQUIRE(rayhit.normal[2] == Approx(0.f));
+            }
+          }
+          SUBCASE("origin below (direction inverted)") {
+            SUBCASE("perpendicular incidence on bottom") {
+              Vec3r<T> org1{0.f, 0.f, -7.5f};
+              Vec3r<T> dir1{0.f, 0.f, -1.f};
+
+              Ray<T> ray{org1, dir1};
+              RayHit<T> rayhit;
+
+              BVHTraceOptions<T> trace_options;
+
+              CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
+
+              // Test intersections
+              update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
+              prepare_traversal(cylinder_intersector, ray, trace_options);
+              T hit_distance = cylinder_intersector.hit_distance;
+              const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
+              update_intersector(cylinder_intersector, hit_distance, 0);
+              post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
+
+              REQUIRE_FALSE(hit_cylinder);
+              REQUIRE_FALSE(rayhit.prim_id == 0);
+              REQUIRE(rayhit.hit_distance == std::numeric_limits<T>::max());
+              REQUIRE(rayhit.normal[0] == Approx(0.f));
+              REQUIRE(rayhit.normal[1] == Approx(0.f));
+              REQUIRE(rayhit.normal[2] == Approx(0.f));
+            }
+            SUBCASE("oblique incidence on bottom") {
+              Vec3r<T> org1{5.f, 0.f, -5.f};
+              Vec3r<T> dir1{1.f, 0.f, -1.f};
+
+              Ray<T> ray{org1, dir1};
+              RayHit<T> rayhit;
+
+              BVHTraceOptions<T> trace_options;
+
+              CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
+
+              // Test intersections
+              update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
+              prepare_traversal(cylinder_intersector, ray, trace_options);
+              T hit_distance = cylinder_intersector.hit_distance;
+              const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
+              update_intersector(cylinder_intersector, hit_distance, 0);
+              post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
+
+              REQUIRE_FALSE(hit_cylinder);
+              REQUIRE_FALSE(rayhit.prim_id == 0);
+              REQUIRE(rayhit.hit_distance == std::numeric_limits<T>::max());
+              REQUIRE(rayhit.normal[0] == Approx(0.f));
+              REQUIRE(rayhit.normal[1] == Approx(0.f));
+              REQUIRE(rayhit.normal[2] == Approx(0.f));
+            }
+            SUBCASE("oblique incidence on shell 1") {
+              Vec3r<T> org1{5, 0, -3};
+              Vec3r<T> dir1{1, 0, -1};
+              Ray<T> ray{org1, dir1};
+              RayHit<T> rayhit;
+
+              BVHTraceOptions<T> trace_options;
+
+              CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
+
+              // Test intersections
+              update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
+              prepare_traversal(cylinder_intersector, ray, trace_options);
+              T hit_distance = cylinder_intersector.hit_distance;
+              const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
+              update_intersector(cylinder_intersector, hit_distance, 0);
+              post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
+
+              REQUIRE_FALSE(hit_cylinder);
+              REQUIRE_FALSE(rayhit.prim_id == 0);
+              REQUIRE(rayhit.hit_distance == std::numeric_limits<T>::max());
+              REQUIRE(rayhit.normal[0] == Approx(0.f));
+              REQUIRE(rayhit.normal[1] == Approx(0.f));
+              REQUIRE(rayhit.normal[2] == Approx(0.f));
+            }
+            SUBCASE("oblique incidence on shell 2") {
+              Vec3r<T> org1{-5, 0, -3};
+              Vec3r<T> dir1{-1, 0, -1};
+              Ray<T> ray{org1, dir1};
+              RayHit<T> rayhit;
+
+              BVHTraceOptions<T> trace_options;
+
+              CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
+
+              // Test intersections
+              update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
+              prepare_traversal(cylinder_intersector, ray, trace_options);
+              T hit_distance = cylinder_intersector.hit_distance;
+              const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
+              update_intersector(cylinder_intersector, hit_distance, 0);
+              post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
+
+              REQUIRE_FALSE(hit_cylinder);
+              REQUIRE_FALSE(rayhit.prim_id == 0);
+              REQUIRE(rayhit.hit_distance == std::numeric_limits<T>::max());
+              REQUIRE(rayhit.normal[0] == Approx(0.f));
+              REQUIRE(rayhit.normal[1] == Approx(0.f));
+              REQUIRE(rayhit.normal[2] == Approx(0.f));
+            }
+            SUBCASE("oblique incidence on shell 3") {
+              Vec3r<T> org1{0, 5, -2};
+              Vec3r<T> dir1{0, 1, -1};
+              Ray<T> ray{org1, dir1};
+              RayHit<T> rayhit;
+
+              BVHTraceOptions<T> trace_options;
+
+              CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
+
+              // Test intersections
+              update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
+              prepare_traversal(cylinder_intersector, ray, trace_options);
+              T hit_distance = cylinder_intersector.hit_distance;
+              const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
+              update_intersector(cylinder_intersector, hit_distance, 0);
+              post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
+
+              REQUIRE_FALSE(hit_cylinder);
+              REQUIRE_FALSE(rayhit.prim_id == 0);
+              REQUIRE(rayhit.hit_distance == std::numeric_limits<T>::max());
+              REQUIRE(rayhit.normal[0] == Approx(0.f));
+              REQUIRE(rayhit.normal[1] == Approx(0.f));
+              REQUIRE(rayhit.normal[2] == Approx(0.f));
+            }
+            SUBCASE("oblique incidence on shell 4") {
+              Vec3r<T> org1{0, -5, -2};
+              Vec3r<T> dir1{0, -1, -1};
+              Ray<T> ray{org1, dir1};
+              RayHit<T> rayhit;
+
+              BVHTraceOptions<T> trace_options;
+
+              CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
+
+              // Test intersections
+              update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
+              prepare_traversal(cylinder_intersector, ray, trace_options);
+              T hit_distance = cylinder_intersector.hit_distance;
+              const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
+              update_intersector(cylinder_intersector, hit_distance, 0);
+              post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
+
+              REQUIRE_FALSE(hit_cylinder);
+              REQUIRE_FALSE(rayhit.prim_id == 0);
+              REQUIRE(rayhit.hit_distance == std::numeric_limits<T>::max());
+              REQUIRE(rayhit.normal[0] == Approx(0.f));
+              REQUIRE(rayhit.normal[1] == Approx(0.f));
+              REQUIRE(rayhit.normal[2] == Approx(0.f));
+            }
+          }
+          SUBCASE("origin around shell (direction inverted") {
+            SUBCASE("perpendicular incidence") {
+              SUBCASE("origin: x+") {
+                Vec3r<T> org1{5, 0, 1};
+                Vec3r<T> dir1{1, 0, 0};
+                Ray<T> ray{org1, dir1};
+                RayHit<T> rayhit;
+
+                BVHTraceOptions<T> trace_options;
+
+                CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
+
+                // Test intersections
+                update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
+                prepare_traversal(cylinder_intersector, ray, trace_options);
+                T hit_distance = cylinder_intersector.hit_distance;
+                const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
+                update_intersector(cylinder_intersector, hit_distance, 0);
+                post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
+
+                REQUIRE_FALSE(hit_cylinder);
+                REQUIRE_FALSE(rayhit.prim_id == 0);
+                REQUIRE(rayhit.hit_distance == std::numeric_limits<T>::max());
+                REQUIRE(rayhit.normal[0] == Approx(0.f));
+                REQUIRE(rayhit.normal[1] == Approx(0.f));
+                REQUIRE(rayhit.normal[2] == Approx(0.f));
+              }
+              SUBCASE("origin: x-") {
+                Vec3r<T> org1{-5, 0, 1};
+                Vec3r<T> dir1{-1, 0, 0};
+                Ray<T> ray{org1, dir1};
+                RayHit<T> rayhit;
+
+                BVHTraceOptions<T> trace_options;
+
+                CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
+
+                // Test intersections
+                update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
+                prepare_traversal(cylinder_intersector, ray, trace_options);
+                T hit_distance = cylinder_intersector.hit_distance;
+                const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
+                update_intersector(cylinder_intersector, hit_distance, 0);
+                post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
+
+                REQUIRE_FALSE(hit_cylinder);
+                REQUIRE_FALSE(rayhit.prim_id == 0);
+                REQUIRE(rayhit.hit_distance == std::numeric_limits<T>::max());
+                REQUIRE(rayhit.normal[0] == Approx(0.f));
+                REQUIRE(rayhit.normal[1] == Approx(0.f));
+                REQUIRE(rayhit.normal[2] == Approx(0.f));
+              }
+              SUBCASE("origin: y+") {
+                Vec3r<T> org1{0, 5, 1};
+                Vec3r<T> dir1{0, 1, 0};
+                Ray<T> ray{org1, dir1};
+                RayHit<T> rayhit;
+
+                BVHTraceOptions<T> trace_options;
+
+                CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
+
+                // Test intersections
+                update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
+                prepare_traversal(cylinder_intersector, ray, trace_options);
+                T hit_distance = cylinder_intersector.hit_distance;
+                const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
+                update_intersector(cylinder_intersector, hit_distance, 0);
+                post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
+
+                REQUIRE_FALSE(hit_cylinder);
+                REQUIRE_FALSE(rayhit.prim_id == 0);
+                REQUIRE(rayhit.hit_distance == std::numeric_limits<T>::max());
+                REQUIRE(rayhit.normal[0] == Approx(0.f));
+                REQUIRE(rayhit.normal[1] == Approx(0.f));
+                REQUIRE(rayhit.normal[2] == Approx(0.f));
+              }
+              SUBCASE("origin: y-") {
+                Vec3r<T> org1{0, -5, 1};
+                Vec3r<T> dir1{0, -1, 0};
+                Ray<T> ray{org1, dir1};
+                RayHit<T> rayhit;
+
+                BVHTraceOptions<T> trace_options;
+
+                CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
+
+                // Test intersections
+                update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
+                prepare_traversal(cylinder_intersector, ray, trace_options);
+                T hit_distance = cylinder_intersector.hit_distance;
+                const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
+                update_intersector(cylinder_intersector, hit_distance, 0);
+                post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
+
+                REQUIRE_FALSE(hit_cylinder);
+                REQUIRE_FALSE(rayhit.prim_id == 0);
+                REQUIRE(rayhit.hit_distance == std::numeric_limits<T>::max());
+                REQUIRE(rayhit.normal[0] == Approx(0.f));
+                REQUIRE(rayhit.normal[1] == Approx(0.f));
+                REQUIRE(rayhit.normal[2] == Approx(0.f));
+              }
+            }
+          }
+        }
+      }
+      SUBCASE("rotated") {
+        SUBCASE("hits") {
+          SUBCASE("about z-axis") {
+            const Vec3r<T> axis{0, 0, 1};
+            Mat3r<T> rot = arbitraryRotationMatrix(axis, pi<T> / 2);
+            rotations->push_back(rot);
 
             Vec3r<T> org1{0.f, 0.f, 7.5f};
             Vec3r<T> dir1{0.f, 0.f, -1.f};
@@ -133,9 +1119,13 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
             REQUIRE(rayhit.normal[1] == Approx(0.f));
             REQUIRE(rayhit.normal[2] == Approx(1.f));
           }
-          SUBCASE("oblique incidence on top") {
-            Vec3r<T> org1{5.f, 0.f, 7.f};
-            Vec3r<T> dir1{-1.f, 0.f, -1.f};
+          SUBCASE("about y-axis") {
+            const Vec3r<T> axis{0, 1, 0};
+            Mat3r<T> rot = arbitraryRotationMatrix(axis, pi<T> / 2);
+            rotations->push_back(rot);
+
+            Vec3r<T> org1{7.5f, 0.f, 0.f};
+            Vec3r<T> dir1{-1.f, 0.f, 0.f};
 
             Ray<T> ray{org1, dir1};
             RayHit<T> rayhit;
@@ -154,116 +1144,18 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
 
             REQUIRE(hit_cylinder);
             REQUIRE(rayhit.prim_id == 0);
-            REQUIRE(rayhit.hit_distance == Approx(std::sqrt(50)));
-            REQUIRE(rayhit.normal[0] == Approx(0.f));
-            REQUIRE(rayhit.normal[1] == Approx(0.f));
-            REQUIRE(rayhit.normal[2] == Approx(1.f));
-          }
-          SUBCASE("oblique incidence on shell 1") {
-            Vec3r<T> org1{5, 0, 5};
-            Vec3r<T> dir1{-1, 0, -1};
-            Ray<T> ray{org1, dir1};
-            RayHit<T> rayhit;
-
-            BVHTraceOptions<T> trace_options;
-
-            CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
-
-            // Test intersections
-            update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
-            prepare_traversal(cylinder_intersector, ray, trace_options);
-            T hit_distance = cylinder_intersector.hit_distance;
-            const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
-            update_intersector(cylinder_intersector, hit_distance, 0);
-            post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
-
-            REQUIRE(hit_cylinder);
-            REQUIRE(rayhit.prim_id == 0);
-            REQUIRE(rayhit.hit_distance == Approx(std::sqrt(32)));
+            REQUIRE(rayhit.hit_distance == Approx(5.5));
             REQUIRE(rayhit.normal[0] == Approx(1.f));
             REQUIRE(rayhit.normal[1] == Approx(0.f));
             REQUIRE(rayhit.normal[2] == Approx(0.f));
           }
-          SUBCASE("oblique incidence on shell 2") {
-            Vec3r<T> org1{-5, 0, 5};
-            Vec3r<T> dir1{1, 0, -1};
-            Ray<T> ray{org1, dir1};
-            RayHit<T> rayhit;
+          SUBCASE("about x-axis") {
+            const Vec3r<T> axis{1, 0, 0};
+            Mat3r<T> rot = arbitraryRotationMatrix(axis, pi<T> / 2);
+            rotations->push_back(rot);
 
-            BVHTraceOptions<T> trace_options;
-
-            CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
-
-            // Test intersections
-            update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
-            prepare_traversal(cylinder_intersector, ray, trace_options);
-            T hit_distance = cylinder_intersector.hit_distance;
-            const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
-            update_intersector(cylinder_intersector, hit_distance, 0);
-            post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
-
-            REQUIRE(hit_cylinder);
-            REQUIRE(rayhit.prim_id == 0);
-            REQUIRE(rayhit.hit_distance == Approx(std::sqrt(32)));
-            REQUIRE(rayhit.normal[0] == Approx(-1.f));
-            REQUIRE(rayhit.normal[1] == Approx(0.f));
-            REQUIRE(rayhit.normal[2] == Approx(0.f));
-          }
-          SUBCASE("oblique incidence on shell 3") {
-            Vec3r<T> org1{0, 5, 4};
-            Vec3r<T> dir1{0, -1, -1};
-            Ray<T> ray{org1, dir1};
-            RayHit<T> rayhit;
-
-            BVHTraceOptions<T> trace_options;
-
-            CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
-
-            // Test intersections
-            update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
-            prepare_traversal(cylinder_intersector, ray, trace_options);
-            T hit_distance = cylinder_intersector.hit_distance;
-            const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
-            update_intersector(cylinder_intersector, hit_distance, 0);
-            post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
-
-            REQUIRE(hit_cylinder);
-            REQUIRE(rayhit.prim_id == 0);
-            REQUIRE(rayhit.hit_distance == Approx(std::sqrt(18)));
-            REQUIRE(rayhit.normal[0] == Approx(0.f));
-            REQUIRE(rayhit.normal[1] == Approx(1.f));
-            REQUIRE(rayhit.normal[2] == Approx(0.f));
-          }
-          SUBCASE("oblique incidence on shell 4") {
-            Vec3r<T> org1{0, -5, 4};
-            Vec3r<T> dir1{0, 1, -1};
-            Ray<T> ray{org1, dir1};
-            RayHit<T> rayhit;
-
-            BVHTraceOptions<T> trace_options;
-
-            CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
-
-            // Test intersections
-            update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
-            prepare_traversal(cylinder_intersector, ray, trace_options);
-            T hit_distance = cylinder_intersector.hit_distance;
-            const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
-            update_intersector(cylinder_intersector, hit_distance, 0);
-            post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
-
-            REQUIRE(hit_cylinder);
-            REQUIRE(rayhit.prim_id == 0);
-            REQUIRE(rayhit.hit_distance == Approx(std::sqrt(18)));
-            REQUIRE(rayhit.normal[0] == Approx(0.f));
-            REQUIRE(rayhit.normal[1] == Approx(-1.f));
-            REQUIRE(rayhit.normal[2] == Approx(0.f));
-          }
-        }
-        SUBCASE("origin below") {
-          SUBCASE("perpendicular incidence on bottom") {
-            Vec3r<T> org1{0.f, 0.f, -7.5f};
-            Vec3r<T> dir1{0.f, 0.f, 1.f};
+            Vec3r<T> org1{0.f, 7.5f, 0.f};
+            Vec3r<T> dir1{0.f, -1.f, 0.f};
 
             Ray<T> ray{org1, dir1};
             RayHit<T> rayhit;
@@ -284,113 +1176,19 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
             REQUIRE(rayhit.prim_id == 0);
             REQUIRE(rayhit.hit_distance == Approx(7.5));
             REQUIRE(rayhit.normal[0] == Approx(0.f));
-            REQUIRE(rayhit.normal[1] == Approx(0.f));
-            REQUIRE(rayhit.normal[2] == Approx(-1.f));
-          }
-          SUBCASE("oblique incidence on bottom") {
-            Vec3r<T> org1{5.f, 0.f, -5.f};
-            Vec3r<T> dir1{-1.f, 0.f, 1.f};
-
-            Ray<T> ray{org1, dir1};
-            RayHit<T> rayhit;
-
-            BVHTraceOptions<T> trace_options;
-
-            CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
-
-            // Test intersections
-            update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
-            prepare_traversal(cylinder_intersector, ray, trace_options);
-            T hit_distance = cylinder_intersector.hit_distance;
-            const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
-            update_intersector(cylinder_intersector, hit_distance, 0);
-            post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
-
-            REQUIRE(hit_cylinder);
-            REQUIRE(rayhit.prim_id == 0);
-            REQUIRE(rayhit.hit_distance == Approx(std::sqrt(50)));
-            REQUIRE(rayhit.normal[0] == Approx(0.f));
-            REQUIRE(rayhit.normal[1] == Approx(0.f));
-            REQUIRE(rayhit.normal[2] == Approx(-1.f));
-          }
-          SUBCASE("oblique incidence on shell 1") {
-            Vec3r<T> org1{5, 0, -3};
-            Vec3r<T> dir1{-1, 0, 1};
-            Ray<T> ray{org1, dir1};
-            RayHit<T> rayhit;
-
-            BVHTraceOptions<T> trace_options;
-
-            CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
-
-            // Test intersections
-            update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
-            prepare_traversal(cylinder_intersector, ray, trace_options);
-            T hit_distance = cylinder_intersector.hit_distance;
-            const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
-            update_intersector(cylinder_intersector, hit_distance, 0);
-            post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
-
-            REQUIRE(hit_cylinder);
-            REQUIRE(rayhit.prim_id == 0);
-            REQUIRE(rayhit.hit_distance == Approx(std::sqrt(32)));
-            REQUIRE(rayhit.normal[0] == Approx(1.f));
-            REQUIRE(rayhit.normal[1] == Approx(0.f));
-            REQUIRE(rayhit.normal[2] == Approx(0.f));
-          }
-          SUBCASE("oblique incidence on shell 2") {
-            Vec3r<T> org1{-5, 0, -3};
-            Vec3r<T> dir1{1, 0, 1};
-            Ray<T> ray{org1, dir1};
-            RayHit<T> rayhit;
-
-            BVHTraceOptions<T> trace_options;
-
-            CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
-
-            // Test intersections
-            update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
-            prepare_traversal(cylinder_intersector, ray, trace_options);
-            T hit_distance = cylinder_intersector.hit_distance;
-            const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
-            update_intersector(cylinder_intersector, hit_distance, 0);
-            post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
-
-            REQUIRE(hit_cylinder);
-            REQUIRE(rayhit.prim_id == 0);
-            REQUIRE(rayhit.hit_distance == Approx(std::sqrt(32)));
-            REQUIRE(rayhit.normal[0] == Approx(-1.f));
-            REQUIRE(rayhit.normal[1] == Approx(0.f));
-            REQUIRE(rayhit.normal[2] == Approx(0.f));
-          }
-          SUBCASE("oblique incidence on shell 3") {
-            Vec3r<T> org1{0, 5, -2};
-            Vec3r<T> dir1{0, -1, 1};
-            Ray<T> ray{org1, dir1};
-            RayHit<T> rayhit;
-
-            BVHTraceOptions<T> trace_options;
-
-            CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
-
-            // Test intersections
-            update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
-            prepare_traversal(cylinder_intersector, ray, trace_options);
-            T hit_distance = cylinder_intersector.hit_distance;
-            const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
-            update_intersector(cylinder_intersector, hit_distance, 0);
-            post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
-
-            REQUIRE(hit_cylinder);
-            REQUIRE(rayhit.prim_id == 0);
-            REQUIRE(rayhit.hit_distance == Approx(std::sqrt(18)));
-            REQUIRE(rayhit.normal[0] == Approx(0.f));
             REQUIRE(rayhit.normal[1] == Approx(1.f));
             REQUIRE(rayhit.normal[2] == Approx(0.f));
           }
-          SUBCASE("oblique incidence on shell 4") {
-            Vec3r<T> org1{0, -5, -2};
-            Vec3r<T> dir1{0, 1, 1};
+        }
+        SUBCASE("no hits") {
+          SUBCASE("about z-axis") {
+            const Vec3r<T> axis{0, 0, 1};
+            Mat3r<T> rot = arbitraryRotationMatrix(axis, pi<T> / 2);
+            rotations->push_back(rot);
+
+            Vec3r<T> org1{0.f, 0.f, 7.5f};
+            Vec3r<T> dir1{0.f, 0.f, 1.f};
+
             Ray<T> ray{org1, dir1};
             RayHit<T> rayhit;
 
@@ -406,18 +1204,550 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
             update_intersector(cylinder_intersector, hit_distance, 0);
             post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
 
-            REQUIRE(hit_cylinder);
-            REQUIRE(rayhit.prim_id == 0);
-            REQUIRE(rayhit.hit_distance == Approx(std::sqrt(18)));
+            REQUIRE_FALSE(hit_cylinder);
+            REQUIRE_FALSE(rayhit.prim_id == 0);
+            REQUIRE(rayhit.hit_distance == std::numeric_limits<T>::max());
             REQUIRE(rayhit.normal[0] == Approx(0.f));
-            REQUIRE(rayhit.normal[1] == Approx(-1.f));
+            REQUIRE(rayhit.normal[1] == Approx(0.f));
+            REQUIRE(rayhit.normal[2] == Approx(0.f));
+          }
+          SUBCASE("about y-axis") {
+            const Vec3r<T> axis{0, 1, 0};
+            Mat3r<T> rot = arbitraryRotationMatrix(axis, pi<T> / 2);
+            rotations->push_back(rot);
+
+            Vec3r<T> org1{7.5f, 0.f, 0.f};
+            Vec3r<T> dir1{1.f, 0.f, 0.f};
+
+            Ray<T> ray{org1, dir1};
+            RayHit<T> rayhit;
+
+            BVHTraceOptions<T> trace_options;
+
+            CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
+
+            // Test intersections
+            update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
+            prepare_traversal(cylinder_intersector, ray, trace_options);
+            T hit_distance = cylinder_intersector.hit_distance;
+            const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
+            update_intersector(cylinder_intersector, hit_distance, 0);
+            post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
+
+            REQUIRE_FALSE(hit_cylinder);
+            REQUIRE_FALSE(rayhit.prim_id == 0);
+            REQUIRE(rayhit.hit_distance == std::numeric_limits<T>::max());
+            REQUIRE(rayhit.normal[0] == Approx(0.f));
+            REQUIRE(rayhit.normal[1] == Approx(0.f));
+            REQUIRE(rayhit.normal[2] == Approx(0.f));
+          }
+          SUBCASE("about x-axis") {
+            const Vec3r<T> axis{1, 0, 0};
+            Mat3r<T> rot = arbitraryRotationMatrix(axis, pi<T> / 2);
+            rotations->push_back(rot);
+
+            Vec3r<T> org1{0.f, 7.5f, 0.f};
+            Vec3r<T> dir1{0.f, 1.f, 0.f};
+
+            Ray<T> ray{org1, dir1};
+            RayHit<T> rayhit;
+
+            BVHTraceOptions<T> trace_options;
+
+            CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
+
+            // Test intersections
+            update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
+            prepare_traversal(cylinder_intersector, ray, trace_options);
+            T hit_distance = cylinder_intersector.hit_distance;
+            const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
+            update_intersector(cylinder_intersector, hit_distance, 0);
+            post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
+
+            REQUIRE_FALSE(hit_cylinder);
+            REQUIRE_FALSE(rayhit.prim_id == 0);
+            REQUIRE(rayhit.hit_distance == std::numeric_limits<T>::max());
+            REQUIRE(rayhit.normal[0] == Approx(0.f));
+            REQUIRE(rayhit.normal[1] == Approx(0.f));
             REQUIRE(rayhit.normal[2] == Approx(0.f));
           }
         }
-        SUBCASE("origin around shell") {
-          SUBCASE("perpendicular incidence") {
-            SUBCASE("origin: x+") {
-              Vec3r<T> org1{5, 0, 1};
+      }
+    }
+    SUBCASE("shifted center") {
+      centers->emplace_back(Vec3r<T>{1.f, 2.f, 0.f});
+      semi_axes_a->emplace_back(1);
+      semi_axes_b->emplace_back(2);
+      heights->emplace_back(2);
+      SUBCASE("non-rotated") {
+        rotations->emplace_back(blaze::IdentityMatrix<T>(3UL));
+        SUBCASE("hits") {
+          SUBCASE("origin above") {
+            SUBCASE("perpendicular incidence on top") {
+
+              Vec3r<T> org1{1.f, 2.f, 7.5f};
+              Vec3r<T> dir1{0.f, 0.f, -1.f};
+
+              Ray<T> ray{org1, dir1};
+              RayHit<T> rayhit;
+
+              BVHTraceOptions<T> trace_options;
+
+              CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
+
+              // Test intersections
+              update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
+              prepare_traversal(cylinder_intersector, ray, trace_options);
+              T hit_distance = cylinder_intersector.hit_distance;
+              const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
+              update_intersector(cylinder_intersector, hit_distance, 0);
+              post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
+
+              REQUIRE(hit_cylinder);
+              REQUIRE(rayhit.prim_id == 0);
+              REQUIRE(rayhit.hit_distance == Approx(5.5));
+              REQUIRE(rayhit.normal[0] == Approx(0.f));
+              REQUIRE(rayhit.normal[1] == Approx(0.f));
+              REQUIRE(rayhit.normal[2] == Approx(1.f));
+            }
+            SUBCASE("oblique incidence on top") {
+              Vec3r<T> org1{6.f, 2.f, 7.f};
+              Vec3r<T> dir1{-1.f, 0.f, -1.f};
+
+              Ray<T> ray{org1, dir1};
+              RayHit<T> rayhit;
+
+              BVHTraceOptions<T> trace_options;
+
+              CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
+
+              // Test intersections
+              update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
+              prepare_traversal(cylinder_intersector, ray, trace_options);
+              T hit_distance = cylinder_intersector.hit_distance;
+              const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
+              update_intersector(cylinder_intersector, hit_distance, 0);
+              post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
+
+              REQUIRE(hit_cylinder);
+              REQUIRE(rayhit.prim_id == 0);
+              REQUIRE(rayhit.hit_distance == Approx(std::sqrt(50)));
+              REQUIRE(rayhit.normal[0] == Approx(0.f));
+              REQUIRE(rayhit.normal[1] == Approx(0.f));
+              REQUIRE(rayhit.normal[2] == Approx(1.f));
+            }
+            SUBCASE("oblique incidence on shell 1") {
+              Vec3r<T> org1{6, 2, 5};
+              Vec3r<T> dir1{-1, 0, -1};
+              Ray<T> ray{org1, dir1};
+              RayHit<T> rayhit;
+
+              BVHTraceOptions<T> trace_options;
+
+              CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
+
+              // Test intersections
+              update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
+              prepare_traversal(cylinder_intersector, ray, trace_options);
+              T hit_distance = cylinder_intersector.hit_distance;
+              const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
+              update_intersector(cylinder_intersector, hit_distance, 0);
+              post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
+
+              REQUIRE(hit_cylinder);
+              REQUIRE(rayhit.prim_id == 0);
+              REQUIRE(rayhit.hit_distance == Approx(std::sqrt(32)));
+              REQUIRE(rayhit.normal[0] == Approx(1.f));
+              REQUIRE(rayhit.normal[1] == Approx(0.f));
+              REQUIRE(rayhit.normal[2] == Approx(0.f));
+            }
+            SUBCASE("oblique incidence on shell 2") {
+              Vec3r<T> org1{-4, 2, 5};
+              Vec3r<T> dir1{1, 0, -1};
+              Ray<T> ray{org1, dir1};
+              RayHit<T> rayhit;
+
+              BVHTraceOptions<T> trace_options;
+
+              CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
+
+              // Test intersections
+              update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
+              prepare_traversal(cylinder_intersector, ray, trace_options);
+              T hit_distance = cylinder_intersector.hit_distance;
+              const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
+              update_intersector(cylinder_intersector, hit_distance, 0);
+              post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
+
+              REQUIRE(hit_cylinder);
+              REQUIRE(rayhit.prim_id == 0);
+              REQUIRE(rayhit.hit_distance == Approx(std::sqrt(32)));
+              REQUIRE(rayhit.normal[0] == Approx(-1.f));
+              REQUIRE(rayhit.normal[1] == Approx(0.f));
+              REQUIRE(rayhit.normal[2] == Approx(0.f));
+            }
+            SUBCASE("oblique incidence on shell 3") {
+              Vec3r<T> org1{1, 7, 4};
+              Vec3r<T> dir1{0, -1, -1};
+              Ray<T> ray{org1, dir1};
+              RayHit<T> rayhit;
+
+              BVHTraceOptions<T> trace_options;
+
+              CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
+
+              // Test intersections
+              update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
+              prepare_traversal(cylinder_intersector, ray, trace_options);
+              T hit_distance = cylinder_intersector.hit_distance;
+              const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
+              update_intersector(cylinder_intersector, hit_distance, 0);
+              post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
+
+              REQUIRE(hit_cylinder);
+              REQUIRE(rayhit.prim_id == 0);
+              REQUIRE(rayhit.hit_distance == Approx(std::sqrt(18)));
+              REQUIRE(rayhit.normal[0] == Approx(0.f));
+              REQUIRE(rayhit.normal[1] == Approx(1.f));
+              REQUIRE(rayhit.normal[2] == Approx(0.f));
+            }
+            SUBCASE("oblique incidence on shell 4") {
+              Vec3r<T> org1{1, -3, 4};
+              Vec3r<T> dir1{0, 1, -1};
+              Ray<T> ray{org1, dir1};
+              RayHit<T> rayhit;
+
+              BVHTraceOptions<T> trace_options;
+
+              CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
+
+              // Test intersections
+              update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
+              prepare_traversal(cylinder_intersector, ray, trace_options);
+              T hit_distance = cylinder_intersector.hit_distance;
+              const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
+              update_intersector(cylinder_intersector, hit_distance, 0);
+              post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
+
+              REQUIRE(hit_cylinder);
+              REQUIRE(rayhit.prim_id == 0);
+              REQUIRE(rayhit.hit_distance == Approx(std::sqrt(18)));
+              REQUIRE(rayhit.normal[0] == Approx(0.f));
+              REQUIRE(rayhit.normal[1] == Approx(-1.f));
+              REQUIRE(rayhit.normal[2] == Approx(0.f));
+            }
+          }
+          SUBCASE("origin below") {
+            SUBCASE("perpendicular incidence on bottom") {
+              Vec3r<T> org1{1.f, 2.f, -7.5f};
+              Vec3r<T> dir1{0.f, 0.f, 1.f};
+
+              Ray<T> ray{org1, dir1};
+              RayHit<T> rayhit;
+
+              BVHTraceOptions<T> trace_options;
+
+              CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
+
+              // Test intersections
+              update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
+              prepare_traversal(cylinder_intersector, ray, trace_options);
+              T hit_distance = cylinder_intersector.hit_distance;
+              const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
+              update_intersector(cylinder_intersector, hit_distance, 0);
+              post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
+
+              REQUIRE(hit_cylinder);
+              REQUIRE(rayhit.prim_id == 0);
+              REQUIRE(rayhit.hit_distance == Approx(7.5));
+              REQUIRE(rayhit.normal[0] == Approx(0.f));
+              REQUIRE(rayhit.normal[1] == Approx(0.f));
+              REQUIRE(rayhit.normal[2] == Approx(-1.f));
+            }
+            SUBCASE("oblique incidence on bottom") {
+              Vec3r<T> org1{6.f, 2.f, -5.f};
+              Vec3r<T> dir1{-1.f, 0.f, 1.f};
+
+              Ray<T> ray{org1, dir1};
+              RayHit<T> rayhit;
+
+              BVHTraceOptions<T> trace_options;
+
+              CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
+
+              // Test intersections
+              update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
+              prepare_traversal(cylinder_intersector, ray, trace_options);
+              T hit_distance = cylinder_intersector.hit_distance;
+              const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
+              update_intersector(cylinder_intersector, hit_distance, 0);
+              post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
+
+              REQUIRE(hit_cylinder);
+              REQUIRE(rayhit.prim_id == 0);
+              REQUIRE(rayhit.hit_distance == Approx(std::sqrt(50)));
+              REQUIRE(rayhit.normal[0] == Approx(0.f));
+              REQUIRE(rayhit.normal[1] == Approx(0.f));
+              REQUIRE(rayhit.normal[2] == Approx(-1.f));
+            }
+            SUBCASE("oblique incidence on shell 1") {
+              Vec3r<T> org1{6, 2, -3};
+              Vec3r<T> dir1{-1, 0, 1};
+              Ray<T> ray{org1, dir1};
+              RayHit<T> rayhit;
+
+              BVHTraceOptions<T> trace_options;
+
+              CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
+
+              // Test intersections
+              update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
+              prepare_traversal(cylinder_intersector, ray, trace_options);
+              T hit_distance = cylinder_intersector.hit_distance;
+              const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
+              update_intersector(cylinder_intersector, hit_distance, 0);
+              post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
+
+              REQUIRE(hit_cylinder);
+              REQUIRE(rayhit.prim_id == 0);
+              REQUIRE(rayhit.hit_distance == Approx(std::sqrt(32)));
+              REQUIRE(rayhit.normal[0] == Approx(1.f));
+              REQUIRE(rayhit.normal[1] == Approx(0.f));
+              REQUIRE(rayhit.normal[2] == Approx(0.f));
+            }
+            SUBCASE("oblique incidence on shell 2") {
+              Vec3r<T> org1{-4, 2, -3};
+              Vec3r<T> dir1{1, 0, 1};
+              Ray<T> ray{org1, dir1};
+              RayHit<T> rayhit;
+
+              BVHTraceOptions<T> trace_options;
+
+              CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
+
+              // Test intersections
+              update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
+              prepare_traversal(cylinder_intersector, ray, trace_options);
+              T hit_distance = cylinder_intersector.hit_distance;
+              const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
+              update_intersector(cylinder_intersector, hit_distance, 0);
+              post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
+
+              REQUIRE(hit_cylinder);
+              REQUIRE(rayhit.prim_id == 0);
+              REQUIRE(rayhit.hit_distance == Approx(std::sqrt(32)));
+              REQUIRE(rayhit.normal[0] == Approx(-1.f));
+              REQUIRE(rayhit.normal[1] == Approx(0.f));
+              REQUIRE(rayhit.normal[2] == Approx(0.f));
+            }
+            SUBCASE("oblique incidence on shell 3") {
+              Vec3r<T> org1{1, 7, -2};
+              Vec3r<T> dir1{0, -1, 1};
+              Ray<T> ray{org1, dir1};
+              RayHit<T> rayhit;
+
+              BVHTraceOptions<T> trace_options;
+
+              CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
+
+              // Test intersections
+              update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
+              prepare_traversal(cylinder_intersector, ray, trace_options);
+              T hit_distance = cylinder_intersector.hit_distance;
+              const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
+              update_intersector(cylinder_intersector, hit_distance, 0);
+              post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
+
+              REQUIRE(hit_cylinder);
+              REQUIRE(rayhit.prim_id == 0);
+              REQUIRE(rayhit.hit_distance == Approx(std::sqrt(18)));
+              REQUIRE(rayhit.normal[0] == Approx(0.f));
+              REQUIRE(rayhit.normal[1] == Approx(1.f));
+              REQUIRE(rayhit.normal[2] == Approx(0.f));
+            }
+            SUBCASE("oblique incidence on shell 4") {
+              Vec3r<T> org1{1, -3, -2};
+              Vec3r<T> dir1{0, 1, 1};
+              Ray<T> ray{org1, dir1};
+              RayHit<T> rayhit;
+
+              BVHTraceOptions<T> trace_options;
+
+              CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
+
+              // Test intersections
+              update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
+              prepare_traversal(cylinder_intersector, ray, trace_options);
+              T hit_distance = cylinder_intersector.hit_distance;
+              const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
+              update_intersector(cylinder_intersector, hit_distance, 0);
+              post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
+
+              REQUIRE(hit_cylinder);
+              REQUIRE(rayhit.prim_id == 0);
+              REQUIRE(rayhit.hit_distance == Approx(std::sqrt(18)));
+              REQUIRE(rayhit.normal[0] == Approx(0.f));
+              REQUIRE(rayhit.normal[1] == Approx(-1.f));
+              REQUIRE(rayhit.normal[2] == Approx(0.f));
+            }
+          }
+          SUBCASE("origin around shell") {
+            SUBCASE("perpendicular incidence") {
+              SUBCASE("origin: x+") {
+                Vec3r<T> org1{6, 2, 1};
+                Vec3r<T> dir1{-1, 0, 0};
+                Ray<T> ray{org1, dir1};
+                RayHit<T> rayhit;
+
+                BVHTraceOptions<T> trace_options;
+
+                CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
+
+                // Test intersections
+                update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
+                prepare_traversal(cylinder_intersector, ray, trace_options);
+                T hit_distance = cylinder_intersector.hit_distance;
+                const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
+                update_intersector(cylinder_intersector, hit_distance, 0);
+                post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
+
+                REQUIRE(hit_cylinder);
+                REQUIRE(rayhit.prim_id == 0);
+                REQUIRE(rayhit.hit_distance == Approx(4));
+                REQUIRE(rayhit.normal[0] == Approx(1.f));
+                REQUIRE(rayhit.normal[1] == Approx(0.f));
+                REQUIRE(rayhit.normal[2] == Approx(0.f));
+              }
+              SUBCASE("origin: x-") {
+                Vec3r<T> org1{-4, 2, 1};
+                Vec3r<T> dir1{1, 0, 0};
+                Ray<T> ray{org1, dir1};
+                RayHit<T> rayhit;
+
+                BVHTraceOptions<T> trace_options;
+
+                CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
+
+                // Test intersections
+                update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
+                prepare_traversal(cylinder_intersector, ray, trace_options);
+                T hit_distance = cylinder_intersector.hit_distance;
+                const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
+                update_intersector(cylinder_intersector, hit_distance, 0);
+                post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
+
+                REQUIRE(hit_cylinder);
+                REQUIRE(rayhit.prim_id == 0);
+                REQUIRE(rayhit.hit_distance == Approx(4));
+                REQUIRE(rayhit.normal[0] == Approx(-1.f));
+                REQUIRE(rayhit.normal[1] == Approx(0.f));
+                REQUIRE(rayhit.normal[2] == Approx(0.f));
+              }
+              SUBCASE("origin: y+") {
+                Vec3r<T> org1{1, 7, 1};
+                Vec3r<T> dir1{0, -1, 0};
+                Ray<T> ray{org1, dir1};
+                RayHit<T> rayhit;
+
+                BVHTraceOptions<T> trace_options;
+
+                CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
+
+                // Test intersections
+                update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
+                prepare_traversal(cylinder_intersector, ray, trace_options);
+                T hit_distance = cylinder_intersector.hit_distance;
+                const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
+                update_intersector(cylinder_intersector, hit_distance, 0);
+                post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
+
+                REQUIRE(hit_cylinder);
+                REQUIRE(rayhit.prim_id == 0);
+                REQUIRE(rayhit.hit_distance == Approx(3));
+                REQUIRE(rayhit.normal[0] == Approx(0.f));
+                REQUIRE(rayhit.normal[1] == Approx(1.f));
+                REQUIRE(rayhit.normal[2] == Approx(0.f));
+              }
+              SUBCASE("origin: y-") {
+                Vec3r<T> org1{1, -3, 1};
+                Vec3r<T> dir1{0, 1, 0};
+                Ray<T> ray{org1, dir1};
+                RayHit<T> rayhit;
+
+                BVHTraceOptions<T> trace_options;
+
+                CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
+
+                // Test intersections
+                update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
+                prepare_traversal(cylinder_intersector, ray, trace_options);
+                T hit_distance = cylinder_intersector.hit_distance;
+                const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
+                update_intersector(cylinder_intersector, hit_distance, 0);
+                post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
+
+                REQUIRE(hit_cylinder);
+                REQUIRE(rayhit.prim_id == 0);
+                REQUIRE(rayhit.hit_distance == Approx(3));
+                REQUIRE(rayhit.normal[0] == Approx(0.f));
+                REQUIRE(rayhit.normal[1] == Approx(-1.f));
+                REQUIRE(rayhit.normal[2] == Approx(0.f));
+              }
+            }
+          }
+          SUBCASE("origin inside of cylinder") {
+            SUBCASE("hit top") {
+              Vec3r<T> org1{1, 2, 1};
+              Vec3r<T> dir1{0, 0, 1};
+              Ray<T> ray{org1, dir1};
+              RayHit<T> rayhit;
+
+              BVHTraceOptions<T> trace_options;
+
+              CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
+
+              // Test intersections
+              update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
+              prepare_traversal(cylinder_intersector, ray, trace_options);
+              T hit_distance = cylinder_intersector.hit_distance;
+              const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
+              update_intersector(cylinder_intersector, hit_distance, 0);
+              post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
+
+              REQUIRE(hit_cylinder);
+              REQUIRE(rayhit.prim_id == 0);
+              REQUIRE(rayhit.hit_distance == Approx(1));
+              REQUIRE(rayhit.normal[0] == Approx(0.f));
+              REQUIRE(rayhit.normal[1] == Approx(0.f));
+              REQUIRE(rayhit.normal[2] == Approx(1.f));
+            }
+            SUBCASE("hit bottom") {
+              Vec3r<T> org1{1, 2, 1};
+              Vec3r<T> dir1{0, 0, -1};
+              Ray<T> ray{org1, dir1};
+              RayHit<T> rayhit;
+
+              BVHTraceOptions<T> trace_options;
+
+              CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
+
+              // Test intersections
+              update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
+              prepare_traversal(cylinder_intersector, ray, trace_options);
+              T hit_distance = cylinder_intersector.hit_distance;
+              const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
+              update_intersector(cylinder_intersector, hit_distance, 0);
+              post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
+
+              REQUIRE(hit_cylinder);
+              REQUIRE(rayhit.prim_id == 0);
+              REQUIRE(rayhit.hit_distance == Approx(1));
+              REQUIRE(rayhit.normal[0] == Approx(0.f));
+              REQUIRE(rayhit.normal[1] == Approx(0.f));
+              REQUIRE(rayhit.normal[2] == Approx(-1.f));
+            }
+            SUBCASE("hit shell 1") {
+              Vec3r<T> org1{1, 2, 1};
               Vec3r<T> dir1{-1, 0, 0};
               Ray<T> ray{org1, dir1};
               RayHit<T> rayhit;
@@ -436,13 +1766,13 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
 
               REQUIRE(hit_cylinder);
               REQUIRE(rayhit.prim_id == 0);
-              REQUIRE(rayhit.hit_distance == Approx(4));
-              REQUIRE(rayhit.normal[0] == Approx(1.f));
+              REQUIRE(rayhit.hit_distance == Approx(1));
+              REQUIRE(rayhit.normal[0] == Approx(-1.f));
               REQUIRE(rayhit.normal[1] == Approx(0.f));
               REQUIRE(rayhit.normal[2] == Approx(0.f));
             }
-            SUBCASE("origin: x-") {
-              Vec3r<T> org1{-5, 0, 1};
+            SUBCASE("hit shell 2") {
+              Vec3r<T> org1{1, 2, 1};
               Vec3r<T> dir1{1, 0, 0};
               Ray<T> ray{org1, dir1};
               RayHit<T> rayhit;
@@ -461,13 +1791,13 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
 
               REQUIRE(hit_cylinder);
               REQUIRE(rayhit.prim_id == 0);
-              REQUIRE(rayhit.hit_distance == Approx(4));
-              REQUIRE(rayhit.normal[0] == Approx(-1.f));
+              REQUIRE(rayhit.hit_distance == Approx(1));
+              REQUIRE(rayhit.normal[0] == Approx(1.f));
               REQUIRE(rayhit.normal[1] == Approx(0.f));
               REQUIRE(rayhit.normal[2] == Approx(0.f));
             }
-            SUBCASE("origin: y+") {
-              Vec3r<T> org1{0, 5, 1};
+            SUBCASE("hit shell 3") {
+              Vec3r<T> org1{1, 2, 1};
               Vec3r<T> dir1{0, -1, 0};
               Ray<T> ray{org1, dir1};
               RayHit<T> rayhit;
@@ -486,13 +1816,13 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
 
               REQUIRE(hit_cylinder);
               REQUIRE(rayhit.prim_id == 0);
-              REQUIRE(rayhit.hit_distance == Approx(3));
+              REQUIRE(rayhit.hit_distance == Approx(2));
               REQUIRE(rayhit.normal[0] == Approx(0.f));
-              REQUIRE(rayhit.normal[1] == Approx(1.f));
+              REQUIRE(rayhit.normal[1] == Approx(-1.f));
               REQUIRE(rayhit.normal[2] == Approx(0.f));
             }
-            SUBCASE("origin: y-") {
-              Vec3r<T> org1{0, -5, 1};
+            SUBCASE("hit shell 4") {
+              Vec3r<T> org1{1, 2, 1};
               Vec3r<T> dir1{0, 1, 0};
               Ray<T> ray{org1, dir1};
               RayHit<T> rayhit;
@@ -511,176 +1841,435 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
 
               REQUIRE(hit_cylinder);
               REQUIRE(rayhit.prim_id == 0);
-              REQUIRE(rayhit.hit_distance == Approx(3));
+              REQUIRE(rayhit.hit_distance == Approx(2));
               REQUIRE(rayhit.normal[0] == Approx(0.f));
-              REQUIRE(rayhit.normal[1] == Approx(-1.f));
+              REQUIRE(rayhit.normal[1] == Approx(1.f));
               REQUIRE(rayhit.normal[2] == Approx(0.f));
             }
           }
         }
-        SUBCASE("origin inside of cylinder") {
-          SUBCASE("hit top") {
-            Vec3r<T> org1{0, 0, 1};
-            Vec3r<T> dir1{0, 0, 1};
-            Ray<T> ray{org1, dir1};
-            RayHit<T> rayhit;
+        SUBCASE("no hits") {
+          SUBCASE("origin above (direction inverted)") {
+            SUBCASE("perpendicular incidence on top") {
 
-            BVHTraceOptions<T> trace_options;
+              Vec3r<T> org1{1.f, 2.f, 7.5f};
+              Vec3r<T> dir1{0.f, 0.f, 1.f};
 
-            CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
+              Ray<T> ray{org1, dir1};
+              RayHit<T> rayhit;
 
-            // Test intersections
-            update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
-            prepare_traversal(cylinder_intersector, ray, trace_options);
-            T hit_distance = cylinder_intersector.hit_distance;
-            const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
-            update_intersector(cylinder_intersector, hit_distance, 0);
-            post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
+              BVHTraceOptions<T> trace_options;
 
-            REQUIRE(hit_cylinder);
-            REQUIRE(rayhit.prim_id == 0);
-            REQUIRE(rayhit.hit_distance == Approx(1));
-            REQUIRE(rayhit.normal[0] == Approx(0.f));
-            REQUIRE(rayhit.normal[1] == Approx(0.f));
-            REQUIRE(rayhit.normal[2] == Approx(1.f));
+              CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
+
+              // Test intersections
+              update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
+              prepare_traversal(cylinder_intersector, ray, trace_options);
+              T hit_distance = cylinder_intersector.hit_distance;
+              const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
+              update_intersector(cylinder_intersector, hit_distance, 0);
+              post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
+
+              REQUIRE_FALSE(hit_cylinder);
+              REQUIRE_FALSE(rayhit.prim_id == 0);
+              REQUIRE(rayhit.hit_distance == std::numeric_limits<T>::max());
+              REQUIRE(rayhit.normal[0] == Approx(0.f));
+              REQUIRE(rayhit.normal[1] == Approx(0.f));
+              REQUIRE(rayhit.normal[2] == Approx(0.f));
+            }
+            SUBCASE("oblique incidence on top") {
+              Vec3r<T> org1{6.f, 2.f, 7.f};
+              Vec3r<T> dir1{1.f, 0.f, 1.f};
+
+              Ray<T> ray{org1, dir1};
+              RayHit<T> rayhit;
+
+              BVHTraceOptions<T> trace_options;
+
+              CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
+
+              // Test intersections
+              update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
+              prepare_traversal(cylinder_intersector, ray, trace_options);
+              T hit_distance = cylinder_intersector.hit_distance;
+              const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
+              update_intersector(cylinder_intersector, hit_distance, 0);
+              post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
+
+              REQUIRE_FALSE(hit_cylinder);
+              REQUIRE_FALSE(rayhit.prim_id == 0);
+              REQUIRE(rayhit.hit_distance == std::numeric_limits<T>::max());
+              REQUIRE(rayhit.normal[0] == Approx(0.f));
+              REQUIRE(rayhit.normal[1] == Approx(0.f));
+              REQUIRE(rayhit.normal[2] == Approx(0.f));
+            }
+            SUBCASE("oblique incidence on shell 1") {
+              Vec3r<T> org1{6, 2, 5};
+              Vec3r<T> dir1{1, 0, 1};
+              Ray<T> ray{org1, dir1};
+              RayHit<T> rayhit;
+
+              BVHTraceOptions<T> trace_options;
+
+              CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
+
+              // Test intersections
+              update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
+              prepare_traversal(cylinder_intersector, ray, trace_options);
+              T hit_distance = cylinder_intersector.hit_distance;
+              const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
+              update_intersector(cylinder_intersector, hit_distance, 0);
+              post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
+
+              REQUIRE_FALSE(hit_cylinder);
+              REQUIRE_FALSE(rayhit.prim_id == 0);
+              REQUIRE(rayhit.hit_distance == std::numeric_limits<T>::max());
+              REQUIRE(rayhit.normal[0] == Approx(0.f));
+              REQUIRE(rayhit.normal[1] == Approx(0.f));
+              REQUIRE(rayhit.normal[2] == Approx(0.f));
+            }
+            SUBCASE("oblique incidence on shell 2") {
+              Vec3r<T> org1{-4, 2, 5};
+              Vec3r<T> dir1{-1, 0, 1};
+              Ray<T> ray{org1, dir1};
+              RayHit<T> rayhit;
+
+              BVHTraceOptions<T> trace_options;
+
+              CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
+
+              // Test intersections
+              update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
+              prepare_traversal(cylinder_intersector, ray, trace_options);
+              T hit_distance = cylinder_intersector.hit_distance;
+              const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
+              update_intersector(cylinder_intersector, hit_distance, 0);
+              post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
+
+              REQUIRE_FALSE(hit_cylinder);
+              REQUIRE_FALSE(rayhit.prim_id == 0);
+              REQUIRE(rayhit.hit_distance == std::numeric_limits<T>::max());
+              REQUIRE(rayhit.normal[0] == Approx(0.f));
+              REQUIRE(rayhit.normal[1] == Approx(0.f));
+              REQUIRE(rayhit.normal[2] == Approx(0.f));
+            }
+            SUBCASE("oblique incidence on shell 3") {
+              Vec3r<T> org1{1, 7, 4};
+              Vec3r<T> dir1{0, 1, 1};
+              Ray<T> ray{org1, dir1};
+              RayHit<T> rayhit;
+
+              BVHTraceOptions<T> trace_options;
+
+              CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
+
+              // Test intersections
+              update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
+              prepare_traversal(cylinder_intersector, ray, trace_options);
+              T hit_distance = cylinder_intersector.hit_distance;
+              const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
+              update_intersector(cylinder_intersector, hit_distance, 0);
+              post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
+
+              REQUIRE_FALSE(hit_cylinder);
+              REQUIRE_FALSE(rayhit.prim_id == 0);
+              REQUIRE(rayhit.hit_distance == std::numeric_limits<T>::max());
+              REQUIRE(rayhit.normal[0] == Approx(0.f));
+              REQUIRE(rayhit.normal[1] == Approx(0.f));
+              REQUIRE(rayhit.normal[2] == Approx(0.f));
+            }
+            SUBCASE("oblique incidence on shell 4") {
+              Vec3r<T> org1{1, -3, 4};
+              Vec3r<T> dir1{0, -1, 1};
+              Ray<T> ray{org1, dir1};
+              RayHit<T> rayhit;
+
+              BVHTraceOptions<T> trace_options;
+
+              CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
+
+              // Test intersections
+              update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
+              prepare_traversal(cylinder_intersector, ray, trace_options);
+              T hit_distance = cylinder_intersector.hit_distance;
+              const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
+              update_intersector(cylinder_intersector, hit_distance, 0);
+              post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
+
+              REQUIRE_FALSE(hit_cylinder);
+              REQUIRE_FALSE(rayhit.prim_id == 0);
+              REQUIRE(rayhit.hit_distance == std::numeric_limits<T>::max());
+              REQUIRE(rayhit.normal[0] == Approx(0.f));
+              REQUIRE(rayhit.normal[1] == Approx(0.f));
+              REQUIRE(rayhit.normal[2] == Approx(0.f));
+            }
           }
-          SUBCASE("hit bottom") {
-            Vec3r<T> org1{0, 0, 1};
-            Vec3r<T> dir1{0, 0, -1};
-            Ray<T> ray{org1, dir1};
-            RayHit<T> rayhit;
+          SUBCASE("origin below (direction inverted)") {
+            SUBCASE("perpendicular incidence on bottom") {
+              Vec3r<T> org1{1.f, 2.f, -7.5f};
+              Vec3r<T> dir1{0.f, 0.f, -1.f};
 
-            BVHTraceOptions<T> trace_options;
+              Ray<T> ray{org1, dir1};
+              RayHit<T> rayhit;
 
-            CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
+              BVHTraceOptions<T> trace_options;
 
-            // Test intersections
-            update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
-            prepare_traversal(cylinder_intersector, ray, trace_options);
-            T hit_distance = cylinder_intersector.hit_distance;
-            const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
-            update_intersector(cylinder_intersector, hit_distance, 0);
-            post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
+              CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
 
-            REQUIRE(hit_cylinder);
-            REQUIRE(rayhit.prim_id == 0);
-            REQUIRE(rayhit.hit_distance == Approx(1));
-            REQUIRE(rayhit.normal[0] == Approx(0.f));
-            REQUIRE(rayhit.normal[1] == Approx(0.f));
-            REQUIRE(rayhit.normal[2] == Approx(-1.f));
+              // Test intersections
+              update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
+              prepare_traversal(cylinder_intersector, ray, trace_options);
+              T hit_distance = cylinder_intersector.hit_distance;
+              const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
+              update_intersector(cylinder_intersector, hit_distance, 0);
+              post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
+
+              REQUIRE_FALSE(hit_cylinder);
+              REQUIRE_FALSE(rayhit.prim_id == 0);
+              REQUIRE(rayhit.hit_distance == std::numeric_limits<T>::max());
+              REQUIRE(rayhit.normal[0] == Approx(0.f));
+              REQUIRE(rayhit.normal[1] == Approx(0.f));
+              REQUIRE(rayhit.normal[2] == Approx(0.f));
+            }
+            SUBCASE("oblique incidence on bottom") {
+              Vec3r<T> org1{6.f, 2.f, -5.f};
+              Vec3r<T> dir1{1.f, 0.f, -1.f};
+
+              Ray<T> ray{org1, dir1};
+              RayHit<T> rayhit;
+
+              BVHTraceOptions<T> trace_options;
+
+              CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
+
+              // Test intersections
+              update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
+              prepare_traversal(cylinder_intersector, ray, trace_options);
+              T hit_distance = cylinder_intersector.hit_distance;
+              const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
+              update_intersector(cylinder_intersector, hit_distance, 0);
+              post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
+
+              REQUIRE_FALSE(hit_cylinder);
+              REQUIRE_FALSE(rayhit.prim_id == 0);
+              REQUIRE(rayhit.hit_distance == std::numeric_limits<T>::max());
+              REQUIRE(rayhit.normal[0] == Approx(0.f));
+              REQUIRE(rayhit.normal[1] == Approx(0.f));
+              REQUIRE(rayhit.normal[2] == Approx(0.f));
+            }
+            SUBCASE("oblique incidence on shell 1") {
+              Vec3r<T> org1{6, 2, -3};
+              Vec3r<T> dir1{1, 0, -1};
+              Ray<T> ray{org1, dir1};
+              RayHit<T> rayhit;
+
+              BVHTraceOptions<T> trace_options;
+
+              CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
+
+              // Test intersections
+              update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
+              prepare_traversal(cylinder_intersector, ray, trace_options);
+              T hit_distance = cylinder_intersector.hit_distance;
+              const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
+              update_intersector(cylinder_intersector, hit_distance, 0);
+              post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
+
+              REQUIRE_FALSE(hit_cylinder);
+              REQUIRE_FALSE(rayhit.prim_id == 0);
+              REQUIRE(rayhit.hit_distance == std::numeric_limits<T>::max());
+              REQUIRE(rayhit.normal[0] == Approx(0.f));
+              REQUIRE(rayhit.normal[1] == Approx(0.f));
+              REQUIRE(rayhit.normal[2] == Approx(0.f));
+            }
+            SUBCASE("oblique incidence on shell 2") {
+              Vec3r<T> org1{-4, 2, -3};
+              Vec3r<T> dir1{-1, 0, -1};
+              Ray<T> ray{org1, dir1};
+              RayHit<T> rayhit;
+
+              BVHTraceOptions<T> trace_options;
+
+              CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
+
+              // Test intersections
+              update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
+              prepare_traversal(cylinder_intersector, ray, trace_options);
+              T hit_distance = cylinder_intersector.hit_distance;
+              const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
+              update_intersector(cylinder_intersector, hit_distance, 0);
+              post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
+
+              REQUIRE_FALSE(hit_cylinder);
+              REQUIRE_FALSE(rayhit.prim_id == 0);
+              REQUIRE(rayhit.hit_distance == std::numeric_limits<T>::max());
+              REQUIRE(rayhit.normal[0] == Approx(0.f));
+              REQUIRE(rayhit.normal[1] == Approx(0.f));
+              REQUIRE(rayhit.normal[2] == Approx(0.f));
+            }
+            SUBCASE("oblique incidence on shell 3") {
+              Vec3r<T> org1{1, 7, -2};
+              Vec3r<T> dir1{0, 1, -1};
+              Ray<T> ray{org1, dir1};
+              RayHit<T> rayhit;
+
+              BVHTraceOptions<T> trace_options;
+
+              CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
+
+              // Test intersections
+              update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
+              prepare_traversal(cylinder_intersector, ray, trace_options);
+              T hit_distance = cylinder_intersector.hit_distance;
+              const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
+              update_intersector(cylinder_intersector, hit_distance, 0);
+              post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
+
+              REQUIRE_FALSE(hit_cylinder);
+              REQUIRE_FALSE(rayhit.prim_id == 0);
+              REQUIRE(rayhit.hit_distance == std::numeric_limits<T>::max());
+              REQUIRE(rayhit.normal[0] == Approx(0.f));
+              REQUIRE(rayhit.normal[1] == Approx(0.f));
+              REQUIRE(rayhit.normal[2] == Approx(0.f));
+            }
+            SUBCASE("oblique incidence on shell 4") {
+              Vec3r<T> org1{1, -3, -2};
+              Vec3r<T> dir1{0, -1, -1};
+              Ray<T> ray{org1, dir1};
+              RayHit<T> rayhit;
+
+              BVHTraceOptions<T> trace_options;
+
+              CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
+
+              // Test intersections
+              update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
+              prepare_traversal(cylinder_intersector, ray, trace_options);
+              T hit_distance = cylinder_intersector.hit_distance;
+              const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
+              update_intersector(cylinder_intersector, hit_distance, 0);
+              post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
+
+              REQUIRE_FALSE(hit_cylinder);
+              REQUIRE_FALSE(rayhit.prim_id == 0);
+              REQUIRE(rayhit.hit_distance == std::numeric_limits<T>::max());
+              REQUIRE(rayhit.normal[0] == Approx(0.f));
+              REQUIRE(rayhit.normal[1] == Approx(0.f));
+              REQUIRE(rayhit.normal[2] == Approx(0.f));
+            }
           }
-          SUBCASE("hit shell 1") {
-            Vec3r<T> org1{0, 0, 1};
-            Vec3r<T> dir1{-1, 0, 0};
-            Ray<T> ray{org1, dir1};
-            RayHit<T> rayhit;
+          SUBCASE("origin around shell (direction inverted)") {
+            SUBCASE("perpendicular incidence") {
+              SUBCASE("origin: x+") {
+                Vec3r<T> org1{6, 2, 1};
+                Vec3r<T> dir1{1, 0, 0};
+                Ray<T> ray{org1, dir1};
+                RayHit<T> rayhit;
 
-            BVHTraceOptions<T> trace_options;
+                BVHTraceOptions<T> trace_options;
 
-            CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
+                CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
 
-            // Test intersections
-            update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
-            prepare_traversal(cylinder_intersector, ray, trace_options);
-            T hit_distance = cylinder_intersector.hit_distance;
-            const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
-            update_intersector(cylinder_intersector, hit_distance, 0);
-            post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
+                // Test intersections
+                update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
+                prepare_traversal(cylinder_intersector, ray, trace_options);
+                T hit_distance = cylinder_intersector.hit_distance;
+                const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
+                update_intersector(cylinder_intersector, hit_distance, 0);
+                post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
 
-            REQUIRE(hit_cylinder);
-            REQUIRE(rayhit.prim_id == 0);
-            REQUIRE(rayhit.hit_distance == Approx(1));
-            REQUIRE(rayhit.normal[0] == Approx(-1.f));
-            REQUIRE(rayhit.normal[1] == Approx(0.f));
-            REQUIRE(rayhit.normal[2] == Approx(0.f));
-          }
-          SUBCASE("hit shell 2") {
-            Vec3r<T> org1{0, 0, 1};
-            Vec3r<T> dir1{1, 0, 0};
-            Ray<T> ray{org1, dir1};
-            RayHit<T> rayhit;
+                REQUIRE_FALSE(hit_cylinder);
+                REQUIRE_FALSE(rayhit.prim_id == 0);
+                REQUIRE(rayhit.hit_distance == std::numeric_limits<T>::max());
+                REQUIRE(rayhit.normal[0] == Approx(0.f));
+                REQUIRE(rayhit.normal[1] == Approx(0.f));
+                REQUIRE(rayhit.normal[2] == Approx(0.f));
+              }
+              SUBCASE("origin: x-") {
+                Vec3r<T> org1{-4, 2, 1};
+                Vec3r<T> dir1{-1, 0, 0};
+                Ray<T> ray{org1, dir1};
+                RayHit<T> rayhit;
 
-            BVHTraceOptions<T> trace_options;
+                BVHTraceOptions<T> trace_options;
 
-            CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
+                CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
 
-            // Test intersections
-            update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
-            prepare_traversal(cylinder_intersector, ray, trace_options);
-            T hit_distance = cylinder_intersector.hit_distance;
-            const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
-            update_intersector(cylinder_intersector, hit_distance, 0);
-            post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
+                // Test intersections
+                update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
+                prepare_traversal(cylinder_intersector, ray, trace_options);
+                T hit_distance = cylinder_intersector.hit_distance;
+                const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
+                update_intersector(cylinder_intersector, hit_distance, 0);
+                post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
 
-            REQUIRE(hit_cylinder);
-            REQUIRE(rayhit.prim_id == 0);
-            REQUIRE(rayhit.hit_distance == Approx(1));
-            REQUIRE(rayhit.normal[0] == Approx(1.f));
-            REQUIRE(rayhit.normal[1] == Approx(0.f));
-            REQUIRE(rayhit.normal[2] == Approx(0.f));
-          }
-          SUBCASE("hit shell 3") {
-            Vec3r<T> org1{0, 0, 1};
-            Vec3r<T> dir1{0, -1, 0};
-            Ray<T> ray{org1, dir1};
-            RayHit<T> rayhit;
+                REQUIRE_FALSE(hit_cylinder);
+                REQUIRE_FALSE(rayhit.prim_id == 0);
+                REQUIRE(rayhit.hit_distance == std::numeric_limits<T>::max());
+                REQUIRE(rayhit.normal[0] == Approx(0.f));
+                REQUIRE(rayhit.normal[1] == Approx(0.f));
+                REQUIRE(rayhit.normal[2] == Approx(0.f));
+              }
+              SUBCASE("origin: y+") {
+                Vec3r<T> org1{1, 7, 1};
+                Vec3r<T> dir1{0, 1, 0};
+                Ray<T> ray{org1, dir1};
+                RayHit<T> rayhit;
 
-            BVHTraceOptions<T> trace_options;
+                BVHTraceOptions<T> trace_options;
 
-            CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
+                CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
 
-            // Test intersections
-            update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
-            prepare_traversal(cylinder_intersector, ray, trace_options);
-            T hit_distance = cylinder_intersector.hit_distance;
-            const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
-            update_intersector(cylinder_intersector, hit_distance, 0);
-            post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
+                // Test intersections
+                update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
+                prepare_traversal(cylinder_intersector, ray, trace_options);
+                T hit_distance = cylinder_intersector.hit_distance;
+                const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
+                update_intersector(cylinder_intersector, hit_distance, 0);
+                post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
 
-            REQUIRE(hit_cylinder);
-            REQUIRE(rayhit.prim_id == 0);
-            REQUIRE(rayhit.hit_distance == Approx(2));
-            REQUIRE(rayhit.normal[0] == Approx(0.f));
-            REQUIRE(rayhit.normal[1] == Approx(-1.f));
-            REQUIRE(rayhit.normal[2] == Approx(0.f));
-          }
-          SUBCASE("hit shell 4") {
-            Vec3r<T> org1{0, 0, 1};
-            Vec3r<T> dir1{0, 1, 0};
-            Ray<T> ray{org1, dir1};
-            RayHit<T> rayhit;
+                REQUIRE_FALSE(hit_cylinder);
+                REQUIRE_FALSE(rayhit.prim_id == 0);
+                REQUIRE(rayhit.hit_distance == std::numeric_limits<T>::max());
+                REQUIRE(rayhit.normal[0] == Approx(0.f));
+                REQUIRE(rayhit.normal[1] == Approx(0.f));
+                REQUIRE(rayhit.normal[2] == Approx(0.f));
+              }
+              SUBCASE("origin: y-") {
+                Vec3r<T> org1{1, -3, 1};
+                Vec3r<T> dir1{0, -1, 0};
+                Ray<T> ray{org1, dir1};
+                RayHit<T> rayhit;
 
-            BVHTraceOptions<T> trace_options;
+                BVHTraceOptions<T> trace_options;
 
-            CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
+                CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
 
-            // Test intersections
-            update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
-            prepare_traversal(cylinder_intersector, ray, trace_options);
-            T hit_distance = cylinder_intersector.hit_distance;
-            const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
-            update_intersector(cylinder_intersector, hit_distance, 0);
-            post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
+                // Test intersections
+                update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
+                prepare_traversal(cylinder_intersector, ray, trace_options);
+                T hit_distance = cylinder_intersector.hit_distance;
+                const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
+                update_intersector(cylinder_intersector, hit_distance, 0);
+                post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
 
-            REQUIRE(hit_cylinder);
-            REQUIRE(rayhit.prim_id == 0);
-            REQUIRE(rayhit.hit_distance == Approx(2));
-            REQUIRE(rayhit.normal[0] == Approx(0.f));
-            REQUIRE(rayhit.normal[1] == Approx(1.f));
-            REQUIRE(rayhit.normal[2] == Approx(0.f));
+                REQUIRE_FALSE(hit_cylinder);
+                REQUIRE_FALSE(rayhit.prim_id == 0);
+                REQUIRE(rayhit.hit_distance == std::numeric_limits<T>::max());
+                REQUIRE(rayhit.normal[0] == Approx(0.f));
+                REQUIRE(rayhit.normal[1] == Approx(0.f));
+                REQUIRE(rayhit.normal[2] == Approx(0.f));
+              }
+            }
           }
         }
       }
-    }
-    SUBCASE("shifted center") {
-      centers->emplace_back(Vec3r<T>{1.f, 2.f, 0.f});
-      semi_axes_a->emplace_back(1);
-      semi_axes_b->emplace_back(2);
-      heights->emplace_back(2);
-      SUBCASE("non-rotated") {
-        rotations->emplace_back(blaze::IdentityMatrix<T>(3UL));
-        SUBCASE("origin above") {
-          SUBCASE("perpendicular incidence on top") {
+      SUBCASE("rotated") {
+        SUBCASE("hits") {
+          SUBCASE("about z-axis") {
+            const Vec3r<T> axis{0, 0, 1};
+            Mat3r<T> rot = arbitraryRotationMatrix(axis, pi<T> / 2);
+            rotations->push_back(rot);
 
             Vec3r<T> org1{1.f, 2.f, 7.5f};
             Vec3r<T> dir1{0.f, 0.f, -1.f};
@@ -707,9 +2296,13 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
             REQUIRE(rayhit.normal[1] == Approx(0.f));
             REQUIRE(rayhit.normal[2] == Approx(1.f));
           }
-          SUBCASE("oblique incidence on top") {
-            Vec3r<T> org1{6.f, 2.f, 7.f};
-            Vec3r<T> dir1{-1.f, 0.f, -1.f};
+          SUBCASE("about y-axis") {
+            const Vec3r<T> axis{0, 1, 0};
+            Mat3r<T> rot = arbitraryRotationMatrix(axis, pi<T> / 2);
+            rotations->push_back(rot);
+
+            Vec3r<T> org1{8.5f, 2.f, 0.f};
+            Vec3r<T> dir1{-1.f, 0.f, 0.f};
 
             Ray<T> ray{org1, dir1};
             RayHit<T> rayhit;
@@ -728,116 +2321,18 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
 
             REQUIRE(hit_cylinder);
             REQUIRE(rayhit.prim_id == 0);
-            REQUIRE(rayhit.hit_distance == Approx(std::sqrt(50)));
-            REQUIRE(rayhit.normal[0] == Approx(0.f));
-            REQUIRE(rayhit.normal[1] == Approx(0.f));
-            REQUIRE(rayhit.normal[2] == Approx(1.f));
-          }
-          SUBCASE("oblique incidence on shell 1") {
-            Vec3r<T> org1{6, 2, 5};
-            Vec3r<T> dir1{-1, 0, -1};
-            Ray<T> ray{org1, dir1};
-            RayHit<T> rayhit;
-
-            BVHTraceOptions<T> trace_options;
-
-            CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
-
-            // Test intersections
-            update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
-            prepare_traversal(cylinder_intersector, ray, trace_options);
-            T hit_distance = cylinder_intersector.hit_distance;
-            const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
-            update_intersector(cylinder_intersector, hit_distance, 0);
-            post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
-
-            REQUIRE(hit_cylinder);
-            REQUIRE(rayhit.prim_id == 0);
-            REQUIRE(rayhit.hit_distance == Approx(std::sqrt(32)));
+            REQUIRE(rayhit.hit_distance == Approx(5.5));
             REQUIRE(rayhit.normal[0] == Approx(1.f));
             REQUIRE(rayhit.normal[1] == Approx(0.f));
             REQUIRE(rayhit.normal[2] == Approx(0.f));
           }
-          SUBCASE("oblique incidence on shell 2") {
-            Vec3r<T> org1{-4, 2, 5};
-            Vec3r<T> dir1{1, 0, -1};
-            Ray<T> ray{org1, dir1};
-            RayHit<T> rayhit;
+          SUBCASE("about x-axis") {
+            const Vec3r<T> axis{1, 0, 0};
+            Mat3r<T> rot = arbitraryRotationMatrix(axis, pi<T> / 2);
+            rotations->push_back(rot);
 
-            BVHTraceOptions<T> trace_options;
-
-            CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
-
-            // Test intersections
-            update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
-            prepare_traversal(cylinder_intersector, ray, trace_options);
-            T hit_distance = cylinder_intersector.hit_distance;
-            const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
-            update_intersector(cylinder_intersector, hit_distance, 0);
-            post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
-
-            REQUIRE(hit_cylinder);
-            REQUIRE(rayhit.prim_id == 0);
-            REQUIRE(rayhit.hit_distance == Approx(std::sqrt(32)));
-            REQUIRE(rayhit.normal[0] == Approx(-1.f));
-            REQUIRE(rayhit.normal[1] == Approx(0.f));
-            REQUIRE(rayhit.normal[2] == Approx(0.f));
-          }
-          SUBCASE("oblique incidence on shell 3") {
-            Vec3r<T> org1{1, 7, 4};
-            Vec3r<T> dir1{0, -1, -1};
-            Ray<T> ray{org1, dir1};
-            RayHit<T> rayhit;
-
-            BVHTraceOptions<T> trace_options;
-
-            CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
-
-            // Test intersections
-            update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
-            prepare_traversal(cylinder_intersector, ray, trace_options);
-            T hit_distance = cylinder_intersector.hit_distance;
-            const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
-            update_intersector(cylinder_intersector, hit_distance, 0);
-            post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
-
-            REQUIRE(hit_cylinder);
-            REQUIRE(rayhit.prim_id == 0);
-            REQUIRE(rayhit.hit_distance == Approx(std::sqrt(18)));
-            REQUIRE(rayhit.normal[0] == Approx(0.f));
-            REQUIRE(rayhit.normal[1] == Approx(1.f));
-            REQUIRE(rayhit.normal[2] == Approx(0.f));
-          }
-          SUBCASE("oblique incidence on shell 4") {
-            Vec3r<T> org1{1, -3, 4};
-            Vec3r<T> dir1{0, 1, -1};
-            Ray<T> ray{org1, dir1};
-            RayHit<T> rayhit;
-
-            BVHTraceOptions<T> trace_options;
-
-            CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
-
-            // Test intersections
-            update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
-            prepare_traversal(cylinder_intersector, ray, trace_options);
-            T hit_distance = cylinder_intersector.hit_distance;
-            const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
-            update_intersector(cylinder_intersector, hit_distance, 0);
-            post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
-
-            REQUIRE(hit_cylinder);
-            REQUIRE(rayhit.prim_id == 0);
-            REQUIRE(rayhit.hit_distance == Approx(std::sqrt(18)));
-            REQUIRE(rayhit.normal[0] == Approx(0.f));
-            REQUIRE(rayhit.normal[1] == Approx(-1.f));
-            REQUIRE(rayhit.normal[2] == Approx(0.f));
-          }
-        }
-        SUBCASE("origin below") {
-          SUBCASE("perpendicular incidence on bottom") {
-            Vec3r<T> org1{1.f, 2.f, -7.5f};
-            Vec3r<T> dir1{0.f, 0.f, 1.f};
+            Vec3r<T> org1{1.f, 9.5f, 0.f};
+            Vec3r<T> dir1{0.f, -1.f, 0.f};
 
             Ray<T> ray{org1, dir1};
             RayHit<T> rayhit;
@@ -858,244 +2353,19 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
             REQUIRE(rayhit.prim_id == 0);
             REQUIRE(rayhit.hit_distance == Approx(7.5));
             REQUIRE(rayhit.normal[0] == Approx(0.f));
-            REQUIRE(rayhit.normal[1] == Approx(0.f));
-            REQUIRE(rayhit.normal[2] == Approx(-1.f));
-          }
-          SUBCASE("oblique incidence on bottom") {
-            Vec3r<T> org1{6.f, 2.f, -5.f};
-            Vec3r<T> dir1{-1.f, 0.f, 1.f};
-
-            Ray<T> ray{org1, dir1};
-            RayHit<T> rayhit;
-
-            BVHTraceOptions<T> trace_options;
-
-            CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
-
-            // Test intersections
-            update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
-            prepare_traversal(cylinder_intersector, ray, trace_options);
-            T hit_distance = cylinder_intersector.hit_distance;
-            const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
-            update_intersector(cylinder_intersector, hit_distance, 0);
-            post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
-
-            REQUIRE(hit_cylinder);
-            REQUIRE(rayhit.prim_id == 0);
-            REQUIRE(rayhit.hit_distance == Approx(std::sqrt(50)));
-            REQUIRE(rayhit.normal[0] == Approx(0.f));
-            REQUIRE(rayhit.normal[1] == Approx(0.f));
-            REQUIRE(rayhit.normal[2] == Approx(-1.f));
-          }
-          SUBCASE("oblique incidence on shell 1") {
-            Vec3r<T> org1{6, 2, -3};
-            Vec3r<T> dir1{-1, 0, 1};
-            Ray<T> ray{org1, dir1};
-            RayHit<T> rayhit;
-
-            BVHTraceOptions<T> trace_options;
-
-            CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
-
-            // Test intersections
-            update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
-            prepare_traversal(cylinder_intersector, ray, trace_options);
-            T hit_distance = cylinder_intersector.hit_distance;
-            const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
-            update_intersector(cylinder_intersector, hit_distance, 0);
-            post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
-
-            REQUIRE(hit_cylinder);
-            REQUIRE(rayhit.prim_id == 0);
-            REQUIRE(rayhit.hit_distance == Approx(std::sqrt(32)));
-            REQUIRE(rayhit.normal[0] == Approx(1.f));
-            REQUIRE(rayhit.normal[1] == Approx(0.f));
-            REQUIRE(rayhit.normal[2] == Approx(0.f));
-          }
-          SUBCASE("oblique incidence on shell 2") {
-            Vec3r<T> org1{-4, 2, -3};
-            Vec3r<T> dir1{1, 0, 1};
-            Ray<T> ray{org1, dir1};
-            RayHit<T> rayhit;
-
-            BVHTraceOptions<T> trace_options;
-
-            CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
-
-            // Test intersections
-            update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
-            prepare_traversal(cylinder_intersector, ray, trace_options);
-            T hit_distance = cylinder_intersector.hit_distance;
-            const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
-            update_intersector(cylinder_intersector, hit_distance, 0);
-            post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
-
-            REQUIRE(hit_cylinder);
-            REQUIRE(rayhit.prim_id == 0);
-            REQUIRE(rayhit.hit_distance == Approx(std::sqrt(32)));
-            REQUIRE(rayhit.normal[0] == Approx(-1.f));
-            REQUIRE(rayhit.normal[1] == Approx(0.f));
-            REQUIRE(rayhit.normal[2] == Approx(0.f));
-          }
-          SUBCASE("oblique incidence on shell 3") {
-            Vec3r<T> org1{1, 7, -2};
-            Vec3r<T> dir1{0, -1, 1};
-            Ray<T> ray{org1, dir1};
-            RayHit<T> rayhit;
-
-            BVHTraceOptions<T> trace_options;
-
-            CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
-
-            // Test intersections
-            update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
-            prepare_traversal(cylinder_intersector, ray, trace_options);
-            T hit_distance = cylinder_intersector.hit_distance;
-            const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
-            update_intersector(cylinder_intersector, hit_distance, 0);
-            post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
-
-            REQUIRE(hit_cylinder);
-            REQUIRE(rayhit.prim_id == 0);
-            REQUIRE(rayhit.hit_distance == Approx(std::sqrt(18)));
-            REQUIRE(rayhit.normal[0] == Approx(0.f));
             REQUIRE(rayhit.normal[1] == Approx(1.f));
             REQUIRE(rayhit.normal[2] == Approx(0.f));
           }
-          SUBCASE("oblique incidence on shell 4") {
-            Vec3r<T> org1{1, -3, -2};
-            Vec3r<T> dir1{0, 1, 1};
-            Ray<T> ray{org1, dir1};
-            RayHit<T> rayhit;
-
-            BVHTraceOptions<T> trace_options;
-
-            CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
-
-            // Test intersections
-            update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
-            prepare_traversal(cylinder_intersector, ray, trace_options);
-            T hit_distance = cylinder_intersector.hit_distance;
-            const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
-            update_intersector(cylinder_intersector, hit_distance, 0);
-            post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
-
-            REQUIRE(hit_cylinder);
-            REQUIRE(rayhit.prim_id == 0);
-            REQUIRE(rayhit.hit_distance == Approx(std::sqrt(18)));
-            REQUIRE(rayhit.normal[0] == Approx(0.f));
-            REQUIRE(rayhit.normal[1] == Approx(-1.f));
-            REQUIRE(rayhit.normal[2] == Approx(0.f));
-          }
         }
-        SUBCASE("origin around shell") {
-          SUBCASE("perpendicular incidence") {
-            SUBCASE("origin: x+") {
-              Vec3r<T> org1{6, 2, 1};
-              Vec3r<T> dir1{-1, 0, 0};
-              Ray<T> ray{org1, dir1};
-              RayHit<T> rayhit;
+        SUBCASE("no hits") {
+          SUBCASE("about z-axis") {
+            const Vec3r<T> axis{0, 0, 1};
+            Mat3r<T> rot = arbitraryRotationMatrix(axis, pi<T> / 2);
+            rotations->push_back(rot);
 
-              BVHTraceOptions<T> trace_options;
+            Vec3r<T> org1{1.f, 2.f, 7.5f};
+            Vec3r<T> dir1{0.f, 0.f, 1.f};
 
-              CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
-
-              // Test intersections
-              update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
-              prepare_traversal(cylinder_intersector, ray, trace_options);
-              T hit_distance = cylinder_intersector.hit_distance;
-              const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
-              update_intersector(cylinder_intersector, hit_distance, 0);
-              post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
-
-              REQUIRE(hit_cylinder);
-              REQUIRE(rayhit.prim_id == 0);
-              REQUIRE(rayhit.hit_distance == Approx(4));
-              REQUIRE(rayhit.normal[0] == Approx(1.f));
-              REQUIRE(rayhit.normal[1] == Approx(0.f));
-              REQUIRE(rayhit.normal[2] == Approx(0.f));
-            }
-            SUBCASE("origin: x-") {
-              Vec3r<T> org1{-4, 2, 1};
-              Vec3r<T> dir1{1, 0, 0};
-              Ray<T> ray{org1, dir1};
-              RayHit<T> rayhit;
-
-              BVHTraceOptions<T> trace_options;
-
-              CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
-
-              // Test intersections
-              update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
-              prepare_traversal(cylinder_intersector, ray, trace_options);
-              T hit_distance = cylinder_intersector.hit_distance;
-              const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
-              update_intersector(cylinder_intersector, hit_distance, 0);
-              post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
-
-              REQUIRE(hit_cylinder);
-              REQUIRE(rayhit.prim_id == 0);
-              REQUIRE(rayhit.hit_distance == Approx(4));
-              REQUIRE(rayhit.normal[0] == Approx(-1.f));
-              REQUIRE(rayhit.normal[1] == Approx(0.f));
-              REQUIRE(rayhit.normal[2] == Approx(0.f));
-            }
-            SUBCASE("origin: y+") {
-              Vec3r<T> org1{1, 7, 1};
-              Vec3r<T> dir1{0, -1, 0};
-              Ray<T> ray{org1, dir1};
-              RayHit<T> rayhit;
-
-              BVHTraceOptions<T> trace_options;
-
-              CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
-
-              // Test intersections
-              update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
-              prepare_traversal(cylinder_intersector, ray, trace_options);
-              T hit_distance = cylinder_intersector.hit_distance;
-              const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
-              update_intersector(cylinder_intersector, hit_distance, 0);
-              post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
-
-              REQUIRE(hit_cylinder);
-              REQUIRE(rayhit.prim_id == 0);
-              REQUIRE(rayhit.hit_distance == Approx(3));
-              REQUIRE(rayhit.normal[0] == Approx(0.f));
-              REQUIRE(rayhit.normal[1] == Approx(1.f));
-              REQUIRE(rayhit.normal[2] == Approx(0.f));
-            }
-            SUBCASE("origin: y-") {
-              Vec3r<T> org1{1, -3, 1};
-              Vec3r<T> dir1{0, 1, 0};
-              Ray<T> ray{org1, dir1};
-              RayHit<T> rayhit;
-
-              BVHTraceOptions<T> trace_options;
-
-              CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
-
-              // Test intersections
-              update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
-              prepare_traversal(cylinder_intersector, ray, trace_options);
-              T hit_distance = cylinder_intersector.hit_distance;
-              const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
-              update_intersector(cylinder_intersector, hit_distance, 0);
-              post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
-
-              REQUIRE(hit_cylinder);
-              REQUIRE(rayhit.prim_id == 0);
-              REQUIRE(rayhit.hit_distance == Approx(3));
-              REQUIRE(rayhit.normal[0] == Approx(0.f));
-              REQUIRE(rayhit.normal[1] == Approx(-1.f));
-              REQUIRE(rayhit.normal[2] == Approx(0.f));
-            }
-          }
-        }
-        SUBCASE("origin inside of cylinder") {
-          SUBCASE("hit top") {
-            Vec3r<T> org1{1, 2, 1};
-            Vec3r<T> dir1{0, 0, 1};
             Ray<T> ray{org1, dir1};
             RayHit<T> rayhit;
 
@@ -1111,66 +2381,21 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
             update_intersector(cylinder_intersector, hit_distance, 0);
             post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
 
-            REQUIRE(hit_cylinder);
-            REQUIRE(rayhit.prim_id == 0);
-            REQUIRE(rayhit.hit_distance == Approx(1));
+            REQUIRE_FALSE(hit_cylinder);
+            REQUIRE_FALSE(rayhit.prim_id == 0);
+            REQUIRE(rayhit.hit_distance == std::numeric_limits<T>::max());
             REQUIRE(rayhit.normal[0] == Approx(0.f));
-            REQUIRE(rayhit.normal[1] == Approx(0.f));
-            REQUIRE(rayhit.normal[2] == Approx(1.f));
-          }
-          SUBCASE("hit bottom") {
-            Vec3r<T> org1{1, 2, 1};
-            Vec3r<T> dir1{0, 0, -1};
-            Ray<T> ray{org1, dir1};
-            RayHit<T> rayhit;
-
-            BVHTraceOptions<T> trace_options;
-
-            CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
-
-            // Test intersections
-            update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
-            prepare_traversal(cylinder_intersector, ray, trace_options);
-            T hit_distance = cylinder_intersector.hit_distance;
-            const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
-            update_intersector(cylinder_intersector, hit_distance, 0);
-            post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
-
-            REQUIRE(hit_cylinder);
-            REQUIRE(rayhit.prim_id == 0);
-            REQUIRE(rayhit.hit_distance == Approx(1));
-            REQUIRE(rayhit.normal[0] == Approx(0.f));
-            REQUIRE(rayhit.normal[1] == Approx(0.f));
-            REQUIRE(rayhit.normal[2] == Approx(-1.f));
-          }
-          SUBCASE("hit shell 1") {
-            Vec3r<T> org1{1, 2, 1};
-            Vec3r<T> dir1{-1, 0, 0};
-            Ray<T> ray{org1, dir1};
-            RayHit<T> rayhit;
-
-            BVHTraceOptions<T> trace_options;
-
-            CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
-
-            // Test intersections
-            update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
-            prepare_traversal(cylinder_intersector, ray, trace_options);
-            T hit_distance = cylinder_intersector.hit_distance;
-            const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
-            update_intersector(cylinder_intersector, hit_distance, 0);
-            post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
-
-            REQUIRE(hit_cylinder);
-            REQUIRE(rayhit.prim_id == 0);
-            REQUIRE(rayhit.hit_distance == Approx(1));
-            REQUIRE(rayhit.normal[0] == Approx(-1.f));
             REQUIRE(rayhit.normal[1] == Approx(0.f));
             REQUIRE(rayhit.normal[2] == Approx(0.f));
           }
-          SUBCASE("hit shell 2") {
-            Vec3r<T> org1{1, 2, 1};
-            Vec3r<T> dir1{1, 0, 0};
+          SUBCASE("about y-axis") {
+            const Vec3r<T> axis{0, 1, 0};
+            Mat3r<T> rot = arbitraryRotationMatrix(axis, pi<T> / 2);
+            rotations->push_back(rot);
+
+            Vec3r<T> org1{8.5f, 2.f, 0.f};
+            Vec3r<T> dir1{1.f, 0.f, 0.f};
+
             Ray<T> ray{org1, dir1};
             RayHit<T> rayhit;
 
@@ -1186,16 +2411,21 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
             update_intersector(cylinder_intersector, hit_distance, 0);
             post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
 
-            REQUIRE(hit_cylinder);
-            REQUIRE(rayhit.prim_id == 0);
-            REQUIRE(rayhit.hit_distance == Approx(1));
-            REQUIRE(rayhit.normal[0] == Approx(1.f));
+            REQUIRE_FALSE(hit_cylinder);
+            REQUIRE_FALSE(rayhit.prim_id == 0);
+            REQUIRE(rayhit.hit_distance == std::numeric_limits<T>::max());
+            REQUIRE(rayhit.normal[0] == Approx(0.f));
             REQUIRE(rayhit.normal[1] == Approx(0.f));
             REQUIRE(rayhit.normal[2] == Approx(0.f));
           }
-          SUBCASE("hit shell 3") {
-            Vec3r<T> org1{1, 2, 1};
-            Vec3r<T> dir1{0, -1, 0};
+          SUBCASE("about x-axis") {
+            const Vec3r<T> axis{1, 0, 0};
+            Mat3r<T> rot = arbitraryRotationMatrix(axis, pi<T> / 2);
+            rotations->push_back(rot);
+
+            Vec3r<T> org1{1.f, 5.5f, 0.f};
+            Vec3r<T> dir1{0.f, 1.f, 0.f};
+
             Ray<T> ray{org1, dir1};
             RayHit<T> rayhit;
 
@@ -1211,36 +2441,11 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
             update_intersector(cylinder_intersector, hit_distance, 0);
             post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
 
-            REQUIRE(hit_cylinder);
-            REQUIRE(rayhit.prim_id == 0);
-            REQUIRE(rayhit.hit_distance == Approx(2));
+            REQUIRE_FALSE(hit_cylinder);
+            REQUIRE_FALSE(rayhit.prim_id == 0);
+            REQUIRE(rayhit.hit_distance == std::numeric_limits<T>::max());
             REQUIRE(rayhit.normal[0] == Approx(0.f));
-            REQUIRE(rayhit.normal[1] == Approx(-1.f));
-            REQUIRE(rayhit.normal[2] == Approx(0.f));
-          }
-          SUBCASE("hit shell 4") {
-            Vec3r<T> org1{1, 2, 1};
-            Vec3r<T> dir1{0, 1, 0};
-            Ray<T> ray{org1, dir1};
-            RayHit<T> rayhit;
-
-            BVHTraceOptions<T> trace_options;
-
-            CylinderIntersector<T> cylinder_intersector{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
-
-            // Test intersections
-            update_intersector(cylinder_intersector, ray.max_hit_distance, -1);
-            prepare_traversal(cylinder_intersector, ray, trace_options);
-            T hit_distance = cylinder_intersector.hit_distance;
-            const bool hit_cylinder = intersect(cylinder_intersector, hit_distance, 0);
-            update_intersector(cylinder_intersector, hit_distance, 0);
-            post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
-
-            REQUIRE(hit_cylinder);
-            REQUIRE(rayhit.prim_id == 0);
-            REQUIRE(rayhit.hit_distance == Approx(2));
-            REQUIRE(rayhit.normal[0] == Approx(0.f));
-            REQUIRE(rayhit.normal[1] == Approx(1.f));
+            REQUIRE(rayhit.normal[1] == Approx(0.f));
             REQUIRE(rayhit.normal[2] == Approx(0.f));
           }
         }
