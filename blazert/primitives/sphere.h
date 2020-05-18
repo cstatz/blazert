@@ -28,7 +28,7 @@ public:
    * @brief Returns the number of primitives in the Sphere -> only one sphere
    * @return unsigned int
    */
-  inline unsigned int size() const { return 1; }
+  inline unsigned int size() const { return centers->size(); }
 
   inline void BoundingBox(Vec3r<T> &bmin, Vec3r<T> &bmax, unsigned int prim_index) const {
     bmin = (*centers)[prim_index] - (*radii)[prim_index];
