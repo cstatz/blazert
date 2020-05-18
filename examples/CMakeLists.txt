@@ -1,4 +1,5 @@
 include_directories(${BLAZE_INCLUDE_DIRS})
 add_subdirectory(benchmark_blaze)
-add_subdirectory(scene)
+add_subdirectory(scene_mesh)
 add_subdirectory(path_tracer)
+add_subdirectory(scene_primitives)
