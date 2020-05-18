@@ -27,11 +27,11 @@ public:
 
 template<typename T>
 std::ostream& operator<<(std::ostream& stream, const BBox<T>& b) {
-  stream << "BoundingBox" << std::endl;
-  stream << " - Lower:" << std::endl;
-  stream << b.bmin << std::endl;
-  stream << " - Upper:" << std::endl;
-  stream << b.bmax << std::endl;
+  stream << "BoundingBox \n";
+  stream << " - Lower: \n";
+  stream << b.bmin << "\n";
+  stream << " - Upper: \n";
+  stream << b.bmax << "\n";
   return stream;
 }
 
