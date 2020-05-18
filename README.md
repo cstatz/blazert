@@ -9,11 +9,16 @@
 5. [Contributing](#contributing)
 
 ## Introduction
-A double precision raytracer for physics applications based on a nanort fork using blaze datatypes.
-You can use your own (vector) dataypes (e.g. as provided by eigen3) and it also works in single precision.
-At the moment blazeRT works with triangular meshes and simple primitives, but it should be easy to extend blazeRT to  work on polygons or more complex primitives.
+A **double precision ray tracer** for physics applications based on a [nanort](https://github.com/lighttransport/nanort) fork using blaze datatypes.
+
+You can use your own (vector) dataypes (e.g. as provided by eigen3) and it also works with single precision.
+
+At the moment blazeRT works with triangular meshes and simple primitives, but it should be easy to extend blazeRT 
+to  work on polygons or more complex primitives.
 
 ## Features
+- [x] modern C++
+- [x] using vector and matrix type from [blaze](https://bitbucket.org/blaze-lib/blaze/src/master/) for efficient linear algebra
 - [x] single and double precision ray tracing 
 - [x] Embree fall back for single precision floats
 - [x] currently supported geometry
@@ -22,7 +27,7 @@ At the moment blazeRT works with triangular meshes and simple primitives, but it
     - [x] (finite) planes
     - [x] cylinders
 - [x] BVH accelerated ray racing
-- [x] unit tests
+- [x] unit tests via [doctest](https://github.com/onqtam/doctest)
 
 ## Installation
 Installation and build is tested on linux (e.g. ubuntu bionic, arch-linux) and macos.
@@ -30,9 +35,10 @@ Before starting the build process please ensure all dependencies are properly in
 
 ### Dependencies
  * c++17 capable compiler
- * cmake (>3.11.0)
- * blaze (>3.7)
- * embree (>3) if ```EMBREE_TRACING``` fallback is desired
+ * cmake (>= 3.11.0)
+ * blaze (>= 3.7)
+ * embree (>= 3) if ```EMBREE_TRACING``` fallback is desired
+ * doctest for testing
 
 ### Build and test
 This is a header-only library. No need to build anything. Just drop it in your source directory and off you go.
