@@ -8,7 +8,8 @@
 4. [Usage](#usage)
     1. [Examples](#examples)
     2. [Minimal Examples](#minimal-example)
-5. [Contributing](#contributing)
+5. [License](#license)
+6. [Contributing](#contributing)
 
 ## Introduction
 A **double precision ray tracer** for physics applications based on a [nanort](https://github.com/lighttransport/nanort) fork using blaze datatypes.
@@ -67,37 +68,17 @@ checkout the minimal examples below.
 - [ ] Embree fallback
 
 ### Minimal Example
-This is a minimal examples rendering two cylinders which are color-coded. This is an example similar to 
+Example for using blazeRT can be found the the `examples` subdirectory.
+
+A minimal example would look like this:
 ```examples/scene_primitives``` to get a feeling for the API.
 ```c++
 #include <blazert/blazert.h>
-#include <blazert/datatypes.h>
 #include <memory>
 #include <vector>
 
-#define STB_IMAGE_WRITE_IMPLEMENTATION
-#include "stb_image_write.h"
-
 // This alias is defined in order to setup the simulation for float or double, depending on what you want to do.
 using ft = double;
-
-void SaveImagePNG(const char *filename, const float *rgb, int width,
-                  int height) {
-  auto *bytes = new unsigned char[width * height * 3];
-  for (int y = 0; y < height; y++) {
-    for (int x = 0; x < width; x++) {
-      const int index = y * width + x;
-      bytes[index * 3 + 0] = (unsigned char) std::max(
-          0.0f, std::min(rgb[index * 3 + 0] * 255.0f, 255.0f));
-      bytes[index * 3 + 1] = (unsigned char) std::max(
-          0.0f, std::min(rgb[index * 3 + 1] * 255.0f, 255.0f));
-      bytes[index * 3 + 2] = (unsigned char) std::max(
-          0.0f, std::min(rgb[index * 3 + 2] * 255.0f, 255.0f));
-    }
-  }
-  stbi_write_png(filename, width, height, 3, bytes, width * 3);
-  delete[] bytes;
-}
 
 int main(int argc, char **argv) {
 
@@ -110,9 +91,6 @@ int main(int argc, char **argv) {
   auto semi_axes_b = std::make_unique<std::vector<ft>>();
   auto heights = std::make_unique<std::vector<ft>>();
   auto rotations = std::make_unique<blazert::Mat3rList<ft>>();
-
-  auto sph_centers = std::make_unique<blazert::Vec3rList<ft>>();
-  auto radii = std::make_unique<std::vector<ft>>();
 
   blazert::Mat3r<ft> rot{
       {0, 0, 1},
@@ -142,10 +120,7 @@ int main(int argc, char **argv) {
   blazert::Scene<ft> scene;
   scene.add_cylinders(*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations);
   scene.commit();
-
-  // structure to save the colors
-  std::vector<float> rgb(width * height * 3, 0.0f);
-
+  
   for (int y = 0; y < height; y++) {
     for (int x = 0; x < width; x++) {
 
@@ -153,27 +128,50 @@ int main(int argc, char **argv) {
       blazert::RayHit<ft> rayhit;
 
       const bool hit = intersect1(scene, ray, rayhit);
-      if (hit) {
-        if (rayhit.prim_id == 0) {
-          // red for first prim_id
-          rgb[3 * ((height - y - 1) * width + x) + 0] = float(1);
-          rgb[3 * ((height - y - 1) * width + x) + 1] = float(0);
-          rgb[3 * ((height - y - 1) * width + x) + 2] = float(0);
-        } else {
-          // green for all other prim_ids
-          rgb[3 * ((height - y - 1) * width + x) + 0] = float(0);
-          rgb[3 * ((height - y - 1) * width + x) + 1] = float(1);
-          rgb[3 * ((height - y - 1) * width + x) + 2] = float(0);
-        }
+      if (hit) { 
+        // Do something ...
       }
     }
   }
 
-  SaveImagePNG("render.png", &rgb.at(0), width, height);
-
   return 0;
 }
 ```
+## License
+
+blazeRT is licensed under the new BSD (3-clause) license.
+blazeRT is based on and inspired by `nanort.h` which is licensed under:
+
+```
+MIT License
+
+Copyright (c) 2015-2018 Light Transport Entertainment, Inc.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
+
+The purpose of this fork is the simplified inclusion of the blaze-lib vector-types (or similar types that provided the necessary operators and datalayout) and an enhanced maintainability of the code.
+
+The examples are built around third party libraries (e.g. `tiny_obj_loader` and `stb_image_write`) which adhere to their own respective licenses (found in the included files).
+
+The rendering example is take from the `nanort` repo and serves as a baseline. The Lucy model included in this demo scene is taken from the Stanford 3D Scanning Repository: http://graphics.stanford.edu/data/3Dscanrep/
+
 ## Contributing
 We appreciate all contributions from issues to pull requests.
 
