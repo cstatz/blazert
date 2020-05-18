@@ -6,11 +6,12 @@
 #include <blazert/ray.h>
 #include <blazert/scene.h>
 
-#include <blazert/embree/primitives/EmbreeSphere.h>
+#include <blazert/embree/primitives/EmbreeCylinder.h>
 #include <blazert/embree/primitives/EmbreePlane.h>
+#include <blazert/embree/primitives/EmbreeSphere.h>
 
 #include <embree3/rtcore.h>
-#include <map>
+//#include <map>
 
 namespace blazert {
 
@@ -26,7 +27,7 @@ public:
 
   EmbreeScene() : device(rtcNewDevice("verbose=0,start_threads=1,threads=4,set_affinity=1")),
                   rtcscene(rtcNewScene(device)), has_been_committed(false) {
-    if constexpr(std::is_same<double, T>::value) {
+    if constexpr (std::is_same<double, T>::value) {
       std::cout << "-> Attention: Using embree bvh and traversal for float tracing. <-" << std::endl;
       std::cout << "This will also impact double precision tracing by blazert." << std::endl;
       std::cout << "You're using doubles for geometry computation, consider disabling embree." << std::endl;
@@ -37,6 +38,7 @@ public:
   unsigned int add_mesh(const Vec3rList<T> &vertices, const Vec3iList &triangles);
   unsigned int add_spheres(const Vec3rList<T> &centers, const std::vector<T> &radii);
   unsigned int add_planes(const Vec3rList<T> &centers, const std::vector<T> &dxs, const std::vector<T> &dys, const Mat3rList<T> &rotations);
+  unsigned int add_cylinders(const Vec3rList<T> &centers, const std::vector<T> &semi_axes_a, const std::vector<T> &semi_axes_b, const std::vector<T> &heights, const Mat3rList<T> &rotations);
 
   //template<class X, ...> add_custom_primitive( ... );
 
@@ -102,8 +104,7 @@ unsigned int EmbreeScene<T>::add_mesh(const Vec3rList<T> &vertices, const Vec3iL
     rtcCommitGeometry(geometry);
     auto geom_id = rtcAttachGeometry(rtcscene, geometry);
     id = geom_id;
-  }
-  else {
+  } else {
     id = blazertscene.add_mesh(vertices, triangles);
   }
   return id;
@@ -118,15 +119,14 @@ unsigned int EmbreeScene<T>::add_spheres(const Vec3rList<T> &centers, const std:
     // TODO: We are looking for something more like this:
     auto sphere = std::make_unique<EmbreeSphere>(device, rtcscene, centers[0], radii[0]);
     id = sphere->geomID;
-//    for(size_t prim_id = 0; prim_id < centers.size(); ++prim_id) {
-//      const Vec3r<T> &c = centers[prim_id];
-//      const T r = radii[prim_id];
-//      auto sphere = std::make_unique<EmbreeSphere>(device, rtcscene, c, r);
-//      // TODO: This is probably not really...good
-//      id = sphere->geomID;
-//    }
-  }
-  else {
+    //    for(size_t prim_id = 0; prim_id < centers.size(); ++prim_id) {
+    //      const Vec3r<T> &c = centers[prim_id];
+    //      const T r = radii[prim_id];
+    //      auto sphere = std::make_unique<EmbreeSphere>(device, rtcscene, c, r);
+    //      // TODO: This is probably not really...good
+    //      id = sphere->geomID;
+    //    }
+  } else {
     id = blazertscene.add_spheres(centers, radii);
   }
   return id;
@@ -141,18 +141,40 @@ unsigned int EmbreeScene<T>::add_planes(const Vec3rList<T> &centers, const std::
     auto plane = std::make_unique<EmbreePlane>(device, rtcscene, centers[0], dxs[0], dys[0], rotations[0]);
     id = plane->geomID;
     // TODO: We are looking for something more like this:
-//    for(size_t prim_id = 0; prim_id < centers.size(); ++prim_id) {
-//      const Vec3r<T> &c = centers[prim_id];
-//      const T dx = dxs[prim_id];
-//      const T dy = dys[prim_id];
-//      const Mat3r<T> &rot = rotations[prim_id];
-//      auto plane = std::make_unique<EmbreePlane>(device, rtcscene, c, dx, dy, rot);
-//      // TODO: This is probably not really...good
-//      id = plane->geomID;
-//    }
-  }
-  else {
+    //    for(size_t prim_id = 0; prim_id < centers.size(); ++prim_id) {
+    //      const Vec3r<T> &c = centers[prim_id];
+    //      const T dx = dxs[prim_id];
+    //      const T dy = dys[prim_id];
+    //      const Mat3r<T> &rot = rotations[prim_id];
+    //      auto plane = std::make_unique<EmbreePlane>(device, rtcscene, c, dx, dy, rot);
+    //      // TODO: This is probably not really...good
+    //      id = plane->geomID;
+    //    }
+  } else {
     id = blazertscene.add_planes(centers, dxs, dys, rotations);
+  }
+  return id;
+}
+
+template<typename T>
+unsigned int EmbreeScene<T>::add_cylinders(const Vec3rList<T> &centers, const std::vector<T> &semi_axes_a, const std::vector<T> &semi_axes_b, const std::vector<T> &heights, const Mat3rList<T> &rotations) {
+  unsigned int id = -1;
+
+  if constexpr (std::is_same<float, T>::value) {
+    auto plane = std::make_unique<EmbreeCylinder>(device, rtcscene, centers[0], semi_axes_a[0], semi_axes_b[0], heights[0], rotations[0]);
+    id = plane->geomID;
+    // TODO: We are looking for something more like this:
+    //    for(size_t prim_id = 0; prim_id < centers.size(); ++prim_id) {
+    //      const Vec3r<T> &c = centers[prim_id];
+    //      const T dx = dxs[prim_id];
+    //      const T dy = dys[prim_id];
+    //      const Mat3r<T> &rot = rotations[prim_id];
+    //      auto plane = std::make_unique<EmbreePlane>(device, rtcscene, c, dx, dy, rot);
+    //      // TODO: This is probably not really...good
+    //      id = plane->geomID;
+    //    }
+  } else {
+    id = blazertscene.add_cylinders(centers, semi_axes_a, semi_axes_b, heights, rotations);
   }
   return id;
 }

@@ -10,25 +10,26 @@
 #include <memory>
 //#include <blazert/scene.h>
 
-#include "../catch.hpp"
+#include "../doctest.h"
 #include "../test_helpers.h"
 
 using namespace blazert;
+using namespace doctest;
 
-TEMPLATE_TEST_CASE("Sphere", "[bounding box, distance to surface, intersections]", float, double) {
+TEST_CASE_TEMPLATE("Sphere", T, float, double) {
 
-  SECTION("bounding box") {
-    const Vec3r<TestType> center{1.f, 1.f, 1.f};
-    TestType radius = 1.f;
+  SUBCASE("bounding box") {
+    const Vec3r<T> center{1.f, 1.f, 1.f};
+    T radius = 1.f;
 
-    auto centers = std::make_unique<Vec3rList<TestType>>();
-    auto radii = std::make_unique<std::vector<TestType>>();
+    auto centers = std::make_unique<Vec3rList<T>>();
+    auto radii = std::make_unique<std::vector<T>>();
     centers->emplace_back(center);
     radii->emplace_back(radius);
 
-    Sphere<TestType> sphere(*centers, *radii);
+    Sphere<T> sphere(*centers, *radii);
 
-    Vec3r<TestType> bmin, bmax;
+    Vec3r<T> bmin, bmax;
     sphere.BoundingBox(bmin, bmax, 0);
 
     REQUIRE(bmin[0] == Approx(0.f));
@@ -38,94 +39,94 @@ TEMPLATE_TEST_CASE("Sphere", "[bounding box, distance to surface, intersections]
     REQUIRE(bmax[1] == Approx(2.f));
     REQUIRE(bmax[2] == Approx(2.f));
   }
-  SECTION("distance to surface") {
-    Vec3r<TestType> center{0.f, 0.f, 0.f};
-    auto centers = std::make_unique<Vec3rList<TestType>>();
-    auto radii = std::make_unique<std::vector<TestType>>();
+  SUBCASE("distance to surface") {
+    Vec3r<T> center{0.f, 0.f, 0.f};
+    auto centers = std::make_unique<Vec3rList<T>>();
+    auto radii = std::make_unique<std::vector<T>>();
     centers->emplace_back(center);
     
-    SECTION("R = 1")
+    SUBCASE("R = 1")
     {
       float radius = 1.f;
       radii->emplace_back(radius);
       
-      Sphere<TestType> spheres(*centers, *radii);
+      Sphere<T> spheres(*centers, *radii);
 
-      REQUIRE(distance_to_surface(spheres, Vec3r<TestType>{  0.f,  0.f,  0.f }, 0) == Approx(1.f));
-      REQUIRE(distance_to_surface(spheres, Vec3r<TestType>{ -1.f,  0.f,  0.f }, 0) == Approx(0.f));
-      REQUIRE(distance_to_surface(spheres, Vec3r<TestType>{ -2.f,  0.f,  0.f }, 0) == Approx(1.f));
-      REQUIRE(distance_to_surface(spheres, Vec3r<TestType>{ -2.f, -2.f, -2.f }, 0) == Approx(std::sqrt(3.f * 4.f) - 1.f));
+      REQUIRE(distance_to_surface(spheres, Vec3r<T>{  0.f,  0.f,  0.f }, 0) == Approx(1.f));
+      REQUIRE(distance_to_surface(spheres, Vec3r<T>{ -1.f,  0.f,  0.f }, 0) == Approx(0.f));
+      REQUIRE(distance_to_surface(spheres, Vec3r<T>{ -2.f,  0.f,  0.f }, 0) == Approx(1.f));
+      REQUIRE(distance_to_surface(spheres, Vec3r<T>{ -2.f, -2.f, -2.f }, 0) == Approx(std::sqrt(3.f * 4.f) - 1.f));
     }
-    SECTION("R = 3")
+    SUBCASE("R = 3")
     {
       float radius = 3.f;
       radii->emplace_back(radius);
 
-      Sphere<TestType> spheres(*centers, *radii);
+      Sphere<T> spheres(*centers, *radii);
 
-      REQUIRE(distance_to_surface(spheres, Vec3r<TestType>{  0.f,  0.f,  0.f }, 0) == Approx(3.f));
-      REQUIRE(distance_to_surface(spheres, Vec3r<TestType>{ -1.f,  0.f,  0.f }, 0) == Approx(2.f));
-      REQUIRE(distance_to_surface(spheres, Vec3r<TestType>{ -2.f,  0.f,  0.f }, 0) == Approx(1.f));
-      REQUIRE(distance_to_surface(spheres, Vec3r<TestType>{ -2.f, -2.f, -2.f }, 0) == Approx(std::sqrt(3.f * 4.f) - 3.f));
+      REQUIRE(distance_to_surface(spheres, Vec3r<T>{  0.f,  0.f,  0.f }, 0) == Approx(3.f));
+      REQUIRE(distance_to_surface(spheres, Vec3r<T>{ -1.f,  0.f,  0.f }, 0) == Approx(2.f));
+      REQUIRE(distance_to_surface(spheres, Vec3r<T>{ -2.f,  0.f,  0.f }, 0) == Approx(1.f));
+      REQUIRE(distance_to_surface(spheres, Vec3r<T>{ -2.f, -2.f, -2.f }, 0) == Approx(std::sqrt(3.f * 4.f) - 3.f));
     }
   }
-  SECTION("intersections") {
-    SECTION("Ray origin outside sphere") {
-      const Vec3r<TestType> center{0.f, 0.f, 0.f};
-      const TestType radius = 1.;
+  SUBCASE("intersections") {
+    SUBCASE("Ray origin outside sphere") {
+      const Vec3r<T> center{0.f, 0.f, 0.f};
+      const T radius = 1.;
 
       // Centers and Radii should go on the heap.
-      auto centers = std::make_unique<Vec3rList<TestType>>();
-      auto radii = std::make_unique<std::vector<TestType>>();
+      auto centers = std::make_unique<Vec3rList<T>>();
+      auto radii = std::make_unique<std::vector<T>>();
       centers->emplace_back(center);
       radii->emplace_back(radius);
 
-      const Vec3r<TestType> org{2.f, 0.f, 0.f};
-      const Vec3r<TestType> dir{-1.f, 0.f, 0.f};
+      const Vec3r<T> org{2.f, 0.f, 0.f};
+      const Vec3r<T> dir{-1.f, 0.f, 0.f};
 
-      const Ray<TestType> ray{org, dir};
-      RayHit<TestType> rayhit;
+      const Ray<T> ray{org, dir};
+      RayHit<T> rayhit;
 
-      BVHTraceOptions<TestType> trace_options;
+      BVHTraceOptions<T> trace_options;
 
-      SphereIntersector<TestType> sphere_intersector{*centers, *radii};
+      SphereIntersector<T> sphere_intersector{*centers, *radii};
 
       // Test intersections
       update_intersector(sphere_intersector, ray.max_hit_distance, -1);
       prepare_traversal(sphere_intersector, ray, trace_options);
-      TestType hit_distance = sphere_intersector.hit_distance;
+      T hit_distance = sphere_intersector.hit_distance;
       const bool hit_sphere = intersect(sphere_intersector, hit_distance, 0);
       update_intersector(sphere_intersector, hit_distance, 0);
       post_traversal(sphere_intersector, ray, hit_sphere, rayhit);
 
       // should be in distance of 1
       REQUIRE(hit_sphere);
-      REQUIRE(rayhit.hit_distance == Approx(static_cast<TestType>(1.f)));
+      REQUIRE(rayhit.hit_distance == Approx(static_cast<T>(1.f)));
     }
-    SECTION("Ray origin inside sphere") {
-      Vec3r<TestType> center1{0.f, 0.f, 0.f};
-      TestType radius = 1.f;
+    SUBCASE("Ray origin inside sphere") {
+      Vec3r<T> center1{0.f, 0.f, 0.f};
+      T radius = 1.f;
 
-      auto centers = std::make_unique<Vec3rList<TestType>>();
-      auto radii = std::make_unique<std::vector<TestType>>();
+      auto centers = std::make_unique<Vec3rList<T>>();
+      auto radii = std::make_unique<std::vector<T>>();
       centers->emplace_back(center1);
       radii->emplace_back(radius);
 
-      SECTION("Ray 1") {
-        const Vec3r<TestType> org{0.f, 0.f, 0.f};
-        const Vec3r<TestType> dir{-1.f, 0.f, 0.f};
+      SUBCASE("Ray 1") {
+        const Vec3r<T> org{0.f, 0.f, 0.f};
+        const Vec3r<T> dir{-1.f, 0.f, 0.f};
 
-        const Ray<TestType> ray{org, dir};
-        RayHit<TestType> rayhit;
+        const Ray<T> ray{org, dir};
+        RayHit<T> rayhit;
 
-        BVHTraceOptions<TestType> trace_options;
+        BVHTraceOptions<T> trace_options;
 
-        SphereIntersector<TestType> sphere_intersector{*centers, *radii};
+        SphereIntersector<T> sphere_intersector{*centers, *radii};
 
         // Test intersections
         update_intersector(sphere_intersector, ray.max_hit_distance, -1);
         prepare_traversal(sphere_intersector, ray, trace_options);
-        TestType hit_distance = sphere_intersector.hit_distance;
+        T hit_distance = sphere_intersector.hit_distance;
         const bool hit_sphere = intersect(sphere_intersector, hit_distance, 0);
         update_intersector(sphere_intersector, hit_distance, 0);
         post_traversal(sphere_intersector, ray, hit_sphere, rayhit);
@@ -134,21 +135,21 @@ TEMPLATE_TEST_CASE("Sphere", "[bounding box, distance to surface, intersections]
         REQUIRE(hit_sphere);
         REQUIRE(rayhit.hit_distance == Approx(1.f));
       }
-      SECTION("Ray 2") {
-        const Vec3r<TestType> org{0.f, 0.f, 0.5f};
-        const Vec3r<TestType> dir{0.f, 0.f, -1.f};
+      SUBCASE("Ray 2") {
+        const Vec3r<T> org{0.f, 0.f, 0.5f};
+        const Vec3r<T> dir{0.f, 0.f, -1.f};
 
-        const Ray<TestType> ray{org, dir};
-        RayHit<TestType> rayhit;
+        const Ray<T> ray{org, dir};
+        RayHit<T> rayhit;
 
-        BVHTraceOptions<TestType> trace_options;
+        BVHTraceOptions<T> trace_options;
 
-        SphereIntersector<TestType> sphere_intersector{*centers, *radii};
+        SphereIntersector<T> sphere_intersector{*centers, *radii};
 
         // Test intersections
         update_intersector(sphere_intersector, ray.max_hit_distance, -1);
         prepare_traversal(sphere_intersector, ray, trace_options);
-        TestType hit_distance = sphere_intersector.hit_distance;
+        T hit_distance = sphere_intersector.hit_distance;
         const bool hit_sphere = intersect(sphere_intersector, hit_distance, 0);
         update_intersector(sphere_intersector, hit_distance, 0);
         post_traversal(sphere_intersector, ray, hit_sphere, rayhit);
@@ -158,81 +159,81 @@ TEMPLATE_TEST_CASE("Sphere", "[bounding box, distance to surface, intersections]
         REQUIRE(rayhit.hit_distance == Approx(1.5f));
       }
     }
-    SECTION("Ray origin on sphere") {
-      Vec3r<TestType> center1{1.f, 0.f, 0.f};
-      TestType radius = 1.f;
+    SUBCASE("Ray origin on sphere") {
+      Vec3r<T> center1{1.f, 0.f, 0.f};
+      T radius = 1.f;
 
-      auto centers = std::make_unique<Vec3rList<TestType>>();
-      auto radii = std::make_unique<std::vector<TestType>>();
+      auto centers = std::make_unique<Vec3rList<T>>();
+      auto radii = std::make_unique<std::vector<T>>();
       centers->emplace_back(center1);
       radii->emplace_back(radius);
 
-      SECTION("Ray 1") {
-        Vec3r<TestType> org{0.f, 0.f, 0.f};
-        Vec3r<TestType> dir{1.f, 0.f, 0.f};
+      SUBCASE("Ray 1") {
+        Vec3r<T> org{0.f, 0.f, 0.f};
+        Vec3r<T> dir{1.f, 0.f, 0.f};
 
-        const Ray<TestType> ray{org, dir};
-        RayHit<TestType> rayhit;
+        const Ray<T> ray{org, dir};
+        RayHit<T> rayhit;
 
-        BVHTraceOptions<TestType> trace_options;
+        BVHTraceOptions<T> trace_options;
 
-        SphereIntersector<TestType> sphere_intersector{*centers, *radii};
+        SphereIntersector<T> sphere_intersector{*centers, *radii};
 
         // Test intersections
         update_intersector(sphere_intersector, ray.max_hit_distance, -1);
         prepare_traversal(sphere_intersector, ray, trace_options);
-        TestType hit_distance = sphere_intersector.hit_distance;
+        T hit_distance = sphere_intersector.hit_distance;
         const bool hit_sphere = intersect(sphere_intersector, hit_distance, 0);
         update_intersector(sphere_intersector, hit_distance, 0);
         post_traversal(sphere_intersector, ray, hit_sphere, rayhit);
 
         REQUIRE(rayhit.hit_distance == Approx(2.f));
       }
-      SECTION("Ray 2") {
-        Vec3r<TestType> org{0.f, 0.f, 0.f};
-        Vec3r<TestType> dir{-1.f, 0.f, 0.f};
+      SUBCASE("Ray 2") {
+        Vec3r<T> org{0.f, 0.f, 0.f};
+        Vec3r<T> dir{-1.f, 0.f, 0.f};
 
-        const Ray<TestType> ray{org, dir};
-        RayHit<TestType> rayhit;
+        const Ray<T> ray{org, dir};
+        RayHit<T> rayhit;
 
-        BVHTraceOptions<TestType> trace_options;
+        BVHTraceOptions<T> trace_options;
 
-        SphereIntersector<TestType> sphere_intersector{*centers, *radii};
+        SphereIntersector<T> sphere_intersector{*centers, *radii};
 
         // Test intersections
         update_intersector(sphere_intersector, ray.max_hit_distance, -1);
         prepare_traversal(sphere_intersector, ray, trace_options);
-        TestType hit_distance = sphere_intersector.hit_distance;
+        T hit_distance = sphere_intersector.hit_distance;
         const bool hit_sphere = intersect(sphere_intersector, hit_distance, 0);
         update_intersector(sphere_intersector, hit_distance, 0);
         post_traversal(sphere_intersector, ray, hit_sphere, rayhit);
 
-        REQUIRE(rayhit.hit_distance == Approx(std::numeric_limits<TestType>::max()));
+        REQUIRE(rayhit.hit_distance == Approx(std::numeric_limits<T>::max()));
       }
     }
-    SECTION("ray passing through sphere center") {
-      Vec3r<TestType> center1{0.f, 0.f, 0.f};
-      TestType radius = 2.f;
+    SUBCASE("ray passing through sphere center") {
+      Vec3r<T> center1{0.f, 0.f, 0.f};
+      T radius = 2.f;
 
-      auto centers = std::make_unique<Vec3rList<TestType>>();
-      auto radii = std::make_unique<std::vector<TestType>>();
+      auto centers = std::make_unique<Vec3rList<T>>();
+      auto radii = std::make_unique<std::vector<T>>();
       centers->emplace_back(center1);
       radii->emplace_back(radius);
 
-      Vec3r<TestType> org{3.f, 1.f, 0.f};
-      Vec3r<TestType> dir{-1.f, 0.f, 0.f};
+      Vec3r<T> org{3.f, 1.f, 0.f};
+      Vec3r<T> dir{-1.f, 0.f, 0.f};
 
-      const Ray<TestType> ray{org, dir};
-      RayHit<TestType> rayhit;
+      const Ray<T> ray{org, dir};
+      RayHit<T> rayhit;
 
-      BVHTraceOptions<TestType> trace_options;
+      BVHTraceOptions<T> trace_options;
 
-      SphereIntersector<TestType> sphere_intersector{*centers, *radii};
+      SphereIntersector<T> sphere_intersector{*centers, *radii};
 
       // Test intersections
       update_intersector(sphere_intersector, ray.max_hit_distance, -1);
       prepare_traversal(sphere_intersector, ray, trace_options);
-      TestType hit_distance = sphere_intersector.hit_distance;
+      T hit_distance = sphere_intersector.hit_distance;
       const bool hit_sphere = intersect(sphere_intersector, hit_distance, 0);
       update_intersector(sphere_intersector, hit_distance, 0);
       post_traversal(sphere_intersector, ray, hit_sphere, rayhit);
