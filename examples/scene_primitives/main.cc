@@ -1,77 +1,6 @@
-# blazeRT
-
-1. [Introduction](#introduction)
-2. [Features](#features)
-3. [Installation](#installation)
-    1. [Dependencies](#dependencies)
-    2. [Build and Test](#build-and-test)
-4. [Usage](#usage)
-    1. [Examples](#examples)
-    2. [Minimal Examples](#minimal-example)
-5. [Contributing](#contributing)
-
-## Introduction
-A **double precision ray tracer** for physics applications based on a [nanort](https://github.com/lighttransport/nanort) fork using blaze datatypes.
-
-You can use your own (vector) dataypes (e.g. as provided by eigen3) and it also works with single precision.
-
-At the moment blazeRT works with triangular meshes and simple primitives, but it should be easy to extend blazeRT 
-to  work on polygons or more complex primitives.
-
-Please read the [contribution guide](CONTRIBUTING.md) if you are interested in improving blazeRT.
-
-## Features
-- [x] modern C++
-- [x] using vector and matrix type from [blaze](https://bitbucket.org/blaze-lib/blaze/src/master/) for efficient linear algebra
-- [x] single and double precision ray tracing 
-- [x] Embree fall back for single precision floats
-- [x] currently supported geometry
-    - [x] triangular meshes
-    - [x] spheres
-    - [x] (finite) planes
-    - [x] cylinders
-- [x] BVH accelerated ray racing
-- [x] unit tests via [doctest](https://github.com/onqtam/doctest)
-
-## Installation
-Installation and build is tested on linux (e.g. ubuntu bionic, arch-linux) and macos.
-Before starting the build process please ensure all dependencies are properly installed and available to the project.
-
-### Dependencies
- * c++17 capable compiler
- * cmake (>= 3.11.0)
- * blaze (>= 3.7)
- * embree (>= 3) if ```EMBREE_TRACING``` fallback is desired
- * doctest for testing
-
-### Build and test
-This is a header-only library. No need to build anything. Just drop it in your source directory and off you go.
-The build step is for the examples.
-We strictly recommend an out-of-source build in a separate directory (here for simplicity ```build```) 
-Starting in the source directory to project is build from the commandline as follows:
-```shell script
-mkdir build
-cd build 
-cmake ../
-cmake --build .
-cmake --build . -- install  # If package needs to be installed 
-ctest  # Runs the tests
-```
-## Usage
-To get familiar with the usage of blazeRT, look at the provided examples and test cases. To get started quickly,
-checkout the minimal examples below.
-### Examples
-- [x] [path tracerfor mesh geometries](examples/path_tracer) with rendered output
-- [x] [path tracer based on the scene facility](examples/scene_mesh) of blazeRT without rendered output
-- [x] [cylinder and sphere primitives](examples/scene_primitives) within a blazeRT scene and color-coded output
-- [ ] Embree fallback
-
-### Minimal Example
-This is a minimal examples rendering two cylinders which are color-coded. This is an example similar to 
-```examples/scene_primitives``` to get a feeling for the API.
-```c++
 #include <blazert/blazert.h>
 #include <blazert/datatypes.h>
+#include <iostream>
 #include <memory>
 #include <vector>
 
@@ -81,6 +10,7 @@ This is a minimal examples rendering two cylinders which are color-coded. This i
 // This alias is defined in order to setup the simulation for float or double, depending on what you want to do.
 using ft = double;
 
+// TODO: This eats float ... we need to convert.
 void SaveImagePNG(const char *filename, const float *rgb, int width,
                   int height) {
   auto *bytes = new unsigned char[width * height * 3];
@@ -136,16 +66,26 @@ int main(int argc, char **argv) {
   heights->emplace_back(2);
   rotations->push_back(rot);
 
+  // first sphere
+  sph_centers->emplace_back(blazert::Vec3r<ft>{1, 1, 0});
+  radii->emplace_back(0.5);
+  sph_centers->emplace_back(blazert::Vec3r<ft>{-2, 10, 0});
+  radii->emplace_back(1.5);
+
   // Create the scene, add the cylinders and commit the scene
   // committing the scene builds the BVHs
   // After committing you cannot add anymore geometries
   blazert::Scene<ft> scene;
   scene.add_cylinders(*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations);
+  scene.add_spheres(*sph_centers, *radii);
   scene.commit();
 
   // structure to save the colors
   std::vector<float> rgb(width * height * 3, 0.0f);
 
+#ifdef _OPENMP
+#pragma omp parallel for schedule(dynamic, 1)
+#endif
   for (int y = 0; y < height; y++) {
     for (int x = 0; x < width; x++) {
 
@@ -173,8 +113,3 @@ int main(int argc, char **argv) {
 
   return 0;
 }
-```
-## Contributing
-We appreciate all contributions from issues to pull requests.
-
-For contributing, please read the [contribution guide](CONTRIBUTING.md).
