@@ -27,7 +27,7 @@ FIND_PACKAGE(blaze REQUIRED 3.7)
 INCLUDE_DIRECTORIES(${BLAZE_INCLUDE_DIRS})
 
 FIND_PACKAGE(embree 3.0)
-FIND_PACKAGE(benchmark REQUIRED)
+FIND_PACKAGE(benchmark)
 #target_link_libraries(MyTarget benchmark::benchmark Threads::Threads benchmark::benchmark_main)
 FIND_PACKAGE(Threads)
 
