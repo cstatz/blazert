@@ -59,8 +59,7 @@ TEST_CASE_TEMPLATE("EmbreeScene", T, float, double) {
           REQUIRE(rayhit3.normal[1] == Approx(0));
           REQUIRE(rayhit3.normal[2] == Approx(1));
         }
-        SUBCASE("no hit")
-        {
+        SUBCASE("no hit") {
           EmbreeScene<T> scene;
           scene.add_spheres(*centers, *radii);
           scene.commit();
@@ -112,7 +111,6 @@ TEST_CASE_TEMPLATE("EmbreeScene", T, float, double) {
           REQUIRE(rayhit2.normal[0] == Approx(0));
           REQUIRE(rayhit2.normal[1] == Approx(0));
           REQUIRE(rayhit2.normal[2] == Approx(-1.f));
-
         }
       }
       SUBCASE("Ray origin on sphere") {
@@ -195,6 +193,40 @@ TEST_CASE_TEMPLATE("EmbreeScene", T, float, double) {
       REQUIRE(hit);
       REQUIRE(rayhit.prim_id == prim_id);
       REQUIRE(rayhit.hit_distance == Approx(5));
+      REQUIRE(rayhit.normal[0] == Approx(0));
+      REQUIRE(rayhit.normal[1] == Approx(0));
+      REQUIRE(rayhit.normal[2] == Approx(1));
+    }
+  }
+  SUBCASE("Cylinder") {
+    auto centers = std::make_unique<Vec3rList<T>>();
+    auto semi_axes_a = std::make_unique<std::vector<T>>();
+    auto semi_axes_b = std::make_unique<std::vector<T>>();
+    auto heights = std::make_unique<std::vector<T>>();
+    auto rotations = std::make_unique<Mat3rList<T>>();
+
+    centers->emplace_back(Vec3r<T>{0., 0., 0.});
+    semi_axes_a->emplace_back(2.);
+    semi_axes_b->emplace_back(2.);
+    heights->emplace_back(2.);
+    rotations->emplace_back(blaze::IdentityMatrix<T>(3UL));
+
+    EmbreeScene<T> scene{};
+    unsigned int prim_id = scene.add_cylinders(*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations);
+    scene.commit();
+
+    SUBCASE("intersections") {
+      Vec3r<T> org{0.f, 0.f, 5.f};
+      Vec3r<T> dir{0.f, 0.f, -1.f};
+
+      const Ray<T> ray{org, dir};
+      RayHit<T> rayhit;
+
+      const bool hit = intersect1(scene, ray, rayhit);
+
+      REQUIRE(hit);
+      REQUIRE(rayhit.prim_id == prim_id);
+      REQUIRE(rayhit.hit_distance == Approx(3));
       REQUIRE(rayhit.normal[0] == Approx(0));
       REQUIRE(rayhit.normal[1] == Approx(0));
       REQUIRE(rayhit.normal[2] == Approx(1));
