@@ -2,14 +2,14 @@
 // Created by ogarten on 1/29/19.
 //
 
-#include "catch.hpp"
+#include "doctest.h"
 #include "test_helpers.h"
 #include <blazert/datatypes.h>
 
 using namespace blazert;
 
 
-//TEST_CASE("Storage", "[alignment, double]")
+//TEST_CASE("Storage" * doctest::may_fail(true))
 //{
 //  {
 //    Vec3rList<double> vertices;

@@ -12,13 +12,14 @@ Before starting the build process please ensure all dependencies are properly in
  * c++17 capable compiler
  * cmake (>3.11.0)
  * blaze (>3.7)
+ * embree (>3) if ```EMBREE_TRACING``` fallback is desired
 
 ### Build and test
 This is a header-only library. No need to build anything. Just drop it in your source directory and off you go.
 The build step is for the examples.
 We strictly recommend an out-of-source build in a separate directory (here for simplicity ```build```) 
 Starting in the source directory to project is build from the commandline as follows:
-```
+```shell script
 mkdir build
 cd build 
 cmake ../
@@ -26,9 +27,10 @@ cmake --build .
 cmake --build . -- install  # If package needs to be installed 
 ctest  # Runs the tests
 ```
-
 ## Usage
-For now, look at the examples.
+For now, look at the examples and test cases.
 
-### User-Defined Geometry
-See [user-defined geometry guide](README_USER_GEOMETRY.md) 
+## Contributing
+For contributing, please read the [contribution guide][contribution].
+                                                     
+[contribution]: CONTRIBUTING.md

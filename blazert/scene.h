@@ -6,6 +6,8 @@
 #include <blazert/bvh/options.h>
 #include <blazert/datatypes.h>
 
+#include <blazert/primitives/cylinder.h>
+#include <blazert/primitives/plane.h>
 #include <blazert/primitives/sphere.h>
 #include <blazert/primitives/trimesh.h>
 
@@ -21,6 +23,11 @@ public:
   BVHTraceOptions<T> trace_options;
 
   mutable bool has_been_committed = false;
+  /***
+   * geometries counts the amount of different geometry types
+   * -> each geometry has its own BVH
+   * -> for each geometry, we have various primitives; the hit prim_id will be saved in the RayHit structure
+   ***/
   mutable unsigned int geometries = 0;
 
   TriangleMesh<T> triangles;
@@ -33,6 +40,16 @@ public:
   BVH<T> spheres_bvh;
   mutable bool has_spheres = false;
 
+  Plane<T> planes;
+  PlaneSAHPred<T> planes_sah;
+  BVH<T> planes_bvh;
+  mutable bool has_planes = false;
+
+  Cylinder<T> cylinders;
+  CylinderSAHPred<T> cylinders_sah;
+  BVH<T> cylinders_bvh;
+  mutable bool has_cylinders = false;
+
 public:
   BlazertScene() = default;
 
@@ -41,10 +58,40 @@ public:
    * @param vertices Vertices need to be allocated on the heap!
    * @param triangles Triangles need to be allocated on the heap!
    * @return Returns the (geometry) id for the mesh.
-   * The geom_id is set in the rayhit structure by the intersection functions.
+   * The prim_id is set in the rayhit structure by the intersection functions.
    */
   unsigned int add_mesh(const Vec3rList<T> &vertices, const Vec3iList &triangles);
-  inline unsigned int add_spheres(const Vec3rList<T> &centers, const std::vector<T> &radii);
+
+  /***
+   * Adds centers.size() spheres to the scene -> results in centers.size() primitive ideas
+   * @brief Adds spheres at centers with radii
+   * @param centers specifies centers of the spheres (needs to be allocated on heap)
+   * @param radii specifies radii of the spheres (needs to be allocated on heap)
+   * @return geometry id of the spheres
+   */
+  unsigned int add_spheres(const Vec3rList<T> &centers, const std::vector<T> &radii);
+
+  /***
+   * @brief Adds planes at centers with dimensions dxs and dys rotated around rotations
+   * @param centers center of planes
+   * @param dxs dimensions in x direction
+   * @param dys dimensions in y direction
+   * @param rotations local rotation matrices
+   * @return geometry id of the planes
+   */
+  unsigned int add_planes(const Vec3rList<T> &centers, const std::vector<T> &dxs, const std::vector<T> &dys, const Mat3rList<T> &rotations);
+
+  /***
+   * @brief Adds cylinders with the bottom ellipsoid centered at centers, described by two semi_axes and heights.
+   * @param centers 
+   * @param semi_axes_a 
+   * @param semi_axes_b 
+   * @param heights 
+   * @param rotations 
+   * @return geometry id of the cylinders
+   */
+  unsigned int add_cylinders(const Vec3rList<T> &centers, const std::vector<T> &semi_axes_a, const std::vector<T> &semi_axes_b,
+                             const std::vector<T> &heights, const Mat3rList<T> &rotations);
 
   bool commit() {
 
@@ -54,6 +101,14 @@ public:
 
     if (has_spheres) {
       spheres_bvh.build(spheres, spheres_sah, build_options);
+    }
+
+    if (has_planes) {
+      planes_bvh.build(planes, planes_sah, build_options);
+    }
+    
+    if (has_cylinders) {
+      cylinders_bvh.build(cylinders, cylinders_sah, build_options);
     }
 
     has_been_committed = true;
@@ -90,6 +145,28 @@ inline bool intersect1(const BlazertScene<T> &scene, const Ray<T> &ray, RayHit<T
     }
   }
 
+  if (scene.has_planes) {
+    PlaneIntersector<T> plane_intersector{*(scene.planes.centers), *(scene.planes.dxs), *(scene.planes.dys), *(scene.planes.rotations)};
+    const bool hit_plane = traverse(scene.planes_bvh, ray, plane_intersector, temp_rayhit, scene.trace_options);
+    if (hit_plane) {
+      if (temp_rayhit.hit_distance < rayhit.hit_distance) {
+        rayhit = temp_rayhit;
+        hit += hit_plane;
+      }
+    }
+  }
+
+  if (scene.has_cylinders) {
+    CylinderIntersector<T> cylinder_intersector{*(scene.cylinders.centers), *(scene.cylinders.semi_axes_a),
+                                                *(scene.cylinders.semi_axes_b), *(scene.cylinders.heights), *(scene.cylinders.rotations)};
+    const bool hit_cylinder = traverse(scene.cylinders_bvh, ray, cylinder_intersector, temp_rayhit, scene.trace_options);
+    if (hit_cylinder) {
+      if (temp_rayhit.hit_distance < rayhit.hit_distance) {
+        rayhit = temp_rayhit;
+        hit += hit_cylinder;
+      }
+    }
+  }
   return hit;
 }
 
@@ -103,8 +180,7 @@ unsigned int BlazertScene<T>::add_mesh(const Vec3rList<T> &vertices, const Vec3i
     has_triangles = true;
 
     return geometries++;
-  }
-  else {
+  } else {
     return -1;
   }
 }
@@ -118,8 +194,34 @@ unsigned int BlazertScene<T>::add_spheres(const Vec3rList<T> &centers, const std
     has_spheres = true;
 
     return geometries++;
+  } else {
+    return -1;
   }
-  else {
+}
+
+template<typename T>
+unsigned int BlazertScene<T>::add_planes(const Vec3rList<T> &centers, const std::vector<T> &dxs, const std::vector<T> &dys, const Mat3rList<T> &rotations) {
+
+  if ((!has_planes) && (!has_been_committed)) {
+    planes = Plane(centers, dxs, dys, rotations);
+    planes_sah = PlaneSAHPred(centers, dxs, dys, rotations);
+    has_planes = true;
+
+    return geometries++;
+  } else {
+    return -1;
+  }
+}
+template<typename T>
+unsigned int BlazertScene<T>::add_cylinders(const Vec3rList<T> &centers, const std::vector<T> &semi_axes_a, const std::vector<T> &semi_axes_b,
+                                            const std::vector<T> &heights, const Mat3rList<T> &rotations) {
+  if ((!has_cylinders) && (!has_been_committed)) {
+    cylinders = Cylinder(centers, semi_axes_a, semi_axes_b, heights, rotations);
+    cylinders_sah = CylinderSAHPred(centers, semi_axes_a, semi_axes_b, heights, rotations);
+    has_cylinders = true;
+
+    return geometries++;
+  } else {
     return -1;
   }
 }
