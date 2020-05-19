@@ -9,64 +9,31 @@
 using namespace blazert;
 using namespace doctest;
 
-TEST_CASE("IntersectRayAABB")
+TEST_CASE_TEMPLATE("IntersectRayAABB", T, float, double)
 {
-    SUBCASE("float_example")
+    SUBCASE("template_example")
     {
     // return variables    
-    float tmin;
-    float tmax;    
+    T tmin;
+    T tmax;    
     
     // correct values
-    float tmin_cor = 1.5;
-    float tmax_cor = 2.519804;
-    
-    // precision
-    float epsilon = std::numeric_limits<float>().epsilon();
-    
+    T tmin_cor = 1.5000000000000002;
+    T tmax_cor = 2.519803902718557;
+        
     // parameters
-    float min_t = 0.0;
-    float max_t = 3.0;
-    float pos_inf = std::numeric_limits<float>().max();
-    float neg_inf = -1 * std::numeric_limits<float>().max();
-    Vec3r<float> bmin{ -1.0, 1.0, 1.0 };
-    Vec3r<float> bmax{ 1.0, 2.0, 2.0 };
-    Vec3r<float> ray_org{ 0.0, -0.470871, 1.7941742 };
-    Vec3r<float> ray_inv_dir{ pos_inf, 1.0198039, -5.0990195 };
+    T min_t = 0.0;
+    T max_t = 3.0;
+    T pos_inf = std::numeric_limits<T>().max();
+    T neg_inf = -1 * std::numeric_limits<T>().max();
+    Vec3r<T> bmin{ -1.0, 1.0, 1.0 };
+    Vec3r<T> bmax{ 1.0, 2.0, 2.0 };
+    Vec3r<T> ray_org{ 0.0, -0.4708710135363803, 1.794174202707276 };
+    Vec3r<T> ray_inv_dir{ pos_inf, 1.019803902718557, -5.099019513592786 };
     Vec3ui ray_dir_sign{ 0, 0, 1 };
     
     REQUIRE(IntersectRayAABB(tmin, tmax, min_t, max_t, bmin, bmax, ray_org, ray_inv_dir, ray_dir_sign));
-    REQUIRE(tmin == Approx(tmin_cor).epsilon(epsilon));
-    REQUIRE(tmax == Approx(tmax_cor).epsilon(epsilon));
-    }
-    
-
-    SUBCASE("double_example")
-    {
-    // return variables    
-    double tmin;
-    double tmax;    
-    
-    // correct values
-    double tmin_cor = 1.5000000000000002;
-    double tmax_cor = 2.519803902718557;
-    
-    // precision
-    double epsilon = std::numeric_limits<double>().epsilon();
-    
-    // parameters
-    double min_t = 0.0;
-    double max_t = 3.0;
-    double pos_inf = std::numeric_limits<double>().max();
-    double neg_inf = -1 * std::numeric_limits<double>().max();
-    Vec3r<double> bmin{ -1.0, 1.0, 1.0 };
-    Vec3r<double> bmax{ 1.0, 2.0, 2.0 };
-    Vec3r<double> ray_org{ 0.0, -0.4708710135363803, 1.794174202707276 };
-    Vec3r<double> ray_inv_dir{ pos_inf, 1.019803902718557, -5.099019513592786 };
-    Vec3ui ray_dir_sign{ 0, 0, 1 };
-    
-    REQUIRE(IntersectRayAABB(tmin, tmax, min_t, max_t, bmin, bmax, ray_org, ray_inv_dir, ray_dir_sign));
-    REQUIRE(tmin == Approx(tmin_cor).epsilon(epsilon));
-    REQUIRE(tmax == Approx(tmax_cor).epsilon(epsilon));
+    REQUIRE(tmin == Approx(tmin_cor));
+    REQUIRE(tmax == Approx(tmax_cor));
     }
 }
