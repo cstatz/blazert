@@ -12,9 +12,9 @@
 6. [Contributing](#contributing)
 
 ## Introduction
-A **double precision ray tracer** for physics applications based on a [nanort](https://github.com/lighttransport/nanort) fork using blaze datatypes.
+A **double precision ray tracer** for physics applications based on a [nanort](https://github.com/lighttransport/nanort) fork using blaze datatypes. blazeRTs scene interface is similar to embree and intents to be a minimal effort (nearly plugin) replacement. 
 
-You can use your own (vector) dataypes (e.g. as provided by eigen3) and it also works with single precision.
+You can use your own (vector) dataypes (e.g. as provided by eigen3) and it also works with single precision floats.
 
 At the moment blazeRT works with triangular meshes and simple primitives, but it should be easy to extend blazeRT 
 to  work on polygons or more complex primitives.
@@ -58,6 +58,9 @@ cmake --build .
 cmake --build . -- install  # If package needs to be installed 
 ctest  # Runs the tests
 ```
+
+**A word of caution:** blazeRT will compile and work with compiler optimizations enabled (up to **-O3**), but needs infinite-math. If your application needs fast-math, ensure that the blazeRT code path is compiled with `-fno-finite-math-only` (in case of clang). In terms of performance, in its current form there is no major runtime difference between compilation with *-O2* and *-O3*. 
+
 ## Usage
 To get familiar with the usage of blazeRT, look at the provided examples and test cases. To get started quickly,
 checkout the minimal examples below.
@@ -139,7 +142,7 @@ int main(int argc, char **argv) {
 ```
 ## License
 
-blazeRT is licensed under the new BSD (3-clause) license.
+blazeRT is licensed under the new **BSD (3-clause) license**.
 blazeRT is based on and inspired by `nanort.h` which is licensed under:
 
 ```
