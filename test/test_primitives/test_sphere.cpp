@@ -1,32 +1,35 @@
 //
 // Created by ogarten on 12/05/2020.
 //
-//
-// Created by ogarten on 1/23/19.
-//
 
 #include <blazert/blazert.h>
 #include <blazert/bvh/accel.h>
 #include <blazert/datatypes.h>
 #include <blazert/primitives/sphere.h>
 #include <blazert/ray.h>
+#include <memory>
 //#include <blazert/scene.h>
 
-#include "../catch.hpp"
+#include "../doctest.h"
 #include "../test_helpers.h"
 
 using namespace blazert;
+using namespace doctest;
 
-TEST_CASE("Sphere", "[bounding box, distance to surface, intersections]") {
+TEST_CASE_TEMPLATE("Sphere", T, float, double) {
 
-  SECTION("BOUNDING BOX") {
-    const Vec3r<double> center{1.f, 1.f, 1.f};
-    float radius = 1.f;
-    std::vector<Vec3r<double>> centers{center};
-    std::vector<double> radiuss{radius};
+  SUBCASE("bounding box") {
+    const Vec3r<T> center{1.f, 1.f, 1.f};
+    T radius = 1.f;
 
-    Vec3r<double> bmin, bmax;
-    Sphere<double> sphere(centers, radiuss);
+    auto centers = std::make_unique<Vec3rList<T>>();
+    auto radii = std::make_unique<std::vector<T>>();
+    centers->emplace_back(center);
+    radii->emplace_back(radius);
+
+    Sphere<T> sphere(*centers, *radii);
+
+    Vec3r<T> bmin, bmax;
     sphere.BoundingBox(bmin, bmax, 0);
 
     REQUIRE(bmin[0] == Approx(0.f));
@@ -36,86 +39,211 @@ TEST_CASE("Sphere", "[bounding box, distance to surface, intersections]") {
     REQUIRE(bmax[1] == Approx(2.f));
     REQUIRE(bmax[2] == Approx(2.f));
   }
+  SUBCASE("distance to surface") {
+    Vec3r<T> center{0.f, 0.f, 0.f};
+    auto centers = std::make_unique<Vec3rList<T>>();
+    auto radii = std::make_unique<std::vector<T>>();
+    centers->emplace_back(center);
+    
+    SUBCASE("R = 1")
+    {
+      float radius = 1.f;
+      radii->emplace_back(radius);
+      
+      Sphere<T> spheres(*centers, *radii);
 
-  //  SECTION("DISTANCE TO SURFACE") {
-  //    Vec3r<double> center{0.f, 0.f, 0.f};
-  //    SECTION("R = 1") {
-  //      float radius = 1.f;
-  //
-  //      EmbreeSphere sphere(D, S, center, radius);
-  //      rtcCommitScene(S);
-  //
-  //      REQUIRE(sphere.distance_to_surface(Vec3r<double>{0.f, 0.f, 0.f}) == Approx(1.f));
-  //      REQUIRE(sphere.distance_to_surface(Vec3r<double>{-1.f, 0.f, 0.f}) == Approx(0.f));
-  //      REQUIRE(sphere.distance_to_surface(Vec3r<double>{-2.f, 0.f, 0.f}) == Approx(1.f));
-  //      REQUIRE(sphere.distance_to_surface(Vec3r<double>{-2.f, -2.f, -2.f}) == Approx(std::sqrt(3.f * 4.f) - 1.f));
-  //    }
-  //    SECTION("R = 3") {
-  //      float radius = 3.f;
-  //
-  //      //EmbreeDevice D("verbose=0");
-  //      //EmbreeScene S(D, RTC_SCENE_FLAG_NONE, 0);
-  //      EmbreeSphere sphere(D, S, center, radius);
-  //      rtcCommitScene(S);
-  //
-  //      REQUIRE(sphere.distance_to_surface(Vec3r<double>{0.f, 0.f, 0.f}) == Approx(3.f));
-  //      REQUIRE(sphere.distance_to_surface(Vec3r<double>{-1.f, 0.f, 0.f}) == Approx(2.f));
-  //      REQUIRE(sphere.distance_to_surface(Vec3r<double>{-2.f, 0.f, 0.f}) == Approx(1.f));
-  //      REQUIRE(sphere.distance_to_surface(Vec3r<double>{-2.f, -2.f, -2.f}) == Approx(std::sqrt(3.f * 4.f) - 3.f));
-  //    }
-  //  }
-  SECTION("INTERSECTIONS") {
-//    SECTION("Ray origin outside sphere") {
-//      Vec3r<double> center{0.f, 0.f, 0.f};
-//      double radius = 1.;
-//
-//      Vec3r<double> org{2.f, 0.f, 0.f};
-//      Vec3r<double> dir{-1.f, 0.f, 0.f};
-//
-//      Ray<double> ray{org, dir};
-//      RayHit<double> rayhit;
-//
-//      std::vector<Vec3r<double>> centers{center};
-//      std::vector<double> radiuss{radius};
-//
-//      Sphere<double> sphere(centers, radiuss);
-//      SphereSAHPred<double> sphere_sah(centers, radiuss);
-//
-//      BVHBuildOptions<double> build_options;
-//      BVHTraceOptions<double> trace_options;
-//
-//      BVH<double> bvh_sphere;
-//      bvh_sphere.build(sphere, sphere_sah, build_options);
-//
-//      SphereIntersector<double> sphere_intersector{centers, radiuss};
-//      const bool hit_sphere = traverse(bvh_sphere, ray, sphere_intersector, rayhit, trace_options);
-//
-//      // should be in distance of 1
-//      REQUIRE(hit_sphere == true);
-//      REQUIRE(rayhit.hit_distance == Approx(static_cast<double>(1.f)));
-//    }
+      REQUIRE(distance_to_surface(spheres, Vec3r<T>{  0.f,  0.f,  0.f }, 0) == Approx(1.f));
+      REQUIRE(distance_to_surface(spheres, Vec3r<T>{ -1.f,  0.f,  0.f }, 0) == Approx(0.f));
+      REQUIRE(distance_to_surface(spheres, Vec3r<T>{ -2.f,  0.f,  0.f }, 0) == Approx(1.f));
+      REQUIRE(distance_to_surface(spheres, Vec3r<T>{ -2.f, -2.f, -2.f }, 0) == Approx(std::sqrt(3.f * 4.f) - 1.f));
+    }
+    SUBCASE("R = 3")
+    {
+      float radius = 3.f;
+      radii->emplace_back(radius);
+
+      Sphere<T> spheres(*centers, *radii);
+
+      REQUIRE(distance_to_surface(spheres, Vec3r<T>{  0.f,  0.f,  0.f }, 0) == Approx(3.f));
+      REQUIRE(distance_to_surface(spheres, Vec3r<T>{ -1.f,  0.f,  0.f }, 0) == Approx(2.f));
+      REQUIRE(distance_to_surface(spheres, Vec3r<T>{ -2.f,  0.f,  0.f }, 0) == Approx(1.f));
+      REQUIRE(distance_to_surface(spheres, Vec3r<T>{ -2.f, -2.f, -2.f }, 0) == Approx(std::sqrt(3.f * 4.f) - 3.f));
+    }
+  }
+  SUBCASE("intersections") {
+    SUBCASE("Ray origin outside sphere") {
+      const Vec3r<T> center{0.f, 0.f, 0.f};
+      const T radius = 1.;
+
+      // Centers and Radii should go on the heap.
+      auto centers = std::make_unique<Vec3rList<T>>();
+      auto radii = std::make_unique<std::vector<T>>();
+      centers->emplace_back(center);
+      radii->emplace_back(radius);
+
+      const Vec3r<T> org{2.f, 0.f, 0.f};
+      const Vec3r<T> dir{-1.f, 0.f, 0.f};
+
+      const Ray<T> ray{org, dir};
+      RayHit<T> rayhit;
+
+      BVHTraceOptions<T> trace_options;
+
+      SphereIntersector<T> sphere_intersector{*centers, *radii};
+
+      // Test intersections
+      update_intersector(sphere_intersector, ray.max_hit_distance, -1);
+      prepare_traversal(sphere_intersector, ray, trace_options);
+      T hit_distance = sphere_intersector.hit_distance;
+      const bool hit_sphere = intersect(sphere_intersector, hit_distance, 0);
+      update_intersector(sphere_intersector, hit_distance, 0);
+      post_traversal(sphere_intersector, ray, hit_sphere, rayhit);
+
+      // should be in distance of 1
+      REQUIRE(hit_sphere);
+      REQUIRE(rayhit.hit_distance == Approx(static_cast<T>(1.f)));
+    }
+    SUBCASE("Ray origin inside sphere") {
+      Vec3r<T> center1{0.f, 0.f, 0.f};
+      T radius = 1.f;
+
+      auto centers = std::make_unique<Vec3rList<T>>();
+      auto radii = std::make_unique<std::vector<T>>();
+      centers->emplace_back(center1);
+      radii->emplace_back(radius);
+
+      SUBCASE("Ray 1") {
+        const Vec3r<T> org{0.f, 0.f, 0.f};
+        const Vec3r<T> dir{-1.f, 0.f, 0.f};
+
+        const Ray<T> ray{org, dir};
+        RayHit<T> rayhit;
+
+        BVHTraceOptions<T> trace_options;
+
+        SphereIntersector<T> sphere_intersector{*centers, *radii};
+
+        // Test intersections
+        update_intersector(sphere_intersector, ray.max_hit_distance, -1);
+        prepare_traversal(sphere_intersector, ray, trace_options);
+        T hit_distance = sphere_intersector.hit_distance;
+        const bool hit_sphere = intersect(sphere_intersector, hit_distance, 0);
+        update_intersector(sphere_intersector, hit_distance, 0);
+        post_traversal(sphere_intersector, ray, hit_sphere, rayhit);
+
+        // should be in distance of 1
+        REQUIRE(hit_sphere);
+        REQUIRE(rayhit.hit_distance == Approx(1.f));
+      }
+      SUBCASE("Ray 2") {
+        const Vec3r<T> org{0.f, 0.f, 0.5f};
+        const Vec3r<T> dir{0.f, 0.f, -1.f};
+
+        const Ray<T> ray{org, dir};
+        RayHit<T> rayhit;
+
+        BVHTraceOptions<T> trace_options;
+
+        SphereIntersector<T> sphere_intersector{*centers, *radii};
+
+        // Test intersections
+        update_intersector(sphere_intersector, ray.max_hit_distance, -1);
+        prepare_traversal(sphere_intersector, ray, trace_options);
+        T hit_distance = sphere_intersector.hit_distance;
+        const bool hit_sphere = intersect(sphere_intersector, hit_distance, 0);
+        update_intersector(sphere_intersector, hit_distance, 0);
+        post_traversal(sphere_intersector, ray, hit_sphere, rayhit);
+
+        // should be in distance of 1
+        REQUIRE(hit_sphere);
+        REQUIRE(rayhit.hit_distance == Approx(1.5f));
+      }
+    }
+    SUBCASE("Ray origin on sphere") {
+      Vec3r<T> center1{1.f, 0.f, 0.f};
+      T radius = 1.f;
+
+      auto centers = std::make_unique<Vec3rList<T>>();
+      auto radii = std::make_unique<std::vector<T>>();
+      centers->emplace_back(center1);
+      radii->emplace_back(radius);
+
+      SUBCASE("Ray 1") {
+        Vec3r<T> org{0.f, 0.f, 0.f};
+        Vec3r<T> dir{1.f, 0.f, 0.f};
+
+        const Ray<T> ray{org, dir};
+        RayHit<T> rayhit;
+
+        BVHTraceOptions<T> trace_options;
+
+        SphereIntersector<T> sphere_intersector{*centers, *radii};
+
+        // Test intersections
+        update_intersector(sphere_intersector, ray.max_hit_distance, -1);
+        prepare_traversal(sphere_intersector, ray, trace_options);
+        T hit_distance = sphere_intersector.hit_distance;
+        const bool hit_sphere = intersect(sphere_intersector, hit_distance, 0);
+        update_intersector(sphere_intersector, hit_distance, 0);
+        post_traversal(sphere_intersector, ray, hit_sphere, rayhit);
+
+        REQUIRE(rayhit.hit_distance == Approx(2.f));
+      }
+      SUBCASE("Ray 2") {
+        Vec3r<T> org{0.f, 0.f, 0.f};
+        Vec3r<T> dir{-1.f, 0.f, 0.f};
+
+        const Ray<T> ray{org, dir};
+        RayHit<T> rayhit;
+
+        BVHTraceOptions<T> trace_options;
+
+        SphereIntersector<T> sphere_intersector{*centers, *radii};
+
+        // Test intersections
+        update_intersector(sphere_intersector, ray.max_hit_distance, -1);
+        prepare_traversal(sphere_intersector, ray, trace_options);
+        T hit_distance = sphere_intersector.hit_distance;
+        const bool hit_sphere = intersect(sphere_intersector, hit_distance, 0);
+        update_intersector(sphere_intersector, hit_distance, 0);
+        post_traversal(sphere_intersector, ray, hit_sphere, rayhit);
+
+        REQUIRE(rayhit.hit_distance == Approx(std::numeric_limits<T>::max()));
+      }
+    }
+    SUBCASE("ray passing through sphere center") {
+      Vec3r<T> center1{0.f, 0.f, 0.f};
+      T radius = 2.f;
+
+      auto centers = std::make_unique<Vec3rList<T>>();
+      auto radii = std::make_unique<std::vector<T>>();
+      centers->emplace_back(center1);
+      radii->emplace_back(radius);
+
+      Vec3r<T> org{3.f, 1.f, 0.f};
+      Vec3r<T> dir{-1.f, 0.f, 0.f};
+
+      const Ray<T> ray{org, dir};
+      RayHit<T> rayhit;
+
+      BVHTraceOptions<T> trace_options;
+
+      SphereIntersector<T> sphere_intersector{*centers, *radii};
+
+      // Test intersections
+      update_intersector(sphere_intersector, ray.max_hit_distance, -1);
+      prepare_traversal(sphere_intersector, ray, trace_options);
+      T hit_distance = sphere_intersector.hit_distance;
+      const bool hit_sphere = intersect(sphere_intersector, hit_distance, 0);
+      update_intersector(sphere_intersector, hit_distance, 0);
+      post_traversal(sphere_intersector, ray, hit_sphere, rayhit);
+
+      REQUIRE(rayhit.hit_distance == Approx(1.26794919f));
+
+      REQUIRE(rayhit.normal[0] == Approx(sqrt(3) / 2));
+      REQUIRE(rayhit.normal[1] == Approx(sqrt(1) / 2));
+      REQUIRE(rayhit.normal[2] == Approx(0.f));
+    }
   }
 }
 
-TEST_CASE("Scene with Sphere", "[]") {
-//  SECTION("Intersection") {
-//    std::vector<Vec3r<double>> centers{Vec3r<double>{0.f, 0.f, 0.f}};
-//    std::vector<double>radiuss{1.};
-//
-//    Vec3r<double> org{2.f, 0.f, 0.f};
-//    Vec3r<double> dir{-1.f, 0.f, 0.f};
-//
-//    Scene<double> scene;
-//    unsigned int prim_id = scene.add_spheres(centers, radiuss);
-//    scene.commit();
-//
-//    const Ray<double> ray{org, dir};
-//    RayHit<double> rayhit;
-//
-//    const bool hit = intersect1(scene, ray, rayhit);
-//
-//    REQUIRE(prim_id == 0);
-//    REQUIRE(hit == true);
-//    REQUIRE(rayhit.hit_distance == Approx(1));
-//  }
-}

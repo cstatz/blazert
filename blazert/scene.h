@@ -6,6 +6,8 @@
 #include <blazert/bvh/options.h>
 #include <blazert/datatypes.h>
 
+#include <blazert/primitives/cylinder.h>
+#include <blazert/primitives/plane.h>
 #include <blazert/primitives/sphere.h>
 #include <blazert/primitives/trimesh.h>
 
@@ -15,56 +17,100 @@ namespace blazert {
 
 template<typename T>
 class BlazertScene {
+
 public:
   BVHBuildOptions<T> build_options;
   BVHTraceOptions<T> trace_options;
 
-  // A lot of private data ...
   mutable bool has_been_committed = false;
-  mutable bool has_mesh = false;
-  mutable bool has_sphere = false;
-  mutable bool has_plane = false;
-  mutable bool has_box = false;
-  mutable bool has_cylinder = false;
-  mutable unsigned int primitives = 0;
+  /***
+   * geometries counts the amount of different geometry types
+   * -> each geometry has its own BVH
+   * -> for each geometry, we have various primitives; the hit prim_id will be saved in the RayHit structure
+   ***/
+  mutable unsigned int geometries = 0;
 
-  TriangleMesh<T> triangles_;
-  TriangleSAHPred<T> triangles_sah_;
+  TriangleMesh<T> triangles;
+  TriangleSAHPred<T> triangles_sah;
+  BVH<T> triangles_bvh;
+  mutable bool has_triangles = false;
 
-  Sphere<T> spheres_;                 // default constructed
-  SphereSAHPred<T> spheres_sah_;// default constructed
+  Sphere<T> spheres;
+  SphereSAHPred<T> spheres_sah;
+  BVH<T> spheres_bvh;
+  mutable bool has_spheres = false;
 
-  BVH<T> bvh_mesh;
-  BVH<T> bvh_sphere;
-  //BVHAccel<T> plane_accel;
-  //BVHAccel<T> box_accel;
-  //BVHAccel<T> cylinder_accel;
+  Plane<T> planes;
+  PlaneSAHPred<T> planes_sah;
+  BVH<T> planes_bvh;
+  mutable bool has_planes = false;
+
+  Cylinder<T> cylinders;
+  CylinderSAHPred<T> cylinders_sah;
+  BVH<T> cylinders_bvh;
+  mutable bool has_cylinders = false;
 
 public:
   BlazertScene() = default;
 
-  // TODO: default arguments ...
+  /**
+   * @brief Adds a triangular mesh to the scene
+   * @param vertices Vertices need to be allocated on the heap!
+   * @param triangles Triangles need to be allocated on the heap!
+   * @return Returns the (geometry) id for the mesh.
+   * The prim_id is set in the rayhit structure by the intersection functions.
+   */
   unsigned int add_mesh(const Vec3rList<T> &vertices, const Vec3iList &triangles);
-  //inline unsigned int add_mesh(const Vec3rList<T> &vertices, const Vec3iList &triangles, Vec3rList &vertex_normals);
-  inline unsigned int add_spheres(const std::vector<Vec3r<T>> &centers, const std::vector<T> &radiuss);
-  //inline unsigned int add_plane(const Vec3r<T> &origin, const Vec3r<T> &bmin, const Vec3r<T> &bmax, const Matrix3r<T> &rotation);
-  //inline unsigned int add_box(const Vec3r<T> &center, const Vec3r<T> &size, const Matrix3r<T> &rotation);
 
-  //template<class X, ...> add_custom_primitive( ... );
+  /***
+   * Adds centers.size() spheres to the scene -> results in centers.size() primitive ideas
+   * @brief Adds spheres at centers with radii
+   * @param centers specifies centers of the spheres (needs to be allocated on heap)
+   * @param radii specifies radii of the spheres (needs to be allocated on heap)
+   * @return geometry id of the spheres
+   */
+  unsigned int add_spheres(const Vec3rList<T> &centers, const std::vector<T> &radii);
+
+  /***
+   * @brief Adds planes at centers with dimensions dxs and dys rotated around rotations
+   * @param centers center of planes
+   * @param dxs dimensions in x direction
+   * @param dys dimensions in y direction
+   * @param rotations local rotation matrices
+   * @return geometry id of the planes
+   */
+  unsigned int add_planes(const Vec3rList<T> &centers, const std::vector<T> &dxs, const std::vector<T> &dys, const Mat3rList<T> &rotations);
+
+  /***
+   * @brief Adds cylinders with the bottom ellipsoid centered at centers, described by two semi_axes and heights.
+   * @param centers 
+   * @param semi_axes_a 
+   * @param semi_axes_b 
+   * @param heights 
+   * @param rotations 
+   * @return geometry id of the cylinders
+   */
+  unsigned int add_cylinders(const Vec3rList<T> &centers, const std::vector<T> &semi_axes_a, const std::vector<T> &semi_axes_b,
+                             const std::vector<T> &heights, const Mat3rList<T> &rotations);
 
   bool commit() {
 
-    // Build all the BVH ...
-    if (has_mesh) {
-      bvh_mesh.build(triangles_, triangles_sah_, build_options);
+    if (has_triangles) {
+      triangles_bvh.build(triangles, triangles_sah, build_options);
     }
 
-    if (has_sphere) {
-      bvh_sphere.build(spheres_, spheres_sah_, build_options);
+    if (has_spheres) {
+      spheres_bvh.build(spheres, spheres_sah, build_options);
     }
 
-    //place_accel.Build()
-    //box_accel.Build()
+    if (has_planes) {
+      planes_bvh.build(planes, planes_sah, build_options);
+    }
+    
+    if (has_cylinders) {
+      cylinders_bvh.build(cylinders, cylinders_sah, build_options);
+    }
+
     has_been_committed = true;
     return has_been_committed;
   };
@@ -79,60 +125,102 @@ inline bool intersect1(const BlazertScene<T> &scene, const Ray<T> &ray, RayHit<T
   bool hit = false;
 
   // Do the traversal for all primitives ...
-  if (scene.has_mesh) {
-    TriangleIntersector<T> triangle_intersector{*(scene.triangles_.vertices_), *(scene.triangles_.faces_)};
-    // TODO: Performance critical code should not be a member function (hidden pointer *this), since the compiler will not know how to optimize.
-    const bool hit_mesh = traverse(scene.bvh_mesh, ray, triangle_intersector, temp_rayhit, scene.trace_options);
+  if (scene.has_triangles) {
+    TriangleIntersector<T> triangle_intersector{*(scene.triangles.vertices), *(scene.triangles.faces)};
+    const bool hit_mesh = traverse(scene.triangles_bvh, ray, triangle_intersector, temp_rayhit, scene.trace_options);
     if (hit_mesh) {
       rayhit = temp_rayhit;
       hit += hit_mesh;
     }
   }
 
-  if (scene.has_sphere) {
-    SphereIntersector<T> sphere_intersector{*(scene.spheres_.centers_), *(scene.spheres_.radiuss_)};
-    const bool hit_sphere = traverse(scene.bvh_sphere, ray, sphere_intersector, temp_rayhit, scene.trace_options);
+  if (scene.has_spheres) {
+    SphereIntersector<T> sphere_intersector{*(scene.spheres.centers), *(scene.spheres.radii)};
+    const bool hit_sphere = traverse(scene.spheres_bvh, ray, sphere_intersector, temp_rayhit, scene.trace_options);
     if (hit_sphere) {
-      rayhit = temp_rayhit;
-      hit += hit_sphere;
+      if (temp_rayhit.hit_distance < rayhit.hit_distance) {
+        rayhit = temp_rayhit;
+        hit += hit_sphere;
+      }
     }
   }
 
+  if (scene.has_planes) {
+    PlaneIntersector<T> plane_intersector{*(scene.planes.centers), *(scene.planes.dxs), *(scene.planes.dys), *(scene.planes.rotations)};
+    const bool hit_plane = traverse(scene.planes_bvh, ray, plane_intersector, temp_rayhit, scene.trace_options);
+    if (hit_plane) {
+      if (temp_rayhit.hit_distance < rayhit.hit_distance) {
+        rayhit = temp_rayhit;
+        hit += hit_plane;
+      }
+    }
+  }
+
+  if (scene.has_cylinders) {
+    CylinderIntersector<T> cylinder_intersector{*(scene.cylinders.centers), *(scene.cylinders.semi_axes_a),
+                                                *(scene.cylinders.semi_axes_b), *(scene.cylinders.heights), *(scene.cylinders.rotations)};
+    const bool hit_cylinder = traverse(scene.cylinders_bvh, ray, cylinder_intersector, temp_rayhit, scene.trace_options);
+    if (hit_cylinder) {
+      if (temp_rayhit.hit_distance < rayhit.hit_distance) {
+        rayhit = temp_rayhit;
+        hit += hit_cylinder;
+      }
+    }
+  }
   return hit;
 }
 
 // Implementation of the add_ functions goes below ..
 template<typename T>
-unsigned int BlazertScene<T>::add_mesh(const Vec3rList<T> &vertices, const Vec3iList &triangles) {
+unsigned int BlazertScene<T>::add_mesh(const Vec3rList<T> &vertices, const Vec3iList &faces) {
 
-  // TODO: For now, only one mesh is supported ...
-  if ((!has_mesh) && (!has_been_committed)) {
-    triangles_ = TriangleMesh(vertices, triangles);
-    triangles_sah_ = TriangleSAHPred(vertices, triangles);
+  if ((!has_triangles) && (!has_been_committed)) {
+    triangles = TriangleMesh(vertices, faces);
+    triangles_sah = TriangleSAHPred(vertices, faces);
+    has_triangles = true;
 
-    const unsigned int prim_id = primitives;
-    primitives += triangles.size();
-    has_mesh = true;
-    has_been_committed = false;
-
-    return prim_id;
+    return geometries++;
   } else {
     return -1;
   }
 }
 
 template<typename T>
-unsigned int BlazertScene<T>::add_spheres(const std::vector<Vec3r<T>> &centers, const std::vector<T> &radiuss) {
+unsigned int BlazertScene<T>::add_spheres(const Vec3rList<T> &centers, const std::vector<T> &radii) {
 
-  if ((!has_sphere) && (!has_been_committed)) {
-    spheres_ = Sphere(centers, radiuss);
-    spheres_sah_ = SphereSAHPred(centers, radiuss);
+  if ((!has_spheres) && (!has_been_committed)) {
+    spheres = Sphere(centers, radii);
+    spheres_sah = SphereSAHPred(centers, radii);
+    has_spheres = true;
 
-    const unsigned int prim_id = primitives;
-    primitives += 1;
-    has_sphere = true;
-    has_been_committed = false;
-    return prim_id;
+    return geometries++;
+  } else {
+    return -1;
+  }
+}
+
+template<typename T>
+unsigned int BlazertScene<T>::add_planes(const Vec3rList<T> &centers, const std::vector<T> &dxs, const std::vector<T> &dys, const Mat3rList<T> &rotations) {
+
+  if ((!has_planes) && (!has_been_committed)) {
+    planes = Plane(centers, dxs, dys, rotations);
+    planes_sah = PlaneSAHPred(centers, dxs, dys, rotations);
+    has_planes = true;
+
+    return geometries++;
+  } else {
+    return -1;
+  }
+}
+template<typename T>
+unsigned int BlazertScene<T>::add_cylinders(const Vec3rList<T> &centers, const std::vector<T> &semi_axes_a, const std::vector<T> &semi_axes_b,
+                                            const std::vector<T> &heights, const Mat3rList<T> &rotations) {
+  if ((!has_cylinders) && (!has_been_committed)) {
+    cylinders = Cylinder(centers, semi_axes_a, semi_axes_b, heights, rotations);
+    cylinders_sah = CylinderSAHPred(centers, semi_axes_a, semi_axes_b, heights, rotations);
+    has_cylinders = true;
+
+    return geometries++;
   } else {
     return -1;
   }
