@@ -7,6 +7,7 @@
 #include <blazert/datatypes.h>
 
 using namespace blazert;
+using namespace doctest;
 
 TEST_CASE("IntersectRayAABB")
 {
@@ -35,8 +36,8 @@ TEST_CASE("IntersectRayAABB")
     Vec3ui ray_dir_sign{ 0, 0, 1 };
     
     REQUIRE(IntersectRayAABB(tmin, tmax, min_t, max_t, bmin, bmax, ray_org, ray_inv_dir, ray_dir_sign));
-    REQUIRE(tmin == Approx(tmin_cor).epsilon(epsilon);
-    REQUIRE(tmax == Approx(tmax_cor).epsilon(epsilon);
+    REQUIRE(tmin == Approx(tmin_cor).epsilon(epsilon));
+    REQUIRE(tmax == Approx(tmax_cor).epsilon(epsilon));
     }
     
 
@@ -65,7 +66,7 @@ TEST_CASE("IntersectRayAABB")
     Vec3ui ray_dir_sign{ 0, 0, 1 };
     
     REQUIRE(IntersectRayAABB(tmin, tmax, min_t, max_t, bmin, bmax, ray_org, ray_inv_dir, ray_dir_sign));
-    REQUIRE(tmin == Approx(tmin_cor).epsilon(epsilon);
-    REQUIRE(tmax == Approx(tmax_cor).epsilon(epsilon);
+    REQUIRE(tmin == Approx(tmin_cor).epsilon(epsilon));
+    REQUIRE(tmax == Approx(tmax_cor).epsilon(epsilon));
     }
-
+}

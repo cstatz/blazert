@@ -39,3 +39,6 @@ cmake-*
 
 # MACOS
 .DS_Store
+
+# Jupyter 
+.ipy*
