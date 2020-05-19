@@ -71,9 +71,9 @@ subdivide_mesh(const OriginMesh& in, OriginMesh& out)
   out.vertices = in.vertices;
 
   for (uint32_t i = 0; i < in.triangle_count(); ++i) {
-    const uint32_t f0 = in.triangles[i * 4 + 1];
-    const uint32_t f1 = in.triangles[i * 4 + 2];
-    const uint32_t f2 = in.triangles[i * 4 + 3];
+    const uint32_t f0 = in.triangles[i][0];
+    const uint32_t f1 = in.triangles[i][1];
+    const uint32_t f2 = in.triangles[i][2];
 
     const blazert::Vec3r<float> v0 = in.vertices[f0];
     const blazert::Vec3r<float> v1 = in.vertices[f1];

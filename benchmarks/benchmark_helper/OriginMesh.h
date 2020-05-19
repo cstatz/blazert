@@ -14,7 +14,7 @@ public:
   virtual ~OriginMesh() = default;
 
   blazert::Vec3rList<float> vertices;
-  std::vector<uint32_t> triangles;
+  blazert::Vec3iList triangles;
 
   virtual uint32_t triangle_count() const;
 

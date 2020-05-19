@@ -68,6 +68,6 @@ ADD_TEST(main test_blazert)
 
 file(GLOB_RECURSE BENCHMARK_SRC ${CMAKE_SOURCE_DIR}/benchmarks/*)
 add_executable(benchmark_blazeRT ${BENCHMARK_SRC})
-TARGET_INCLUDE_DIRECTORIES(benchmark_blazeRT PUBLIC ${CMAKE_SOURCE_DIR} ${BLAZE_INCLUDE_DIRS})
-target_link_libraries(benchmark_blazeRT PUBLIC benchmark::benchmark ${BLAZE_LIBRARY} ${LAPACK_LIBRARIES})
+TARGET_INCLUDE_DIRECTORIES(benchmark_blazeRT PUBLIC ${CMAKE_SOURCE_DIR} ${BLAZE_INCLUDE_DIRS} ${EMBREE_INCLUDE_DIRS})
+target_link_libraries(benchmark_blazeRT PUBLIC benchmark::benchmark ${BLAZE_LIBRARY} ${LAPACK_LIBRARIES} ${EMBREE_LIBRARY})
 
