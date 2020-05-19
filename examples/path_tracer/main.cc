@@ -10,10 +10,10 @@
 #include <blaze/math/Column.h>
 
 #define NOMINMAX
-#include "tiny_obj_loader.h"
+#include "../common/tiny_obj_loader.h"
 
 #define STB_IMAGE_WRITE_IMPLEMENTATION
-#include "stb_image_write.h"
+#include "../common/stb_image_write.h"
 
 using ft = double;
 
@@ -359,8 +359,8 @@ int main(int argc, char **argv) {
 
   ft scale{1.0};
 
-  std::string objFilename = "../common/cornellbox_suzanne_lucy.obj";
-  std::string mtlPath = "../common/";
+  std::string objFilename = "models/cornellbox_suzanne_lucy.obj";
+  std::string mtlPath = "models/";
 
   // arguments can be supplied via command line:
   // 1. objectfile

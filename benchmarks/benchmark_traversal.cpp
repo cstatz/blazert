@@ -24,4 +24,4 @@ BM_TRAVERSAL(benchmark::State& state)
     run_BVHBuild();
   }
 }
-BENCHMARK(BM_TRAVERSAL);//->Unit(benchmark::kMillisecond);
+//BENCHMARK(BM_TRAVERSAL);//->Unit(benchmark::kMillisecond);
