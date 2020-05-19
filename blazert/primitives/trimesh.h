@@ -223,9 +223,9 @@ inline bool intersect(TriangleIntersector<T> &i, T &t_inout, const unsigned int 
   const Vec3r<T> &p1 = (*(i.vertices))[face[1]];
   const Vec3r<T> &p2 = (*(i.vertices))[face[2]];
 
-  const Vec3r<T> A = p0 - ray_org;
-  const Vec3r<T> B = p1 - ray_org;
-  const Vec3r<T> C = p2 - ray_org;
+  const Vec3r<T> &A = p0 - ray_org;
+  const Vec3r<T> &B = p1 - ray_org;
+  const Vec3r<T> &C = p2 - ray_org;
 
   /**
    * TODO: These micro-optimizations need to be benchmarked.
