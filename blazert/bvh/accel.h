@@ -17,7 +17,6 @@
 #include <blazert/bvh/statistics.h>
 #include <blazert/datatypes.h>
 #include <blazert/defines.h>
-#include <blazert/stack.h>
 
 namespace blazert {
 
