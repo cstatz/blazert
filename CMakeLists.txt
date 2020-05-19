@@ -65,7 +65,7 @@ TARGET_LINK_LIBRARIES(test_blazert ${EMBREE_LIBRARY})
 SET_TARGET_PROPERTIES(test_blazert PROPERTIES LINKER_LANGUAGE CXX)
 ADD_TEST(main test_blazert)
 
-add_compile_definitions(BLAZERT_USE_PADDED_AND_ALIGNED_TYPES)
+#add_compile_definitions(BLAZERT_USE_PADDED_AND_ALIGNED_TYPES)
 
 file(GLOB_RECURSE BENCHMARK_SRC ${CMAKE_SOURCE_DIR}/benchmarks/*)
 add_executable(benchmark_blazeRT ${BENCHMARK_SRC})
