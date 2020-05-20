@@ -2,7 +2,7 @@
 // Created by ogarten on 18/05/2020.
 //
 
-#include "../doctest.h"
+#include <third_party/doctest/doctest/doctest.h>
 #include <blazert/embree/primitives/EmbreeCylinder.h>
 #include <blazert/embree/scene.h>
 
