@@ -2,7 +2,7 @@
 // Created by ogarten on 19/05/2020.
 //
 //#define BLAZERT_USE_PADDED_AND_ALIGNED_TYPES
-#include "../benchmark_helper/OriginSphere.h"
+#include "../../benchmark_helper/OriginSphere.h"
 #include <benchmark/benchmark.h>
 
 #include <blazert/blazert.h>
@@ -24,7 +24,7 @@
 using namespace blazert;
 
 template<typename T>
-static void BM_BLAZERT_TRAVERSE_BVH_Sphere(benchmark::State &state) {
+static void BM_BLAZERT_TRAVERSE_REALISTIC_BVH_Sphere(benchmark::State &state) {
   BVHBuildOptions<T> build_options;
   BVHTraceOptions<T> trace_options;
 
@@ -50,11 +50,11 @@ static void BM_BLAZERT_TRAVERSE_BVH_Sphere(benchmark::State &state) {
     }
   }
 }
-BENCHMARK_TEMPLATE(BM_BLAZERT_TRAVERSE_BVH_Sphere, float)->DenseRange(2, 9, 1)->Unit(benchmark::kMillisecond);
-BENCHMARK_TEMPLATE(BM_BLAZERT_TRAVERSE_BVH_Sphere, double)->DenseRange(2, 9, 1)->Unit(benchmark::kMillisecond);
+BENCHMARK_TEMPLATE(BM_BLAZERT_TRAVERSE_REALISTIC_BVH_Sphere, float)->DenseRange(2, 9, 1)->Unit(benchmark::kMillisecond);
+BENCHMARK_TEMPLATE(BM_BLAZERT_TRAVERSE_REALISTIC_BVH_Sphere, double)->DenseRange(2, 9, 1)->Unit(benchmark::kMillisecond);
 
 static void
-BM_EMBREE_TRAVERSE_BVH_Sphere(benchmark::State &state) {
+BM_EMBREE_TRAVERSE_REALISTIC_BVH_Sphere(benchmark::State &state) {
   auto device = rtcNewDevice("verbose=0,start_threads=1,threads=1,set_affinity=1");
   auto scene = rtcNewScene(device);
 
@@ -92,10 +92,10 @@ BM_EMBREE_TRAVERSE_BVH_Sphere(benchmark::State &state) {
     }
   }
 }
-BENCHMARK(BM_EMBREE_TRAVERSE_BVH_Sphere)->DenseRange(2, 9, 1)->Unit(benchmark::kMillisecond);
+BENCHMARK(BM_EMBREE_TRAVERSE_REALISTIC_BVH_Sphere)->DenseRange(2, 9, 1)->Unit(benchmark::kMillisecond);
 
 template<typename T>
-static void BM_nanoRT_TRAVERSE_BVH_Sphere(benchmark::State &state) {
+static void BM_nanoRT_TRAVERSE_REALISTIC_BVH_Sphere(benchmark::State &state) {
   nanort::BVHBuildOptions<T> build_options;
   nanort::BVHTraceOptions trace_options;
 
@@ -113,20 +113,18 @@ static void BM_nanoRT_TRAVERSE_BVH_Sphere(benchmark::State &state) {
 
   constexpr int height = 4 * 2048;
   constexpr int width = 4 * 2048;
+  nanort::Ray<T> ray;
+  ray.min_t = 0.0f;
+  ray.max_t = std::numeric_limits<T>::max();
+  ray.org[0] = 0.0f;
+  ray.org[1] = 0.0f;
+  ray.org[2] = 10.0f;
+
   for (auto _ : state) {
     for (int y = 0; y < height; y++) {
       for (int x = 0; x < width; x++) {
-        nanort::Ray<T> ray;
-        ray.min_t = 0.0f;
-        ray.max_t = std::numeric_limits<T>::max();
-        ray.org[0] = 0.0f;
-        ray.org[1] = 5.0f;
-        ray.org[2] = 20.0f;
-        nanort::real3 dir;
-        dir[0] = (x / (T) width) - 0.5f;
-        dir[1] = (y / (T) height) - 0.5f;
-        dir[2] = -1.0f;
-        dir = nanort::vnormalize(dir);
+        const nanort::real3<T> &tmp{static_cast<T>((x / T(width)) - 0.5), static_cast<T>((y / T(height)) - 0.5), float(-1.)};
+        const nanort::real3<T> &dir = nanort::vnormalize(tmp);
         ray.dir[0] = dir[0];
         ray.dir[1] = dir[1];
         ray.dir[2] = dir[2];
@@ -137,11 +135,11 @@ static void BM_nanoRT_TRAVERSE_BVH_Sphere(benchmark::State &state) {
     }
   }
 }
-//BENCHMARK_TEMPLATE(BM_nanoRT_TRAVERSE_BVH_Sphere, float)->DenseRange(2, 9, 1)->Unit(benchmark::kMillisecond);
-//BENCHMARK_TEMPLATE(BM_nanoRT_TRAVERSE_BVH_Sphere, double)->DenseRange(2, 9, 1)->Unit(benchmark::kMillisecond);
+BENCHMARK_TEMPLATE(BM_nanoRT_TRAVERSE_REALISTIC_BVH_Sphere, float)->DenseRange(2, 6, 1)->Unit(benchmark::kMillisecond);
+BENCHMARK_TEMPLATE(BM_nanoRT_TRAVERSE_REALISTIC_BVH_Sphere, double)->DenseRange(2, 6, 1)->Unit(benchmark::kMillisecond);
 
 template<typename T>
-static void BM_bvh_TRAVERSE_BVH_Sphere_SweepSAH(benchmark::State &state) {
+static void BM_bvh_TRAVERSE_REALISTIC_BVH_Sphere_SweepSAH(benchmark::State &state) {
   using Scalar = T;
   using Vector3 = bvh::Vector3<Scalar>;
   using Triangle = bvh::Triangle<Scalar>;
@@ -183,7 +181,7 @@ static void BM_bvh_TRAVERSE_BVH_Sphere_SweepSAH(benchmark::State &state) {
       for (int x = 0; x < width; x++) {
         // Intersect a ray with the data structure
         Ray ray(
-            Vector3(0.0, 0.0, 1.0),                                                                     // origin
+            Vector3(0.0, 0.0, 10.0),                                                                     // origin
             Vector3(static_cast<T>((x / T(width)) - 0.5), static_cast<T>((y / T(height)) - 0.5), T(-1)),// direction
             0.0,                                                                                        // minimum distance
             std::numeric_limits<T>::max()                                                               // maximum distance
@@ -196,11 +194,11 @@ static void BM_bvh_TRAVERSE_BVH_Sphere_SweepSAH(benchmark::State &state) {
     }
   }
 }
-BENCHMARK_TEMPLATE(BM_bvh_TRAVERSE_BVH_Sphere_SweepSAH, float)->DenseRange(2, 9, 1)->Unit(benchmark::kMillisecond);
-BENCHMARK_TEMPLATE(BM_bvh_TRAVERSE_BVH_Sphere_SweepSAH, double)->DenseRange(2, 9, 1)->Unit(benchmark::kMillisecond);
+BENCHMARK_TEMPLATE(BM_bvh_TRAVERSE_REALISTIC_BVH_Sphere_SweepSAH, float)->DenseRange(2, 9, 1)->Unit(benchmark::kMillisecond);
+BENCHMARK_TEMPLATE(BM_bvh_TRAVERSE_REALISTIC_BVH_Sphere_SweepSAH, double)->DenseRange(2, 9, 1)->Unit(benchmark::kMillisecond);
 
 template<typename T>
-static void BM_bvh_TRAVERSE_BVH_Sphere_BinnedSAH(benchmark::State &state) {
+static void BM_bvh_TRAVERSE_REALISTIC_BVH_Sphere_BinnedSAH(benchmark::State &state) {
   using Scalar = T;
   using Vector3 = bvh::Vector3<Scalar>;
   using Triangle = bvh::Triangle<Scalar>;
@@ -242,7 +240,7 @@ static void BM_bvh_TRAVERSE_BVH_Sphere_BinnedSAH(benchmark::State &state) {
       for (int x = 0; x < width; x++) {
         // Intersect a ray with the data structure
         Ray ray(
-            Vector3(0.0, 0.0, 1.0),                                                                     // origin
+            Vector3(0.0, 0.0, 10.0),                                                                     // origin
             Vector3(static_cast<T>((x / T(width)) - 0.5), static_cast<T>((y / T(height)) - 0.5), T(-1)),// direction
             0.0,                                                                                        // minimum distance
             std::numeric_limits<T>::max()                                                               // maximum distance
@@ -255,5 +253,5 @@ static void BM_bvh_TRAVERSE_BVH_Sphere_BinnedSAH(benchmark::State &state) {
     }
   }
 }
-BENCHMARK_TEMPLATE(BM_bvh_TRAVERSE_BVH_Sphere_BinnedSAH, float)->DenseRange(2, 9, 1)->Unit(benchmark::kMillisecond);
-BENCHMARK_TEMPLATE(BM_bvh_TRAVERSE_BVH_Sphere_BinnedSAH, double)->DenseRange(2, 9, 1)->Unit(benchmark::kMillisecond);
+BENCHMARK_TEMPLATE(BM_bvh_TRAVERSE_REALISTIC_BVH_Sphere_BinnedSAH, float)->DenseRange(2, 9, 1)->Unit(benchmark::kMillisecond);
+BENCHMARK_TEMPLATE(BM_bvh_TRAVERSE_REALISTIC_BVH_Sphere_BinnedSAH, double)->DenseRange(2, 9, 1)->Unit(benchmark::kMillisecond);
