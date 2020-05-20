@@ -5,7 +5,7 @@
 #include <vector>
 
 #define STB_IMAGE_WRITE_IMPLEMENTATION
-#include "stb_image_write.h"
+#include "../common/stb_image_write.h"
 
 // This alias is defined in order to setup the simulation for float or double, depending on what you want to do.
 using ft = double;

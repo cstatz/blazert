@@ -1,4 +1,4 @@
-#include "tiny_obj_loader.h"
+#include "../common/tiny_obj_loader.h"
 #include <blazert/blazert.h>
 #include <iostream>
 #include <vector>
@@ -47,7 +47,7 @@ int main(int argc, char **argv) {
   int width = 8192;
   int height = 8192;
 
-  std::string objFilename = "../../../examples/common/cornellbox_suzanne_lucy.obj";
+  std::string objFilename = "../../../examples/models/cornellbox_suzanne_lucy.obj";
 
   if (argc > 1) {
     objFilename = std::string(argv[1]);

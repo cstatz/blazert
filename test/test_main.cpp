@@ -8,7 +8,7 @@
 //#define CATCH_CONFIG_RUNNER
 #define DOCTEST_CONFIG_IMPLEMENT
 
-#include "doctest.h"
+#include <third_party/doctest/doctest/doctest.h>
 #include "test_helpers.h"
 
 int

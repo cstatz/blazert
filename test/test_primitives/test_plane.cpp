@@ -9,7 +9,7 @@
 #include <memory>
 //#include <blazert/scene.h>
 
-#include "../doctest.h"
+#include <third_party/doctest/doctest/doctest.h>
 #include "../test_helpers.h"
 
 using namespace blazert;

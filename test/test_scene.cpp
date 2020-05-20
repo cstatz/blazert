@@ -10,7 +10,7 @@
 #include <blazert/scene.h>
 #include <memory>
 
-#include "doctest.h"
+#include <third_party/doctest/doctest/doctest.h>
 
 using namespace blazert;
 using namespace doctest;
@@ -27,7 +27,7 @@ TEST_CASE_TEMPLATE("Scene with Sphere", T, float, double) {
     Vec3r<T> dir{-1.f, 0.f, 0.f};
 
     Scene<T> scene;
-    unsigned int prim_id = scene.add_spheres(*centers, *radiuss);
+    unsigned int geom_id = scene.add_spheres(*centers, *radiuss);
     scene.commit();
 
     const Ray<T> ray{org, dir};
@@ -35,10 +35,13 @@ TEST_CASE_TEMPLATE("Scene with Sphere", T, float, double) {
 
     const bool hit = intersect1(scene, ray, rayhit);
 
-    REQUIRE(prim_id == 0);
-    REQUIRE(prim_id == rayhit.prim_id);
+    REQUIRE(geom_id == 0);
+    //REQUIRE(geom_id == rayhit.geom_id);
     REQUIRE(hit);
     REQUIRE(rayhit.hit_distance == Approx(1));
+    REQUIRE(rayhit.normal[0] == Approx(1));
+    REQUIRE(rayhit.normal[1] == Approx(0));
+    REQUIRE(rayhit.normal[2] == Approx(0));
   }
 }
 
@@ -58,7 +61,7 @@ TEST_CASE_TEMPLATE("Scene with Plane", T, float, double) {
     Vec3r<T> dir{0.f, 0.f, -1.f};
 
     Scene<T> scene;
-    unsigned int prim_id = scene.add_planes(*centers, *dxs, *dys, *rotations);
+    unsigned int geom_id = scene.add_planes(*centers, *dxs, *dys, *rotations);
     scene.commit();
 
     const Ray<T> ray{org, dir};
@@ -66,8 +69,8 @@ TEST_CASE_TEMPLATE("Scene with Plane", T, float, double) {
 
     const bool hit = intersect1(scene, ray, rayhit);
 
-    REQUIRE(prim_id == 0);
-    REQUIRE(prim_id == rayhit.prim_id);
+    REQUIRE(geom_id == 0);
+    //REQUIRE(geom_id == rayhit.geom_id);
     REQUIRE(hit);
     REQUIRE(rayhit.hit_distance == Approx(5));
     REQUIRE(rayhit.normal[0] == Approx(0));
@@ -94,7 +97,7 @@ TEST_CASE_TEMPLATE("Scene with Cylinder", T, float, double) {
     Vec3r<T> dir{0.f, 0.f, -1.f};
 
     Scene<T> scene;
-    unsigned int prim_id = scene.add_cylinders(*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations);
+    unsigned int geom_id = scene.add_cylinders(*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations);
     scene.commit();
 
     const Ray<T> ray{org, dir};
@@ -102,10 +105,59 @@ TEST_CASE_TEMPLATE("Scene with Cylinder", T, float, double) {
 
     const bool hit = intersect1(scene, ray, rayhit);
 
-    REQUIRE(prim_id == 0);
-    REQUIRE(prim_id == rayhit.prim_id);
+    REQUIRE(geom_id == 0);
+    //REQUIRE(geom_id == rayhit.geom_id);
     REQUIRE(hit);
     REQUIRE(rayhit.hit_distance == Approx(3));
+    REQUIRE(rayhit.normal[0] == Approx(0));
+    REQUIRE(rayhit.normal[1] == Approx(0));
+    REQUIRE(rayhit.normal[2] == Approx(1));
+  }
+}
+
+TEST_CASE_TEMPLATE("Scene with 2 different primitives", T, float, double) {
+  SUBCASE("Intersection") {
+    //Cylinder
+    auto c_centers = std::make_unique<Vec3rList<T>>();
+    auto c_semi_axes_a = std::make_unique<std::vector<T>>();
+    auto c_semi_axes_b = std::make_unique<std::vector<T>>();
+    auto c_heights = std::make_unique<std::vector<T>>();
+    auto c_rotations = std::make_unique<Mat3rList<T>>();
+
+    c_centers->emplace_back(Vec3r<T>{0., 0., -2.});
+    c_semi_axes_a->emplace_back(2.);
+    c_semi_axes_b->emplace_back(2.);
+    c_heights->emplace_back(2.);
+    c_rotations->emplace_back(blaze::IdentityMatrix<T>(3UL));
+
+    // Sphere
+    auto s_centers = std::make_unique<Vec3rList<T>>();
+    auto s_radii = std::make_unique<std::vector<T>>();
+
+    s_centers->emplace_back(Vec3r<T>{0., 0., 3.});
+    s_radii->emplace_back(2.);
+
+    // ray
+    const Vec3r<T> org{0.f, 0.f, 7.f};
+    const Vec3r<T> dir{0.f, 0.f, -1.f};
+    const Ray<T> ray{org, dir};
+
+    // scene + add primitives -> cylinder with sphere above it, only sphere should be hit!
+    Scene<T> scene;
+    unsigned int c_geom_id = scene.add_cylinders(*c_centers, *c_semi_axes_a, *c_semi_axes_b, *c_heights, *c_rotations);
+    unsigned int s_geom_id = scene.add_spheres(*s_centers, *s_radii);
+    scene.commit();
+
+    RayHit<T> rayhit;
+
+    const bool hit = intersect1(scene, ray, rayhit);
+
+    REQUIRE(c_geom_id == 0);
+    REQUIRE(s_geom_id == 1);
+    REQUIRE(hit);
+    REQUIRE(rayhit.prim_id == 0);
+    //REQUIRE(rayhit.geom_id == s_geom_id);
+    REQUIRE(rayhit.hit_distance == Approx(2));
     REQUIRE(rayhit.normal[0] == Approx(0));
     REQUIRE(rayhit.normal[1] == Approx(0));
     REQUIRE(rayhit.normal[2] == Approx(1));

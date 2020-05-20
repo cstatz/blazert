@@ -1,8 +1,7 @@
 //
 // Created by ogarten on 1/23/19.
 //
-
-#include "../doctest.h"
+#include <third_party/doctest/doctest/doctest.h>
 #include <blazert/embree/primitives/EmbreeSphere.h>
 
 using namespace blazert;
