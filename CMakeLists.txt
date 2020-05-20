@@ -4,12 +4,12 @@ PROJECT(blazert)
 # Compiler Flags
 set(CMAKE_CXX_STANDARD 17)
 IF(CMAKE_COMPILER_IS_GNUCXX)
-    set(CMAKE_CXX_FLAGS "-std=c++17 -O3 -Wall -fPIC -funroll-loops -march=native -fomit-frame-pointer -mfma")
+    set(CMAKE_CXX_FLAGS "-std=c++17 -O3 -Wall -fPIC -funroll-loops -msse2 -fomit-frame-pointer -mfma")
 ELSEIF(MSVC)
     # this currently work but is not really the way to go..
     set(CMAKE_CXX_FLAGS "/std:c++17 /Wall /arch:AVX")
 ELSE()
-    set(CMAKE_CXX_FLAGS "-std=c++17 -O3 -Wall -fPIC -funroll-loops -march=native -fomit-frame-pointer -fno-finite-math-only -fno-signed-zeros -freciprocal-math -ffp-contract=fast")
+    set(CMAKE_CXX_FLAGS "-std=c++17 -O3 -Wall -fPIC -funroll-loops -msse2 -fomit-frame-pointer -fno-finite-math-only -fno-signed-zeros -freciprocal-math -ffp-contract=fast")
 ENDIF(CMAKE_COMPILER_IS_GNUCXX)
 
 IF(FORCE_COLOR_OUTPUT)
@@ -57,18 +57,21 @@ WRITE_BASIC_PACKAGE_VERSION_FILE(blazertConfigVersion.cmake VERSION ${BLAZERT_VE
 INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/blazertConfig.cmake ${CMAKE_CURRENT_BINARY_DIR}/blazertConfigVersion.cmake DESTINATION ${CMAKE_INSTALL_DATADIR}/blazert/cmake)
 INSTALL(DIRECTORY blazert DESTINATION include)
 
+add_subdirectory(third_party/doctest)
 FILE(GLOB_RECURSE TEST_SRC ${CMAKE_SOURCE_DIR}/test/*.cpp)
 FILE(GLOB_RECURSE EMBREE_PRIMITIVES_SRC ${CMAKE_SOURCE_DIR}/blazert/embree/primitives/*.cpp )
 ADD_EXECUTABLE(test_blazert ${TEST_SRC} ${EMBREE_PRIMITIVES_SRC})
 TARGET_INCLUDE_DIRECTORIES(test_blazert PUBLIC ${CMAKE_SOURCE_DIR} ${EMBREE_INCLUDE_DIRS} ${BLAZE_INCLUDE_DIRS} "/usr/local/include")
-TARGET_LINK_LIBRARIES(test_blazert ${EMBREE_LIBRARY})
+TARGET_LINK_LIBRARIES(test_blazert doctest::doctest ${EMBREE_LIBRARY})
 SET_TARGET_PROPERTIES(test_blazert PROPERTIES LINKER_LANGUAGE CXX)
 ADD_TEST(main test_blazert)
 
-#add_compile_definitions(BLAZERT_USE_PADDED_AND_ALIGNED_TYPES)
+add_compile_definitions(BLAZERT_USE_PADDED_AND_ALIGNED_TYPES)
 
+add_subdirectory(third_party/bvh)
+add_subdirectory(third_party/nanort)
 file(GLOB_RECURSE BENCHMARK_SRC ${CMAKE_SOURCE_DIR}/benchmarks/*)
 add_executable(benchmark_blazeRT ${BENCHMARK_SRC})
 TARGET_INCLUDE_DIRECTORIES(benchmark_blazeRT PUBLIC ${CMAKE_SOURCE_DIR} ${BLAZE_INCLUDE_DIRS} ${EMBREE_INCLUDE_DIRS})
-target_link_libraries(benchmark_blazeRT PUBLIC benchmark::benchmark ${BLAZE_LIBRARY} ${LAPACK_LIBRARIES} ${EMBREE_LIBRARY})
+target_link_libraries(benchmark_blazeRT PUBLIC benchmark::benchmark ${BLAZE_LIBRARY} ${LAPACK_LIBRARIES} ${EMBREE_LIBRARY} bvh)
 
