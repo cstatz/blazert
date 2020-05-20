@@ -15,6 +15,7 @@
 #include <third_party/bvh/include/bvh/ray.hpp>
 #include <third_party/bvh/include/bvh/single_ray_traverser.hpp>
 #include <third_party/bvh/include/bvh/sweep_sah_builder.hpp>
+#include <third_party/bvh/include/bvh/binned_sah_builder.hpp>
 #include <third_party/bvh/include/bvh/triangle.hpp>
 #include <third_party/bvh/include/bvh/vector.hpp>
 
@@ -140,7 +141,7 @@ static void BM_nanoRT_TRAVERSE_BVH_Sphere(benchmark::State &state) {
 //BENCHMARK_TEMPLATE(BM_nanoRT_TRAVERSE_BVH_Sphere, double)->DenseRange(2, 9, 1)->Unit(benchmark::kMillisecond);
 
 template<typename T>
-static void BM_bvh_TRAVERSE_BVH_Sphere(benchmark::State &state) {
+static void BM_bvh_TRAVERSE_BVH_Sphere_SweepSAH(benchmark::State &state) {
   using Scalar = T;
   using Vector3 = bvh::Vector3<Scalar>;
   using Triangle = bvh::Triangle<Scalar>;
@@ -195,5 +196,64 @@ static void BM_bvh_TRAVERSE_BVH_Sphere(benchmark::State &state) {
     }
   }
 }
-BENCHMARK_TEMPLATE(BM_bvh_TRAVERSE_BVH_Sphere, float)->DenseRange(2, 9, 1)->Unit(benchmark::kMillisecond);
-BENCHMARK_TEMPLATE(BM_bvh_TRAVERSE_BVH_Sphere, double)->DenseRange(2, 9, 1)->Unit(benchmark::kMillisecond);
+BENCHMARK_TEMPLATE(BM_bvh_TRAVERSE_BVH_Sphere_SweepSAH, float)->DenseRange(2, 9, 1)->Unit(benchmark::kMillisecond);
+BENCHMARK_TEMPLATE(BM_bvh_TRAVERSE_BVH_Sphere_SweepSAH, double)->DenseRange(2, 9, 1)->Unit(benchmark::kMillisecond);
+
+template<typename T>
+static void BM_bvh_TRAVERSE_BVH_Sphere_BinnedSAH(benchmark::State &state) {
+  using Scalar = T;
+  using Vector3 = bvh::Vector3<Scalar>;
+  using Triangle = bvh::Triangle<Scalar>;
+  using Ray = bvh::Ray<Scalar>;
+  using Bvh = bvh::Bvh<Scalar>;
+
+  auto os = OriginSphere<T>(state.range(0));
+
+  std::vector<Triangle> triangles;
+  triangles.reserve(os.triangles.size());
+  for (int i = 0; i < os.triangles.size(); i += 3) {
+    triangles.emplace_back(
+        Vector3{
+            static_cast<Scalar>(os.triangles[i][0]),
+            static_cast<Scalar>(os.triangles[i][1]),
+            static_cast<Scalar>(os.triangles[i][2])},
+        Vector3{
+            static_cast<Scalar>(os.triangles[i + 1][0]),
+            static_cast<Scalar>(os.triangles[i + 1][1]),
+            static_cast<Scalar>(os.triangles[i + 1][2])},
+        Vector3{
+            static_cast<Scalar>(os.triangles[i + 2][0]),
+            static_cast<Scalar>(os.triangles[i + 2][1]),
+            static_cast<Scalar>(os.triangles[i + 2][2])});
+  }
+
+  Bvh bvh;
+
+  // Create an acceleration data structure on those triangles
+  bvh::BinnedSahBuilder<Bvh, 64> builder(bvh);
+  auto [bboxes, centers] = bvh::compute_bounding_boxes_and_centers(triangles.data(), triangles.size());
+  auto global_bbox = bvh::compute_bounding_boxes_union(bboxes.get(), triangles.size());
+  builder.build(global_bbox, bboxes.get(), centers.get(), triangles.size());
+
+  constexpr int height = 4 * 2048;
+  constexpr int width = 4 * 2048;
+  for (auto _ : state) {
+    for (int y = 0; y < height; y++) {
+      for (int x = 0; x < width; x++) {
+        // Intersect a ray with the data structure
+        Ray ray(
+            Vector3(0.0, 0.0, 1.0),                                                                     // origin
+            Vector3(static_cast<T>((x / T(width)) - 0.5), static_cast<T>((y / T(height)) - 0.5), T(-1)),// direction
+            0.0,                                                                                        // minimum distance
+            std::numeric_limits<T>::max()                                                               // maximum distance
+        );
+        bvh::ClosestIntersector<false, Bvh, Triangle> intersector(bvh, triangles.data());
+        bvh::SingleRayTraverser<Bvh> traverser(bvh);
+
+        auto hit = traverser.traverse(ray, intersector);
+      }
+    }
+  }
+}
+BENCHMARK_TEMPLATE(BM_bvh_TRAVERSE_BVH_Sphere_BinnedSAH, float)->DenseRange(2, 9, 1)->Unit(benchmark::kMillisecond);
+BENCHMARK_TEMPLATE(BM_bvh_TRAVERSE_BVH_Sphere_BinnedSAH, double)->DenseRange(2, 9, 1)->Unit(benchmark::kMillisecond);
