@@ -10,7 +10,7 @@
 #include <blazert/scene.h>
 #include <memory>
 
-#include "doctest.h"
+#include <third_party/doctest/doctest/doctest.h>
 
 using namespace blazert;
 using namespace doctest;
