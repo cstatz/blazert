@@ -36,7 +36,7 @@ TEST_CASE_TEMPLATE("Scene with Sphere", T, float, double) {
     const bool hit = intersect1(scene, ray, rayhit);
 
     REQUIRE(geom_id == 0);
-    //REQUIRE(geom_id == rayhit.geom_id);
+    REQUIRE(geom_id == rayhit.geom_id);
     REQUIRE(hit);
     REQUIRE(rayhit.hit_distance == Approx(1));
     REQUIRE(rayhit.normal[0] == Approx(1));
@@ -70,7 +70,7 @@ TEST_CASE_TEMPLATE("Scene with Plane", T, float, double) {
     const bool hit = intersect1(scene, ray, rayhit);
 
     REQUIRE(geom_id == 0);
-    //REQUIRE(geom_id == rayhit.geom_id);
+    REQUIRE(geom_id == rayhit.geom_id);
     REQUIRE(hit);
     REQUIRE(rayhit.hit_distance == Approx(5));
     REQUIRE(rayhit.normal[0] == Approx(0));
@@ -106,7 +106,7 @@ TEST_CASE_TEMPLATE("Scene with Cylinder", T, float, double) {
     const bool hit = intersect1(scene, ray, rayhit);
 
     REQUIRE(geom_id == 0);
-    //REQUIRE(geom_id == rayhit.geom_id);
+    REQUIRE(geom_id == rayhit.geom_id);
     REQUIRE(hit);
     REQUIRE(rayhit.hit_distance == Approx(3));
     REQUIRE(rayhit.normal[0] == Approx(0));
@@ -156,7 +156,7 @@ TEST_CASE_TEMPLATE("Scene with 2 different primitives", T, float, double) {
     REQUIRE(s_geom_id == 1);
     REQUIRE(hit);
     REQUIRE(rayhit.prim_id == 0);
-    //REQUIRE(rayhit.geom_id == s_geom_id);
+    REQUIRE(rayhit.geom_id == s_geom_id);
     REQUIRE(rayhit.hit_distance == Approx(2));
     REQUIRE(rayhit.normal[0] == Approx(0));
     REQUIRE(rayhit.normal[1] == Approx(0));
