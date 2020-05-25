@@ -33,21 +33,25 @@ public:
   TriangleMesh<T> triangles;
   TriangleSAHPred<T> triangles_sah;
   BVH<T> triangles_bvh;
+  size_t triangles_geom_id = -1;
   mutable bool has_triangles = false;
 
   Sphere<T> spheres;
   SphereSAHPred<T> spheres_sah;
   BVH<T> spheres_bvh;
+  size_t spheres_geom_id = -1;
   mutable bool has_spheres = false;
 
   Plane<T> planes;
   PlaneSAHPred<T> planes_sah;
   BVH<T> planes_bvh;
+  size_t planes_geom_id = -1;
   mutable bool has_planes = false;
 
   Cylinder<T> cylinders;
   CylinderSAHPred<T> cylinders_sah;
   BVH<T> cylinders_bvh;
+  size_t cylinders_geom_id = -1;
   mutable bool has_cylinders = false;
 
 public:
@@ -130,6 +134,7 @@ inline bool intersect1(const BlazertScene<T> &scene, const Ray<T> &ray, RayHit<T
     const bool hit_mesh = traverse(scene.triangles_bvh, ray, triangle_intersector, temp_rayhit, scene.trace_options);
     if (hit_mesh) {
       rayhit = temp_rayhit;
+      rayhit.geom_id = scene.triangles_geom_id;
       hit += hit_mesh;
     }
   }
@@ -140,6 +145,7 @@ inline bool intersect1(const BlazertScene<T> &scene, const Ray<T> &ray, RayHit<T
     if (hit_sphere) {
       if (temp_rayhit.hit_distance < rayhit.hit_distance) {
         rayhit = temp_rayhit;
+        rayhit.geom_id = scene.spheres_geom_id;
         hit += hit_sphere;
       }
     }
@@ -151,6 +157,7 @@ inline bool intersect1(const BlazertScene<T> &scene, const Ray<T> &ray, RayHit<T
     if (hit_plane) {
       if (temp_rayhit.hit_distance < rayhit.hit_distance) {
         rayhit = temp_rayhit;
+        rayhit.geom_id = scene.planes_geom_id;
         hit += hit_plane;
       }
     }
@@ -163,6 +170,7 @@ inline bool intersect1(const BlazertScene<T> &scene, const Ray<T> &ray, RayHit<T
     if (hit_cylinder) {
       if (temp_rayhit.hit_distance < rayhit.hit_distance) {
         rayhit = temp_rayhit;
+        rayhit.geom_id = scene.cylinders_geom_id;
         hit += hit_cylinder;
       }
     }
@@ -179,7 +187,8 @@ unsigned int BlazertScene<T>::add_mesh(const Vec3rList<T> &vertices, const Vec3i
     triangles_sah = TriangleSAHPred(vertices, faces);
     has_triangles = true;
 
-    return geometries++;
+    triangles_geom_id = geometries++;
+    return triangles_geom_id;
   } else {
     return -1;
   }
@@ -193,7 +202,8 @@ unsigned int BlazertScene<T>::add_spheres(const Vec3rList<T> &centers, const std
     spheres_sah = SphereSAHPred(centers, radii);
     has_spheres = true;
 
-    return geometries++;
+    spheres_geom_id = geometries++;
+    return spheres_geom_id;
   } else {
     return -1;
   }
@@ -207,7 +217,8 @@ unsigned int BlazertScene<T>::add_planes(const Vec3rList<T> &centers, const std:
     planes_sah = PlaneSAHPred(centers, dxs, dys, rotations);
     has_planes = true;
 
-    return geometries++;
+    planes_geom_id = geometries++;
+    return planes_geom_id;
   } else {
     return -1;
   }
@@ -220,7 +231,8 @@ unsigned int BlazertScene<T>::add_cylinders(const Vec3rList<T> &centers, const s
     cylinders_sah = CylinderSAHPred(centers, semi_axes_a, semi_axes_b, heights, rotations);
     has_cylinders = true;
 
-    return geometries++;
+    cylinders_geom_id = geometries++;
+    return cylinders_geom_id;
   } else {
     return -1;
   }

@@ -29,6 +29,7 @@ struct BLAZERTALIGN RayHit {
   Vec2r<T> uv;
   T hit_distance = std::numeric_limits<T>::max();
   unsigned int prim_id = -1;
+  unsigned int geom_id = -1;
 };
 
 }// namespace blazert
