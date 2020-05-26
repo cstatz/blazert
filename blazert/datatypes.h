@@ -2,6 +2,9 @@
 #ifndef BLAZERT_DATATYPES_H_
 #define BLAZERT_DATATYPES_H_
 
+#include <cmath>
+//#define FP_FAST_FMA
+
 #include <blaze/Math.h>
 #include <blaze/util/AlignedAllocator.h>
 

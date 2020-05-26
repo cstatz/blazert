@@ -398,7 +398,6 @@ int main(int argc, char **argv) {
   MeshLight lights(*mesh, materials);
 
   blazert::BVHBuildOptions<ft> build_options;// Use default option
-  build_options.cache_bbox = false;
 
   std::cout << "  BVH build option:\n"
             << "    # of leaf primitives: " << build_options.min_leaf_primitives << "\n"
@@ -411,7 +410,7 @@ int main(int argc, char **argv) {
   //printf("faces = %p\n", mesh.faces);
 
   blazert::BVH<ft> accel;
-  ret = accel.build(triangle_mesh, triangle_pred, build_options);
+  auto build_statistics = accel.build(triangle_mesh, triangle_pred, build_options);
   assert(ret);
 
   //printf("  BVH build time: %f secs\n", t.msec() / 1000.0);

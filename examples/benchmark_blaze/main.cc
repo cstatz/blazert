@@ -58,7 +58,6 @@ int main(int argc, char **argv) {
   LoadObj(*mesh, objFilename.c_str());
 
   blazert::BVHBuildOptions<ft> build_options;// Use default option
-  build_options.cache_bbox = false;
 
   blazert::TriangleMesh<ft> triangle_mesh(mesh->vertices, mesh->triangles);   //, sizeof(float) * 3);
   blazert::TriangleSAHPred<ft> triangle_pred(mesh->vertices, mesh->triangles);//, sizeof(float) * 3);

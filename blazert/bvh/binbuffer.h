@@ -13,7 +13,8 @@ template<typename T> inline T calculate_box_surface(const Vec3r<T> &min, const V
 
 template <typename T>
 struct BLAZERTALIGN Bin {
-  BBox<T> bbox;
+  Vec3r<T> min;
+  Vec3r<T> max;
   size_t  count;
   T cost;
 
@@ -38,8 +39,8 @@ struct BLAZERTALIGN BinBuffer {
 };
 
 template<typename T, class P>
-inline void ContributeBinBuffer(BinBuffer<T> &bins, const Vec3r<T> &scene_min, const Vec3r<T> &scene_max, const std::vector<unsigned int> &indices, const unsigned int left_idx,
-                                const unsigned int right_idx, const P &p) {
+inline void ContributeBinBuffer(BinBuffer<T> &bins, const Vec3r<T> &scene_min, const Vec3r<T> &scene_max, const std::vector<unsigned int> &indices,
+                                const unsigned int left_idx, const unsigned int right_idx, const P &p) {
 
   T bin_size = static_cast<T>(bins.bin_size);
 
@@ -60,7 +61,7 @@ inline void ContributeBinBuffer(BinBuffer<T> &bins, const Vec3r<T> &scene_min, c
   // Clear bin data
   bins.clear();
 
-  for (size_t i = left_idx; i < right_idx; i++) {
+  for (unsigned int i=left_idx; i<right_idx; i++) {
     //
     // Quantize the center position into [0, BIN_SIZE)
     //
@@ -69,19 +70,19 @@ inline void ContributeBinBuffer(BinBuffer<T> &bins, const Vec3r<T> &scene_min, c
     Vec3r<T> bmin, bmax, center;
 
     p.BoundingBoxAndCenter(bmin, bmax, center, indices[i]);
-    Vec3r<T> quantized_center = (center - scene_min) * scene_inv_size;
+    Vec3r<T> quantized_center = (center - scene_min) * scene_inv_size;  // in [0., T(bin_size)]
 
     // idx is now in [0, BIN_SIZE)
     for (int j = 0; j < 3; ++j) {
       // idx is now in [0, BIN_SIZE)
-      unsigned idx = std::min(bins.bin_size - 1, unsigned(std::max(0, int(quantized_center[j]))));
+      unsigned int idx = std::min(bins.bin_size - 1, unsigned(std::max(0, int(quantized_center[j]))));
 
       // Increment bin counter + extend bounding box of bin
       Bin<T>& bin = bins.bin[j * bins.bin_size + idx];
       bin.count++;
       for (int k = 0; k < 3; ++k) {
-        bin.bbox.bmin[k] = std::min(bin.bbox.bmin[k], bmin[k]);
-        bin.bbox.bmax[k] = std::max(bin.bbox.bmax[k], bmax[k]);
+        bin.min[k] = std::min(bin.min[k], bmin[k]);
+        bin.max[k] = std::max(bin.max[k], bmax[k]);
       }
     }
   }
@@ -98,31 +99,34 @@ inline unsigned int FindCutFromBinBuffer(Vec3r<T> &cut_pos, BinBuffer<T> &bins, 
 
     // Sweep left to accumulate bounding boxes and compute the right-hand side of the cost
     size_t count = 0;
-    BBox<T> accumulated_bbox;
+    Vec3r<T> bmin_, bmax_;
+
     for (size_t i = bins.bin_size - 1; i > 0; --i) {
       Bin<T>& bin = bins.bin[j * bins.bin_size + i];
       for (int k = 0; k < 3; ++k) {
-        accumulated_bbox.bmin[k] = std::min(bin.bbox.bmin[k], accumulated_bbox.bmin[k]);
-        accumulated_bbox.bmax[k] = std::max(bin.bbox.bmax[k], accumulated_bbox.bmax[k]);
+        bmin_[k] = std::min(bin.min[k], bmin_[k]);
+        bmax_[k] = std::max(bin.max[k], bmax_[k]);
       }
       count += bin.count;
-      bin.cost = count * calculate_box_surface(accumulated_bbox.bmin, accumulated_bbox.bmax);
+      bin.cost = count * calculate_box_surface(bmin_, bmax_);
     }
 
     // Sweep right to compute the full cost
     count = 0;
-    accumulated_bbox = BBox<T>();
+    bmin_ = static_cast<T>(0.);
+    bmax_ = static_cast<T>(0.);
+
     size_t minBin = 1;
     for (size_t i = 0; i < bins.bin_size - 1; i++) {
       Bin<T>& bin = bins.bin[j * bins.bin_size + i];
       Bin<T>& next_bin = bins.bin[j * bins.bin_size + i + 1];
       for (int k = 0; k < 3; ++k) {
-        accumulated_bbox.bmin[k] = std::min(bin.bbox.bmin[k], accumulated_bbox.bmin[k]);
-        accumulated_bbox.bmax[k] = std::max(bin.bbox.bmax[k], accumulated_bbox.bmax[k]);
+        bmin_[k] = std::min(bin.min[k], bmin_[k]);
+        bmax_[k] = std::max(bin.max[k], bmax_[k]);
       }
       count += bin.count;
       // Traversal cost and intersection cost are irrelevant for minimization
-      T cost = count * calculate_box_surface(accumulated_bbox.bmin, accumulated_bbox.bmax) + next_bin.cost;
+      T cost = count * calculate_box_surface(bmin_, bmax_) + next_bin.cost;
 
       if (cost < minCost[j]) {
         minCost[j] = cost;
