@@ -34,7 +34,7 @@ static void BM_BLAZERT_TRAVERSE_REALISTIC_BVH_Sphere(benchmark::State &state) {
   TriangleSAHPred triangles_sah(os.vertices, os.triangles);
 
   BVH<T> triangles_bvh;
-  const bool success = triangles_bvh.build(triangles, triangles_sah, build_options);
+  auto statistics = triangles_bvh.build(triangles, triangles_sah, build_options);
   //std::cout << "success = " << success << "\n";
 
   constexpr int height = 4 * 2048;

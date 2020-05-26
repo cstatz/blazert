@@ -34,7 +34,7 @@ static void BM_BLAZERT_TRAVERSE_WORST_BVH_Sphere(benchmark::State &state) {
   TriangleSAHPred triangles_sah(os.vertices, os.triangles);
 
   BVH<T> triangles_bvh;
-  const bool success = triangles_bvh.build(triangles, triangles_sah, build_options);
+  auto stats = triangles_bvh.build(triangles, triangles_sah, build_options);
   //std::cout << "success = " << success << "\n";
 
   for (auto _ : state) {
