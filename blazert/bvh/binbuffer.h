@@ -2,8 +2,6 @@
 #ifndef BLAZERT_BVH_BINBUFFER_H_
 #define BLAZERT_BVH_BINBUFFER_H_
 
-#include <blazert/bvh/sah.h>
-
 namespace blazert {
 
 template<typename T> inline T calculate_box_surface(const Vec3r<T> &min, const Vec3r<T> &max) {
