@@ -1,4 +1,4 @@
-#set(BUILD_TARGET "scene_embree")
+set(BUILD_TARGET "scene_mesh")
 
 #include_directories(${CMAKE_SOURCE_DIR} "${CMAKE_SOURCE_DIR}/examples/common" "/usr/local/include")
 
