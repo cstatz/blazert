@@ -10,10 +10,10 @@
 #include <blaze/math/Column.h>
 
 #define NOMINMAX
-#include "tiny_obj_loader.h"
+#include "../common/tiny_obj_loader.h"
 
 #define STB_IMAGE_WRITE_IMPLEMENTATION
-#include "stb_image_write.h"
+#include "../common/stb_image_write.h"
 
 using ft = double;
 
@@ -359,8 +359,8 @@ int main(int argc, char **argv) {
 
   ft scale{1.0};
 
-  std::string objFilename = "../common/cornellbox_suzanne_lucy.obj";
-  std::string mtlPath = "../common/";
+  std::string objFilename = "models/cornellbox_suzanne_lucy.obj";
+  std::string mtlPath = "models/";
 
   // arguments can be supplied via command line:
   // 1. objectfile
@@ -384,12 +384,10 @@ int main(int argc, char **argv) {
   std::cout << "Using OpenMP: no!\n";
 #endif
 
-  bool ret = false;
-
   auto *mesh = new Mesh<ft>;
 
   std::vector<tinyobj::material_t> materials;
-  ret = LoadObj(*mesh, materials, objFilename.c_str(), scale, mtlPath.c_str());
+  const bool ret = LoadObj(*mesh, materials, objFilename.c_str(), scale, mtlPath.c_str());
   if (!ret) {
     std::cerr << "Failed to load [ " << objFilename.c_str() << " ]\n";
     return -1;
@@ -398,7 +396,6 @@ int main(int argc, char **argv) {
   MeshLight lights(*mesh, materials);
 
   blazert::BVHBuildOptions<ft> build_options;// Use default option
-  build_options.cache_bbox = false;
 
   std::cout << "  BVH build option:\n"
             << "    # of leaf primitives: " << build_options.min_leaf_primitives << "\n"
@@ -411,8 +408,7 @@ int main(int argc, char **argv) {
   //printf("faces = %p\n", mesh.faces);
 
   blazert::BVH<ft> accel;
-  ret = accel.build(triangle_mesh, triangle_pred, build_options);
-  assert(ret);
+  auto build_statistics = accel.build(triangle_mesh, triangle_pred, build_options);
 
   //printf("  BVH build time: %f secs\n", t.msec() / 1000.0);
 

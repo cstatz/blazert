@@ -26,11 +26,11 @@ public:
 
   // Set default value: T cost_t_aabb = 0.2
   BVHBuildOptions()
-      : cost_t_aabb(static_cast<T>(0.2)),
-        cache_bbox(false),
+      : cost_t_aabb(static_cast<T>(0.2)), //1/(2*pi)
+        cache_bbox(true),
         min_leaf_primitives(4),
-        max_tree_depth(256),
-        bin_size(64)
+        max_tree_depth(512),
+        bin_size(1024)
 #ifdef BLAZERT_PARALLEL_BUILD
         ,
         shallow_depth(BLAZERT_SHALLOW_DEPTH),

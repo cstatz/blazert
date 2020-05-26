@@ -47,7 +47,7 @@ int main(int argc, char **argv) {
   int width = 4*8192;
   int height = 4*8192;
 
-  std::string objFilename = "../../../examples/common/cornellbox_suzanne_lucy.obj";
+  std::string objFilename = "../../../examples/models/cornellbox_suzanne_lucy.obj";
 
   if (argc > 1) {
     objFilename = std::string(argv[1]);
@@ -58,7 +58,6 @@ int main(int argc, char **argv) {
   LoadObj(*mesh, objFilename.c_str());
 
   blazert::BVHBuildOptions<ft> build_options;// Use default option
-  build_options.cache_bbox = false;
 
   blazert::TriangleMesh<ft> triangle_mesh(mesh->vertices, mesh->triangles);   //, sizeof(float) * 3);
   blazert::TriangleSAHPred<ft> triangle_pred(mesh->vertices, mesh->triangles);//, sizeof(float) * 3);
