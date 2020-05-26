@@ -66,10 +66,6 @@ TARGET_LINK_LIBRARIES(test_blazert doctest::doctest ${EMBREE_LIBRARY})
 SET_TARGET_PROPERTIES(test_blazert PROPERTIES LINKER_LANGUAGE CXX)
 ADD_TEST(main test_blazert)
 
-add_compile_definitions(BLAZERT_USE_PADDED_AND_ALIGNED_TYPES)
-
-add_subdirectory(third_party/bvh)
-add_subdirectory(third_party/nanort)
 file(GLOB_RECURSE BENCHMARK_SRC ${CMAKE_SOURCE_DIR}/benchmarks/*)
 add_executable(benchmark_blazeRT ${BENCHMARK_SRC})
 TARGET_INCLUDE_DIRECTORIES(benchmark_blazeRT PUBLIC ${CMAKE_SOURCE_DIR} ${BLAZE_INCLUDE_DIRS} ${EMBREE_INCLUDE_DIRS})
