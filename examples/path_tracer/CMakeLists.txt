@@ -4,8 +4,8 @@ include_directories(${CMAKE_SOURCE_DIR} "${CMAKE_SOURCE_DIR}/examples/common" "/
 
 file(GLOB SOURCES "*.cc" "${CMAKE_SOURCE_DIR}/examples/common/*.cc")
 add_executable(${BUILD_TARGET} ${SOURCES})
-IF(OpenMP_CXX_FOUND)
-    target_link_libraries(${BUILD_TARGET} PUBLIC OpenMP::OpenMP_CXX )
-ENDIF()
+IF (OpenMP_CXX_FOUND)
+    target_link_libraries(${BUILD_TARGET} PUBLIC OpenMP::OpenMP_CXX)
+ENDIF ()
 
 source_group("Source Files" FILES ${SOURCES})
