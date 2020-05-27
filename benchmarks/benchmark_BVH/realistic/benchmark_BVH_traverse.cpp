@@ -54,8 +54,8 @@ static void BM_BLAZERT_TRAVERSE_REALISTIC_BVH_Sphere(benchmark::State &state) {
     }
   }
 }
-BENCHMARK_TEMPLATE(BM_BLAZERT_TRAVERSE_REALISTIC_BVH_Sphere, float)->DenseRange(2, 9, 1)->Unit(benchmark::kMillisecond);
-BENCHMARK_TEMPLATE(BM_BLAZERT_TRAVERSE_REALISTIC_BVH_Sphere, double)->DenseRange(2, 9, 1)->Unit(benchmark::kMillisecond);
+BENCHMARK_TEMPLATE(BM_BLAZERT_TRAVERSE_REALISTIC_BVH_Sphere, float)->DenseRange(2, 10, 1)->Unit(benchmark::kMillisecond);
+BENCHMARK_TEMPLATE(BM_BLAZERT_TRAVERSE_REALISTIC_BVH_Sphere, double)->DenseRange(2, 10, 1)->Unit(benchmark::kMillisecond);
 
 static void
 BM_EMBREE_TRAVERSE_REALISTIC_BVH_Sphere(benchmark::State &state) {
