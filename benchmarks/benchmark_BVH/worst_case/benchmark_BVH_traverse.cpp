@@ -34,7 +34,7 @@ static void BM_BLAZERT_TRAVERSE_WORST_BVH_Sphere(benchmark::State &state) {
   TriangleSAHPred triangles_sah(os.vertices, os.triangles);
 
   BVH<T> triangles_bvh;
-  const bool success = triangles_bvh.build(triangles, triangles_sah, build_options);
+  const auto success = triangles_bvh.build(triangles, triangles_sah, build_options);
   //std::cout << "success = " << success << "\n";
 
   for (auto _ : state) {
@@ -125,8 +125,8 @@ static void BM_nanoRT_TRAVERSE_WORST_BVH_Sphere(benchmark::State &state) {
     }
   }
 }
-BENCHMARK_TEMPLATE(BM_nanoRT_TRAVERSE_WORST_BVH_Sphere, float)->DenseRange(2, 5, 1)->Unit(benchmark::kMillisecond);
-BENCHMARK_TEMPLATE(BM_nanoRT_TRAVERSE_WORST_BVH_Sphere, double)->DenseRange(2, 5, 1)->Unit(benchmark::kMillisecond);
+BENCHMARK_TEMPLATE(BM_nanoRT_TRAVERSE_WORST_BVH_Sphere, float)->DenseRange(2, 9, 1)->Unit(benchmark::kMillisecond);
+BENCHMARK_TEMPLATE(BM_nanoRT_TRAVERSE_WORST_BVH_Sphere, double)->DenseRange(2, 9, 1)->Unit(benchmark::kMillisecond);
 
 template<typename T>
 static void BM_bvh_TRAVERSE_WORST_BVH_Sphere_SweepSAH(benchmark::State &state) {

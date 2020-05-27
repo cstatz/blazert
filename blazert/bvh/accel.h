@@ -190,12 +190,23 @@ inline bool intersect_leaf(const BVHNode<T> &node, I &intersector, const std::ve
   for (unsigned int i = 0; i < num_primitives; i++) {
     const unsigned int prim_idx = indices[i + offset];
 
+    // TODO: The design is sh****.
+    // node -> offset, num_prims -> indices -> face (from faces) -> vertex (from vertices)
+    // 5 indirections
+    // Better alternative: node -> primitives -> vertices
+    // build-time + memory vs. traversal speed.
+
+    // slightly larger node -> store pointers to child node and
+
     T local_hit_distance = current_hit_distance;
     hit = intersect(intersector, local_hit_distance, prim_idx);
 
     if (hit) {
       current_hit_distance = local_hit_distance;
       update_intersector(intersector, current_hit_distance, prim_idx);
+#ifdef BLAZERT_FIRST_INSTEAD_OF_CLOSEST
+      break; // Any intersection will do.
+#endif
     }
   }
 
@@ -210,8 +221,7 @@ inline bool traverse(const BVH<T> &bvh, const Ray<T> &ray, I &intersector, H &ra
 
   node_stack[node_stack_index] = 0;
 
-  T min_t = ray.min_hit_distance;
-  T max_t = ray.max_hit_distance;
+  T hit_t = ray.max_hit_distance;
 
   update_intersector(intersector, ray.max_hit_distance, -1);
   prepare_traversal(intersector, ray, options);
@@ -219,6 +229,10 @@ inline bool traverse(const BVH<T> &bvh, const Ray<T> &ray, I &intersector, H &ra
   while (node_stack_index >= 0) {
     const unsigned int index = node_stack[node_stack_index--];
     const BVHNode<T> &node = bvh.nodes[index];
+
+    T max_t = hit_t;
+    //T max_t = ray.max_hit_distance;
+    T min_t = ray.min_hit_distance;
 
     if (intersect_node(min_t, max_t, node, ray)) {
       // Branch node
@@ -229,10 +243,12 @@ inline bool traverse(const BVH<T> &bvh, const Ray<T> &ray, I &intersector, H &ra
         // Traverse near first.
         node_stack[++node_stack_index] = node.data[order_far];
         node_stack[++node_stack_index] = node.data[order_near];
+
       }
       // Leaf node
-      else {
-        intersect_leaf(node, intersector, bvh.indices);
+      else if (intersect_leaf(node, intersector, bvh.indices)) {
+        //intersect_leaf(node, intersector, bvh.indices);
+        hit_t = intersector.hit_distance;
       }
     }
   }

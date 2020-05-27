@@ -27,7 +27,6 @@ template<typename T>
 static void BM_BLAZERT_BUILD_BVH_Sphere(benchmark::State& state)
 {
   BVHBuildOptions<T> build_options;
-  build_options.cache_bbox = false;
   BVH<T> triangles_bvh;
 
   const auto os = OriginSphere<T>(state.range(0));

@@ -61,9 +61,9 @@ int main(int argc, char **argv) {
   unsigned int prim_id = scene.add_mesh(mesh->vertices, mesh->triangles);
   scene.commit();
 
-#ifdef _OPENMP
-#pragma omp parallel for schedule(dynamic, 1)
-#endif
+//#ifdef _OPENMP
+//#pragma omp parallel for schedule(dynamic, 1)
+//#endif
   for (int y = 0; y < height; y++) {
     for (int x = 0; x < width; x++) {
 
