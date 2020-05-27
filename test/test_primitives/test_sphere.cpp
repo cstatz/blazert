@@ -32,12 +32,12 @@ TEST_CASE_TEMPLATE("Sphere", T, float, double) {
     Vec3r<T> bmin, bmax;
     sphere.BoundingBox(bmin, bmax, 0);
 
-    REQUIRE(bmin[0] == Approx(0.f));
-    REQUIRE(bmin[1] == Approx(0.f));
-    REQUIRE(bmin[2] == Approx(0.f));
-    REQUIRE(bmax[0] == Approx(2.f));
-    REQUIRE(bmax[1] == Approx(2.f));
-    REQUIRE(bmax[2] == Approx(2.f));
+    CHECK(bmin[0] == Approx(0.f));
+    CHECK(bmin[1] == Approx(0.f));
+    CHECK(bmin[2] == Approx(0.f));
+    CHECK(bmax[0] == Approx(2.f));
+    CHECK(bmax[1] == Approx(2.f));
+    CHECK(bmax[2] == Approx(2.f));
   }
   SUBCASE("distance to surface") {
     Vec3r<T> center{0.f, 0.f, 0.f};
@@ -52,10 +52,10 @@ TEST_CASE_TEMPLATE("Sphere", T, float, double) {
       
       Sphere<T> spheres(*centers, *radii);
 
-      REQUIRE(distance_to_surface(spheres, Vec3r<T>{  0.f,  0.f,  0.f }, 0) == Approx(1.f));
-      REQUIRE(distance_to_surface(spheres, Vec3r<T>{ -1.f,  0.f,  0.f }, 0) == Approx(0.f));
-      REQUIRE(distance_to_surface(spheres, Vec3r<T>{ -2.f,  0.f,  0.f }, 0) == Approx(1.f));
-      REQUIRE(distance_to_surface(spheres, Vec3r<T>{ -2.f, -2.f, -2.f }, 0) == Approx(std::sqrt(3.f * 4.f) - 1.f));
+      CHECK(distance_to_surface(spheres, Vec3r<T>{  0.f,  0.f,  0.f }, 0) == Approx(1.f));
+      CHECK(distance_to_surface(spheres, Vec3r<T>{ -1.f,  0.f,  0.f }, 0) == Approx(0.f));
+      CHECK(distance_to_surface(spheres, Vec3r<T>{ -2.f,  0.f,  0.f }, 0) == Approx(1.f));
+      CHECK(distance_to_surface(spheres, Vec3r<T>{ -2.f, -2.f, -2.f }, 0) == Approx(std::sqrt(3.f * 4.f) - 1.f));
     }
     SUBCASE("R = 3")
     {
@@ -64,10 +64,10 @@ TEST_CASE_TEMPLATE("Sphere", T, float, double) {
 
       Sphere<T> spheres(*centers, *radii);
 
-      REQUIRE(distance_to_surface(spheres, Vec3r<T>{  0.f,  0.f,  0.f }, 0) == Approx(3.f));
-      REQUIRE(distance_to_surface(spheres, Vec3r<T>{ -1.f,  0.f,  0.f }, 0) == Approx(2.f));
-      REQUIRE(distance_to_surface(spheres, Vec3r<T>{ -2.f,  0.f,  0.f }, 0) == Approx(1.f));
-      REQUIRE(distance_to_surface(spheres, Vec3r<T>{ -2.f, -2.f, -2.f }, 0) == Approx(std::sqrt(3.f * 4.f) - 3.f));
+      CHECK(distance_to_surface(spheres, Vec3r<T>{  0.f,  0.f,  0.f }, 0) == Approx(3.f));
+      CHECK(distance_to_surface(spheres, Vec3r<T>{ -1.f,  0.f,  0.f }, 0) == Approx(2.f));
+      CHECK(distance_to_surface(spheres, Vec3r<T>{ -2.f,  0.f,  0.f }, 0) == Approx(1.f));
+      CHECK(distance_to_surface(spheres, Vec3r<T>{ -2.f, -2.f, -2.f }, 0) == Approx(std::sqrt(3.f * 4.f) - 3.f));
     }
   }
   SUBCASE("intersections") {
@@ -100,8 +100,8 @@ TEST_CASE_TEMPLATE("Sphere", T, float, double) {
       post_traversal(sphere_intersector, ray, hit_sphere, rayhit);
 
       // should be in distance of 1
-      REQUIRE(hit_sphere);
-      REQUIRE(rayhit.hit_distance == Approx(static_cast<T>(1.f)));
+      CHECK(hit_sphere);
+      CHECK(rayhit.hit_distance == Approx(static_cast<T>(1.f)));
     }
     SUBCASE("Ray origin inside sphere") {
       Vec3r<T> center1{0.f, 0.f, 0.f};
@@ -132,8 +132,8 @@ TEST_CASE_TEMPLATE("Sphere", T, float, double) {
         post_traversal(sphere_intersector, ray, hit_sphere, rayhit);
 
         // should be in distance of 1
-        REQUIRE(hit_sphere);
-        REQUIRE(rayhit.hit_distance == Approx(1.f));
+        CHECK(hit_sphere);
+        CHECK(rayhit.hit_distance == Approx(1.f));
       }
       SUBCASE("Ray 2") {
         const Vec3r<T> org{0.f, 0.f, 0.5f};
@@ -155,8 +155,8 @@ TEST_CASE_TEMPLATE("Sphere", T, float, double) {
         post_traversal(sphere_intersector, ray, hit_sphere, rayhit);
 
         // should be in distance of 1
-        REQUIRE(hit_sphere);
-        REQUIRE(rayhit.hit_distance == Approx(1.5f));
+        CHECK(hit_sphere);
+        CHECK(rayhit.hit_distance == Approx(1.5f));
       }
     }
     SUBCASE("Ray origin on sphere") {
@@ -187,7 +187,7 @@ TEST_CASE_TEMPLATE("Sphere", T, float, double) {
         update_intersector(sphere_intersector, hit_distance, 0);
         post_traversal(sphere_intersector, ray, hit_sphere, rayhit);
 
-        REQUIRE(rayhit.hit_distance == Approx(2.f));
+        CHECK(rayhit.hit_distance == Approx(2.f));
       }
       SUBCASE("Ray 2") {
         Vec3r<T> org{0.f, 0.f, 0.f};
@@ -208,7 +208,7 @@ TEST_CASE_TEMPLATE("Sphere", T, float, double) {
         update_intersector(sphere_intersector, hit_distance, 0);
         post_traversal(sphere_intersector, ray, hit_sphere, rayhit);
 
-        REQUIRE(rayhit.hit_distance == Approx(std::numeric_limits<T>::max()));
+        CHECK(rayhit.hit_distance == Approx(std::numeric_limits<T>::max()));
       }
     }
     SUBCASE("ray passing through sphere center") {
@@ -238,11 +238,11 @@ TEST_CASE_TEMPLATE("Sphere", T, float, double) {
       update_intersector(sphere_intersector, hit_distance, 0);
       post_traversal(sphere_intersector, ray, hit_sphere, rayhit);
 
-      REQUIRE(rayhit.hit_distance == Approx(1.26794919f));
+      CHECK(rayhit.hit_distance == Approx(1.26794919f));
 
-      REQUIRE(rayhit.normal[0] == Approx(sqrt(3) / 2));
-      REQUIRE(rayhit.normal[1] == Approx(sqrt(1) / 2));
-      REQUIRE(rayhit.normal[2] == Approx(0.f));
+      CHECK(rayhit.normal[0] == Approx(sqrt(3) / 2));
+      CHECK(rayhit.normal[1] == Approx(sqrt(1) / 2));
+      CHECK(rayhit.normal[2] == Approx(0.f));
     }
   }
 }

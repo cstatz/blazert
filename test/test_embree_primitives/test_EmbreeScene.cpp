@@ -34,12 +34,12 @@ TEST_CASE_TEMPLATE("EmbreeScene", T, float, double) {
           RayHit<T> rayhit1;
           const bool hit = intersect1(scene, ray1, rayhit1);
           // should be in distance of 1
-          REQUIRE(hit);
-          REQUIRE(rayhit1.prim_id == prim_id);
-          REQUIRE(rayhit1.hit_distance == Approx(1.f));
-          REQUIRE(rayhit1.normal[0] == Approx(1));
-          REQUIRE(rayhit1.normal[1] == Approx(0));
-          REQUIRE(rayhit1.normal[2] == Approx(0));
+          CHECK(hit);
+          CHECK(rayhit1.prim_id == prim_id);
+          CHECK(rayhit1.hit_distance == Approx(1.f));
+          CHECK(rayhit1.normal[0] == Approx(1));
+          CHECK(rayhit1.normal[1] == Approx(0));
+          CHECK(rayhit1.normal[2] == Approx(0));
         }
         SUBCASE("hit in distance 2") {
           EmbreeScene<T> scene;
@@ -52,12 +52,12 @@ TEST_CASE_TEMPLATE("EmbreeScene", T, float, double) {
           RayHit<T> rayhit3;
           const bool hit = intersect1(scene, ray3, rayhit3);
           // should be in distance of 2
-          REQUIRE(hit);
-          REQUIRE(rayhit3.prim_id == prim_id);
-          REQUIRE(rayhit3.hit_distance == Approx(2.f));
-          REQUIRE(rayhit3.normal[0] == Approx(0));
-          REQUIRE(rayhit3.normal[1] == Approx(0));
-          REQUIRE(rayhit3.normal[2] == Approx(1));
+          CHECK(hit);
+          CHECK(rayhit3.prim_id == prim_id);
+          CHECK(rayhit3.hit_distance == Approx(2.f));
+          CHECK(rayhit3.normal[0] == Approx(0));
+          CHECK(rayhit3.normal[1] == Approx(0));
+          CHECK(rayhit3.normal[2] == Approx(1));
         }
         SUBCASE("no hit") {
           EmbreeScene<T> scene;
@@ -70,8 +70,8 @@ TEST_CASE_TEMPLATE("EmbreeScene", T, float, double) {
           RayHit<T> rayhit2;
           const bool hit = intersect1(scene, ray2, rayhit2);
           // should not hit, therefore tfar is the same as before
-          REQUIRE(!hit);
-          REQUIRE(rayhit2.hit_distance == Approx(std::numeric_limits<T>::max()));
+          CHECK(!hit);
+          CHECK(rayhit2.hit_distance == Approx(std::numeric_limits<T>::max()));
         }
       }
       SUBCASE("Ray origin inside sphere") {
@@ -87,12 +87,12 @@ TEST_CASE_TEMPLATE("EmbreeScene", T, float, double) {
           RayHit<T> rayhit1;
           const bool hit = intersect1(scene, ray1, rayhit1);
           // should be in distance of 1
-          REQUIRE(hit);
-          REQUIRE(rayhit1.prim_id == prim_id);
-          REQUIRE(rayhit1.hit_distance == Approx(1.f));
-          REQUIRE(rayhit1.normal[0] == Approx(-1));
-          REQUIRE(rayhit1.normal[1] == Approx(0));
-          REQUIRE(rayhit1.normal[2] == Approx(0));
+          CHECK(hit);
+          CHECK(rayhit1.prim_id == prim_id);
+          CHECK(rayhit1.hit_distance == Approx(1.f));
+          CHECK(rayhit1.normal[0] == Approx(-1));
+          CHECK(rayhit1.normal[1] == Approx(0));
+          CHECK(rayhit1.normal[2] == Approx(0));
         }
         SUBCASE("origin != sphere center") {
           EmbreeScene<T> scene;
@@ -105,12 +105,12 @@ TEST_CASE_TEMPLATE("EmbreeScene", T, float, double) {
           RayHit<T> rayhit2;
           const bool hit = intersect1(scene, ray2, rayhit2);
           // should  hit in distance of 1.5
-          REQUIRE(hit);
-          REQUIRE(rayhit2.prim_id == prim_id);
-          REQUIRE(rayhit2.hit_distance == Approx(1.5f));
-          REQUIRE(rayhit2.normal[0] == Approx(0));
-          REQUIRE(rayhit2.normal[1] == Approx(0));
-          REQUIRE(rayhit2.normal[2] == Approx(-1.f));
+          CHECK(hit);
+          CHECK(rayhit2.prim_id == prim_id);
+          CHECK(rayhit2.hit_distance == Approx(1.5f));
+          CHECK(rayhit2.normal[0] == Approx(0));
+          CHECK(rayhit2.normal[1] == Approx(0));
+          CHECK(rayhit2.normal[2] == Approx(-1.f));
         }
       }
       SUBCASE("Ray origin on sphere") {
@@ -125,12 +125,12 @@ TEST_CASE_TEMPLATE("EmbreeScene", T, float, double) {
           RayHit<T> rayhit1;
           const bool hit = intersect1(scene, ray1, rayhit1);
           // should hit in distance of 2
-          REQUIRE(hit);
-          REQUIRE(rayhit1.prim_id == prim_id);
-          REQUIRE(rayhit1.hit_distance == Approx(2.f));
-          REQUIRE(rayhit1.normal[0] == Approx(-1));
-          REQUIRE(rayhit1.normal[1] == Approx(0));
-          REQUIRE(rayhit1.normal[2] == Approx(0));
+          CHECK(hit);
+          CHECK(rayhit1.prim_id == prim_id);
+          CHECK(rayhit1.hit_distance == Approx(2.f));
+          CHECK(rayhit1.normal[0] == Approx(-1));
+          CHECK(rayhit1.normal[1] == Approx(0));
+          CHECK(rayhit1.normal[2] == Approx(0));
         }
         SUBCASE("shooting outside") {
           EmbreeScene<T> scene;
@@ -142,8 +142,8 @@ TEST_CASE_TEMPLATE("EmbreeScene", T, float, double) {
           const Ray<T> ray2{org2, dir2};
           RayHit<T> rayhit2;
           const bool hit = intersect1(scene, ray2, rayhit2);
-          REQUIRE(!hit);
-          REQUIRE(rayhit2.hit_distance == Approx(std::numeric_limits<T>::max()));
+          CHECK(!hit);
+          CHECK(rayhit2.hit_distance == Approx(std::numeric_limits<T>::max()));
         }
       }
       SUBCASE("ray not passing through sphere center") {
@@ -157,12 +157,12 @@ TEST_CASE_TEMPLATE("EmbreeScene", T, float, double) {
         RayHit<T> rayhit1;
         const bool hit = intersect1(scene, ray1, rayhit1);
 
-        REQUIRE(hit);
-        REQUIRE(rayhit1.prim_id == prim_id);
-        REQUIRE(rayhit1.hit_distance == Approx(1.133974596));
-        REQUIRE(rayhit1.normal[0] == Approx(sqrt(3) / 2));
-        REQUIRE(rayhit1.normal[1] == Approx(sqrt(1) / 2));
-        REQUIRE(rayhit1.normal[2] == Approx(0.f));
+        CHECK(hit);
+        CHECK(rayhit1.prim_id == prim_id);
+        CHECK(rayhit1.hit_distance == Approx(1.133974596));
+        CHECK(rayhit1.normal[0] == Approx(sqrt(3) / 2));
+        CHECK(rayhit1.normal[1] == Approx(sqrt(1) / 2));
+        CHECK(rayhit1.normal[2] == Approx(0.f));
       }
     }
   }
@@ -190,12 +190,12 @@ TEST_CASE_TEMPLATE("EmbreeScene", T, float, double) {
 
       const bool hit = intersect1(scene, ray, rayhit);
 
-      REQUIRE(hit);
-      REQUIRE(rayhit.prim_id == prim_id);
-      REQUIRE(rayhit.hit_distance == Approx(5));
-      REQUIRE(rayhit.normal[0] == Approx(0));
-      REQUIRE(rayhit.normal[1] == Approx(0));
-      REQUIRE(rayhit.normal[2] == Approx(1));
+      CHECK(hit);
+      CHECK(rayhit.prim_id == prim_id);
+      CHECK(rayhit.hit_distance == Approx(5));
+      CHECK(rayhit.normal[0] == Approx(0));
+      CHECK(rayhit.normal[1] == Approx(0));
+      CHECK(rayhit.normal[2] == Approx(1));
     }
   }
   SUBCASE("Cylinder") {
@@ -224,12 +224,12 @@ TEST_CASE_TEMPLATE("EmbreeScene", T, float, double) {
 
       const bool hit = intersect1(scene, ray, rayhit);
 
-      REQUIRE(hit);
-      REQUIRE(rayhit.prim_id == prim_id);
-      REQUIRE(rayhit.hit_distance == Approx(3));
-      REQUIRE(rayhit.normal[0] == Approx(0));
-      REQUIRE(rayhit.normal[1] == Approx(0));
-      REQUIRE(rayhit.normal[2] == Approx(1));
+      CHECK(hit);
+      CHECK(rayhit.prim_id == prim_id);
+      CHECK(rayhit.hit_distance == Approx(3));
+      CHECK(rayhit.normal[0] == Approx(0));
+      CHECK(rayhit.normal[1] == Approx(0));
+      CHECK(rayhit.normal[2] == Approx(1));
     }
   }
 }
