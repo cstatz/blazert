@@ -198,8 +198,8 @@ static void BM_bvh_TRAVERSE_WORST_BVH_Sphere_SweepSAH(benchmark::State &state) {
     }
   }
 }
-BENCHMARK_TEMPLATE(BM_bvh_TRAVERSE_WORST_BVH_Sphere_SweepSAH, float)->DenseRange(2, 10, 1)->Unit(benchmark::kMillisecond);
-BENCHMARK_TEMPLATE(BM_bvh_TRAVERSE_WORST_BVH_Sphere_SweepSAH, double)->DenseRange(2, 10, 1)->Unit(benchmark::kMillisecond);
+BENCHMARK_TEMPLATE(BM_bvh_TRAVERSE_WORST_BVH_Sphere_SweepSAH, float)->DenseRange(2, 8, 1)->Unit(benchmark::kMillisecond);
+BENCHMARK_TEMPLATE(BM_bvh_TRAVERSE_WORST_BVH_Sphere_SweepSAH, double)->DenseRange(2, 8, 1)->Unit(benchmark::kMillisecond);
 
 template<typename T>
 static void BM_bvh_TRAVERSE_WORST_BVH_Sphere_BinnedSAH(benchmark::State &state) {
@@ -253,5 +253,5 @@ static void BM_bvh_TRAVERSE_WORST_BVH_Sphere_BinnedSAH(benchmark::State &state) 
     }
   }
 }
-BENCHMARK_TEMPLATE(BM_bvh_TRAVERSE_WORST_BVH_Sphere_BinnedSAH, float)->DenseRange(2, 10, 1)->Unit(benchmark::kMillisecond);
-BENCHMARK_TEMPLATE(BM_bvh_TRAVERSE_WORST_BVH_Sphere_BinnedSAH, double)->DenseRange(2, 10, 1)->Unit(benchmark::kMillisecond);
+BENCHMARK_TEMPLATE(BM_bvh_TRAVERSE_WORST_BVH_Sphere_BinnedSAH, float)->DenseRange(2, 8, 1)->Unit(benchmark::kMillisecond);
+BENCHMARK_TEMPLATE(BM_bvh_TRAVERSE_WORST_BVH_Sphere_BinnedSAH, double)->DenseRange(2, 8, 1)->Unit(benchmark::kMillisecond);
