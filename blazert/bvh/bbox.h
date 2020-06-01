@@ -10,55 +10,8 @@
 
 namespace blazert {
 
-/**
- * @brief Bounding box.
- */
-template<typename T>
-class BLAZERTALIGN BBox {
-public:
-  Vec3r<T> bmin;
-  Vec3r<T> bmax;
-
-  BBox() {
-    bmin = std::numeric_limits<T>::max();
-    bmax = -std::numeric_limits<T>::max();
-  }
-};
-
-template<typename T>
-std::ostream& operator<<(std::ostream& stream, const BBox<T>& b) {
-  stream << "BoundingBox \n";
-  stream << " - Lower: \n";
-  stream << b.bmin << "\n";
-  stream << " - Upper: \n";
-  stream << b.bmax << "\n";
-  return stream;
-}
-
-
-template<typename T>
-inline void GetBoundingBox(Vec3r<T> &bmin, Vec3r<T> &bmax, const std::vector<BBox<T>> &bboxes,
-                           const std::vector<unsigned int> &indices, unsigned int left_index, unsigned int right_index) {
-
-  unsigned int i = left_index;
-  unsigned int idx = indices[i];
-
-  bmin = bboxes[idx].bmin;
-  bmax = bboxes[idx].bmax;
-
-  // for each primitive
-  for (i = left_index + 1; i < right_index; i++) {
-    idx = indices[i];
-    // xyz
-    for (int k = 0; k < 3; k++) {
-      bmin[k] = std::min(bmin[k], bboxes[idx].bmin[k]);
-      bmax[k] = std::max(bmax[k], bboxes[idx].bmax[k]);
-    }
-  }
-}
-
 template<typename T, class P>
-inline void ComputeBoundingBox(Vec3r<T> &bmin, Vec3r<T> &bmax, std::vector<unsigned int> &indices,
+inline void compute_bounding_box(Vec3r<T> &bmin, Vec3r<T> &bmax, std::vector<unsigned int> &indices,
                                unsigned int left_index, unsigned int right_index, const P &p) {
   unsigned int idx = indices[left_index];
   p.BoundingBox(bmin, bmax, idx);

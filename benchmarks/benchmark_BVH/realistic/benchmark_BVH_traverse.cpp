@@ -28,13 +28,13 @@ static void BM_BLAZERT_TRAVERSE_REALISTIC_BVH_Sphere(benchmark::State &state) {
   BVHBuildOptions<T> build_options;
   BVHTraceOptions<T> trace_options;
 
-  auto os = OriginSphere<T>(state.range(0));
+  auto os = std::make_unique<OriginSphere<T>>(state.range(0));
 
-  TriangleMesh triangles(os.vertices, os.triangles);
-  TriangleSAHPred triangles_sah(os.vertices, os.triangles);
+  TriangleMesh triangles(os->vertices, os->triangles);
+  TriangleSAHPred triangles_sah(os->vertices, os->triangles);
 
   BVH<T> triangles_bvh;
-  const bool success = triangles_bvh.build(triangles, triangles_sah, build_options);
+  auto statistics = triangles_bvh.build(triangles, triangles_sah, build_options);
   //std::cout << "success = " << success << "\n";
 
   constexpr int height = 4 * 2048;
@@ -43,7 +43,7 @@ static void BM_BLAZERT_TRAVERSE_REALISTIC_BVH_Sphere(benchmark::State &state) {
     for (int y = 0; y < height; y++) {
       for (int x = 0; x < width; x++) {
         const blazert::Ray<T> ray{{0.0, 0.0, 10.0}, {static_cast<T>((x / T(width)) - 0.5), static_cast<T>((y / T(height)) - 0.5), T(-1.)}};
-        TriangleIntersector<T> triangle_intersector{os.vertices, os.triangles};
+        TriangleIntersector<T> triangle_intersector{os->vertices, os->triangles};
         RayHit<T> temp_rayhit;
         traverse(triangles_bvh, ray, triangle_intersector, temp_rayhit, trace_options);
       }
@@ -135,8 +135,8 @@ static void BM_nanoRT_TRAVERSE_REALISTIC_BVH_Sphere(benchmark::State &state) {
     }
   }
 }
-BENCHMARK_TEMPLATE(BM_nanoRT_TRAVERSE_REALISTIC_BVH_Sphere, float)->DenseRange(2, 6, 1)->Unit(benchmark::kMillisecond);
-BENCHMARK_TEMPLATE(BM_nanoRT_TRAVERSE_REALISTIC_BVH_Sphere, double)->DenseRange(2, 6, 1)->Unit(benchmark::kMillisecond);
+BENCHMARK_TEMPLATE(BM_nanoRT_TRAVERSE_REALISTIC_BVH_Sphere, float)->DenseRange(2, 9, 1)->Unit(benchmark::kMillisecond);
+BENCHMARK_TEMPLATE(BM_nanoRT_TRAVERSE_REALISTIC_BVH_Sphere, double)->DenseRange(2, 9, 1)->Unit(benchmark::kMillisecond);
 
 template<typename T>
 static void BM_bvh_TRAVERSE_REALISTIC_BVH_Sphere_SweepSAH(benchmark::State &state) {

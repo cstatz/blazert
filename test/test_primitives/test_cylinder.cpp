@@ -36,12 +36,12 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
         Vec3r<T> bmin, bmax;
         cylinders.BoundingBox(bmin, bmax, 0);
 
-        REQUIRE(bmin[0] == Approx(-1));
-        REQUIRE(bmin[1] == Approx(-1));
-        REQUIRE(bmin[2] == Approx(0));
-        REQUIRE(bmax[0] == Approx(1));
-        REQUIRE(bmax[1] == Approx(1));
-        REQUIRE(bmax[2] == Approx(2));
+        CHECK(bmin[0] == Approx(-1));
+        CHECK(bmin[1] == Approx(-1));
+        CHECK(bmin[2] == Approx(0));
+        CHECK(bmax[0] == Approx(1));
+        CHECK(bmax[1] == Approx(1));
+        CHECK(bmax[2] == Approx(2));
       }
       SUBCASE("rotated about (0,1,0)") {
         const Vec3r<T> axis{0, 1, 0};
@@ -52,12 +52,12 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
         Vec3r<T> bmin, bmax;
         cylinders.BoundingBox(bmin, bmax, 0);
 
-        REQUIRE(bmin[0] == Approx(0));
-        REQUIRE(bmin[1] == Approx(-1));
-        REQUIRE(bmin[2] == Approx(-1));
-        REQUIRE(bmax[0] == Approx(2));
-        REQUIRE(bmax[1] == Approx(1));
-        REQUIRE(bmax[2] == Approx(1));
+        CHECK(bmin[0] == Approx(0));
+        CHECK(bmin[1] == Approx(-1));
+        CHECK(bmin[2] == Approx(-1));
+        CHECK(bmax[0] == Approx(2));
+        CHECK(bmax[1] == Approx(1));
+        CHECK(bmax[2] == Approx(1));
       }
     }
     SUBCASE("shifted center") {
@@ -72,12 +72,12 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
         Vec3r<T> bmin, bmax;
         cylinders.BoundingBox(bmin, bmax, 0);
 
-        REQUIRE(bmin[0] == Approx(-1));
-        REQUIRE(bmin[1] == Approx(0));
-        REQUIRE(bmin[2] == Approx(4));
-        REQUIRE(bmax[0] == Approx(1));
-        REQUIRE(bmax[1] == Approx(2));
-        REQUIRE(bmax[2] == Approx(6));
+        CHECK(bmin[0] == Approx(-1));
+        CHECK(bmin[1] == Approx(0));
+        CHECK(bmin[2] == Approx(4));
+        CHECK(bmax[0] == Approx(1));
+        CHECK(bmax[1] == Approx(2));
+        CHECK(bmax[2] == Approx(6));
       }
       SUBCASE("rotated about (0,1,0)") {
         const Vec3r<T> axis{0, 1, 0};
@@ -88,12 +88,12 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
         Vec3r<T> bmin, bmax;
         cylinders.BoundingBox(bmin, bmax, 0);
 
-        REQUIRE(bmin[0] == Approx(0));
-        REQUIRE(bmin[1] == Approx(0));
-        REQUIRE(bmin[2] == Approx(3));
-        REQUIRE(bmax[0] == Approx(2));
-        REQUIRE(bmax[1] == Approx(2));
-        REQUIRE(bmax[2] == Approx(5));
+        CHECK(bmin[0] == Approx(0));
+        CHECK(bmin[1] == Approx(0));
+        CHECK(bmin[2] == Approx(3));
+        CHECK(bmax[0] == Approx(2));
+        CHECK(bmax[1] == Approx(2));
+        CHECK(bmax[2] == Approx(5));
       }
     }
   }
@@ -126,12 +126,12 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               update_intersector(cylinder_intersector, hit_distance, 0);
               post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
 
-              REQUIRE(hit_cylinder);
-              REQUIRE(rayhit.prim_id == 0);
-              REQUIRE(rayhit.hit_distance == Approx(5.5));
-              REQUIRE(rayhit.normal[0] == Approx(0.f));
-              REQUIRE(rayhit.normal[1] == Approx(0.f));
-              REQUIRE(rayhit.normal[2] == Approx(1.f));
+              CHECK(hit_cylinder);
+              CHECK(rayhit.prim_id == 0);
+              CHECK(rayhit.hit_distance == Approx(5.5));
+              CHECK(rayhit.normal[0] == Approx(0.f));
+              CHECK(rayhit.normal[1] == Approx(0.f));
+              CHECK(rayhit.normal[2] == Approx(1.f));
             }
             SUBCASE("oblique incidence on top") {
               Vec3r<T> org1{5.f, 0.f, 7.f};
@@ -152,12 +152,12 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               update_intersector(cylinder_intersector, hit_distance, 0);
               post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
 
-              REQUIRE(hit_cylinder);
-              REQUIRE(rayhit.prim_id == 0);
-              REQUIRE(rayhit.hit_distance == Approx(std::sqrt(50)));
-              REQUIRE(rayhit.normal[0] == Approx(0.f));
-              REQUIRE(rayhit.normal[1] == Approx(0.f));
-              REQUIRE(rayhit.normal[2] == Approx(1.f));
+              CHECK(hit_cylinder);
+              CHECK(rayhit.prim_id == 0);
+              CHECK(rayhit.hit_distance == Approx(std::sqrt(50)));
+              CHECK(rayhit.normal[0] == Approx(0.f));
+              CHECK(rayhit.normal[1] == Approx(0.f));
+              CHECK(rayhit.normal[2] == Approx(1.f));
             }
             SUBCASE("oblique incidence on shell 1") {
               Vec3r<T> org1{5, 0, 5};
@@ -177,12 +177,12 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               update_intersector(cylinder_intersector, hit_distance, 0);
               post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
 
-              REQUIRE(hit_cylinder);
-              REQUIRE(rayhit.prim_id == 0);
-              REQUIRE(rayhit.hit_distance == Approx(std::sqrt(32)));
-              REQUIRE(rayhit.normal[0] == Approx(1.f));
-              REQUIRE(rayhit.normal[1] == Approx(0.f));
-              REQUIRE(rayhit.normal[2] == Approx(0.f));
+              CHECK(hit_cylinder);
+              CHECK(rayhit.prim_id == 0);
+              CHECK(rayhit.hit_distance == Approx(std::sqrt(32)));
+              CHECK(rayhit.normal[0] == Approx(1.f));
+              CHECK(rayhit.normal[1] == Approx(0.f));
+              CHECK(rayhit.normal[2] == Approx(0.f));
             }
             SUBCASE("oblique incidence on shell 2") {
               Vec3r<T> org1{-5, 0, 5};
@@ -202,12 +202,12 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               update_intersector(cylinder_intersector, hit_distance, 0);
               post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
 
-              REQUIRE(hit_cylinder);
-              REQUIRE(rayhit.prim_id == 0);
-              REQUIRE(rayhit.hit_distance == Approx(std::sqrt(32)));
-              REQUIRE(rayhit.normal[0] == Approx(-1.f));
-              REQUIRE(rayhit.normal[1] == Approx(0.f));
-              REQUIRE(rayhit.normal[2] == Approx(0.f));
+              CHECK(hit_cylinder);
+              CHECK(rayhit.prim_id == 0);
+              CHECK(rayhit.hit_distance == Approx(std::sqrt(32)));
+              CHECK(rayhit.normal[0] == Approx(-1.f));
+              CHECK(rayhit.normal[1] == Approx(0.f));
+              CHECK(rayhit.normal[2] == Approx(0.f));
             }
             SUBCASE("oblique incidence on shell 3") {
               Vec3r<T> org1{0, 5, 4};
@@ -227,12 +227,12 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               update_intersector(cylinder_intersector, hit_distance, 0);
               post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
 
-              REQUIRE(hit_cylinder);
-              REQUIRE(rayhit.prim_id == 0);
-              REQUIRE(rayhit.hit_distance == Approx(std::sqrt(18)));
-              REQUIRE(rayhit.normal[0] == Approx(0.f));
-              REQUIRE(rayhit.normal[1] == Approx(1.f));
-              REQUIRE(rayhit.normal[2] == Approx(0.f));
+              CHECK(hit_cylinder);
+              CHECK(rayhit.prim_id == 0);
+              CHECK(rayhit.hit_distance == Approx(std::sqrt(18)));
+              CHECK(rayhit.normal[0] == Approx(0.f));
+              CHECK(rayhit.normal[1] == Approx(1.f));
+              CHECK(rayhit.normal[2] == Approx(0.f));
             }
             SUBCASE("oblique incidence on shell 4") {
               Vec3r<T> org1{0, -5, 4};
@@ -252,12 +252,12 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               update_intersector(cylinder_intersector, hit_distance, 0);
               post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
 
-              REQUIRE(hit_cylinder);
-              REQUIRE(rayhit.prim_id == 0);
-              REQUIRE(rayhit.hit_distance == Approx(std::sqrt(18)));
-              REQUIRE(rayhit.normal[0] == Approx(0.f));
-              REQUIRE(rayhit.normal[1] == Approx(-1.f));
-              REQUIRE(rayhit.normal[2] == Approx(0.f));
+              CHECK(hit_cylinder);
+              CHECK(rayhit.prim_id == 0);
+              CHECK(rayhit.hit_distance == Approx(std::sqrt(18)));
+              CHECK(rayhit.normal[0] == Approx(0.f));
+              CHECK(rayhit.normal[1] == Approx(-1.f));
+              CHECK(rayhit.normal[2] == Approx(0.f));
             }
           }
           SUBCASE("origin below") {
@@ -280,12 +280,12 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               update_intersector(cylinder_intersector, hit_distance, 0);
               post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
 
-              REQUIRE(hit_cylinder);
-              REQUIRE(rayhit.prim_id == 0);
-              REQUIRE(rayhit.hit_distance == Approx(7.5));
-              REQUIRE(rayhit.normal[0] == Approx(0.f));
-              REQUIRE(rayhit.normal[1] == Approx(0.f));
-              REQUIRE(rayhit.normal[2] == Approx(-1.f));
+              CHECK(hit_cylinder);
+              CHECK(rayhit.prim_id == 0);
+              CHECK(rayhit.hit_distance == Approx(7.5));
+              CHECK(rayhit.normal[0] == Approx(0.f));
+              CHECK(rayhit.normal[1] == Approx(0.f));
+              CHECK(rayhit.normal[2] == Approx(-1.f));
             }
             SUBCASE("oblique incidence on bottom") {
               Vec3r<T> org1{5.f, 0.f, -5.f};
@@ -306,12 +306,12 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               update_intersector(cylinder_intersector, hit_distance, 0);
               post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
 
-              REQUIRE(hit_cylinder);
-              REQUIRE(rayhit.prim_id == 0);
-              REQUIRE(rayhit.hit_distance == Approx(std::sqrt(50)));
-              REQUIRE(rayhit.normal[0] == Approx(0.f));
-              REQUIRE(rayhit.normal[1] == Approx(0.f));
-              REQUIRE(rayhit.normal[2] == Approx(-1.f));
+              CHECK(hit_cylinder);
+              CHECK(rayhit.prim_id == 0);
+              CHECK(rayhit.hit_distance == Approx(std::sqrt(50)));
+              CHECK(rayhit.normal[0] == Approx(0.f));
+              CHECK(rayhit.normal[1] == Approx(0.f));
+              CHECK(rayhit.normal[2] == Approx(-1.f));
             }
             SUBCASE("oblique incidence on shell 1") {
               Vec3r<T> org1{5, 0, -3};
@@ -331,12 +331,12 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               update_intersector(cylinder_intersector, hit_distance, 0);
               post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
 
-              REQUIRE(hit_cylinder);
-              REQUIRE(rayhit.prim_id == 0);
-              REQUIRE(rayhit.hit_distance == Approx(std::sqrt(32)));
-              REQUIRE(rayhit.normal[0] == Approx(1.f));
-              REQUIRE(rayhit.normal[1] == Approx(0.f));
-              REQUIRE(rayhit.normal[2] == Approx(0.f));
+              CHECK(hit_cylinder);
+              CHECK(rayhit.prim_id == 0);
+              CHECK(rayhit.hit_distance == Approx(std::sqrt(32)));
+              CHECK(rayhit.normal[0] == Approx(1.f));
+              CHECK(rayhit.normal[1] == Approx(0.f));
+              CHECK(rayhit.normal[2] == Approx(0.f));
             }
             SUBCASE("oblique incidence on shell 2") {
               Vec3r<T> org1{-5, 0, -3};
@@ -356,12 +356,12 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               update_intersector(cylinder_intersector, hit_distance, 0);
               post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
 
-              REQUIRE(hit_cylinder);
-              REQUIRE(rayhit.prim_id == 0);
-              REQUIRE(rayhit.hit_distance == Approx(std::sqrt(32)));
-              REQUIRE(rayhit.normal[0] == Approx(-1.f));
-              REQUIRE(rayhit.normal[1] == Approx(0.f));
-              REQUIRE(rayhit.normal[2] == Approx(0.f));
+              CHECK(hit_cylinder);
+              CHECK(rayhit.prim_id == 0);
+              CHECK(rayhit.hit_distance == Approx(std::sqrt(32)));
+              CHECK(rayhit.normal[0] == Approx(-1.f));
+              CHECK(rayhit.normal[1] == Approx(0.f));
+              CHECK(rayhit.normal[2] == Approx(0.f));
             }
             SUBCASE("oblique incidence on shell 3") {
               Vec3r<T> org1{0, 5, -2};
@@ -381,12 +381,12 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               update_intersector(cylinder_intersector, hit_distance, 0);
               post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
 
-              REQUIRE(hit_cylinder);
-              REQUIRE(rayhit.prim_id == 0);
-              REQUIRE(rayhit.hit_distance == Approx(std::sqrt(18)));
-              REQUIRE(rayhit.normal[0] == Approx(0.f));
-              REQUIRE(rayhit.normal[1] == Approx(1.f));
-              REQUIRE(rayhit.normal[2] == Approx(0.f));
+              CHECK(hit_cylinder);
+              CHECK(rayhit.prim_id == 0);
+              CHECK(rayhit.hit_distance == Approx(std::sqrt(18)));
+              CHECK(rayhit.normal[0] == Approx(0.f));
+              CHECK(rayhit.normal[1] == Approx(1.f));
+              CHECK(rayhit.normal[2] == Approx(0.f));
             }
             SUBCASE("oblique incidence on shell 4") {
               Vec3r<T> org1{0, -5, -2};
@@ -406,12 +406,12 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               update_intersector(cylinder_intersector, hit_distance, 0);
               post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
 
-              REQUIRE(hit_cylinder);
-              REQUIRE(rayhit.prim_id == 0);
-              REQUIRE(rayhit.hit_distance == Approx(std::sqrt(18)));
-              REQUIRE(rayhit.normal[0] == Approx(0.f));
-              REQUIRE(rayhit.normal[1] == Approx(-1.f));
-              REQUIRE(rayhit.normal[2] == Approx(0.f));
+              CHECK(hit_cylinder);
+              CHECK(rayhit.prim_id == 0);
+              CHECK(rayhit.hit_distance == Approx(std::sqrt(18)));
+              CHECK(rayhit.normal[0] == Approx(0.f));
+              CHECK(rayhit.normal[1] == Approx(-1.f));
+              CHECK(rayhit.normal[2] == Approx(0.f));
             }
           }
           SUBCASE("origin around shell") {
@@ -434,12 +434,12 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
                 update_intersector(cylinder_intersector, hit_distance, 0);
                 post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
 
-                REQUIRE(hit_cylinder);
-                REQUIRE(rayhit.prim_id == 0);
-                REQUIRE(rayhit.hit_distance == Approx(4));
-                REQUIRE(rayhit.normal[0] == Approx(1.f));
-                REQUIRE(rayhit.normal[1] == Approx(0.f));
-                REQUIRE(rayhit.normal[2] == Approx(0.f));
+                CHECK(hit_cylinder);
+                CHECK(rayhit.prim_id == 0);
+                CHECK(rayhit.hit_distance == Approx(4));
+                CHECK(rayhit.normal[0] == Approx(1.f));
+                CHECK(rayhit.normal[1] == Approx(0.f));
+                CHECK(rayhit.normal[2] == Approx(0.f));
               }
               SUBCASE("origin: x-") {
                 Vec3r<T> org1{-5, 0, 1};
@@ -459,12 +459,12 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
                 update_intersector(cylinder_intersector, hit_distance, 0);
                 post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
 
-                REQUIRE(hit_cylinder);
-                REQUIRE(rayhit.prim_id == 0);
-                REQUIRE(rayhit.hit_distance == Approx(4));
-                REQUIRE(rayhit.normal[0] == Approx(-1.f));
-                REQUIRE(rayhit.normal[1] == Approx(0.f));
-                REQUIRE(rayhit.normal[2] == Approx(0.f));
+                CHECK(hit_cylinder);
+                CHECK(rayhit.prim_id == 0);
+                CHECK(rayhit.hit_distance == Approx(4));
+                CHECK(rayhit.normal[0] == Approx(-1.f));
+                CHECK(rayhit.normal[1] == Approx(0.f));
+                CHECK(rayhit.normal[2] == Approx(0.f));
               }
               SUBCASE("origin: y+") {
                 Vec3r<T> org1{0, 5, 1};
@@ -484,12 +484,12 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
                 update_intersector(cylinder_intersector, hit_distance, 0);
                 post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
 
-                REQUIRE(hit_cylinder);
-                REQUIRE(rayhit.prim_id == 0);
-                REQUIRE(rayhit.hit_distance == Approx(3));
-                REQUIRE(rayhit.normal[0] == Approx(0.f));
-                REQUIRE(rayhit.normal[1] == Approx(1.f));
-                REQUIRE(rayhit.normal[2] == Approx(0.f));
+                CHECK(hit_cylinder);
+                CHECK(rayhit.prim_id == 0);
+                CHECK(rayhit.hit_distance == Approx(3));
+                CHECK(rayhit.normal[0] == Approx(0.f));
+                CHECK(rayhit.normal[1] == Approx(1.f));
+                CHECK(rayhit.normal[2] == Approx(0.f));
               }
               SUBCASE("origin: y-") {
                 Vec3r<T> org1{0, -5, 1};
@@ -509,12 +509,12 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
                 update_intersector(cylinder_intersector, hit_distance, 0);
                 post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
 
-                REQUIRE(hit_cylinder);
-                REQUIRE(rayhit.prim_id == 0);
-                REQUIRE(rayhit.hit_distance == Approx(3));
-                REQUIRE(rayhit.normal[0] == Approx(0.f));
-                REQUIRE(rayhit.normal[1] == Approx(-1.f));
-                REQUIRE(rayhit.normal[2] == Approx(0.f));
+                CHECK(hit_cylinder);
+                CHECK(rayhit.prim_id == 0);
+                CHECK(rayhit.hit_distance == Approx(3));
+                CHECK(rayhit.normal[0] == Approx(0.f));
+                CHECK(rayhit.normal[1] == Approx(-1.f));
+                CHECK(rayhit.normal[2] == Approx(0.f));
               }
             }
           }
@@ -537,12 +537,12 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               update_intersector(cylinder_intersector, hit_distance, 0);
               post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
 
-              REQUIRE(hit_cylinder);
-              REQUIRE(rayhit.prim_id == 0);
-              REQUIRE(rayhit.hit_distance == Approx(1));
-              REQUIRE(rayhit.normal[0] == Approx(0.f));
-              REQUIRE(rayhit.normal[1] == Approx(0.f));
-              REQUIRE(rayhit.normal[2] == Approx(1.f));
+              CHECK(hit_cylinder);
+              CHECK(rayhit.prim_id == 0);
+              CHECK(rayhit.hit_distance == Approx(1));
+              CHECK(rayhit.normal[0] == Approx(0.f));
+              CHECK(rayhit.normal[1] == Approx(0.f));
+              CHECK(rayhit.normal[2] == Approx(1.f));
             }
             SUBCASE("hit bottom") {
               Vec3r<T> org1{0, 0, 1};
@@ -562,12 +562,12 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               update_intersector(cylinder_intersector, hit_distance, 0);
               post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
 
-              REQUIRE(hit_cylinder);
-              REQUIRE(rayhit.prim_id == 0);
-              REQUIRE(rayhit.hit_distance == Approx(1));
-              REQUIRE(rayhit.normal[0] == Approx(0.f));
-              REQUIRE(rayhit.normal[1] == Approx(0.f));
-              REQUIRE(rayhit.normal[2] == Approx(-1.f));
+              CHECK(hit_cylinder);
+              CHECK(rayhit.prim_id == 0);
+              CHECK(rayhit.hit_distance == Approx(1));
+              CHECK(rayhit.normal[0] == Approx(0.f));
+              CHECK(rayhit.normal[1] == Approx(0.f));
+              CHECK(rayhit.normal[2] == Approx(-1.f));
             }
             SUBCASE("hit shell 1") {
               Vec3r<T> org1{0, 0, 1};
@@ -587,12 +587,12 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               update_intersector(cylinder_intersector, hit_distance, 0);
               post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
 
-              REQUIRE(hit_cylinder);
-              REQUIRE(rayhit.prim_id == 0);
-              REQUIRE(rayhit.hit_distance == Approx(1));
-              REQUIRE(rayhit.normal[0] == Approx(-1.f));
-              REQUIRE(rayhit.normal[1] == Approx(0.f));
-              REQUIRE(rayhit.normal[2] == Approx(0.f));
+              CHECK(hit_cylinder);
+              CHECK(rayhit.prim_id == 0);
+              CHECK(rayhit.hit_distance == Approx(1));
+              CHECK(rayhit.normal[0] == Approx(-1.f));
+              CHECK(rayhit.normal[1] == Approx(0.f));
+              CHECK(rayhit.normal[2] == Approx(0.f));
             }
             SUBCASE("hit shell 2") {
               Vec3r<T> org1{0, 0, 1};
@@ -612,12 +612,12 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               update_intersector(cylinder_intersector, hit_distance, 0);
               post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
 
-              REQUIRE(hit_cylinder);
-              REQUIRE(rayhit.prim_id == 0);
-              REQUIRE(rayhit.hit_distance == Approx(1));
-              REQUIRE(rayhit.normal[0] == Approx(1.f));
-              REQUIRE(rayhit.normal[1] == Approx(0.f));
-              REQUIRE(rayhit.normal[2] == Approx(0.f));
+              CHECK(hit_cylinder);
+              CHECK(rayhit.prim_id == 0);
+              CHECK(rayhit.hit_distance == Approx(1));
+              CHECK(rayhit.normal[0] == Approx(1.f));
+              CHECK(rayhit.normal[1] == Approx(0.f));
+              CHECK(rayhit.normal[2] == Approx(0.f));
             }
             SUBCASE("hit shell 3") {
               Vec3r<T> org1{0, 0, 1};
@@ -637,12 +637,12 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               update_intersector(cylinder_intersector, hit_distance, 0);
               post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
 
-              REQUIRE(hit_cylinder);
-              REQUIRE(rayhit.prim_id == 0);
-              REQUIRE(rayhit.hit_distance == Approx(2));
-              REQUIRE(rayhit.normal[0] == Approx(0.f));
-              REQUIRE(rayhit.normal[1] == Approx(-1.f));
-              REQUIRE(rayhit.normal[2] == Approx(0.f));
+              CHECK(hit_cylinder);
+              CHECK(rayhit.prim_id == 0);
+              CHECK(rayhit.hit_distance == Approx(2));
+              CHECK(rayhit.normal[0] == Approx(0.f));
+              CHECK(rayhit.normal[1] == Approx(-1.f));
+              CHECK(rayhit.normal[2] == Approx(0.f));
             }
             SUBCASE("hit shell 4") {
               Vec3r<T> org1{0, 0, 1};
@@ -662,12 +662,12 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               update_intersector(cylinder_intersector, hit_distance, 0);
               post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
 
-              REQUIRE(hit_cylinder);
-              REQUIRE(rayhit.prim_id == 0);
-              REQUIRE(rayhit.hit_distance == Approx(2));
-              REQUIRE(rayhit.normal[0] == Approx(0.f));
-              REQUIRE(rayhit.normal[1] == Approx(1.f));
-              REQUIRE(rayhit.normal[2] == Approx(0.f));
+              CHECK(hit_cylinder);
+              CHECK(rayhit.prim_id == 0);
+              CHECK(rayhit.hit_distance == Approx(2));
+              CHECK(rayhit.normal[0] == Approx(0.f));
+              CHECK(rayhit.normal[1] == Approx(1.f));
+              CHECK(rayhit.normal[2] == Approx(0.f));
             }
           }
         }
@@ -693,12 +693,12 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               update_intersector(cylinder_intersector, hit_distance, 0);
               post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
 
-              REQUIRE_FALSE(hit_cylinder);
-              REQUIRE_FALSE(rayhit.prim_id == 0);
-              REQUIRE(rayhit.hit_distance == std::numeric_limits<T>::max());
-              REQUIRE(rayhit.normal[0] == Approx(0.f));
-              REQUIRE(rayhit.normal[1] == Approx(0.f));
-              REQUIRE(rayhit.normal[2] == Approx(0.f));
+              CHECK_FALSE(hit_cylinder);
+              CHECK_FALSE(rayhit.prim_id == 0);
+              CHECK(rayhit.hit_distance == std::numeric_limits<T>::max());
+              CHECK(rayhit.normal[0] == Approx(0.f));
+              CHECK(rayhit.normal[1] == Approx(0.f));
+              CHECK(rayhit.normal[2] == Approx(0.f));
             }
             SUBCASE("oblique incidence on top") {
               Vec3r<T> org1{5.f, 0.f, 7.f};
@@ -719,12 +719,12 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               update_intersector(cylinder_intersector, hit_distance, 0);
               post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
 
-              REQUIRE_FALSE(hit_cylinder);
-              REQUIRE_FALSE(rayhit.prim_id == 0);
-              REQUIRE(rayhit.hit_distance == std::numeric_limits<T>::max());
-              REQUIRE(rayhit.normal[0] == Approx(0.f));
-              REQUIRE(rayhit.normal[1] == Approx(0.f));
-              REQUIRE(rayhit.normal[2] == Approx(0.f));
+              CHECK_FALSE(hit_cylinder);
+              CHECK_FALSE(rayhit.prim_id == 0);
+              CHECK(rayhit.hit_distance == std::numeric_limits<T>::max());
+              CHECK(rayhit.normal[0] == Approx(0.f));
+              CHECK(rayhit.normal[1] == Approx(0.f));
+              CHECK(rayhit.normal[2] == Approx(0.f));
             }
             SUBCASE("oblique incidence on shell 1") {
               Vec3r<T> org1{5, 0, 5};
@@ -744,12 +744,12 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               update_intersector(cylinder_intersector, hit_distance, 0);
               post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
 
-              REQUIRE_FALSE(hit_cylinder);
-              REQUIRE_FALSE(rayhit.prim_id == 0);
-              REQUIRE(rayhit.hit_distance == std::numeric_limits<T>::max());
-              REQUIRE(rayhit.normal[0] == Approx(0.f));
-              REQUIRE(rayhit.normal[1] == Approx(0.f));
-              REQUIRE(rayhit.normal[2] == Approx(0.f));
+              CHECK_FALSE(hit_cylinder);
+              CHECK_FALSE(rayhit.prim_id == 0);
+              CHECK(rayhit.hit_distance == std::numeric_limits<T>::max());
+              CHECK(rayhit.normal[0] == Approx(0.f));
+              CHECK(rayhit.normal[1] == Approx(0.f));
+              CHECK(rayhit.normal[2] == Approx(0.f));
             }
             SUBCASE("oblique incidence on shell 2") {
               Vec3r<T> org1{-5, 0, 5};
@@ -769,12 +769,12 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               update_intersector(cylinder_intersector, hit_distance, 0);
               post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
 
-              REQUIRE_FALSE(hit_cylinder);
-              REQUIRE_FALSE(rayhit.prim_id == 0);
-              REQUIRE(rayhit.hit_distance == std::numeric_limits<T>::max());
-              REQUIRE(rayhit.normal[0] == Approx(0.f));
-              REQUIRE(rayhit.normal[1] == Approx(0.f));
-              REQUIRE(rayhit.normal[2] == Approx(0.f));
+              CHECK_FALSE(hit_cylinder);
+              CHECK_FALSE(rayhit.prim_id == 0);
+              CHECK(rayhit.hit_distance == std::numeric_limits<T>::max());
+              CHECK(rayhit.normal[0] == Approx(0.f));
+              CHECK(rayhit.normal[1] == Approx(0.f));
+              CHECK(rayhit.normal[2] == Approx(0.f));
             }
             SUBCASE("oblique incidence on shell 3") {
               Vec3r<T> org1{0, 5, 4};
@@ -794,12 +794,12 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               update_intersector(cylinder_intersector, hit_distance, 0);
               post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
 
-              REQUIRE_FALSE(hit_cylinder);
-              REQUIRE_FALSE(rayhit.prim_id == 0);
-              REQUIRE(rayhit.hit_distance == std::numeric_limits<T>::max());
-              REQUIRE(rayhit.normal[0] == Approx(0.f));
-              REQUIRE(rayhit.normal[1] == Approx(0.f));
-              REQUIRE(rayhit.normal[2] == Approx(0.f));
+              CHECK_FALSE(hit_cylinder);
+              CHECK_FALSE(rayhit.prim_id == 0);
+              CHECK(rayhit.hit_distance == std::numeric_limits<T>::max());
+              CHECK(rayhit.normal[0] == Approx(0.f));
+              CHECK(rayhit.normal[1] == Approx(0.f));
+              CHECK(rayhit.normal[2] == Approx(0.f));
             }
             SUBCASE("oblique incidence on shell 4") {
               Vec3r<T> org1{0, -5, 4};
@@ -819,12 +819,12 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               update_intersector(cylinder_intersector, hit_distance, 0);
               post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
 
-              REQUIRE_FALSE(hit_cylinder);
-              REQUIRE_FALSE(rayhit.prim_id == 0);
-              REQUIRE(rayhit.hit_distance == std::numeric_limits<T>::max());
-              REQUIRE(rayhit.normal[0] == Approx(0.f));
-              REQUIRE(rayhit.normal[1] == Approx(0.f));
-              REQUIRE(rayhit.normal[2] == Approx(0.f));
+              CHECK_FALSE(hit_cylinder);
+              CHECK_FALSE(rayhit.prim_id == 0);
+              CHECK(rayhit.hit_distance == std::numeric_limits<T>::max());
+              CHECK(rayhit.normal[0] == Approx(0.f));
+              CHECK(rayhit.normal[1] == Approx(0.f));
+              CHECK(rayhit.normal[2] == Approx(0.f));
             }
           }
           SUBCASE("origin below (direction inverted)") {
@@ -847,12 +847,12 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               update_intersector(cylinder_intersector, hit_distance, 0);
               post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
 
-              REQUIRE_FALSE(hit_cylinder);
-              REQUIRE_FALSE(rayhit.prim_id == 0);
-              REQUIRE(rayhit.hit_distance == std::numeric_limits<T>::max());
-              REQUIRE(rayhit.normal[0] == Approx(0.f));
-              REQUIRE(rayhit.normal[1] == Approx(0.f));
-              REQUIRE(rayhit.normal[2] == Approx(0.f));
+              CHECK_FALSE(hit_cylinder);
+              CHECK_FALSE(rayhit.prim_id == 0);
+              CHECK(rayhit.hit_distance == std::numeric_limits<T>::max());
+              CHECK(rayhit.normal[0] == Approx(0.f));
+              CHECK(rayhit.normal[1] == Approx(0.f));
+              CHECK(rayhit.normal[2] == Approx(0.f));
             }
             SUBCASE("oblique incidence on bottom") {
               Vec3r<T> org1{5.f, 0.f, -5.f};
@@ -873,12 +873,12 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               update_intersector(cylinder_intersector, hit_distance, 0);
               post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
 
-              REQUIRE_FALSE(hit_cylinder);
-              REQUIRE_FALSE(rayhit.prim_id == 0);
-              REQUIRE(rayhit.hit_distance == std::numeric_limits<T>::max());
-              REQUIRE(rayhit.normal[0] == Approx(0.f));
-              REQUIRE(rayhit.normal[1] == Approx(0.f));
-              REQUIRE(rayhit.normal[2] == Approx(0.f));
+              CHECK_FALSE(hit_cylinder);
+              CHECK_FALSE(rayhit.prim_id == 0);
+              CHECK(rayhit.hit_distance == std::numeric_limits<T>::max());
+              CHECK(rayhit.normal[0] == Approx(0.f));
+              CHECK(rayhit.normal[1] == Approx(0.f));
+              CHECK(rayhit.normal[2] == Approx(0.f));
             }
             SUBCASE("oblique incidence on shell 1") {
               Vec3r<T> org1{5, 0, -3};
@@ -898,12 +898,12 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               update_intersector(cylinder_intersector, hit_distance, 0);
               post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
 
-              REQUIRE_FALSE(hit_cylinder);
-              REQUIRE_FALSE(rayhit.prim_id == 0);
-              REQUIRE(rayhit.hit_distance == std::numeric_limits<T>::max());
-              REQUIRE(rayhit.normal[0] == Approx(0.f));
-              REQUIRE(rayhit.normal[1] == Approx(0.f));
-              REQUIRE(rayhit.normal[2] == Approx(0.f));
+              CHECK_FALSE(hit_cylinder);
+              CHECK_FALSE(rayhit.prim_id == 0);
+              CHECK(rayhit.hit_distance == std::numeric_limits<T>::max());
+              CHECK(rayhit.normal[0] == Approx(0.f));
+              CHECK(rayhit.normal[1] == Approx(0.f));
+              CHECK(rayhit.normal[2] == Approx(0.f));
             }
             SUBCASE("oblique incidence on shell 2") {
               Vec3r<T> org1{-5, 0, -3};
@@ -923,12 +923,12 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               update_intersector(cylinder_intersector, hit_distance, 0);
               post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
 
-              REQUIRE_FALSE(hit_cylinder);
-              REQUIRE_FALSE(rayhit.prim_id == 0);
-              REQUIRE(rayhit.hit_distance == std::numeric_limits<T>::max());
-              REQUIRE(rayhit.normal[0] == Approx(0.f));
-              REQUIRE(rayhit.normal[1] == Approx(0.f));
-              REQUIRE(rayhit.normal[2] == Approx(0.f));
+              CHECK_FALSE(hit_cylinder);
+              CHECK_FALSE(rayhit.prim_id == 0);
+              CHECK(rayhit.hit_distance == std::numeric_limits<T>::max());
+              CHECK(rayhit.normal[0] == Approx(0.f));
+              CHECK(rayhit.normal[1] == Approx(0.f));
+              CHECK(rayhit.normal[2] == Approx(0.f));
             }
             SUBCASE("oblique incidence on shell 3") {
               Vec3r<T> org1{0, 5, -2};
@@ -948,12 +948,12 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               update_intersector(cylinder_intersector, hit_distance, 0);
               post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
 
-              REQUIRE_FALSE(hit_cylinder);
-              REQUIRE_FALSE(rayhit.prim_id == 0);
-              REQUIRE(rayhit.hit_distance == std::numeric_limits<T>::max());
-              REQUIRE(rayhit.normal[0] == Approx(0.f));
-              REQUIRE(rayhit.normal[1] == Approx(0.f));
-              REQUIRE(rayhit.normal[2] == Approx(0.f));
+              CHECK_FALSE(hit_cylinder);
+              CHECK_FALSE(rayhit.prim_id == 0);
+              CHECK(rayhit.hit_distance == std::numeric_limits<T>::max());
+              CHECK(rayhit.normal[0] == Approx(0.f));
+              CHECK(rayhit.normal[1] == Approx(0.f));
+              CHECK(rayhit.normal[2] == Approx(0.f));
             }
             SUBCASE("oblique incidence on shell 4") {
               Vec3r<T> org1{0, -5, -2};
@@ -973,12 +973,12 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               update_intersector(cylinder_intersector, hit_distance, 0);
               post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
 
-              REQUIRE_FALSE(hit_cylinder);
-              REQUIRE_FALSE(rayhit.prim_id == 0);
-              REQUIRE(rayhit.hit_distance == std::numeric_limits<T>::max());
-              REQUIRE(rayhit.normal[0] == Approx(0.f));
-              REQUIRE(rayhit.normal[1] == Approx(0.f));
-              REQUIRE(rayhit.normal[2] == Approx(0.f));
+              CHECK_FALSE(hit_cylinder);
+              CHECK_FALSE(rayhit.prim_id == 0);
+              CHECK(rayhit.hit_distance == std::numeric_limits<T>::max());
+              CHECK(rayhit.normal[0] == Approx(0.f));
+              CHECK(rayhit.normal[1] == Approx(0.f));
+              CHECK(rayhit.normal[2] == Approx(0.f));
             }
           }
           SUBCASE("origin around shell (direction inverted") {
@@ -1001,12 +1001,12 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
                 update_intersector(cylinder_intersector, hit_distance, 0);
                 post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
 
-                REQUIRE_FALSE(hit_cylinder);
-                REQUIRE_FALSE(rayhit.prim_id == 0);
-                REQUIRE(rayhit.hit_distance == std::numeric_limits<T>::max());
-                REQUIRE(rayhit.normal[0] == Approx(0.f));
-                REQUIRE(rayhit.normal[1] == Approx(0.f));
-                REQUIRE(rayhit.normal[2] == Approx(0.f));
+                CHECK_FALSE(hit_cylinder);
+                CHECK_FALSE(rayhit.prim_id == 0);
+                CHECK(rayhit.hit_distance == std::numeric_limits<T>::max());
+                CHECK(rayhit.normal[0] == Approx(0.f));
+                CHECK(rayhit.normal[1] == Approx(0.f));
+                CHECK(rayhit.normal[2] == Approx(0.f));
               }
               SUBCASE("origin: x-") {
                 Vec3r<T> org1{-5, 0, 1};
@@ -1026,12 +1026,12 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
                 update_intersector(cylinder_intersector, hit_distance, 0);
                 post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
 
-                REQUIRE_FALSE(hit_cylinder);
-                REQUIRE_FALSE(rayhit.prim_id == 0);
-                REQUIRE(rayhit.hit_distance == std::numeric_limits<T>::max());
-                REQUIRE(rayhit.normal[0] == Approx(0.f));
-                REQUIRE(rayhit.normal[1] == Approx(0.f));
-                REQUIRE(rayhit.normal[2] == Approx(0.f));
+                CHECK_FALSE(hit_cylinder);
+                CHECK_FALSE(rayhit.prim_id == 0);
+                CHECK(rayhit.hit_distance == std::numeric_limits<T>::max());
+                CHECK(rayhit.normal[0] == Approx(0.f));
+                CHECK(rayhit.normal[1] == Approx(0.f));
+                CHECK(rayhit.normal[2] == Approx(0.f));
               }
               SUBCASE("origin: y+") {
                 Vec3r<T> org1{0, 5, 1};
@@ -1051,12 +1051,12 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
                 update_intersector(cylinder_intersector, hit_distance, 0);
                 post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
 
-                REQUIRE_FALSE(hit_cylinder);
-                REQUIRE_FALSE(rayhit.prim_id == 0);
-                REQUIRE(rayhit.hit_distance == std::numeric_limits<T>::max());
-                REQUIRE(rayhit.normal[0] == Approx(0.f));
-                REQUIRE(rayhit.normal[1] == Approx(0.f));
-                REQUIRE(rayhit.normal[2] == Approx(0.f));
+                CHECK_FALSE(hit_cylinder);
+                CHECK_FALSE(rayhit.prim_id == 0);
+                CHECK(rayhit.hit_distance == std::numeric_limits<T>::max());
+                CHECK(rayhit.normal[0] == Approx(0.f));
+                CHECK(rayhit.normal[1] == Approx(0.f));
+                CHECK(rayhit.normal[2] == Approx(0.f));
               }
               SUBCASE("origin: y-") {
                 Vec3r<T> org1{0, -5, 1};
@@ -1076,12 +1076,12 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
                 update_intersector(cylinder_intersector, hit_distance, 0);
                 post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
 
-                REQUIRE_FALSE(hit_cylinder);
-                REQUIRE_FALSE(rayhit.prim_id == 0);
-                REQUIRE(rayhit.hit_distance == std::numeric_limits<T>::max());
-                REQUIRE(rayhit.normal[0] == Approx(0.f));
-                REQUIRE(rayhit.normal[1] == Approx(0.f));
-                REQUIRE(rayhit.normal[2] == Approx(0.f));
+                CHECK_FALSE(hit_cylinder);
+                CHECK_FALSE(rayhit.prim_id == 0);
+                CHECK(rayhit.hit_distance == std::numeric_limits<T>::max());
+                CHECK(rayhit.normal[0] == Approx(0.f));
+                CHECK(rayhit.normal[1] == Approx(0.f));
+                CHECK(rayhit.normal[2] == Approx(0.f));
               }
             }
           }
@@ -1112,12 +1112,12 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
             update_intersector(cylinder_intersector, hit_distance, 0);
             post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
 
-            REQUIRE(hit_cylinder);
-            REQUIRE(rayhit.prim_id == 0);
-            REQUIRE(rayhit.hit_distance == Approx(5.5));
-            REQUIRE(rayhit.normal[0] == Approx(0.f));
-            REQUIRE(rayhit.normal[1] == Approx(0.f));
-            REQUIRE(rayhit.normal[2] == Approx(1.f));
+            CHECK(hit_cylinder);
+            CHECK(rayhit.prim_id == 0);
+            CHECK(rayhit.hit_distance == Approx(5.5));
+            CHECK(rayhit.normal[0] == Approx(0.f));
+            CHECK(rayhit.normal[1] == Approx(0.f));
+            CHECK(rayhit.normal[2] == Approx(1.f));
           }
           SUBCASE("about y-axis") {
             const Vec3r<T> axis{0, 1, 0};
@@ -1142,12 +1142,12 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
             update_intersector(cylinder_intersector, hit_distance, 0);
             post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
 
-            REQUIRE(hit_cylinder);
-            REQUIRE(rayhit.prim_id == 0);
-            REQUIRE(rayhit.hit_distance == Approx(5.5));
-            REQUIRE(rayhit.normal[0] == Approx(1.f));
-            REQUIRE(rayhit.normal[1] == Approx(0.f));
-            REQUIRE(rayhit.normal[2] == Approx(0.f));
+            CHECK(hit_cylinder);
+            CHECK(rayhit.prim_id == 0);
+            CHECK(rayhit.hit_distance == Approx(5.5));
+            CHECK(rayhit.normal[0] == Approx(1.f));
+            CHECK(rayhit.normal[1] == Approx(0.f));
+            CHECK(rayhit.normal[2] == Approx(0.f));
           }
           SUBCASE("about x-axis") {
             const Vec3r<T> axis{1, 0, 0};
@@ -1172,12 +1172,12 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
             update_intersector(cylinder_intersector, hit_distance, 0);
             post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
 
-            REQUIRE(hit_cylinder);
-            REQUIRE(rayhit.prim_id == 0);
-            REQUIRE(rayhit.hit_distance == Approx(7.5));
-            REQUIRE(rayhit.normal[0] == Approx(0.f));
-            REQUIRE(rayhit.normal[1] == Approx(1.f));
-            REQUIRE(rayhit.normal[2] == Approx(0.f));
+            CHECK(hit_cylinder);
+            CHECK(rayhit.prim_id == 0);
+            CHECK(rayhit.hit_distance == Approx(7.5));
+            CHECK(rayhit.normal[0] == Approx(0.f));
+            CHECK(rayhit.normal[1] == Approx(1.f));
+            CHECK(rayhit.normal[2] == Approx(0.f));
           }
         }
         SUBCASE("no hits") {
@@ -1204,12 +1204,12 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
             update_intersector(cylinder_intersector, hit_distance, 0);
             post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
 
-            REQUIRE_FALSE(hit_cylinder);
-            REQUIRE_FALSE(rayhit.prim_id == 0);
-            REQUIRE(rayhit.hit_distance == std::numeric_limits<T>::max());
-            REQUIRE(rayhit.normal[0] == Approx(0.f));
-            REQUIRE(rayhit.normal[1] == Approx(0.f));
-            REQUIRE(rayhit.normal[2] == Approx(0.f));
+            CHECK_FALSE(hit_cylinder);
+            CHECK_FALSE(rayhit.prim_id == 0);
+            CHECK(rayhit.hit_distance == std::numeric_limits<T>::max());
+            CHECK(rayhit.normal[0] == Approx(0.f));
+            CHECK(rayhit.normal[1] == Approx(0.f));
+            CHECK(rayhit.normal[2] == Approx(0.f));
           }
           SUBCASE("about y-axis") {
             const Vec3r<T> axis{0, 1, 0};
@@ -1234,12 +1234,12 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
             update_intersector(cylinder_intersector, hit_distance, 0);
             post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
 
-            REQUIRE_FALSE(hit_cylinder);
-            REQUIRE_FALSE(rayhit.prim_id == 0);
-            REQUIRE(rayhit.hit_distance == std::numeric_limits<T>::max());
-            REQUIRE(rayhit.normal[0] == Approx(0.f));
-            REQUIRE(rayhit.normal[1] == Approx(0.f));
-            REQUIRE(rayhit.normal[2] == Approx(0.f));
+            CHECK_FALSE(hit_cylinder);
+            CHECK_FALSE(rayhit.prim_id == 0);
+            CHECK(rayhit.hit_distance == std::numeric_limits<T>::max());
+            CHECK(rayhit.normal[0] == Approx(0.f));
+            CHECK(rayhit.normal[1] == Approx(0.f));
+            CHECK(rayhit.normal[2] == Approx(0.f));
           }
           SUBCASE("about x-axis") {
             const Vec3r<T> axis{1, 0, 0};
@@ -1264,12 +1264,12 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
             update_intersector(cylinder_intersector, hit_distance, 0);
             post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
 
-            REQUIRE_FALSE(hit_cylinder);
-            REQUIRE_FALSE(rayhit.prim_id == 0);
-            REQUIRE(rayhit.hit_distance == std::numeric_limits<T>::max());
-            REQUIRE(rayhit.normal[0] == Approx(0.f));
-            REQUIRE(rayhit.normal[1] == Approx(0.f));
-            REQUIRE(rayhit.normal[2] == Approx(0.f));
+            CHECK_FALSE(hit_cylinder);
+            CHECK_FALSE(rayhit.prim_id == 0);
+            CHECK(rayhit.hit_distance == std::numeric_limits<T>::max());
+            CHECK(rayhit.normal[0] == Approx(0.f));
+            CHECK(rayhit.normal[1] == Approx(0.f));
+            CHECK(rayhit.normal[2] == Approx(0.f));
           }
         }
       }
@@ -1303,12 +1303,12 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               update_intersector(cylinder_intersector, hit_distance, 0);
               post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
 
-              REQUIRE(hit_cylinder);
-              REQUIRE(rayhit.prim_id == 0);
-              REQUIRE(rayhit.hit_distance == Approx(5.5));
-              REQUIRE(rayhit.normal[0] == Approx(0.f));
-              REQUIRE(rayhit.normal[1] == Approx(0.f));
-              REQUIRE(rayhit.normal[2] == Approx(1.f));
+              CHECK(hit_cylinder);
+              CHECK(rayhit.prim_id == 0);
+              CHECK(rayhit.hit_distance == Approx(5.5));
+              CHECK(rayhit.normal[0] == Approx(0.f));
+              CHECK(rayhit.normal[1] == Approx(0.f));
+              CHECK(rayhit.normal[2] == Approx(1.f));
             }
             SUBCASE("oblique incidence on top") {
               Vec3r<T> org1{6.f, 2.f, 7.f};
@@ -1329,12 +1329,12 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               update_intersector(cylinder_intersector, hit_distance, 0);
               post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
 
-              REQUIRE(hit_cylinder);
-              REQUIRE(rayhit.prim_id == 0);
-              REQUIRE(rayhit.hit_distance == Approx(std::sqrt(50)));
-              REQUIRE(rayhit.normal[0] == Approx(0.f));
-              REQUIRE(rayhit.normal[1] == Approx(0.f));
-              REQUIRE(rayhit.normal[2] == Approx(1.f));
+              CHECK(hit_cylinder);
+              CHECK(rayhit.prim_id == 0);
+              CHECK(rayhit.hit_distance == Approx(std::sqrt(50)));
+              CHECK(rayhit.normal[0] == Approx(0.f));
+              CHECK(rayhit.normal[1] == Approx(0.f));
+              CHECK(rayhit.normal[2] == Approx(1.f));
             }
             SUBCASE("oblique incidence on shell 1") {
               Vec3r<T> org1{6, 2, 5};
@@ -1354,12 +1354,12 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               update_intersector(cylinder_intersector, hit_distance, 0);
               post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
 
-              REQUIRE(hit_cylinder);
-              REQUIRE(rayhit.prim_id == 0);
-              REQUIRE(rayhit.hit_distance == Approx(std::sqrt(32)));
-              REQUIRE(rayhit.normal[0] == Approx(1.f));
-              REQUIRE(rayhit.normal[1] == Approx(0.f));
-              REQUIRE(rayhit.normal[2] == Approx(0.f));
+              CHECK(hit_cylinder);
+              CHECK(rayhit.prim_id == 0);
+              CHECK(rayhit.hit_distance == Approx(std::sqrt(32)));
+              CHECK(rayhit.normal[0] == Approx(1.f));
+              CHECK(rayhit.normal[1] == Approx(0.f));
+              CHECK(rayhit.normal[2] == Approx(0.f));
             }
             SUBCASE("oblique incidence on shell 2") {
               Vec3r<T> org1{-4, 2, 5};
@@ -1379,12 +1379,12 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               update_intersector(cylinder_intersector, hit_distance, 0);
               post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
 
-              REQUIRE(hit_cylinder);
-              REQUIRE(rayhit.prim_id == 0);
-              REQUIRE(rayhit.hit_distance == Approx(std::sqrt(32)));
-              REQUIRE(rayhit.normal[0] == Approx(-1.f));
-              REQUIRE(rayhit.normal[1] == Approx(0.f));
-              REQUIRE(rayhit.normal[2] == Approx(0.f));
+              CHECK(hit_cylinder);
+              CHECK(rayhit.prim_id == 0);
+              CHECK(rayhit.hit_distance == Approx(std::sqrt(32)));
+              CHECK(rayhit.normal[0] == Approx(-1.f));
+              CHECK(rayhit.normal[1] == Approx(0.f));
+              CHECK(rayhit.normal[2] == Approx(0.f));
             }
             SUBCASE("oblique incidence on shell 3") {
               Vec3r<T> org1{1, 7, 4};
@@ -1404,12 +1404,12 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               update_intersector(cylinder_intersector, hit_distance, 0);
               post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
 
-              REQUIRE(hit_cylinder);
-              REQUIRE(rayhit.prim_id == 0);
-              REQUIRE(rayhit.hit_distance == Approx(std::sqrt(18)));
-              REQUIRE(rayhit.normal[0] == Approx(0.f));
-              REQUIRE(rayhit.normal[1] == Approx(1.f));
-              REQUIRE(rayhit.normal[2] == Approx(0.f));
+              CHECK(hit_cylinder);
+              CHECK(rayhit.prim_id == 0);
+              CHECK(rayhit.hit_distance == Approx(std::sqrt(18)));
+              CHECK(rayhit.normal[0] == Approx(0.f));
+              CHECK(rayhit.normal[1] == Approx(1.f));
+              CHECK(rayhit.normal[2] == Approx(0.f));
             }
             SUBCASE("oblique incidence on shell 4") {
               Vec3r<T> org1{1, -3, 4};
@@ -1429,12 +1429,12 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               update_intersector(cylinder_intersector, hit_distance, 0);
               post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
 
-              REQUIRE(hit_cylinder);
-              REQUIRE(rayhit.prim_id == 0);
-              REQUIRE(rayhit.hit_distance == Approx(std::sqrt(18)));
-              REQUIRE(rayhit.normal[0] == Approx(0.f));
-              REQUIRE(rayhit.normal[1] == Approx(-1.f));
-              REQUIRE(rayhit.normal[2] == Approx(0.f));
+              CHECK(hit_cylinder);
+              CHECK(rayhit.prim_id == 0);
+              CHECK(rayhit.hit_distance == Approx(std::sqrt(18)));
+              CHECK(rayhit.normal[0] == Approx(0.f));
+              CHECK(rayhit.normal[1] == Approx(-1.f));
+              CHECK(rayhit.normal[2] == Approx(0.f));
             }
           }
           SUBCASE("origin below") {
@@ -1457,12 +1457,12 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               update_intersector(cylinder_intersector, hit_distance, 0);
               post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
 
-              REQUIRE(hit_cylinder);
-              REQUIRE(rayhit.prim_id == 0);
-              REQUIRE(rayhit.hit_distance == Approx(7.5));
-              REQUIRE(rayhit.normal[0] == Approx(0.f));
-              REQUIRE(rayhit.normal[1] == Approx(0.f));
-              REQUIRE(rayhit.normal[2] == Approx(-1.f));
+              CHECK(hit_cylinder);
+              CHECK(rayhit.prim_id == 0);
+              CHECK(rayhit.hit_distance == Approx(7.5));
+              CHECK(rayhit.normal[0] == Approx(0.f));
+              CHECK(rayhit.normal[1] == Approx(0.f));
+              CHECK(rayhit.normal[2] == Approx(-1.f));
             }
             SUBCASE("oblique incidence on bottom") {
               Vec3r<T> org1{6.f, 2.f, -5.f};
@@ -1483,12 +1483,12 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               update_intersector(cylinder_intersector, hit_distance, 0);
               post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
 
-              REQUIRE(hit_cylinder);
-              REQUIRE(rayhit.prim_id == 0);
-              REQUIRE(rayhit.hit_distance == Approx(std::sqrt(50)));
-              REQUIRE(rayhit.normal[0] == Approx(0.f));
-              REQUIRE(rayhit.normal[1] == Approx(0.f));
-              REQUIRE(rayhit.normal[2] == Approx(-1.f));
+              CHECK(hit_cylinder);
+              CHECK(rayhit.prim_id == 0);
+              CHECK(rayhit.hit_distance == Approx(std::sqrt(50)));
+              CHECK(rayhit.normal[0] == Approx(0.f));
+              CHECK(rayhit.normal[1] == Approx(0.f));
+              CHECK(rayhit.normal[2] == Approx(-1.f));
             }
             SUBCASE("oblique incidence on shell 1") {
               Vec3r<T> org1{6, 2, -3};
@@ -1508,12 +1508,12 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               update_intersector(cylinder_intersector, hit_distance, 0);
               post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
 
-              REQUIRE(hit_cylinder);
-              REQUIRE(rayhit.prim_id == 0);
-              REQUIRE(rayhit.hit_distance == Approx(std::sqrt(32)));
-              REQUIRE(rayhit.normal[0] == Approx(1.f));
-              REQUIRE(rayhit.normal[1] == Approx(0.f));
-              REQUIRE(rayhit.normal[2] == Approx(0.f));
+              CHECK(hit_cylinder);
+              CHECK(rayhit.prim_id == 0);
+              CHECK(rayhit.hit_distance == Approx(std::sqrt(32)));
+              CHECK(rayhit.normal[0] == Approx(1.f));
+              CHECK(rayhit.normal[1] == Approx(0.f));
+              CHECK(rayhit.normal[2] == Approx(0.f));
             }
             SUBCASE("oblique incidence on shell 2") {
               Vec3r<T> org1{-4, 2, -3};
@@ -1533,12 +1533,12 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               update_intersector(cylinder_intersector, hit_distance, 0);
               post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
 
-              REQUIRE(hit_cylinder);
-              REQUIRE(rayhit.prim_id == 0);
-              REQUIRE(rayhit.hit_distance == Approx(std::sqrt(32)));
-              REQUIRE(rayhit.normal[0] == Approx(-1.f));
-              REQUIRE(rayhit.normal[1] == Approx(0.f));
-              REQUIRE(rayhit.normal[2] == Approx(0.f));
+              CHECK(hit_cylinder);
+              CHECK(rayhit.prim_id == 0);
+              CHECK(rayhit.hit_distance == Approx(std::sqrt(32)));
+              CHECK(rayhit.normal[0] == Approx(-1.f));
+              CHECK(rayhit.normal[1] == Approx(0.f));
+              CHECK(rayhit.normal[2] == Approx(0.f));
             }
             SUBCASE("oblique incidence on shell 3") {
               Vec3r<T> org1{1, 7, -2};
@@ -1558,12 +1558,12 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               update_intersector(cylinder_intersector, hit_distance, 0);
               post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
 
-              REQUIRE(hit_cylinder);
-              REQUIRE(rayhit.prim_id == 0);
-              REQUIRE(rayhit.hit_distance == Approx(std::sqrt(18)));
-              REQUIRE(rayhit.normal[0] == Approx(0.f));
-              REQUIRE(rayhit.normal[1] == Approx(1.f));
-              REQUIRE(rayhit.normal[2] == Approx(0.f));
+              CHECK(hit_cylinder);
+              CHECK(rayhit.prim_id == 0);
+              CHECK(rayhit.hit_distance == Approx(std::sqrt(18)));
+              CHECK(rayhit.normal[0] == Approx(0.f));
+              CHECK(rayhit.normal[1] == Approx(1.f));
+              CHECK(rayhit.normal[2] == Approx(0.f));
             }
             SUBCASE("oblique incidence on shell 4") {
               Vec3r<T> org1{1, -3, -2};
@@ -1583,12 +1583,12 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               update_intersector(cylinder_intersector, hit_distance, 0);
               post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
 
-              REQUIRE(hit_cylinder);
-              REQUIRE(rayhit.prim_id == 0);
-              REQUIRE(rayhit.hit_distance == Approx(std::sqrt(18)));
-              REQUIRE(rayhit.normal[0] == Approx(0.f));
-              REQUIRE(rayhit.normal[1] == Approx(-1.f));
-              REQUIRE(rayhit.normal[2] == Approx(0.f));
+              CHECK(hit_cylinder);
+              CHECK(rayhit.prim_id == 0);
+              CHECK(rayhit.hit_distance == Approx(std::sqrt(18)));
+              CHECK(rayhit.normal[0] == Approx(0.f));
+              CHECK(rayhit.normal[1] == Approx(-1.f));
+              CHECK(rayhit.normal[2] == Approx(0.f));
             }
           }
           SUBCASE("origin around shell") {
@@ -1611,12 +1611,12 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
                 update_intersector(cylinder_intersector, hit_distance, 0);
                 post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
 
-                REQUIRE(hit_cylinder);
-                REQUIRE(rayhit.prim_id == 0);
-                REQUIRE(rayhit.hit_distance == Approx(4));
-                REQUIRE(rayhit.normal[0] == Approx(1.f));
-                REQUIRE(rayhit.normal[1] == Approx(0.f));
-                REQUIRE(rayhit.normal[2] == Approx(0.f));
+                CHECK(hit_cylinder);
+                CHECK(rayhit.prim_id == 0);
+                CHECK(rayhit.hit_distance == Approx(4));
+                CHECK(rayhit.normal[0] == Approx(1.f));
+                CHECK(rayhit.normal[1] == Approx(0.f));
+                CHECK(rayhit.normal[2] == Approx(0.f));
               }
               SUBCASE("origin: x-") {
                 Vec3r<T> org1{-4, 2, 1};
@@ -1636,12 +1636,12 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
                 update_intersector(cylinder_intersector, hit_distance, 0);
                 post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
 
-                REQUIRE(hit_cylinder);
-                REQUIRE(rayhit.prim_id == 0);
-                REQUIRE(rayhit.hit_distance == Approx(4));
-                REQUIRE(rayhit.normal[0] == Approx(-1.f));
-                REQUIRE(rayhit.normal[1] == Approx(0.f));
-                REQUIRE(rayhit.normal[2] == Approx(0.f));
+                CHECK(hit_cylinder);
+                CHECK(rayhit.prim_id == 0);
+                CHECK(rayhit.hit_distance == Approx(4));
+                CHECK(rayhit.normal[0] == Approx(-1.f));
+                CHECK(rayhit.normal[1] == Approx(0.f));
+                CHECK(rayhit.normal[2] == Approx(0.f));
               }
               SUBCASE("origin: y+") {
                 Vec3r<T> org1{1, 7, 1};
@@ -1661,12 +1661,12 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
                 update_intersector(cylinder_intersector, hit_distance, 0);
                 post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
 
-                REQUIRE(hit_cylinder);
-                REQUIRE(rayhit.prim_id == 0);
-                REQUIRE(rayhit.hit_distance == Approx(3));
-                REQUIRE(rayhit.normal[0] == Approx(0.f));
-                REQUIRE(rayhit.normal[1] == Approx(1.f));
-                REQUIRE(rayhit.normal[2] == Approx(0.f));
+                CHECK(hit_cylinder);
+                CHECK(rayhit.prim_id == 0);
+                CHECK(rayhit.hit_distance == Approx(3));
+                CHECK(rayhit.normal[0] == Approx(0.f));
+                CHECK(rayhit.normal[1] == Approx(1.f));
+                CHECK(rayhit.normal[2] == Approx(0.f));
               }
               SUBCASE("origin: y-") {
                 Vec3r<T> org1{1, -3, 1};
@@ -1686,12 +1686,12 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
                 update_intersector(cylinder_intersector, hit_distance, 0);
                 post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
 
-                REQUIRE(hit_cylinder);
-                REQUIRE(rayhit.prim_id == 0);
-                REQUIRE(rayhit.hit_distance == Approx(3));
-                REQUIRE(rayhit.normal[0] == Approx(0.f));
-                REQUIRE(rayhit.normal[1] == Approx(-1.f));
-                REQUIRE(rayhit.normal[2] == Approx(0.f));
+                CHECK(hit_cylinder);
+                CHECK(rayhit.prim_id == 0);
+                CHECK(rayhit.hit_distance == Approx(3));
+                CHECK(rayhit.normal[0] == Approx(0.f));
+                CHECK(rayhit.normal[1] == Approx(-1.f));
+                CHECK(rayhit.normal[2] == Approx(0.f));
               }
             }
           }
@@ -1714,12 +1714,12 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               update_intersector(cylinder_intersector, hit_distance, 0);
               post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
 
-              REQUIRE(hit_cylinder);
-              REQUIRE(rayhit.prim_id == 0);
-              REQUIRE(rayhit.hit_distance == Approx(1));
-              REQUIRE(rayhit.normal[0] == Approx(0.f));
-              REQUIRE(rayhit.normal[1] == Approx(0.f));
-              REQUIRE(rayhit.normal[2] == Approx(1.f));
+              CHECK(hit_cylinder);
+              CHECK(rayhit.prim_id == 0);
+              CHECK(rayhit.hit_distance == Approx(1));
+              CHECK(rayhit.normal[0] == Approx(0.f));
+              CHECK(rayhit.normal[1] == Approx(0.f));
+              CHECK(rayhit.normal[2] == Approx(1.f));
             }
             SUBCASE("hit bottom") {
               Vec3r<T> org1{1, 2, 1};
@@ -1739,12 +1739,12 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               update_intersector(cylinder_intersector, hit_distance, 0);
               post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
 
-              REQUIRE(hit_cylinder);
-              REQUIRE(rayhit.prim_id == 0);
-              REQUIRE(rayhit.hit_distance == Approx(1));
-              REQUIRE(rayhit.normal[0] == Approx(0.f));
-              REQUIRE(rayhit.normal[1] == Approx(0.f));
-              REQUIRE(rayhit.normal[2] == Approx(-1.f));
+              CHECK(hit_cylinder);
+              CHECK(rayhit.prim_id == 0);
+              CHECK(rayhit.hit_distance == Approx(1));
+              CHECK(rayhit.normal[0] == Approx(0.f));
+              CHECK(rayhit.normal[1] == Approx(0.f));
+              CHECK(rayhit.normal[2] == Approx(-1.f));
             }
             SUBCASE("hit shell 1") {
               Vec3r<T> org1{1, 2, 1};
@@ -1764,12 +1764,12 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               update_intersector(cylinder_intersector, hit_distance, 0);
               post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
 
-              REQUIRE(hit_cylinder);
-              REQUIRE(rayhit.prim_id == 0);
-              REQUIRE(rayhit.hit_distance == Approx(1));
-              REQUIRE(rayhit.normal[0] == Approx(-1.f));
-              REQUIRE(rayhit.normal[1] == Approx(0.f));
-              REQUIRE(rayhit.normal[2] == Approx(0.f));
+              CHECK(hit_cylinder);
+              CHECK(rayhit.prim_id == 0);
+              CHECK(rayhit.hit_distance == Approx(1));
+              CHECK(rayhit.normal[0] == Approx(-1.f));
+              CHECK(rayhit.normal[1] == Approx(0.f));
+              CHECK(rayhit.normal[2] == Approx(0.f));
             }
             SUBCASE("hit shell 2") {
               Vec3r<T> org1{1, 2, 1};
@@ -1789,12 +1789,12 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               update_intersector(cylinder_intersector, hit_distance, 0);
               post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
 
-              REQUIRE(hit_cylinder);
-              REQUIRE(rayhit.prim_id == 0);
-              REQUIRE(rayhit.hit_distance == Approx(1));
-              REQUIRE(rayhit.normal[0] == Approx(1.f));
-              REQUIRE(rayhit.normal[1] == Approx(0.f));
-              REQUIRE(rayhit.normal[2] == Approx(0.f));
+              CHECK(hit_cylinder);
+              CHECK(rayhit.prim_id == 0);
+              CHECK(rayhit.hit_distance == Approx(1));
+              CHECK(rayhit.normal[0] == Approx(1.f));
+              CHECK(rayhit.normal[1] == Approx(0.f));
+              CHECK(rayhit.normal[2] == Approx(0.f));
             }
             SUBCASE("hit shell 3") {
               Vec3r<T> org1{1, 2, 1};
@@ -1814,12 +1814,12 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               update_intersector(cylinder_intersector, hit_distance, 0);
               post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
 
-              REQUIRE(hit_cylinder);
-              REQUIRE(rayhit.prim_id == 0);
-              REQUIRE(rayhit.hit_distance == Approx(2));
-              REQUIRE(rayhit.normal[0] == Approx(0.f));
-              REQUIRE(rayhit.normal[1] == Approx(-1.f));
-              REQUIRE(rayhit.normal[2] == Approx(0.f));
+              CHECK(hit_cylinder);
+              CHECK(rayhit.prim_id == 0);
+              CHECK(rayhit.hit_distance == Approx(2));
+              CHECK(rayhit.normal[0] == Approx(0.f));
+              CHECK(rayhit.normal[1] == Approx(-1.f));
+              CHECK(rayhit.normal[2] == Approx(0.f));
             }
             SUBCASE("hit shell 4") {
               Vec3r<T> org1{1, 2, 1};
@@ -1839,12 +1839,12 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               update_intersector(cylinder_intersector, hit_distance, 0);
               post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
 
-              REQUIRE(hit_cylinder);
-              REQUIRE(rayhit.prim_id == 0);
-              REQUIRE(rayhit.hit_distance == Approx(2));
-              REQUIRE(rayhit.normal[0] == Approx(0.f));
-              REQUIRE(rayhit.normal[1] == Approx(1.f));
-              REQUIRE(rayhit.normal[2] == Approx(0.f));
+              CHECK(hit_cylinder);
+              CHECK(rayhit.prim_id == 0);
+              CHECK(rayhit.hit_distance == Approx(2));
+              CHECK(rayhit.normal[0] == Approx(0.f));
+              CHECK(rayhit.normal[1] == Approx(1.f));
+              CHECK(rayhit.normal[2] == Approx(0.f));
             }
           }
         }
@@ -1870,12 +1870,12 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               update_intersector(cylinder_intersector, hit_distance, 0);
               post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
 
-              REQUIRE_FALSE(hit_cylinder);
-              REQUIRE_FALSE(rayhit.prim_id == 0);
-              REQUIRE(rayhit.hit_distance == std::numeric_limits<T>::max());
-              REQUIRE(rayhit.normal[0] == Approx(0.f));
-              REQUIRE(rayhit.normal[1] == Approx(0.f));
-              REQUIRE(rayhit.normal[2] == Approx(0.f));
+              CHECK_FALSE(hit_cylinder);
+              CHECK_FALSE(rayhit.prim_id == 0);
+              CHECK(rayhit.hit_distance == std::numeric_limits<T>::max());
+              CHECK(rayhit.normal[0] == Approx(0.f));
+              CHECK(rayhit.normal[1] == Approx(0.f));
+              CHECK(rayhit.normal[2] == Approx(0.f));
             }
             SUBCASE("oblique incidence on top") {
               Vec3r<T> org1{6.f, 2.f, 7.f};
@@ -1896,12 +1896,12 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               update_intersector(cylinder_intersector, hit_distance, 0);
               post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
 
-              REQUIRE_FALSE(hit_cylinder);
-              REQUIRE_FALSE(rayhit.prim_id == 0);
-              REQUIRE(rayhit.hit_distance == std::numeric_limits<T>::max());
-              REQUIRE(rayhit.normal[0] == Approx(0.f));
-              REQUIRE(rayhit.normal[1] == Approx(0.f));
-              REQUIRE(rayhit.normal[2] == Approx(0.f));
+              CHECK_FALSE(hit_cylinder);
+              CHECK_FALSE(rayhit.prim_id == 0);
+              CHECK(rayhit.hit_distance == std::numeric_limits<T>::max());
+              CHECK(rayhit.normal[0] == Approx(0.f));
+              CHECK(rayhit.normal[1] == Approx(0.f));
+              CHECK(rayhit.normal[2] == Approx(0.f));
             }
             SUBCASE("oblique incidence on shell 1") {
               Vec3r<T> org1{6, 2, 5};
@@ -1921,12 +1921,12 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               update_intersector(cylinder_intersector, hit_distance, 0);
               post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
 
-              REQUIRE_FALSE(hit_cylinder);
-              REQUIRE_FALSE(rayhit.prim_id == 0);
-              REQUIRE(rayhit.hit_distance == std::numeric_limits<T>::max());
-              REQUIRE(rayhit.normal[0] == Approx(0.f));
-              REQUIRE(rayhit.normal[1] == Approx(0.f));
-              REQUIRE(rayhit.normal[2] == Approx(0.f));
+              CHECK_FALSE(hit_cylinder);
+              CHECK_FALSE(rayhit.prim_id == 0);
+              CHECK(rayhit.hit_distance == std::numeric_limits<T>::max());
+              CHECK(rayhit.normal[0] == Approx(0.f));
+              CHECK(rayhit.normal[1] == Approx(0.f));
+              CHECK(rayhit.normal[2] == Approx(0.f));
             }
             SUBCASE("oblique incidence on shell 2") {
               Vec3r<T> org1{-4, 2, 5};
@@ -1946,12 +1946,12 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               update_intersector(cylinder_intersector, hit_distance, 0);
               post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
 
-              REQUIRE_FALSE(hit_cylinder);
-              REQUIRE_FALSE(rayhit.prim_id == 0);
-              REQUIRE(rayhit.hit_distance == std::numeric_limits<T>::max());
-              REQUIRE(rayhit.normal[0] == Approx(0.f));
-              REQUIRE(rayhit.normal[1] == Approx(0.f));
-              REQUIRE(rayhit.normal[2] == Approx(0.f));
+              CHECK_FALSE(hit_cylinder);
+              CHECK_FALSE(rayhit.prim_id == 0);
+              CHECK(rayhit.hit_distance == std::numeric_limits<T>::max());
+              CHECK(rayhit.normal[0] == Approx(0.f));
+              CHECK(rayhit.normal[1] == Approx(0.f));
+              CHECK(rayhit.normal[2] == Approx(0.f));
             }
             SUBCASE("oblique incidence on shell 3") {
               Vec3r<T> org1{1, 7, 4};
@@ -1971,12 +1971,12 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               update_intersector(cylinder_intersector, hit_distance, 0);
               post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
 
-              REQUIRE_FALSE(hit_cylinder);
-              REQUIRE_FALSE(rayhit.prim_id == 0);
-              REQUIRE(rayhit.hit_distance == std::numeric_limits<T>::max());
-              REQUIRE(rayhit.normal[0] == Approx(0.f));
-              REQUIRE(rayhit.normal[1] == Approx(0.f));
-              REQUIRE(rayhit.normal[2] == Approx(0.f));
+              CHECK_FALSE(hit_cylinder);
+              CHECK_FALSE(rayhit.prim_id == 0);
+              CHECK(rayhit.hit_distance == std::numeric_limits<T>::max());
+              CHECK(rayhit.normal[0] == Approx(0.f));
+              CHECK(rayhit.normal[1] == Approx(0.f));
+              CHECK(rayhit.normal[2] == Approx(0.f));
             }
             SUBCASE("oblique incidence on shell 4") {
               Vec3r<T> org1{1, -3, 4};
@@ -1996,12 +1996,12 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               update_intersector(cylinder_intersector, hit_distance, 0);
               post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
 
-              REQUIRE_FALSE(hit_cylinder);
-              REQUIRE_FALSE(rayhit.prim_id == 0);
-              REQUIRE(rayhit.hit_distance == std::numeric_limits<T>::max());
-              REQUIRE(rayhit.normal[0] == Approx(0.f));
-              REQUIRE(rayhit.normal[1] == Approx(0.f));
-              REQUIRE(rayhit.normal[2] == Approx(0.f));
+              CHECK_FALSE(hit_cylinder);
+              CHECK_FALSE(rayhit.prim_id == 0);
+              CHECK(rayhit.hit_distance == std::numeric_limits<T>::max());
+              CHECK(rayhit.normal[0] == Approx(0.f));
+              CHECK(rayhit.normal[1] == Approx(0.f));
+              CHECK(rayhit.normal[2] == Approx(0.f));
             }
           }
           SUBCASE("origin below (direction inverted)") {
@@ -2024,12 +2024,12 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               update_intersector(cylinder_intersector, hit_distance, 0);
               post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
 
-              REQUIRE_FALSE(hit_cylinder);
-              REQUIRE_FALSE(rayhit.prim_id == 0);
-              REQUIRE(rayhit.hit_distance == std::numeric_limits<T>::max());
-              REQUIRE(rayhit.normal[0] == Approx(0.f));
-              REQUIRE(rayhit.normal[1] == Approx(0.f));
-              REQUIRE(rayhit.normal[2] == Approx(0.f));
+              CHECK_FALSE(hit_cylinder);
+              CHECK_FALSE(rayhit.prim_id == 0);
+              CHECK(rayhit.hit_distance == std::numeric_limits<T>::max());
+              CHECK(rayhit.normal[0] == Approx(0.f));
+              CHECK(rayhit.normal[1] == Approx(0.f));
+              CHECK(rayhit.normal[2] == Approx(0.f));
             }
             SUBCASE("oblique incidence on bottom") {
               Vec3r<T> org1{6.f, 2.f, -5.f};
@@ -2050,12 +2050,12 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               update_intersector(cylinder_intersector, hit_distance, 0);
               post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
 
-              REQUIRE_FALSE(hit_cylinder);
-              REQUIRE_FALSE(rayhit.prim_id == 0);
-              REQUIRE(rayhit.hit_distance == std::numeric_limits<T>::max());
-              REQUIRE(rayhit.normal[0] == Approx(0.f));
-              REQUIRE(rayhit.normal[1] == Approx(0.f));
-              REQUIRE(rayhit.normal[2] == Approx(0.f));
+              CHECK_FALSE(hit_cylinder);
+              CHECK_FALSE(rayhit.prim_id == 0);
+              CHECK(rayhit.hit_distance == std::numeric_limits<T>::max());
+              CHECK(rayhit.normal[0] == Approx(0.f));
+              CHECK(rayhit.normal[1] == Approx(0.f));
+              CHECK(rayhit.normal[2] == Approx(0.f));
             }
             SUBCASE("oblique incidence on shell 1") {
               Vec3r<T> org1{6, 2, -3};
@@ -2075,12 +2075,12 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               update_intersector(cylinder_intersector, hit_distance, 0);
               post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
 
-              REQUIRE_FALSE(hit_cylinder);
-              REQUIRE_FALSE(rayhit.prim_id == 0);
-              REQUIRE(rayhit.hit_distance == std::numeric_limits<T>::max());
-              REQUIRE(rayhit.normal[0] == Approx(0.f));
-              REQUIRE(rayhit.normal[1] == Approx(0.f));
-              REQUIRE(rayhit.normal[2] == Approx(0.f));
+              CHECK_FALSE(hit_cylinder);
+              CHECK_FALSE(rayhit.prim_id == 0);
+              CHECK(rayhit.hit_distance == std::numeric_limits<T>::max());
+              CHECK(rayhit.normal[0] == Approx(0.f));
+              CHECK(rayhit.normal[1] == Approx(0.f));
+              CHECK(rayhit.normal[2] == Approx(0.f));
             }
             SUBCASE("oblique incidence on shell 2") {
               Vec3r<T> org1{-4, 2, -3};
@@ -2100,12 +2100,12 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               update_intersector(cylinder_intersector, hit_distance, 0);
               post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
 
-              REQUIRE_FALSE(hit_cylinder);
-              REQUIRE_FALSE(rayhit.prim_id == 0);
-              REQUIRE(rayhit.hit_distance == std::numeric_limits<T>::max());
-              REQUIRE(rayhit.normal[0] == Approx(0.f));
-              REQUIRE(rayhit.normal[1] == Approx(0.f));
-              REQUIRE(rayhit.normal[2] == Approx(0.f));
+              CHECK_FALSE(hit_cylinder);
+              CHECK_FALSE(rayhit.prim_id == 0);
+              CHECK(rayhit.hit_distance == std::numeric_limits<T>::max());
+              CHECK(rayhit.normal[0] == Approx(0.f));
+              CHECK(rayhit.normal[1] == Approx(0.f));
+              CHECK(rayhit.normal[2] == Approx(0.f));
             }
             SUBCASE("oblique incidence on shell 3") {
               Vec3r<T> org1{1, 7, -2};
@@ -2125,12 +2125,12 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               update_intersector(cylinder_intersector, hit_distance, 0);
               post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
 
-              REQUIRE_FALSE(hit_cylinder);
-              REQUIRE_FALSE(rayhit.prim_id == 0);
-              REQUIRE(rayhit.hit_distance == std::numeric_limits<T>::max());
-              REQUIRE(rayhit.normal[0] == Approx(0.f));
-              REQUIRE(rayhit.normal[1] == Approx(0.f));
-              REQUIRE(rayhit.normal[2] == Approx(0.f));
+              CHECK_FALSE(hit_cylinder);
+              CHECK_FALSE(rayhit.prim_id == 0);
+              CHECK(rayhit.hit_distance == std::numeric_limits<T>::max());
+              CHECK(rayhit.normal[0] == Approx(0.f));
+              CHECK(rayhit.normal[1] == Approx(0.f));
+              CHECK(rayhit.normal[2] == Approx(0.f));
             }
             SUBCASE("oblique incidence on shell 4") {
               Vec3r<T> org1{1, -3, -2};
@@ -2150,12 +2150,12 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               update_intersector(cylinder_intersector, hit_distance, 0);
               post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
 
-              REQUIRE_FALSE(hit_cylinder);
-              REQUIRE_FALSE(rayhit.prim_id == 0);
-              REQUIRE(rayhit.hit_distance == std::numeric_limits<T>::max());
-              REQUIRE(rayhit.normal[0] == Approx(0.f));
-              REQUIRE(rayhit.normal[1] == Approx(0.f));
-              REQUIRE(rayhit.normal[2] == Approx(0.f));
+              CHECK_FALSE(hit_cylinder);
+              CHECK_FALSE(rayhit.prim_id == 0);
+              CHECK(rayhit.hit_distance == std::numeric_limits<T>::max());
+              CHECK(rayhit.normal[0] == Approx(0.f));
+              CHECK(rayhit.normal[1] == Approx(0.f));
+              CHECK(rayhit.normal[2] == Approx(0.f));
             }
           }
           SUBCASE("origin around shell (direction inverted)") {
@@ -2178,12 +2178,12 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
                 update_intersector(cylinder_intersector, hit_distance, 0);
                 post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
 
-                REQUIRE_FALSE(hit_cylinder);
-                REQUIRE_FALSE(rayhit.prim_id == 0);
-                REQUIRE(rayhit.hit_distance == std::numeric_limits<T>::max());
-                REQUIRE(rayhit.normal[0] == Approx(0.f));
-                REQUIRE(rayhit.normal[1] == Approx(0.f));
-                REQUIRE(rayhit.normal[2] == Approx(0.f));
+                CHECK_FALSE(hit_cylinder);
+                CHECK_FALSE(rayhit.prim_id == 0);
+                CHECK(rayhit.hit_distance == std::numeric_limits<T>::max());
+                CHECK(rayhit.normal[0] == Approx(0.f));
+                CHECK(rayhit.normal[1] == Approx(0.f));
+                CHECK(rayhit.normal[2] == Approx(0.f));
               }
               SUBCASE("origin: x-") {
                 Vec3r<T> org1{-4, 2, 1};
@@ -2203,12 +2203,12 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
                 update_intersector(cylinder_intersector, hit_distance, 0);
                 post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
 
-                REQUIRE_FALSE(hit_cylinder);
-                REQUIRE_FALSE(rayhit.prim_id == 0);
-                REQUIRE(rayhit.hit_distance == std::numeric_limits<T>::max());
-                REQUIRE(rayhit.normal[0] == Approx(0.f));
-                REQUIRE(rayhit.normal[1] == Approx(0.f));
-                REQUIRE(rayhit.normal[2] == Approx(0.f));
+                CHECK_FALSE(hit_cylinder);
+                CHECK_FALSE(rayhit.prim_id == 0);
+                CHECK(rayhit.hit_distance == std::numeric_limits<T>::max());
+                CHECK(rayhit.normal[0] == Approx(0.f));
+                CHECK(rayhit.normal[1] == Approx(0.f));
+                CHECK(rayhit.normal[2] == Approx(0.f));
               }
               SUBCASE("origin: y+") {
                 Vec3r<T> org1{1, 7, 1};
@@ -2228,12 +2228,12 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
                 update_intersector(cylinder_intersector, hit_distance, 0);
                 post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
 
-                REQUIRE_FALSE(hit_cylinder);
-                REQUIRE_FALSE(rayhit.prim_id == 0);
-                REQUIRE(rayhit.hit_distance == std::numeric_limits<T>::max());
-                REQUIRE(rayhit.normal[0] == Approx(0.f));
-                REQUIRE(rayhit.normal[1] == Approx(0.f));
-                REQUIRE(rayhit.normal[2] == Approx(0.f));
+                CHECK_FALSE(hit_cylinder);
+                CHECK_FALSE(rayhit.prim_id == 0);
+                CHECK(rayhit.hit_distance == std::numeric_limits<T>::max());
+                CHECK(rayhit.normal[0] == Approx(0.f));
+                CHECK(rayhit.normal[1] == Approx(0.f));
+                CHECK(rayhit.normal[2] == Approx(0.f));
               }
               SUBCASE("origin: y-") {
                 Vec3r<T> org1{1, -3, 1};
@@ -2253,12 +2253,12 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
                 update_intersector(cylinder_intersector, hit_distance, 0);
                 post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
 
-                REQUIRE_FALSE(hit_cylinder);
-                REQUIRE_FALSE(rayhit.prim_id == 0);
-                REQUIRE(rayhit.hit_distance == std::numeric_limits<T>::max());
-                REQUIRE(rayhit.normal[0] == Approx(0.f));
-                REQUIRE(rayhit.normal[1] == Approx(0.f));
-                REQUIRE(rayhit.normal[2] == Approx(0.f));
+                CHECK_FALSE(hit_cylinder);
+                CHECK_FALSE(rayhit.prim_id == 0);
+                CHECK(rayhit.hit_distance == std::numeric_limits<T>::max());
+                CHECK(rayhit.normal[0] == Approx(0.f));
+                CHECK(rayhit.normal[1] == Approx(0.f));
+                CHECK(rayhit.normal[2] == Approx(0.f));
               }
             }
           }
@@ -2289,12 +2289,12 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
             update_intersector(cylinder_intersector, hit_distance, 0);
             post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
 
-            REQUIRE(hit_cylinder);
-            REQUIRE(rayhit.prim_id == 0);
-            REQUIRE(rayhit.hit_distance == Approx(5.5));
-            REQUIRE(rayhit.normal[0] == Approx(0.f));
-            REQUIRE(rayhit.normal[1] == Approx(0.f));
-            REQUIRE(rayhit.normal[2] == Approx(1.f));
+            CHECK(hit_cylinder);
+            CHECK(rayhit.prim_id == 0);
+            CHECK(rayhit.hit_distance == Approx(5.5));
+            CHECK(rayhit.normal[0] == Approx(0.f));
+            CHECK(rayhit.normal[1] == Approx(0.f));
+            CHECK(rayhit.normal[2] == Approx(1.f));
           }
           SUBCASE("about y-axis") {
             const Vec3r<T> axis{0, 1, 0};
@@ -2319,12 +2319,12 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
             update_intersector(cylinder_intersector, hit_distance, 0);
             post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
 
-            REQUIRE(hit_cylinder);
-            REQUIRE(rayhit.prim_id == 0);
-            REQUIRE(rayhit.hit_distance == Approx(5.5));
-            REQUIRE(rayhit.normal[0] == Approx(1.f));
-            REQUIRE(rayhit.normal[1] == Approx(0.f));
-            REQUIRE(rayhit.normal[2] == Approx(0.f));
+            CHECK(hit_cylinder);
+            CHECK(rayhit.prim_id == 0);
+            CHECK(rayhit.hit_distance == Approx(5.5));
+            CHECK(rayhit.normal[0] == Approx(1.f));
+            CHECK(rayhit.normal[1] == Approx(0.f));
+            CHECK(rayhit.normal[2] == Approx(0.f));
           }
           SUBCASE("about x-axis") {
             const Vec3r<T> axis{1, 0, 0};
@@ -2349,12 +2349,12 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
             update_intersector(cylinder_intersector, hit_distance, 0);
             post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
 
-            REQUIRE(hit_cylinder);
-            REQUIRE(rayhit.prim_id == 0);
-            REQUIRE(rayhit.hit_distance == Approx(7.5));
-            REQUIRE(rayhit.normal[0] == Approx(0.f));
-            REQUIRE(rayhit.normal[1] == Approx(1.f));
-            REQUIRE(rayhit.normal[2] == Approx(0.f));
+            CHECK(hit_cylinder);
+            CHECK(rayhit.prim_id == 0);
+            CHECK(rayhit.hit_distance == Approx(7.5));
+            CHECK(rayhit.normal[0] == Approx(0.f));
+            CHECK(rayhit.normal[1] == Approx(1.f));
+            CHECK(rayhit.normal[2] == Approx(0.f));
           }
         }
         SUBCASE("no hits") {
@@ -2381,12 +2381,12 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
             update_intersector(cylinder_intersector, hit_distance, 0);
             post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
 
-            REQUIRE_FALSE(hit_cylinder);
-            REQUIRE_FALSE(rayhit.prim_id == 0);
-            REQUIRE(rayhit.hit_distance == std::numeric_limits<T>::max());
-            REQUIRE(rayhit.normal[0] == Approx(0.f));
-            REQUIRE(rayhit.normal[1] == Approx(0.f));
-            REQUIRE(rayhit.normal[2] == Approx(0.f));
+            CHECK_FALSE(hit_cylinder);
+            CHECK_FALSE(rayhit.prim_id == 0);
+            CHECK(rayhit.hit_distance == std::numeric_limits<T>::max());
+            CHECK(rayhit.normal[0] == Approx(0.f));
+            CHECK(rayhit.normal[1] == Approx(0.f));
+            CHECK(rayhit.normal[2] == Approx(0.f));
           }
           SUBCASE("about y-axis") {
             const Vec3r<T> axis{0, 1, 0};
@@ -2411,12 +2411,12 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
             update_intersector(cylinder_intersector, hit_distance, 0);
             post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
 
-            REQUIRE_FALSE(hit_cylinder);
-            REQUIRE_FALSE(rayhit.prim_id == 0);
-            REQUIRE(rayhit.hit_distance == std::numeric_limits<T>::max());
-            REQUIRE(rayhit.normal[0] == Approx(0.f));
-            REQUIRE(rayhit.normal[1] == Approx(0.f));
-            REQUIRE(rayhit.normal[2] == Approx(0.f));
+            CHECK_FALSE(hit_cylinder);
+            CHECK_FALSE(rayhit.prim_id == 0);
+            CHECK(rayhit.hit_distance == std::numeric_limits<T>::max());
+            CHECK(rayhit.normal[0] == Approx(0.f));
+            CHECK(rayhit.normal[1] == Approx(0.f));
+            CHECK(rayhit.normal[2] == Approx(0.f));
           }
           SUBCASE("about x-axis") {
             const Vec3r<T> axis{1, 0, 0};
@@ -2441,12 +2441,12 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
             update_intersector(cylinder_intersector, hit_distance, 0);
             post_traversal(cylinder_intersector, ray, hit_cylinder, rayhit);
 
-            REQUIRE_FALSE(hit_cylinder);
-            REQUIRE_FALSE(rayhit.prim_id == 0);
-            REQUIRE(rayhit.hit_distance == std::numeric_limits<T>::max());
-            REQUIRE(rayhit.normal[0] == Approx(0.f));
-            REQUIRE(rayhit.normal[1] == Approx(0.f));
-            REQUIRE(rayhit.normal[2] == Approx(0.f));
+            CHECK_FALSE(hit_cylinder);
+            CHECK_FALSE(rayhit.prim_id == 0);
+            CHECK(rayhit.hit_distance == std::numeric_limits<T>::max());
+            CHECK(rayhit.normal[0] == Approx(0.f));
+            CHECK(rayhit.normal[1] == Approx(0.f));
+            CHECK(rayhit.normal[2] == Approx(0.f));
           }
         }
       }
