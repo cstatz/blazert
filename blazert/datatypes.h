@@ -5,6 +5,7 @@
 #include <cmath>
 //#define FP_FAST_FMA
 
+#include <iostream>
 #include <blaze/Math.h>
 #include <blaze/util/AlignedAllocator.h>
 
@@ -47,5 +48,30 @@ template<class T> using Mat3r = blaze::StaticMatrix<T, 3UL, 3UL, blaze::rowMajor
 template<class T> using Vec3rList = std::vector<Vec3r<T>, blaze::AlignedAllocator<Vec3r<T>>>;
 using Vec3iList = std::vector<Vec3ui,  blaze::AlignedAllocator<Vec3ui>>;
 template<typename T> using Mat3rList = std::vector<Mat3r<T>, blaze::AlignedAllocator<Mat3r<T>>>;
+
+template<typename T, unsigned int capacity=0>
+struct Stack {
+  T stack[capacity];
+  unsigned int ss = 0;
+  inline void push_back(T node) {stack[ss++] = node;}
+  inline void pop_back() {stack[ss--] = 0;}
+  [[nodiscard]] inline T back() const {return stack[ss-1];}
+  [[nodiscard]] inline unsigned int size() const {return ss;}
+};
+
+template<typename T>
+struct Tri {
+  const Vec3r<T> a;
+  const Vec3r<T> b;
+  const Vec3r<T> c;
+  unsigned int i;
+  //Tri(Vec3r<T> a, Vec3r<T> b, Vec3r<T> c, unsigned int i) : a(a), b(b), c(c), i(i) {}
+  Tri(Vec3r<T> a, Vec3r<T> b_, Vec3r<T> c_, unsigned int i) : a(a), b(c_-a), c(a-b_), i(i) {}
+  Tri() = delete;
+  Tri(Tri&& rhs) noexcept : a(std::move(rhs.a)), b(std::move(rhs.b)), c(std::move(rhs.c)), i(std::exchange(i, -1)) {}
+  Tri(const Tri& rhs) =delete;
+  Tri &operator=(const Tri &rhs) =delete;
+};
+
 }
 #endif  // BLAZERT_DATATYPES_H_
