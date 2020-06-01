@@ -21,7 +21,7 @@ public:
   BVHBuildOptions()
       :
         min_leaf_primitives(4),
-        max_tree_depth(256),  // Does not impact build time significantly
+        max_tree_depth(BLAZERT_MAX_TREE_DEPTH),  // Does not impact build time significantly
         bin_size(64)  // Influences build significantly
         {}
 };
