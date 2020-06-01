@@ -3,7 +3,11 @@
 #define BLAZERT_DEFINES_H_
 
 #ifndef BLAZERT_MAX_STACK_DEPTH
-#define BLAZERT_MAX_STACK_DEPTH (512)
+#define BLAZERT_MAX_STACK_DEPTH 256
+#endif
+
+#ifndef BLAZERT_MAX_TREE_DEPTH
+#define BLAZERT_MAX_TREE_DEPTH 28
 #endif
 
 // Defines relevant for the parallel build
