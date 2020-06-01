@@ -10,9 +10,10 @@
 
 namespace blazert {
 
-template<typename T>
-inline bool intersect_node(T &min_distance /* inout */, T &max_distance /* inout*/, const BVHNode<T> &node, const Ray<T> &ray) {
+template<typename T, typename Node>
+inline bool intersect_node(T &min_distance /* inout */, T &max_distance /* inout*/, const Node &node, const Ray<T> &ray) {
 
+  // This is hard to beat.
   constexpr T l1 = static_cast<T>(1) + static_cast<T>(4) * std::numeric_limits<T>::epsilon();
   T min_, max_;
 
