@@ -384,12 +384,10 @@ int main(int argc, char **argv) {
   std::cout << "Using OpenMP: no!\n";
 #endif
 
-  bool ret = false;
-
   auto *mesh = new Mesh<ft>;
 
   std::vector<tinyobj::material_t> materials;
-  ret = LoadObj(*mesh, materials, objFilename.c_str(), scale, mtlPath.c_str());
+  const bool ret = LoadObj(*mesh, materials, objFilename.c_str(), scale, mtlPath.c_str());
   if (!ret) {
     std::cerr << "Failed to load [ " << objFilename.c_str() << " ]\n";
     return -1;
@@ -411,7 +409,6 @@ int main(int argc, char **argv) {
 
   blazert::BVH<ft> accel;
   auto build_statistics = accel.build(triangle_mesh, triangle_pred, build_options);
-  assert(ret);
 
   //printf("  BVH build time: %f secs\n", t.msec() / 1000.0);
 

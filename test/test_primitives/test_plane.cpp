@@ -41,12 +41,12 @@ TEST_CASE_TEMPLATE("Plane", TestType, float, double) {
         Vec3r<TestType> bmin, bmax;
         planes.BoundingBox(bmin, bmax, 0);
 
-        REQUIRE(bmin[0] == Approx(-1.f));
-        REQUIRE(bmin[1] == Approx(-1.f));
-        REQUIRE(bmin[2] == Approx(-std::numeric_limits<TestType>::min()));
-        REQUIRE(bmax[0] == Approx(1.f));
-        REQUIRE(bmax[1] == Approx(1.f));
-        REQUIRE(bmax[2] == Approx(std::numeric_limits<TestType>::min()));
+        CHECK(bmin[0] == Approx(-1.f));
+        CHECK(bmin[1] == Approx(-1.f));
+        CHECK(bmin[2] == Approx(-std::numeric_limits<TestType>::min()));
+        CHECK(bmax[0] == Approx(1.f));
+        CHECK(bmax[1] == Approx(1.f));
+        CHECK(bmax[2] == Approx(std::numeric_limits<TestType>::min()));
       }
       SUBCASE("rotated about y-axis") {
         // matrix which rotates the plane about the y-axis ( x = 0 is now plane eq)
@@ -58,12 +58,12 @@ TEST_CASE_TEMPLATE("Plane", TestType, float, double) {
         Vec3r<TestType> bmin, bmax;
         planes.BoundingBox(bmin, bmax, 0);
 
-        REQUIRE(bmin[0] == Approx(-std::numeric_limits<TestType>::min()));
-        REQUIRE(bmin[1] == Approx(-1.f));
-        REQUIRE(bmin[2] == Approx(-1.f));
-        REQUIRE(bmax[0] == Approx(std::numeric_limits<TestType>::min()));
-        REQUIRE(bmax[1] == Approx(1.f));
-        REQUIRE(bmax[2] == Approx(1.f));
+        CHECK(bmin[0] == Approx(-std::numeric_limits<TestType>::min()));
+        CHECK(bmin[1] == Approx(-1.f));
+        CHECK(bmin[2] == Approx(-1.f));
+        CHECK(bmax[0] == Approx(std::numeric_limits<TestType>::min()));
+        CHECK(bmax[1] == Approx(1.f));
+        CHECK(bmax[2] == Approx(1.f));
       }
       SUBCASE("rotated about r=normalized(1,1,0)") {
 
@@ -78,12 +78,12 @@ TEST_CASE_TEMPLATE("Plane", TestType, float, double) {
         Vec3r<TestType> bmin, bmax;
         planes.BoundingBox(bmin, bmax, 0);
 
-        REQUIRE(bmin[0] == Approx(-1.f));
-        REQUIRE(bmin[1] == Approx(-1.f));
-        REQUIRE(bmin[2] == Approx(-sqrt(2)));
-        REQUIRE(bmax[0] == Approx(1.f));
-        REQUIRE(bmax[1] == Approx(1.f));
-        REQUIRE(bmax[2] == Approx(sqrt(2)));
+        CHECK(bmin[0] == Approx(-1.f));
+        CHECK(bmin[1] == Approx(-1.f));
+        CHECK(bmin[2] == Approx(-sqrt(2)));
+        CHECK(bmax[0] == Approx(1.f));
+        CHECK(bmax[1] == Approx(1.f));
+        CHECK(bmax[2] == Approx(sqrt(2)));
       }
       SUBCASE("rotated in xy-plane") {
         const Vec3r<TestType> axis{0, 0, 1};
@@ -95,12 +95,12 @@ TEST_CASE_TEMPLATE("Plane", TestType, float, double) {
         Vec3r<TestType> bmin, bmax;
         planes.BoundingBox(bmin, bmax, 0);
 
-        REQUIRE(bmin[0] == Approx(-sqrt(2)));
-        REQUIRE(bmin[1] == Approx(-sqrt(2)));
-        REQUIRE(bmin[2] == Approx(0));
-        REQUIRE(bmax[0] == Approx(sqrt(2)));
-        REQUIRE(bmax[1] == Approx(sqrt(2)));
-        REQUIRE(bmax[2] == Approx(0));
+        CHECK(bmin[0] == Approx(-sqrt(2)));
+        CHECK(bmin[1] == Approx(-sqrt(2)));
+        CHECK(bmin[2] == Approx(0));
+        CHECK(bmax[0] == Approx(sqrt(2)));
+        CHECK(bmax[1] == Approx(sqrt(2)));
+        CHECK(bmax[2] == Approx(0));
       }
     }
     SUBCASE("shifted center") {
@@ -116,12 +116,12 @@ TEST_CASE_TEMPLATE("Plane", TestType, float, double) {
         Vec3r<TestType> bmin, bmax;
         planes.BoundingBox(bmin, bmax, 0);
 
-        REQUIRE(bmin[0] == Approx(0.f));
-        REQUIRE(bmin[1] == Approx(0.f));
-        REQUIRE(bmin[2] == Approx(1.f));
-        REQUIRE(bmax[0] == Approx(2.f));
-        REQUIRE(bmax[1] == Approx(2.f));
-        REQUIRE(bmax[2] == Approx(1.f));
+        CHECK(bmin[0] == Approx(0.f));
+        CHECK(bmin[1] == Approx(0.f));
+        CHECK(bmin[2] == Approx(1.f));
+        CHECK(bmax[0] == Approx(2.f));
+        CHECK(bmax[1] == Approx(2.f));
+        CHECK(bmax[2] == Approx(1.f));
       }
       SUBCASE("rotated about y-axis") {
         // matrix which rotates the plane about the y-axis ( x = 0 is now plane eq)
@@ -133,12 +133,12 @@ TEST_CASE_TEMPLATE("Plane", TestType, float, double) {
         Vec3r<TestType> bmin, bmax;
         planes.BoundingBox(bmin, bmax, 0);
 
-        REQUIRE(bmin[0] == Approx(1.f));
-        REQUIRE(bmin[1] == Approx(0.f));
-        REQUIRE(bmin[2] == Approx(0.f));
-        REQUIRE(bmax[0] == Approx(1.f));
-        REQUIRE(bmax[1] == Approx(2.f));
-        REQUIRE(bmax[2] == Approx(2.f));
+        CHECK(bmin[0] == Approx(1.f));
+        CHECK(bmin[1] == Approx(0.f));
+        CHECK(bmin[2] == Approx(0.f));
+        CHECK(bmax[0] == Approx(1.f));
+        CHECK(bmax[1] == Approx(2.f));
+        CHECK(bmax[2] == Approx(2.f));
       }
       SUBCASE("rotated about r=normalized(1,1,0)") {
         // plane on z=0, rotated such that (xmin, ymin) corner is parallel to z-axis
@@ -151,12 +151,12 @@ TEST_CASE_TEMPLATE("Plane", TestType, float, double) {
         Vec3r<TestType> bmin, bmax;
         planes.BoundingBox(bmin, bmax, 0);
 
-        REQUIRE(bmin[0] == Approx(0));
-        REQUIRE(bmin[1] == Approx(0));
-        REQUIRE(bmin[2] == Approx(1 - std::sqrt(2)));
-        REQUIRE(bmax[0] == Approx(2));
-        REQUIRE(bmax[1] == Approx(2));
-        REQUIRE(bmax[2] == Approx(1 + std::sqrt(2)));
+        CHECK(bmin[0] == Approx(0));
+        CHECK(bmin[1] == Approx(0));
+        CHECK(bmin[2] == Approx(1 - std::sqrt(2)));
+        CHECK(bmax[0] == Approx(2));
+        CHECK(bmax[1] == Approx(2));
+        CHECK(bmax[2] == Approx(1 + std::sqrt(2)));
       }
       SUBCASE("rotated in xy-plane") {
         const Vec3r<TestType> axis{0, 0, 1};
@@ -168,12 +168,12 @@ TEST_CASE_TEMPLATE("Plane", TestType, float, double) {
         Vec3r<TestType> bmin, bmax;
         planes.BoundingBox(bmin, bmax, 0);
 
-        REQUIRE(bmin[0] == Approx(1 - std::sqrt(2)));
-        REQUIRE(bmin[1] == Approx(1 - std::sqrt(2)));
-        REQUIRE(bmin[2] == Approx(1));
-        REQUIRE(bmax[0] == Approx(1 + std::sqrt(2)));
-        REQUIRE(bmax[1] == Approx(1 + std::sqrt(2)));
-        REQUIRE(bmax[2] == Approx(1));
+        CHECK(bmin[0] == Approx(1 - std::sqrt(2)));
+        CHECK(bmin[1] == Approx(1 - std::sqrt(2)));
+        CHECK(bmin[2] == Approx(1));
+        CHECK(bmax[0] == Approx(1 + std::sqrt(2)));
+        CHECK(bmax[1] == Approx(1 + std::sqrt(2)));
+        CHECK(bmax[2] == Approx(1));
       }
     }
   }
@@ -205,12 +205,12 @@ TEST_CASE_TEMPLATE("Plane", TestType, float, double) {
         update_intersector(plane_intersector, hit_distance, 0);
         post_traversal(plane_intersector, ray, hit_plane, rayhit);
 
-        REQUIRE(hit_plane);
-        REQUIRE(rayhit.prim_id == 0);
-        REQUIRE(rayhit.hit_distance == Approx(5));
-        REQUIRE(rayhit.normal[0] == Approx(0.f));
-        REQUIRE(rayhit.normal[1] == Approx(0.f));
-        REQUIRE(rayhit.normal[2] == Approx(1.f));
+        CHECK(hit_plane);
+        CHECK(rayhit.prim_id == 0);
+        CHECK(rayhit.hit_distance == Approx(5));
+        CHECK(rayhit.normal[0] == Approx(0.f));
+        CHECK(rayhit.normal[1] == Approx(0.f));
+        CHECK(rayhit.normal[2] == Approx(1.f));
       }
       SUBCASE("rotated about (0,1,0)") {
         // matrix which rotates the plane 45 degrees about the z-axis ( x = 0 is now
@@ -238,12 +238,12 @@ TEST_CASE_TEMPLATE("Plane", TestType, float, double) {
         update_intersector(plane_intersector, hit_distance, 0);
         post_traversal(plane_intersector, ray, hit_plane, rayhit);
 
-        REQUIRE(hit_plane);
-        REQUIRE(rayhit.prim_id == 0);
-        REQUIRE(rayhit.hit_distance == Approx(5));
-        REQUIRE(rayhit.normal[0] == Approx(1.f));
-        REQUIRE(rayhit.normal[1] == Approx(0.f));
-        REQUIRE(rayhit.normal[2] == Approx(0.f));
+        CHECK(hit_plane);
+        CHECK(rayhit.prim_id == 0);
+        CHECK(rayhit.hit_distance == Approx(5));
+        CHECK(rayhit.normal[0] == Approx(1.f));
+        CHECK(rayhit.normal[1] == Approx(0.f));
+        CHECK(rayhit.normal[2] == Approx(0.f));
       }
       SUBCASE("rotated about normalized(1,1,0), edge hit") {
         // matrix which rotates the plane about the y-axis ( x = 0 is now plane eq)
@@ -273,12 +273,12 @@ TEST_CASE_TEMPLATE("Plane", TestType, float, double) {
 
         // hits from the negative x direction -> normal vector should point towards
         // that direction
-        REQUIRE(hit_plane);
-        REQUIRE(rayhit.prim_id == 0);
-        REQUIRE(rayhit.hit_distance == Approx(5 * std::sqrt(2)));
-        REQUIRE(rayhit.normal[0] == Approx(-1 / std::sqrt(2)));
-        REQUIRE(rayhit.normal[1] == Approx(1 / std::sqrt(2)));
-        REQUIRE(rayhit.normal[2] == Approx(0.f));// for rotated planes, you can expect small numerical error
+        CHECK(hit_plane);
+        CHECK(rayhit.prim_id == 0);
+        CHECK(rayhit.hit_distance == Approx(5 * std::sqrt(2)));
+        CHECK(rayhit.normal[0] == Approx(-1 / std::sqrt(2)));
+        CHECK(rayhit.normal[1] == Approx(1 / std::sqrt(2)));
+        CHECK(rayhit.normal[2] == Approx(0.f));// for rotated planes, you can expect small numerical error
         // of size 1e16
       }
       SUBCASE("non-rotated, ray origin outside plane bounds") {
@@ -304,12 +304,12 @@ TEST_CASE_TEMPLATE("Plane", TestType, float, double) {
 
           // hits from the negative x direction -> normal vector should point towards
           // that direction
-          REQUIRE(hit_plane);
-          REQUIRE(rayhit.prim_id == 0);
-          REQUIRE(rayhit.hit_distance == Approx(4 * std::sqrt(2.f)));
-          REQUIRE(rayhit.normal[0] == Approx(0.f));
-          REQUIRE(rayhit.normal[1] == Approx(0.f));
-          REQUIRE(rayhit.normal[2] == Approx(1.f));
+          CHECK(hit_plane);
+          CHECK(rayhit.prim_id == 0);
+          CHECK(rayhit.hit_distance == Approx(4 * std::sqrt(2.f)));
+          CHECK(rayhit.normal[0] == Approx(0.f));
+          CHECK(rayhit.normal[1] == Approx(0.f));
+          CHECK(rayhit.normal[2] == Approx(1.f));
         }
         SUBCASE("outside on negative x-axis") {
           Vec3r<TestType> org2{-4.f, 0.f, -4.f};
@@ -327,12 +327,12 @@ TEST_CASE_TEMPLATE("Plane", TestType, float, double) {
 
           // hits from the negative x direction -> normal vector should point towards
           // that direction
-          REQUIRE(hit_plane);
-          REQUIRE(rayhit2.prim_id == 0);
-          REQUIRE(rayhit2.hit_distance == Approx(4. * std::sqrt(2.f)));
-          REQUIRE(rayhit2.normal[0] == Approx(0.f));
-          REQUIRE(rayhit2.normal[1] == Approx(0.f));
-          REQUIRE(rayhit2.normal[2] == Approx(-1.f));
+          CHECK(hit_plane);
+          CHECK(rayhit2.prim_id == 0);
+          CHECK(rayhit2.hit_distance == Approx(4. * std::sqrt(2.f)));
+          CHECK(rayhit2.normal[0] == Approx(0.f));
+          CHECK(rayhit2.normal[1] == Approx(0.f));
+          CHECK(rayhit2.normal[2] == Approx(-1.f));
         }
       }
       SUBCASE("non-rotated, edge intersection") {
@@ -360,12 +360,12 @@ TEST_CASE_TEMPLATE("Plane", TestType, float, double) {
 
           // hits from the negative x direction -> normal vector should point towards
           // that direction
-          REQUIRE(hit_plane);
-          REQUIRE(rayhit.prim_id == 0);
-          REQUIRE(rayhit.hit_distance == Approx(4));
-          REQUIRE(rayhit.normal[0] == Approx(1.f / std::sqrt(2)));
-          REQUIRE(rayhit.normal[1] == Approx(0.f));
-          REQUIRE(rayhit.normal[2] == Approx(1.f / std::sqrt(2)));
+          CHECK(hit_plane);
+          CHECK(rayhit.prim_id == 0);
+          CHECK(rayhit.hit_distance == Approx(4));
+          CHECK(rayhit.normal[0] == Approx(1.f / std::sqrt(2)));
+          CHECK(rayhit.normal[1] == Approx(0.f));
+          CHECK(rayhit.normal[2] == Approx(1.f / std::sqrt(2)));
         }
         SUBCASE("edge: x_min") {
           // edge at x_min
@@ -383,12 +383,12 @@ TEST_CASE_TEMPLATE("Plane", TestType, float, double) {
 
           // hits from the negative x direction -> normal vector should point towards
           // that direction
-          REQUIRE(hit_plane);
-          REQUIRE(rayhit.prim_id == 0);
-          REQUIRE(rayhit.hit_distance == Approx(4));
-          REQUIRE(rayhit.normal[0] == Approx(-1.f / std::sqrt(2)));
-          REQUIRE(rayhit.normal[1] == Approx(0.f));
-          REQUIRE(rayhit.normal[2] == Approx(1.f / std::sqrt(2)));
+          CHECK(hit_plane);
+          CHECK(rayhit.prim_id == 0);
+          CHECK(rayhit.hit_distance == Approx(4));
+          CHECK(rayhit.normal[0] == Approx(-1.f / std::sqrt(2)));
+          CHECK(rayhit.normal[1] == Approx(0.f));
+          CHECK(rayhit.normal[2] == Approx(1.f / std::sqrt(2)));
         }
         SUBCASE("edge: y max") {
           Vec3r<TestType> org3{0.f, 1.f, 4.f};
@@ -405,12 +405,12 @@ TEST_CASE_TEMPLATE("Plane", TestType, float, double) {
 
           // hits from the negative x direction -> normal vector should point towards
           // that direction
-          REQUIRE(hit_plane);
-          REQUIRE(rayhit.prim_id == 0);
-          REQUIRE(rayhit.hit_distance == Approx(4));
-          REQUIRE(rayhit.normal[0] == Approx(0.f));
-          REQUIRE(rayhit.normal[1] == Approx(1.f / std::sqrt(2)));
-          REQUIRE(rayhit.normal[2] == Approx(1.f / std::sqrt(2)));
+          CHECK(hit_plane);
+          CHECK(rayhit.prim_id == 0);
+          CHECK(rayhit.hit_distance == Approx(4));
+          CHECK(rayhit.normal[0] == Approx(0.f));
+          CHECK(rayhit.normal[1] == Approx(1.f / std::sqrt(2)));
+          CHECK(rayhit.normal[2] == Approx(1.f / std::sqrt(2)));
         }
         SUBCASE("edge: y min") {
           // edge at y_min
@@ -428,12 +428,12 @@ TEST_CASE_TEMPLATE("Plane", TestType, float, double) {
 
           // hits from the negative x direction -> normal vector should point towards
           // that direction
-          REQUIRE(hit_plane);
-          REQUIRE(rayhit.prim_id == 0);
-          REQUIRE(rayhit.hit_distance == Approx(4));
-          REQUIRE(rayhit.normal[0] == Approx(0.f));
-          REQUIRE(rayhit.normal[1] == Approx(-1.f / std::sqrt(2)));
-          REQUIRE(rayhit.normal[2] == Approx(1.f / std::sqrt(2)));
+          CHECK(hit_plane);
+          CHECK(rayhit.prim_id == 0);
+          CHECK(rayhit.hit_distance == Approx(4));
+          CHECK(rayhit.normal[0] == Approx(0.f));
+          CHECK(rayhit.normal[1] == Approx(-1.f / std::sqrt(2)));
+          CHECK(rayhit.normal[2] == Approx(1.f / std::sqrt(2)));
         }
       }
       SUBCASE("non-rotated, corner intersection") {
@@ -460,12 +460,12 @@ TEST_CASE_TEMPLATE("Plane", TestType, float, double) {
 
           // hits from the negative x direction -> normal vector should point towards
           // that direction
-          REQUIRE(hit_plane);
-          REQUIRE(rayhit.prim_id == 0);
-          REQUIRE(rayhit.hit_distance == Approx(4));
-          REQUIRE(rayhit.normal[0] == Approx(1.f / std::sqrt(3)));
-          REQUIRE(rayhit.normal[1] == Approx(1.f / std::sqrt(3)));
-          REQUIRE(rayhit.normal[2] == Approx(1.f / std::sqrt(3)));
+          CHECK(hit_plane);
+          CHECK(rayhit.prim_id == 0);
+          CHECK(rayhit.hit_distance == Approx(4));
+          CHECK(rayhit.normal[0] == Approx(1.f / std::sqrt(3)));
+          CHECK(rayhit.normal[1] == Approx(1.f / std::sqrt(3)));
+          CHECK(rayhit.normal[2] == Approx(1.f / std::sqrt(3)));
         }
         SUBCASE("corner: x min, y max") {
           Vec3r<TestType> org2{-1.f, 1.f, 4.f};
@@ -482,12 +482,12 @@ TEST_CASE_TEMPLATE("Plane", TestType, float, double) {
 
           // hits from the negative x direction -> normal vector should point towards
           // that direction
-          REQUIRE(hit_plane);
-          REQUIRE(rayhit.prim_id == 0);
-          REQUIRE(rayhit.hit_distance == Approx(4));
-          REQUIRE(rayhit.normal[0] == Approx(-1.f / std::sqrt(3)));
-          REQUIRE(rayhit.normal[1] == Approx(1.f / std::sqrt(3)));
-          REQUIRE(rayhit.normal[2] == Approx(1.f / std::sqrt(3)));
+          CHECK(hit_plane);
+          CHECK(rayhit.prim_id == 0);
+          CHECK(rayhit.hit_distance == Approx(4));
+          CHECK(rayhit.normal[0] == Approx(-1.f / std::sqrt(3)));
+          CHECK(rayhit.normal[1] == Approx(1.f / std::sqrt(3)));
+          CHECK(rayhit.normal[2] == Approx(1.f / std::sqrt(3)));
         }
         SUBCASE("corner: x max, y min") {
           Vec3r<TestType> org3{1.f, -1.f, 4.f};
@@ -504,12 +504,12 @@ TEST_CASE_TEMPLATE("Plane", TestType, float, double) {
 
           // hits from the negative x direction -> normal vector should point towards
           // that direction
-          REQUIRE(hit_plane);
-          REQUIRE(rayhit.prim_id == 0);
-          REQUIRE(rayhit.hit_distance == Approx(4));
-          REQUIRE(rayhit.normal[0] == Approx(1.f / std::sqrt(3)));
-          REQUIRE(rayhit.normal[1] == Approx(-1.f / std::sqrt(3)));
-          REQUIRE(rayhit.normal[2] == Approx(1.f / std::sqrt(3)));
+          CHECK(hit_plane);
+          CHECK(rayhit.prim_id == 0);
+          CHECK(rayhit.hit_distance == Approx(4));
+          CHECK(rayhit.normal[0] == Approx(1.f / std::sqrt(3)));
+          CHECK(rayhit.normal[1] == Approx(-1.f / std::sqrt(3)));
+          CHECK(rayhit.normal[2] == Approx(1.f / std::sqrt(3)));
         }
         SUBCASE("corner: x min, y min") {
           // corner at x_min, y_min
@@ -527,12 +527,12 @@ TEST_CASE_TEMPLATE("Plane", TestType, float, double) {
 
           // hits from the negative x direction -> normal vector should point towards
           // that direction
-          REQUIRE(hit_plane);
-          REQUIRE(rayhit.prim_id == 0);
-          REQUIRE(rayhit.hit_distance == Approx(4));
-          REQUIRE(rayhit.normal[0] == Approx(-1.f / std::sqrt(3)));
-          REQUIRE(rayhit.normal[1] == Approx(-1.f / std::sqrt(3)));
-          REQUIRE(rayhit.normal[2] == Approx(1.f / std::sqrt(3)));
+          CHECK(hit_plane);
+          CHECK(rayhit.prim_id == 0);
+          CHECK(rayhit.hit_distance == Approx(4));
+          CHECK(rayhit.normal[0] == Approx(-1.f / std::sqrt(3)));
+          CHECK(rayhit.normal[1] == Approx(-1.f / std::sqrt(3)));
+          CHECK(rayhit.normal[2] == Approx(1.f / std::sqrt(3)));
         }
       }
     }
@@ -563,12 +563,12 @@ TEST_CASE_TEMPLATE("Plane", TestType, float, double) {
         update_intersector(plane_intersector, hit_distance, 0);
         post_traversal(plane_intersector, ray, hit_plane, rayhit);
 
-        REQUIRE(hit_plane);
-        REQUIRE(rayhit.prim_id == 0);
-        REQUIRE(rayhit.hit_distance == Approx(4));
-        REQUIRE(rayhit.normal[0] == Approx(0.f));
-        REQUIRE(rayhit.normal[1] == Approx(0.f));
-        REQUIRE(rayhit.normal[2] == Approx(1.f));
+        CHECK(hit_plane);
+        CHECK(rayhit.prim_id == 0);
+        CHECK(rayhit.hit_distance == Approx(4));
+        CHECK(rayhit.normal[0] == Approx(0.f));
+        CHECK(rayhit.normal[1] == Approx(0.f));
+        CHECK(rayhit.normal[2] == Approx(1.f));
       }
       SUBCASE("rotated, non-shifted") {
         // matrix which rotates the plane 90 degrees about the y-axis ( x = 0 is now
@@ -596,12 +596,12 @@ TEST_CASE_TEMPLATE("Plane", TestType, float, double) {
         update_intersector(plane_intersector, hit_distance, 0);
         post_traversal(plane_intersector, ray, hit_plane, rayhit);
 
-        REQUIRE(hit_plane);
-        REQUIRE(rayhit.prim_id == 0);
-        REQUIRE(rayhit.hit_distance == Approx(4));
-        REQUIRE(rayhit.normal[0] == Approx(1.f));
-        REQUIRE(rayhit.normal[1] == Approx(0.f));
-        REQUIRE(rayhit.normal[2] == Approx(0.f));
+        CHECK(hit_plane);
+        CHECK(rayhit.prim_id == 0);
+        CHECK(rayhit.hit_distance == Approx(4));
+        CHECK(rayhit.normal[0] == Approx(1.f));
+        CHECK(rayhit.normal[1] == Approx(0.f));
+        CHECK(rayhit.normal[2] == Approx(0.f));
       }
       SUBCASE("rotated about r=normalized(1,1,0), edge hit") {
         // matrix which rotates the plane about axis = normalized(1,1,0)
@@ -631,12 +631,12 @@ TEST_CASE_TEMPLATE("Plane", TestType, float, double) {
 
         // hits from the negative x direction -> normal vector should point towards
         // that direction
-        REQUIRE(hit_plane);
-        REQUIRE(rayhit.prim_id == 0);
-        REQUIRE(rayhit.hit_distance == Approx(5 * std::sqrt(2)));
-        REQUIRE(rayhit.normal[0] == Approx(-1 / std::sqrt(2)));
-        REQUIRE(rayhit.normal[1] == Approx(1 / std::sqrt(2)));
-        REQUIRE(rayhit.normal[2] == Approx(0.f));// for rotated planes, you can expect small numerical error
+        CHECK(hit_plane);
+        CHECK(rayhit.prim_id == 0);
+        CHECK(rayhit.hit_distance == Approx(5 * std::sqrt(2)));
+        CHECK(rayhit.normal[0] == Approx(-1 / std::sqrt(2)));
+        CHECK(rayhit.normal[1] == Approx(1 / std::sqrt(2)));
+        CHECK(rayhit.normal[2] == Approx(0.f));// for rotated planes, you can expect small numerical error
         // of size 1e16
       }
       SUBCASE("non-rotated, ray origin outside plane bounds") {
@@ -662,12 +662,12 @@ TEST_CASE_TEMPLATE("Plane", TestType, float, double) {
 
           // hits from the negative x direction -> normal vector should point towards
           // that direction
-          REQUIRE(hit_plane);
-          REQUIRE(rayhit.prim_id == 0);
-          REQUIRE(rayhit.hit_distance == Approx(4 * std::sqrt(2.f)));
-          REQUIRE(rayhit.normal[0] == Approx(0.f));
-          REQUIRE(rayhit.normal[1] == Approx(0.f));
-          REQUIRE(rayhit.normal[2] == Approx(1.f));
+          CHECK(hit_plane);
+          CHECK(rayhit.prim_id == 0);
+          CHECK(rayhit.hit_distance == Approx(4 * std::sqrt(2.f)));
+          CHECK(rayhit.normal[0] == Approx(0.f));
+          CHECK(rayhit.normal[1] == Approx(0.f));
+          CHECK(rayhit.normal[2] == Approx(1.f));
         }
         SUBCASE("outside on negative x-axis") {
           Vec3r<TestType> org2{-3.f, 1.f, -3.f};
@@ -685,12 +685,12 @@ TEST_CASE_TEMPLATE("Plane", TestType, float, double) {
 
           // hits from the negative x direction -> normal vector should point towards
           // that direction
-          REQUIRE(hit_plane);
-          REQUIRE(rayhit2.prim_id == 0);
-          REQUIRE(rayhit2.hit_distance == Approx(4. * std::sqrt(2.f)));
-          REQUIRE(rayhit2.normal[0] == Approx(0.f));
-          REQUIRE(rayhit2.normal[1] == Approx(0.f));
-          REQUIRE(rayhit2.normal[2] == Approx(-1.f));
+          CHECK(hit_plane);
+          CHECK(rayhit2.prim_id == 0);
+          CHECK(rayhit2.hit_distance == Approx(4. * std::sqrt(2.f)));
+          CHECK(rayhit2.normal[0] == Approx(0.f));
+          CHECK(rayhit2.normal[1] == Approx(0.f));
+          CHECK(rayhit2.normal[2] == Approx(-1.f));
         }
       }
       SUBCASE("non-rotated, edge intersection") {
@@ -718,12 +718,12 @@ TEST_CASE_TEMPLATE("Plane", TestType, float, double) {
 
           // hits from the negative x direction -> normal vector should point towards
           // that direction
-          REQUIRE(hit_plane);
-          REQUIRE(rayhit.prim_id == 0);
-          REQUIRE(rayhit.hit_distance == Approx(3));
-          REQUIRE(rayhit.normal[0] == Approx(1.f / std::sqrt(2)));
-          REQUIRE(rayhit.normal[1] == Approx(0.f));
-          REQUIRE(rayhit.normal[2] == Approx(1.f / std::sqrt(2)));
+          CHECK(hit_plane);
+          CHECK(rayhit.prim_id == 0);
+          CHECK(rayhit.hit_distance == Approx(3));
+          CHECK(rayhit.normal[0] == Approx(1.f / std::sqrt(2)));
+          CHECK(rayhit.normal[1] == Approx(0.f));
+          CHECK(rayhit.normal[2] == Approx(1.f / std::sqrt(2)));
         }
         SUBCASE("edge: x_min") {
           // edge at x_min
@@ -741,12 +741,12 @@ TEST_CASE_TEMPLATE("Plane", TestType, float, double) {
 
           // hits from the negative x direction -> normal vector should point towards
           // that direction
-          REQUIRE(hit_plane);
-          REQUIRE(rayhit.prim_id == 0);
-          REQUIRE(rayhit.hit_distance == Approx(3));
-          REQUIRE(rayhit.normal[0] == Approx(-1.f / std::sqrt(2)));
-          REQUIRE(rayhit.normal[1] == Approx(0.f));
-          REQUIRE(rayhit.normal[2] == Approx(1.f / std::sqrt(2)));
+          CHECK(hit_plane);
+          CHECK(rayhit.prim_id == 0);
+          CHECK(rayhit.hit_distance == Approx(3));
+          CHECK(rayhit.normal[0] == Approx(-1.f / std::sqrt(2)));
+          CHECK(rayhit.normal[1] == Approx(0.f));
+          CHECK(rayhit.normal[2] == Approx(1.f / std::sqrt(2)));
         }
         SUBCASE("edge: y max") {
           Vec3r<TestType> org3{1.f, 2.f, 4.f};
@@ -763,12 +763,12 @@ TEST_CASE_TEMPLATE("Plane", TestType, float, double) {
 
           // hits from the negative x direction -> normal vector should point towards
           // that direction
-          REQUIRE(hit_plane);
-          REQUIRE(rayhit.prim_id == 0);
-          REQUIRE(rayhit.hit_distance == Approx(3));
-          REQUIRE(rayhit.normal[0] == Approx(0.f));
-          REQUIRE(rayhit.normal[1] == Approx(1.f / std::sqrt(2)));
-          REQUIRE(rayhit.normal[2] == Approx(1.f / std::sqrt(2)));
+          CHECK(hit_plane);
+          CHECK(rayhit.prim_id == 0);
+          CHECK(rayhit.hit_distance == Approx(3));
+          CHECK(rayhit.normal[0] == Approx(0.f));
+          CHECK(rayhit.normal[1] == Approx(1.f / std::sqrt(2)));
+          CHECK(rayhit.normal[2] == Approx(1.f / std::sqrt(2)));
         }
         SUBCASE("edge: y min") {
           // edge at y_min
@@ -786,12 +786,12 @@ TEST_CASE_TEMPLATE("Plane", TestType, float, double) {
 
           // hits from the negative x direction -> normal vector should point towards
           // that direction
-          REQUIRE(hit_plane);
-          REQUIRE(rayhit.prim_id == 0);
-          REQUIRE(rayhit.hit_distance == Approx(3));
-          REQUIRE(rayhit.normal[0] == Approx(0.f));
-          REQUIRE(rayhit.normal[1] == Approx(-1.f / std::sqrt(2)));
-          REQUIRE(rayhit.normal[2] == Approx(1.f / std::sqrt(2)));
+          CHECK(hit_plane);
+          CHECK(rayhit.prim_id == 0);
+          CHECK(rayhit.hit_distance == Approx(3));
+          CHECK(rayhit.normal[0] == Approx(0.f));
+          CHECK(rayhit.normal[1] == Approx(-1.f / std::sqrt(2)));
+          CHECK(rayhit.normal[2] == Approx(1.f / std::sqrt(2)));
         }
       }
       SUBCASE("non-rotated, corner intersection") {
@@ -818,12 +818,12 @@ TEST_CASE_TEMPLATE("Plane", TestType, float, double) {
 
           // hits from the negative x direction -> normal vector should point towards
           // that direction
-          REQUIRE(hit_plane);
-          REQUIRE(rayhit.prim_id == 0);
-          REQUIRE(rayhit.hit_distance == Approx(3));
-          REQUIRE(rayhit.normal[0] == Approx(1.f / std::sqrt(3)));
-          REQUIRE(rayhit.normal[1] == Approx(1.f / std::sqrt(3)));
-          REQUIRE(rayhit.normal[2] == Approx(1.f / std::sqrt(3)));
+          CHECK(hit_plane);
+          CHECK(rayhit.prim_id == 0);
+          CHECK(rayhit.hit_distance == Approx(3));
+          CHECK(rayhit.normal[0] == Approx(1.f / std::sqrt(3)));
+          CHECK(rayhit.normal[1] == Approx(1.f / std::sqrt(3)));
+          CHECK(rayhit.normal[2] == Approx(1.f / std::sqrt(3)));
         }
         SUBCASE("corner: x min, y max") {
           Vec3r<TestType> org2{0.f, 2.f, 4.f};
@@ -840,12 +840,12 @@ TEST_CASE_TEMPLATE("Plane", TestType, float, double) {
 
           // hits from the negative x direction -> normal vector should point towards
           // that direction
-          REQUIRE(hit_plane);
-          REQUIRE(rayhit.prim_id == 0);
-          REQUIRE(rayhit.hit_distance == Approx(3));
-          REQUIRE(rayhit.normal[0] == Approx(-1.f / std::sqrt(3)));
-          REQUIRE(rayhit.normal[1] == Approx(1.f / std::sqrt(3)));
-          REQUIRE(rayhit.normal[2] == Approx(1.f / std::sqrt(3)));
+          CHECK(hit_plane);
+          CHECK(rayhit.prim_id == 0);
+          CHECK(rayhit.hit_distance == Approx(3));
+          CHECK(rayhit.normal[0] == Approx(-1.f / std::sqrt(3)));
+          CHECK(rayhit.normal[1] == Approx(1.f / std::sqrt(3)));
+          CHECK(rayhit.normal[2] == Approx(1.f / std::sqrt(3)));
         }
         SUBCASE("corner: x max, y min") {
           Vec3r<TestType> org3{2.f, 0.f, 4.f};
@@ -862,12 +862,12 @@ TEST_CASE_TEMPLATE("Plane", TestType, float, double) {
 
           // hits from the negative x direction -> normal vector should point towards
           // that direction
-          REQUIRE(hit_plane);
-          REQUIRE(rayhit.prim_id == 0);
-          REQUIRE(rayhit.hit_distance == Approx(3));
-          REQUIRE(rayhit.normal[0] == Approx(1.f / std::sqrt(3)));
-          REQUIRE(rayhit.normal[1] == Approx(-1.f / std::sqrt(3)));
-          REQUIRE(rayhit.normal[2] == Approx(1.f / std::sqrt(3)));
+          CHECK(hit_plane);
+          CHECK(rayhit.prim_id == 0);
+          CHECK(rayhit.hit_distance == Approx(3));
+          CHECK(rayhit.normal[0] == Approx(1.f / std::sqrt(3)));
+          CHECK(rayhit.normal[1] == Approx(-1.f / std::sqrt(3)));
+          CHECK(rayhit.normal[2] == Approx(1.f / std::sqrt(3)));
         }
         SUBCASE("corner: x min, y min") {
           // corner at x_min, y_min
@@ -885,12 +885,12 @@ TEST_CASE_TEMPLATE("Plane", TestType, float, double) {
 
           // hits from the negative x direction -> normal vector should point towards
           // that direction
-          REQUIRE(hit_plane);
-          REQUIRE(rayhit.prim_id == 0);
-          REQUIRE(rayhit.hit_distance == Approx(3));
-          REQUIRE(rayhit.normal[0] == Approx(-1.f / std::sqrt(3)));
-          REQUIRE(rayhit.normal[1] == Approx(-1.f / std::sqrt(3)));
-          REQUIRE(rayhit.normal[2] == Approx(1.f / std::sqrt(3)));
+          CHECK(hit_plane);
+          CHECK(rayhit.prim_id == 0);
+          CHECK(rayhit.hit_distance == Approx(3));
+          CHECK(rayhit.normal[0] == Approx(-1.f / std::sqrt(3)));
+          CHECK(rayhit.normal[1] == Approx(-1.f / std::sqrt(3)));
+          CHECK(rayhit.normal[2] == Approx(1.f / std::sqrt(3)));
         }
       }
     }

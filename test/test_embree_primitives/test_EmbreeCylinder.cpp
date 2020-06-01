@@ -28,12 +28,12 @@ TEST_CASE_TEMPLATE("EmbreeCylinder", T, float) {
         RTCBounds bound;
         rtcGetSceneBounds(S, &bound);
 
-        REQUIRE(bound.lower_x == Approx(-1));
-        REQUIRE(bound.lower_y == Approx(-1));
-        REQUIRE(bound.lower_z == Approx(0));
-        REQUIRE(bound.upper_x == Approx(1));
-        REQUIRE(bound.upper_y == Approx(1));
-        REQUIRE(bound.upper_z == Approx(2));
+        CHECK(bound.lower_x == Approx(-1));
+        CHECK(bound.lower_y == Approx(-1));
+        CHECK(bound.lower_z == Approx(0));
+        CHECK(bound.upper_x == Approx(1));
+        CHECK(bound.upper_y == Approx(1));
+        CHECK(bound.upper_z == Approx(2));
       }
       SUBCASE("rotated about (0,1,0)") {
         const Vec3r<T> axis{0, 1, 0};
@@ -45,12 +45,12 @@ TEST_CASE_TEMPLATE("EmbreeCylinder", T, float) {
         RTCBounds bound;
         rtcGetSceneBounds(S, &bound);
 
-        REQUIRE(bound.lower_x == Approx(0));
-        REQUIRE(bound.lower_y == Approx(-1));
-        REQUIRE(bound.lower_z == Approx(-1));
-        REQUIRE(bound.upper_x == Approx(2));
-        REQUIRE(bound.upper_y == Approx(1));
-        REQUIRE(bound.upper_z == Approx(1));
+        CHECK(bound.lower_x == Approx(0));
+        CHECK(bound.lower_y == Approx(-1));
+        CHECK(bound.lower_z == Approx(-1));
+        CHECK(bound.upper_x == Approx(2));
+        CHECK(bound.upper_y == Approx(1));
+        CHECK(bound.upper_z == Approx(1));
       }
     }
     SUBCASE("shifted center") {
@@ -66,12 +66,12 @@ TEST_CASE_TEMPLATE("EmbreeCylinder", T, float) {
         RTCBounds bound;
         rtcGetSceneBounds(S, &bound);
 
-        REQUIRE(bound.lower_x == Approx(-1));
-        REQUIRE(bound.lower_y == Approx(0));
-        REQUIRE(bound.lower_z == Approx(4));
-        REQUIRE(bound.upper_x == Approx(1));
-        REQUIRE(bound.upper_y == Approx(2));
-        REQUIRE(bound.upper_z == Approx(6));
+        CHECK(bound.lower_x == Approx(-1));
+        CHECK(bound.lower_y == Approx(0));
+        CHECK(bound.lower_z == Approx(4));
+        CHECK(bound.upper_x == Approx(1));
+        CHECK(bound.upper_y == Approx(2));
+        CHECK(bound.upper_z == Approx(6));
       }
       SUBCASE("rotated about (0,1,0)") {
         const Vec3r<T> axis{0, 1, 0};
@@ -82,12 +82,12 @@ TEST_CASE_TEMPLATE("EmbreeCylinder", T, float) {
         RTCBounds bound;
         rtcGetSceneBounds(S, &bound);
 
-        REQUIRE(bound.lower_x == Approx(0));
-        REQUIRE(bound.lower_y == Approx(0));
-        REQUIRE(bound.lower_z == Approx(3));
-        REQUIRE(bound.upper_x == Approx(2));
-        REQUIRE(bound.upper_y == Approx(2));
-        REQUIRE(bound.upper_z == Approx(5));
+        CHECK(bound.lower_x == Approx(0));
+        CHECK(bound.lower_y == Approx(0));
+        CHECK(bound.lower_z == Approx(3));
+        CHECK(bound.upper_x == Approx(2));
+        CHECK(bound.upper_y == Approx(2));
+        CHECK(bound.upper_z == Approx(5));
       }
     }
   }
@@ -118,11 +118,11 @@ TEST_CASE_TEMPLATE("EmbreeCylinder", T, float) {
             RTCRayHit rayhit{ray, hit};
             rtcIntersect1(S, &context, &rayhit);
 
-            REQUIRE(rayhit.hit.primID == 0);
-            REQUIRE(rayhit.ray.tfar == Approx(5.5));
-            REQUIRE(rayhit.hit.Ng_x == Approx(0.f));
-            REQUIRE(rayhit.hit.Ng_y == Approx(0.f));
-            REQUIRE(rayhit.hit.Ng_z == Approx(1.f));
+            CHECK(rayhit.hit.primID == 0);
+            CHECK(rayhit.ray.tfar == Approx(5.5));
+            CHECK(rayhit.hit.Ng_x == Approx(0.f));
+            CHECK(rayhit.hit.Ng_y == Approx(0.f));
+            CHECK(rayhit.hit.Ng_z == Approx(1.f));
           }
           SUBCASE("oblique incidence on top") {
             EmbreeCylinder cylinder(D, S, center, semi_axis_a, semi_axis_b, height, rot);
@@ -141,11 +141,11 @@ TEST_CASE_TEMPLATE("EmbreeCylinder", T, float) {
             RTCRayHit rayhit{ray, hit};
             rtcIntersect1(S, &context, &rayhit);
 
-            REQUIRE(rayhit.hit.primID == 0);
-            REQUIRE(rayhit.ray.tfar == Approx(std::sqrt(50)));
-            REQUIRE(rayhit.hit.Ng_x == Approx(0.f));
-            REQUIRE(rayhit.hit.Ng_y == Approx(0.f));
-            REQUIRE(rayhit.hit.Ng_z == Approx(1.f));
+            CHECK(rayhit.hit.primID == 0);
+            CHECK(rayhit.ray.tfar == Approx(std::sqrt(50)));
+            CHECK(rayhit.hit.Ng_x == Approx(0.f));
+            CHECK(rayhit.hit.Ng_y == Approx(0.f));
+            CHECK(rayhit.hit.Ng_z == Approx(1.f));
           }
           SUBCASE("oblique incidence on shell 1") {
             EmbreeCylinder cylinder(D, S, center, semi_axis_a, semi_axis_b, height, rot);
@@ -164,11 +164,11 @@ TEST_CASE_TEMPLATE("EmbreeCylinder", T, float) {
             RTCRayHit rayhit{ray, hit};
             rtcIntersect1(S, &context, &rayhit);
 
-            REQUIRE(rayhit.hit.primID == 0);
-            REQUIRE(rayhit.ray.tfar == Approx(std::sqrt(32)));
-            REQUIRE(rayhit.hit.Ng_x == Approx(1.f));
-            REQUIRE(rayhit.hit.Ng_y == Approx(0.f));
-            REQUIRE(rayhit.hit.Ng_z == Approx(0.f));
+            CHECK(rayhit.hit.primID == 0);
+            CHECK(rayhit.ray.tfar == Approx(std::sqrt(32)));
+            CHECK(rayhit.hit.Ng_x == Approx(1.f));
+            CHECK(rayhit.hit.Ng_y == Approx(0.f));
+            CHECK(rayhit.hit.Ng_z == Approx(0.f));
           }
           SUBCASE("oblique incidence on shell 2") {
             Vec3r<T> org1{-5, 0, 5};
@@ -187,11 +187,11 @@ TEST_CASE_TEMPLATE("EmbreeCylinder", T, float) {
             RTCRayHit rayhit{ray, hit};
             rtcIntersect1(S, &context, &rayhit);
 
-            REQUIRE(rayhit.hit.primID == 0);
-            REQUIRE(rayhit.ray.tfar == Approx(std::sqrt(32)));
-            REQUIRE(rayhit.hit.Ng_x == Approx(-1.f));
-            REQUIRE(rayhit.hit.Ng_y == Approx(0.f));
-            REQUIRE(rayhit.hit.Ng_z == Approx(0.f));
+            CHECK(rayhit.hit.primID == 0);
+            CHECK(rayhit.ray.tfar == Approx(std::sqrt(32)));
+            CHECK(rayhit.hit.Ng_x == Approx(-1.f));
+            CHECK(rayhit.hit.Ng_y == Approx(0.f));
+            CHECK(rayhit.hit.Ng_z == Approx(0.f));
           }
           SUBCASE("oblique incidence on shell 3") {
             Vec3r<T> org1{0, 5, 4};
@@ -210,11 +210,11 @@ TEST_CASE_TEMPLATE("EmbreeCylinder", T, float) {
             RTCRayHit rayhit{ray, hit};
             rtcIntersect1(S, &context, &rayhit);
 
-            REQUIRE(rayhit.hit.primID == 0);
-            REQUIRE(rayhit.ray.tfar == Approx(std::sqrt(18)));
-            REQUIRE(rayhit.hit.Ng_x == Approx(0.f));
-            REQUIRE(rayhit.hit.Ng_y == Approx(1.f));
-            REQUIRE(rayhit.hit.Ng_z == Approx(0.f));
+            CHECK(rayhit.hit.primID == 0);
+            CHECK(rayhit.ray.tfar == Approx(std::sqrt(18)));
+            CHECK(rayhit.hit.Ng_x == Approx(0.f));
+            CHECK(rayhit.hit.Ng_y == Approx(1.f));
+            CHECK(rayhit.hit.Ng_z == Approx(0.f));
           }
           SUBCASE("oblique incidence on shell 4") {
             Vec3r<T> org1{0, -5, 4};
@@ -234,11 +234,11 @@ TEST_CASE_TEMPLATE("EmbreeCylinder", T, float) {
             RTCRayHit rayhit{ray, hit};
             rtcIntersect1(S, &context, &rayhit);
 
-            REQUIRE(rayhit.hit.primID == 0);
-            REQUIRE(rayhit.ray.tfar == Approx(std::sqrt(18)));
-            REQUIRE(rayhit.hit.Ng_x == Approx(0.f));
-            REQUIRE(rayhit.hit.Ng_y == Approx(-1.f));
-            REQUIRE(rayhit.hit.Ng_z == Approx(0.f));
+            CHECK(rayhit.hit.primID == 0);
+            CHECK(rayhit.ray.tfar == Approx(std::sqrt(18)));
+            CHECK(rayhit.hit.Ng_x == Approx(0.f));
+            CHECK(rayhit.hit.Ng_y == Approx(-1.f));
+            CHECK(rayhit.hit.Ng_z == Approx(0.f));
           }
         }
         SUBCASE("origin below") {
@@ -260,11 +260,11 @@ TEST_CASE_TEMPLATE("EmbreeCylinder", T, float) {
             RTCRayHit rayhit{ray, hit};
             rtcIntersect1(S, &context, &rayhit);
 
-            REQUIRE(rayhit.hit.primID == 0);
-            REQUIRE(rayhit.ray.tfar == Approx(7.5));
-            REQUIRE(rayhit.hit.Ng_x == Approx(0.f));
-            REQUIRE(rayhit.hit.Ng_y == Approx(0.f));
-            REQUIRE(rayhit.hit.Ng_z == Approx(-1.f));
+            CHECK(rayhit.hit.primID == 0);
+            CHECK(rayhit.ray.tfar == Approx(7.5));
+            CHECK(rayhit.hit.Ng_x == Approx(0.f));
+            CHECK(rayhit.hit.Ng_y == Approx(0.f));
+            CHECK(rayhit.hit.Ng_z == Approx(-1.f));
           }
           SUBCASE("oblique incidence on bottom") {
             Vec3r<T> org1{5.f, 0.f, -5.f};
@@ -284,11 +284,11 @@ TEST_CASE_TEMPLATE("EmbreeCylinder", T, float) {
             RTCRayHit rayhit{ray, hit};
             rtcIntersect1(S, &context, &rayhit);
 
-            REQUIRE(rayhit.hit.primID == 0);
-            REQUIRE(rayhit.ray.tfar == Approx(std::sqrt(50)));
-            REQUIRE(rayhit.hit.Ng_x == Approx(0.f));
-            REQUIRE(rayhit.hit.Ng_y == Approx(0.f));
-            REQUIRE(rayhit.hit.Ng_z == Approx(-1.f));
+            CHECK(rayhit.hit.primID == 0);
+            CHECK(rayhit.ray.tfar == Approx(std::sqrt(50)));
+            CHECK(rayhit.hit.Ng_x == Approx(0.f));
+            CHECK(rayhit.hit.Ng_y == Approx(0.f));
+            CHECK(rayhit.hit.Ng_z == Approx(-1.f));
           }
           SUBCASE("oblique incidence on shell 1") {
             Vec3r<T> org1{5, 0, -3};
@@ -307,11 +307,11 @@ TEST_CASE_TEMPLATE("EmbreeCylinder", T, float) {
             RTCRayHit rayhit{ray, hit};
             rtcIntersect1(S, &context, &rayhit);
 
-            REQUIRE(rayhit.hit.primID == 0);
-            REQUIRE(rayhit.ray.tfar == Approx(std::sqrt(32)));
-            REQUIRE(rayhit.hit.Ng_x == Approx(1.f));
-            REQUIRE(rayhit.hit.Ng_y == Approx(0.f));
-            REQUIRE(rayhit.hit.Ng_z == Approx(0.f));
+            CHECK(rayhit.hit.primID == 0);
+            CHECK(rayhit.ray.tfar == Approx(std::sqrt(32)));
+            CHECK(rayhit.hit.Ng_x == Approx(1.f));
+            CHECK(rayhit.hit.Ng_y == Approx(0.f));
+            CHECK(rayhit.hit.Ng_z == Approx(0.f));
           }
           SUBCASE("oblique incidence on shell 2") {
             Vec3r<T> org1{-5, 0, -3};
@@ -330,11 +330,11 @@ TEST_CASE_TEMPLATE("EmbreeCylinder", T, float) {
             RTCRayHit rayhit{ray, hit};
             rtcIntersect1(S, &context, &rayhit);
 
-            REQUIRE(rayhit.hit.primID == 0);
-            REQUIRE(rayhit.ray.tfar == Approx(std::sqrt(32)));
-            REQUIRE(rayhit.hit.Ng_x == Approx(-1.f));
-            REQUIRE(rayhit.hit.Ng_y == Approx(0.f));
-            REQUIRE(rayhit.hit.Ng_z == Approx(0.f));
+            CHECK(rayhit.hit.primID == 0);
+            CHECK(rayhit.ray.tfar == Approx(std::sqrt(32)));
+            CHECK(rayhit.hit.Ng_x == Approx(-1.f));
+            CHECK(rayhit.hit.Ng_y == Approx(0.f));
+            CHECK(rayhit.hit.Ng_z == Approx(0.f));
           }
           SUBCASE("oblique incidence on shell 3") {
             Vec3r<T> org1{0, 5, -2};
@@ -353,11 +353,11 @@ TEST_CASE_TEMPLATE("EmbreeCylinder", T, float) {
             RTCRayHit rayhit{ray, hit};
             rtcIntersect1(S, &context, &rayhit);
 
-            REQUIRE(rayhit.hit.primID == 0);
-            REQUIRE(rayhit.ray.tfar == Approx(std::sqrt(18)));
-            REQUIRE(rayhit.hit.Ng_x == Approx(0.f));
-            REQUIRE(rayhit.hit.Ng_y == Approx(1.f));
-            REQUIRE(rayhit.hit.Ng_z == Approx(0.f));
+            CHECK(rayhit.hit.primID == 0);
+            CHECK(rayhit.ray.tfar == Approx(std::sqrt(18)));
+            CHECK(rayhit.hit.Ng_x == Approx(0.f));
+            CHECK(rayhit.hit.Ng_y == Approx(1.f));
+            CHECK(rayhit.hit.Ng_z == Approx(0.f));
           }
           SUBCASE("oblique incidence on shell 4") {
             Vec3r<T> org1{0, -5, -2};
@@ -376,11 +376,11 @@ TEST_CASE_TEMPLATE("EmbreeCylinder", T, float) {
             RTCRayHit rayhit{ray, hit};
             rtcIntersect1(S, &context, &rayhit);
 
-            REQUIRE(rayhit.hit.primID == 0);
-            REQUIRE(rayhit.ray.tfar == Approx(std::sqrt(18)));
-            REQUIRE(rayhit.hit.Ng_x == Approx(0.f));
-            REQUIRE(rayhit.hit.Ng_y == Approx(-1.f));
-            REQUIRE(rayhit.hit.Ng_z == Approx(0.f));
+            CHECK(rayhit.hit.primID == 0);
+            CHECK(rayhit.ray.tfar == Approx(std::sqrt(18)));
+            CHECK(rayhit.hit.Ng_x == Approx(0.f));
+            CHECK(rayhit.hit.Ng_y == Approx(-1.f));
+            CHECK(rayhit.hit.Ng_z == Approx(0.f));
           }
         }
         SUBCASE("origin around shell") {
@@ -402,11 +402,11 @@ TEST_CASE_TEMPLATE("EmbreeCylinder", T, float) {
               RTCRayHit rayhit{ray, hit};
               rtcIntersect1(S, &context, &rayhit);
 
-              REQUIRE(rayhit.hit.primID == 0);
-              REQUIRE(rayhit.ray.tfar == Approx(4));
-              REQUIRE(rayhit.hit.Ng_x == Approx(1.f));
-              REQUIRE(rayhit.hit.Ng_y == Approx(0.f));
-              REQUIRE(rayhit.hit.Ng_z == Approx(0.f));
+              CHECK(rayhit.hit.primID == 0);
+              CHECK(rayhit.ray.tfar == Approx(4));
+              CHECK(rayhit.hit.Ng_x == Approx(1.f));
+              CHECK(rayhit.hit.Ng_y == Approx(0.f));
+              CHECK(rayhit.hit.Ng_z == Approx(0.f));
             }
             SUBCASE("origin: x-") {
               Vec3r<T> org1{-5, 0, 1};
@@ -425,11 +425,11 @@ TEST_CASE_TEMPLATE("EmbreeCylinder", T, float) {
               RTCRayHit rayhit{ray, hit};
               rtcIntersect1(S, &context, &rayhit);
 
-              REQUIRE(rayhit.hit.primID == 0);
-              REQUIRE(rayhit.ray.tfar == Approx(4));
-              REQUIRE(rayhit.hit.Ng_x == Approx(-1.f));
-              REQUIRE(rayhit.hit.Ng_y == Approx(0.f));
-              REQUIRE(rayhit.hit.Ng_z == Approx(0.f));
+              CHECK(rayhit.hit.primID == 0);
+              CHECK(rayhit.ray.tfar == Approx(4));
+              CHECK(rayhit.hit.Ng_x == Approx(-1.f));
+              CHECK(rayhit.hit.Ng_y == Approx(0.f));
+              CHECK(rayhit.hit.Ng_z == Approx(0.f));
             }
             SUBCASE("origin: y+") {
               Vec3r<T> org1{0, 5, 1};
@@ -448,11 +448,11 @@ TEST_CASE_TEMPLATE("EmbreeCylinder", T, float) {
               RTCRayHit rayhit{ray, hit};
               rtcIntersect1(S, &context, &rayhit);
 
-              REQUIRE(rayhit.hit.primID == 0);
-              REQUIRE(rayhit.ray.tfar == Approx(3));
-              REQUIRE(rayhit.hit.Ng_x == Approx(0.f));
-              REQUIRE(rayhit.hit.Ng_y == Approx(1.f));
-              REQUIRE(rayhit.hit.Ng_z == Approx(0.f));
+              CHECK(rayhit.hit.primID == 0);
+              CHECK(rayhit.ray.tfar == Approx(3));
+              CHECK(rayhit.hit.Ng_x == Approx(0.f));
+              CHECK(rayhit.hit.Ng_y == Approx(1.f));
+              CHECK(rayhit.hit.Ng_z == Approx(0.f));
             }
             SUBCASE("origin: y-") {
               Vec3r<T> org1{0, -5, 1};
@@ -471,11 +471,11 @@ TEST_CASE_TEMPLATE("EmbreeCylinder", T, float) {
               RTCRayHit rayhit{ray, hit};
               rtcIntersect1(S, &context, &rayhit);
 
-              REQUIRE(rayhit.hit.primID == 0);
-              REQUIRE(rayhit.ray.tfar == Approx(3));
-              REQUIRE(rayhit.hit.Ng_x == Approx(0.f));
-              REQUIRE(rayhit.hit.Ng_y == Approx(-1.f));
-              REQUIRE(rayhit.hit.Ng_z == Approx(0.f));
+              CHECK(rayhit.hit.primID == 0);
+              CHECK(rayhit.ray.tfar == Approx(3));
+              CHECK(rayhit.hit.Ng_x == Approx(0.f));
+              CHECK(rayhit.hit.Ng_y == Approx(-1.f));
+              CHECK(rayhit.hit.Ng_z == Approx(0.f));
             }
           }
         }
@@ -497,11 +497,11 @@ TEST_CASE_TEMPLATE("EmbreeCylinder", T, float) {
             RTCRayHit rayhit{ray, hit};
             rtcIntersect1(S, &context, &rayhit);
 
-            REQUIRE(rayhit.hit.primID == 0);
-            REQUIRE(rayhit.ray.tfar == Approx(1));
-            REQUIRE(rayhit.hit.Ng_x == Approx(0.f));
-            REQUIRE(rayhit.hit.Ng_y == Approx(0.f));
-            REQUIRE(rayhit.hit.Ng_z == Approx(1.f));
+            CHECK(rayhit.hit.primID == 0);
+            CHECK(rayhit.ray.tfar == Approx(1));
+            CHECK(rayhit.hit.Ng_x == Approx(0.f));
+            CHECK(rayhit.hit.Ng_y == Approx(0.f));
+            CHECK(rayhit.hit.Ng_z == Approx(1.f));
           }
           SUBCASE("hit bottom") {
             Vec3r<T> org1{0, 0, 1};
@@ -520,11 +520,11 @@ TEST_CASE_TEMPLATE("EmbreeCylinder", T, float) {
             RTCRayHit rayhit{ray, hit};
             rtcIntersect1(S, &context, &rayhit);
 
-            REQUIRE(rayhit.hit.primID == 0);
-            REQUIRE(rayhit.ray.tfar == Approx(1));
-            REQUIRE(rayhit.hit.Ng_x == Approx(0.f));
-            REQUIRE(rayhit.hit.Ng_y == Approx(0.f));
-            REQUIRE(rayhit.hit.Ng_z == Approx(-1.f));
+            CHECK(rayhit.hit.primID == 0);
+            CHECK(rayhit.ray.tfar == Approx(1));
+            CHECK(rayhit.hit.Ng_x == Approx(0.f));
+            CHECK(rayhit.hit.Ng_y == Approx(0.f));
+            CHECK(rayhit.hit.Ng_z == Approx(-1.f));
           }
           SUBCASE("hit shell 1") {
             Vec3r<T> org1{0, 0, 1};
@@ -543,11 +543,11 @@ TEST_CASE_TEMPLATE("EmbreeCylinder", T, float) {
             RTCRayHit rayhit{ray, hit};
             rtcIntersect1(S, &context, &rayhit);
 
-            REQUIRE(rayhit.hit.primID == 0);
-            REQUIRE(rayhit.ray.tfar == Approx(1));
-            REQUIRE(rayhit.hit.Ng_x == Approx(-1.f));
-            REQUIRE(rayhit.hit.Ng_y == Approx(0.f));
-            REQUIRE(rayhit.hit.Ng_z == Approx(0.f));
+            CHECK(rayhit.hit.primID == 0);
+            CHECK(rayhit.ray.tfar == Approx(1));
+            CHECK(rayhit.hit.Ng_x == Approx(-1.f));
+            CHECK(rayhit.hit.Ng_y == Approx(0.f));
+            CHECK(rayhit.hit.Ng_z == Approx(0.f));
           }
           SUBCASE("hit shell 2") {
             Vec3r<T> org1{0, 0, 1};
@@ -566,11 +566,11 @@ TEST_CASE_TEMPLATE("EmbreeCylinder", T, float) {
             RTCRayHit rayhit{ray, hit};
             rtcIntersect1(S, &context, &rayhit);
 
-            REQUIRE(rayhit.hit.primID == 0);
-            REQUIRE(rayhit.ray.tfar == Approx(1));
-            REQUIRE(rayhit.hit.Ng_x == Approx(1.f));
-            REQUIRE(rayhit.hit.Ng_y == Approx(0.f));
-            REQUIRE(rayhit.hit.Ng_z == Approx(0.f));
+            CHECK(rayhit.hit.primID == 0);
+            CHECK(rayhit.ray.tfar == Approx(1));
+            CHECK(rayhit.hit.Ng_x == Approx(1.f));
+            CHECK(rayhit.hit.Ng_y == Approx(0.f));
+            CHECK(rayhit.hit.Ng_z == Approx(0.f));
           }
           SUBCASE("hit shell 3") {
             Vec3r<T> org1{0, 0, 1};
@@ -589,11 +589,11 @@ TEST_CASE_TEMPLATE("EmbreeCylinder", T, float) {
             RTCRayHit rayhit{ray, hit};
             rtcIntersect1(S, &context, &rayhit);
 
-            REQUIRE(rayhit.hit.primID == 0);
-            REQUIRE(rayhit.ray.tfar == Approx(2));
-            REQUIRE(rayhit.hit.Ng_x == Approx(0.f));
-            REQUIRE(rayhit.hit.Ng_y == Approx(-1.f));
-            REQUIRE(rayhit.hit.Ng_z == Approx(0.f));
+            CHECK(rayhit.hit.primID == 0);
+            CHECK(rayhit.ray.tfar == Approx(2));
+            CHECK(rayhit.hit.Ng_x == Approx(0.f));
+            CHECK(rayhit.hit.Ng_y == Approx(-1.f));
+            CHECK(rayhit.hit.Ng_z == Approx(0.f));
           }
           SUBCASE("hit shell 4") {
             Vec3r<T> org1{0, 0, 1};
@@ -612,11 +612,11 @@ TEST_CASE_TEMPLATE("EmbreeCylinder", T, float) {
             RTCRayHit rayhit{ray, hit};
             rtcIntersect1(S, &context, &rayhit);
 
-            REQUIRE(rayhit.hit.primID == 0);
-            REQUIRE(rayhit.ray.tfar == Approx(2));
-            REQUIRE(rayhit.hit.Ng_x == Approx(0.f));
-            REQUIRE(rayhit.hit.Ng_y == Approx(1.f));
-            REQUIRE(rayhit.hit.Ng_z == Approx(0.f));
+            CHECK(rayhit.hit.primID == 0);
+            CHECK(rayhit.ray.tfar == Approx(2));
+            CHECK(rayhit.hit.Ng_x == Approx(0.f));
+            CHECK(rayhit.hit.Ng_y == Approx(1.f));
+            CHECK(rayhit.hit.Ng_z == Approx(0.f));
           }
         }
       }
@@ -647,11 +647,11 @@ TEST_CASE_TEMPLATE("EmbreeCylinder", T, float) {
             RTCRayHit rayhit{ray, hit};
             rtcIntersect1(S, &context, &rayhit);
 
-            REQUIRE(rayhit.hit.primID == 0);
-            REQUIRE(rayhit.ray.tfar == Approx(5.5));
-            REQUIRE(rayhit.hit.Ng_x == Approx(0.f));
-            REQUIRE(rayhit.hit.Ng_y == Approx(0.f));
-            REQUIRE(rayhit.hit.Ng_z == Approx(1.f));
+            CHECK(rayhit.hit.primID == 0);
+            CHECK(rayhit.ray.tfar == Approx(5.5));
+            CHECK(rayhit.hit.Ng_x == Approx(0.f));
+            CHECK(rayhit.hit.Ng_y == Approx(0.f));
+            CHECK(rayhit.hit.Ng_z == Approx(1.f));
           }
           SUBCASE("oblique incidence on top") {
             Vec3r<T> org1{6.f, 2.f, 7.f};
@@ -671,11 +671,11 @@ TEST_CASE_TEMPLATE("EmbreeCylinder", T, float) {
             RTCRayHit rayhit{ray, hit};
             rtcIntersect1(S, &context, &rayhit);
 
-            REQUIRE(rayhit.hit.primID == 0);
-            REQUIRE(rayhit.ray.tfar == Approx(std::sqrt(50)));
-            REQUIRE(rayhit.hit.Ng_x == Approx(0.f));
-            REQUIRE(rayhit.hit.Ng_y == Approx(0.f));
-            REQUIRE(rayhit.hit.Ng_z == Approx(1.f));
+            CHECK(rayhit.hit.primID == 0);
+            CHECK(rayhit.ray.tfar == Approx(std::sqrt(50)));
+            CHECK(rayhit.hit.Ng_x == Approx(0.f));
+            CHECK(rayhit.hit.Ng_y == Approx(0.f));
+            CHECK(rayhit.hit.Ng_z == Approx(1.f));
           }
           SUBCASE("oblique incidence on shell 1") {
             Vec3r<T> org1{6, 2, 5};
@@ -694,11 +694,11 @@ TEST_CASE_TEMPLATE("EmbreeCylinder", T, float) {
             RTCRayHit rayhit{ray, hit};
             rtcIntersect1(S, &context, &rayhit);
 
-            REQUIRE(rayhit.hit.primID == 0);
-            REQUIRE(rayhit.ray.tfar == Approx(std::sqrt(32)));
-            REQUIRE(rayhit.hit.Ng_x == Approx(1.f));
-            REQUIRE(rayhit.hit.Ng_y == Approx(0.f));
-            REQUIRE(rayhit.hit.Ng_z == Approx(0.f));
+            CHECK(rayhit.hit.primID == 0);
+            CHECK(rayhit.ray.tfar == Approx(std::sqrt(32)));
+            CHECK(rayhit.hit.Ng_x == Approx(1.f));
+            CHECK(rayhit.hit.Ng_y == Approx(0.f));
+            CHECK(rayhit.hit.Ng_z == Approx(0.f));
           }
           SUBCASE("oblique incidence on shell 2") {
             Vec3r<T> org1{-4, 2, 5};
@@ -717,11 +717,11 @@ TEST_CASE_TEMPLATE("EmbreeCylinder", T, float) {
             RTCRayHit rayhit{ray, hit};
             rtcIntersect1(S, &context, &rayhit);
 
-            REQUIRE(rayhit.hit.primID == 0);
-            REQUIRE(rayhit.ray.tfar == Approx(std::sqrt(32)));
-            REQUIRE(rayhit.hit.Ng_x == Approx(-1.f));
-            REQUIRE(rayhit.hit.Ng_y == Approx(0.f));
-            REQUIRE(rayhit.hit.Ng_z == Approx(0.f));
+            CHECK(rayhit.hit.primID == 0);
+            CHECK(rayhit.ray.tfar == Approx(std::sqrt(32)));
+            CHECK(rayhit.hit.Ng_x == Approx(-1.f));
+            CHECK(rayhit.hit.Ng_y == Approx(0.f));
+            CHECK(rayhit.hit.Ng_z == Approx(0.f));
           }
           SUBCASE("oblique incidence on shell 3") {
             Vec3r<T> org1{1, 7, 4};
@@ -740,11 +740,11 @@ TEST_CASE_TEMPLATE("EmbreeCylinder", T, float) {
             RTCRayHit rayhit{ray, hit};
             rtcIntersect1(S, &context, &rayhit);
 
-            REQUIRE(rayhit.hit.primID == 0);
-            REQUIRE(rayhit.ray.tfar == Approx(std::sqrt(18)));
-            REQUIRE(rayhit.hit.Ng_x == Approx(0.f));
-            REQUIRE(rayhit.hit.Ng_y == Approx(1.f));
-            REQUIRE(rayhit.hit.Ng_z == Approx(0.f));
+            CHECK(rayhit.hit.primID == 0);
+            CHECK(rayhit.ray.tfar == Approx(std::sqrt(18)));
+            CHECK(rayhit.hit.Ng_x == Approx(0.f));
+            CHECK(rayhit.hit.Ng_y == Approx(1.f));
+            CHECK(rayhit.hit.Ng_z == Approx(0.f));
           }
           SUBCASE("oblique incidence on shell 4") {
             Vec3r<T> org1{1, -3, 4};
@@ -763,11 +763,11 @@ TEST_CASE_TEMPLATE("EmbreeCylinder", T, float) {
             RTCRayHit rayhit{ray, hit};
             rtcIntersect1(S, &context, &rayhit);
 
-            REQUIRE(rayhit.hit.primID == 0);
-            REQUIRE(rayhit.ray.tfar == Approx(std::sqrt(18)));
-            REQUIRE(rayhit.hit.Ng_x == Approx(0.f));
-            REQUIRE(rayhit.hit.Ng_y == Approx(-1.f));
-            REQUIRE(rayhit.hit.Ng_z == Approx(0.f));
+            CHECK(rayhit.hit.primID == 0);
+            CHECK(rayhit.ray.tfar == Approx(std::sqrt(18)));
+            CHECK(rayhit.hit.Ng_x == Approx(0.f));
+            CHECK(rayhit.hit.Ng_y == Approx(-1.f));
+            CHECK(rayhit.hit.Ng_z == Approx(0.f));
           }
         }
         SUBCASE("origin below") {
@@ -789,11 +789,11 @@ TEST_CASE_TEMPLATE("EmbreeCylinder", T, float) {
             RTCRayHit rayhit{ray, hit};
             rtcIntersect1(S, &context, &rayhit);
 
-            REQUIRE(rayhit.hit.primID == 0);
-            REQUIRE(rayhit.ray.tfar == Approx(7.5));
-            REQUIRE(rayhit.hit.Ng_x == Approx(0.f));
-            REQUIRE(rayhit.hit.Ng_y == Approx(0.f));
-            REQUIRE(rayhit.hit.Ng_z == Approx(-1.f));
+            CHECK(rayhit.hit.primID == 0);
+            CHECK(rayhit.ray.tfar == Approx(7.5));
+            CHECK(rayhit.hit.Ng_x == Approx(0.f));
+            CHECK(rayhit.hit.Ng_y == Approx(0.f));
+            CHECK(rayhit.hit.Ng_z == Approx(-1.f));
           }
           SUBCASE("oblique incidence on bottom") {
             Vec3r<T> org1{6.f, 2.f, -5.f};
@@ -813,11 +813,11 @@ TEST_CASE_TEMPLATE("EmbreeCylinder", T, float) {
             RTCRayHit rayhit{ray, hit};
             rtcIntersect1(S, &context, &rayhit);
 
-            REQUIRE(rayhit.hit.primID == 0);
-            REQUIRE(rayhit.ray.tfar == Approx(std::sqrt(50)));
-            REQUIRE(rayhit.hit.Ng_x == Approx(0.f));
-            REQUIRE(rayhit.hit.Ng_y == Approx(0.f));
-            REQUIRE(rayhit.hit.Ng_z == Approx(-1.f));
+            CHECK(rayhit.hit.primID == 0);
+            CHECK(rayhit.ray.tfar == Approx(std::sqrt(50)));
+            CHECK(rayhit.hit.Ng_x == Approx(0.f));
+            CHECK(rayhit.hit.Ng_y == Approx(0.f));
+            CHECK(rayhit.hit.Ng_z == Approx(-1.f));
           }
           SUBCASE("oblique incidence on shell 1") {
             Vec3r<T> org1{6, 2, -3};
@@ -836,11 +836,11 @@ TEST_CASE_TEMPLATE("EmbreeCylinder", T, float) {
             RTCRayHit rayhit{ray, hit};
             rtcIntersect1(S, &context, &rayhit);
 
-            REQUIRE(rayhit.hit.primID == 0);
-            REQUIRE(rayhit.ray.tfar == Approx(std::sqrt(32)));
-            REQUIRE(rayhit.hit.Ng_x == Approx(1.f));
-            REQUIRE(rayhit.hit.Ng_y == Approx(0.f));
-            REQUIRE(rayhit.hit.Ng_z == Approx(0.f));
+            CHECK(rayhit.hit.primID == 0);
+            CHECK(rayhit.ray.tfar == Approx(std::sqrt(32)));
+            CHECK(rayhit.hit.Ng_x == Approx(1.f));
+            CHECK(rayhit.hit.Ng_y == Approx(0.f));
+            CHECK(rayhit.hit.Ng_z == Approx(0.f));
           }
           SUBCASE("oblique incidence on shell 2") {
             Vec3r<T> org1{-4, 2, -3};
@@ -859,11 +859,11 @@ TEST_CASE_TEMPLATE("EmbreeCylinder", T, float) {
             RTCRayHit rayhit{ray, hit};
             rtcIntersect1(S, &context, &rayhit);
 
-            REQUIRE(rayhit.hit.primID == 0);
-            REQUIRE(rayhit.ray.tfar == Approx(std::sqrt(32)));
-            REQUIRE(rayhit.hit.Ng_x == Approx(-1.f));
-            REQUIRE(rayhit.hit.Ng_y == Approx(0.f));
-            REQUIRE(rayhit.hit.Ng_z == Approx(0.f));
+            CHECK(rayhit.hit.primID == 0);
+            CHECK(rayhit.ray.tfar == Approx(std::sqrt(32)));
+            CHECK(rayhit.hit.Ng_x == Approx(-1.f));
+            CHECK(rayhit.hit.Ng_y == Approx(0.f));
+            CHECK(rayhit.hit.Ng_z == Approx(0.f));
           }
           SUBCASE("oblique incidence on shell 3") {
             Vec3r<T> org1{1, 7, -2};
@@ -882,11 +882,11 @@ TEST_CASE_TEMPLATE("EmbreeCylinder", T, float) {
             RTCRayHit rayhit{ray, hit};
             rtcIntersect1(S, &context, &rayhit);
 
-            REQUIRE(rayhit.hit.primID == 0);
-            REQUIRE(rayhit.ray.tfar == Approx(std::sqrt(18)));
-            REQUIRE(rayhit.hit.Ng_x == Approx(0.f));
-            REQUIRE(rayhit.hit.Ng_y == Approx(1.f));
-            REQUIRE(rayhit.hit.Ng_z == Approx(0.f));
+            CHECK(rayhit.hit.primID == 0);
+            CHECK(rayhit.ray.tfar == Approx(std::sqrt(18)));
+            CHECK(rayhit.hit.Ng_x == Approx(0.f));
+            CHECK(rayhit.hit.Ng_y == Approx(1.f));
+            CHECK(rayhit.hit.Ng_z == Approx(0.f));
           }
           SUBCASE("oblique incidence on shell 4") {
             Vec3r<T> org1{1, -3, -2};
@@ -905,11 +905,11 @@ TEST_CASE_TEMPLATE("EmbreeCylinder", T, float) {
             RTCRayHit rayhit{ray, hit};
             rtcIntersect1(S, &context, &rayhit);
 
-            REQUIRE(rayhit.hit.primID == 0);
-            REQUIRE(rayhit.ray.tfar == Approx(std::sqrt(18)));
-            REQUIRE(rayhit.hit.Ng_x == Approx(0.f));
-            REQUIRE(rayhit.hit.Ng_y == Approx(-1.f));
-            REQUIRE(rayhit.hit.Ng_z == Approx(0.f));
+            CHECK(rayhit.hit.primID == 0);
+            CHECK(rayhit.ray.tfar == Approx(std::sqrt(18)));
+            CHECK(rayhit.hit.Ng_x == Approx(0.f));
+            CHECK(rayhit.hit.Ng_y == Approx(-1.f));
+            CHECK(rayhit.hit.Ng_z == Approx(0.f));
           }
         }
         SUBCASE("origin around shell") {
@@ -931,11 +931,11 @@ TEST_CASE_TEMPLATE("EmbreeCylinder", T, float) {
               RTCRayHit rayhit{ray, hit};
               rtcIntersect1(S, &context, &rayhit);
 
-              REQUIRE(rayhit.hit.primID == 0);
-              REQUIRE(rayhit.ray.tfar == Approx(4));
-              REQUIRE(rayhit.hit.Ng_x == Approx(1.f));
-              REQUIRE(rayhit.hit.Ng_y == Approx(0.f));
-              REQUIRE(rayhit.hit.Ng_z == Approx(0.f));
+              CHECK(rayhit.hit.primID == 0);
+              CHECK(rayhit.ray.tfar == Approx(4));
+              CHECK(rayhit.hit.Ng_x == Approx(1.f));
+              CHECK(rayhit.hit.Ng_y == Approx(0.f));
+              CHECK(rayhit.hit.Ng_z == Approx(0.f));
             }
             SUBCASE("origin: x-") {
               Vec3r<T> org1{-4, 2, 1};
@@ -954,11 +954,11 @@ TEST_CASE_TEMPLATE("EmbreeCylinder", T, float) {
               RTCRayHit rayhit{ray, hit};
               rtcIntersect1(S, &context, &rayhit);
 
-              REQUIRE(rayhit.hit.primID == 0);
-              REQUIRE(rayhit.ray.tfar == Approx(4));
-              REQUIRE(rayhit.hit.Ng_x == Approx(-1.f));
-              REQUIRE(rayhit.hit.Ng_y == Approx(0.f));
-              REQUIRE(rayhit.hit.Ng_z == Approx(0.f));
+              CHECK(rayhit.hit.primID == 0);
+              CHECK(rayhit.ray.tfar == Approx(4));
+              CHECK(rayhit.hit.Ng_x == Approx(-1.f));
+              CHECK(rayhit.hit.Ng_y == Approx(0.f));
+              CHECK(rayhit.hit.Ng_z == Approx(0.f));
             }
             SUBCASE("origin: y+") {
               Vec3r<T> org1{1, 7, 1};
@@ -977,11 +977,11 @@ TEST_CASE_TEMPLATE("EmbreeCylinder", T, float) {
               RTCRayHit rayhit{ray, hit};
               rtcIntersect1(S, &context, &rayhit);
 
-              REQUIRE(rayhit.hit.primID == 0);
-              REQUIRE(rayhit.ray.tfar == Approx(3));
-              REQUIRE(rayhit.hit.Ng_x == Approx(0.f));
-              REQUIRE(rayhit.hit.Ng_y == Approx(1.f));
-              REQUIRE(rayhit.hit.Ng_z == Approx(0.f));
+              CHECK(rayhit.hit.primID == 0);
+              CHECK(rayhit.ray.tfar == Approx(3));
+              CHECK(rayhit.hit.Ng_x == Approx(0.f));
+              CHECK(rayhit.hit.Ng_y == Approx(1.f));
+              CHECK(rayhit.hit.Ng_z == Approx(0.f));
             }
             SUBCASE("origin: y-") {
               Vec3r<T> org1{1, -3, 1};
@@ -1000,11 +1000,11 @@ TEST_CASE_TEMPLATE("EmbreeCylinder", T, float) {
               RTCRayHit rayhit{ray, hit};
               rtcIntersect1(S, &context, &rayhit);
 
-              REQUIRE(rayhit.hit.primID == 0);
-              REQUIRE(rayhit.ray.tfar == Approx(3));
-              REQUIRE(rayhit.hit.Ng_x == Approx(0.f));
-              REQUIRE(rayhit.hit.Ng_y == Approx(-1.f));
-              REQUIRE(rayhit.hit.Ng_z == Approx(0.f));
+              CHECK(rayhit.hit.primID == 0);
+              CHECK(rayhit.ray.tfar == Approx(3));
+              CHECK(rayhit.hit.Ng_x == Approx(0.f));
+              CHECK(rayhit.hit.Ng_y == Approx(-1.f));
+              CHECK(rayhit.hit.Ng_z == Approx(0.f));
             }
           }
         }
@@ -1026,11 +1026,11 @@ TEST_CASE_TEMPLATE("EmbreeCylinder", T, float) {
             RTCRayHit rayhit{ray, hit};
             rtcIntersect1(S, &context, &rayhit);
 
-            REQUIRE(rayhit.hit.primID == 0);
-            REQUIRE(rayhit.ray.tfar == Approx(1));
-            REQUIRE(rayhit.hit.Ng_x == Approx(0.f));
-            REQUIRE(rayhit.hit.Ng_y == Approx(0.f));
-            REQUIRE(rayhit.hit.Ng_z == Approx(1.f));
+            CHECK(rayhit.hit.primID == 0);
+            CHECK(rayhit.ray.tfar == Approx(1));
+            CHECK(rayhit.hit.Ng_x == Approx(0.f));
+            CHECK(rayhit.hit.Ng_y == Approx(0.f));
+            CHECK(rayhit.hit.Ng_z == Approx(1.f));
           }
           SUBCASE("hit bottom") {
             Vec3r<T> org1{1, 2, 1};
@@ -1049,11 +1049,11 @@ TEST_CASE_TEMPLATE("EmbreeCylinder", T, float) {
             RTCRayHit rayhit{ray, hit};
             rtcIntersect1(S, &context, &rayhit);
 
-            REQUIRE(rayhit.hit.primID == 0);
-            REQUIRE(rayhit.ray.tfar == Approx(1));
-            REQUIRE(rayhit.hit.Ng_x == Approx(0.f));
-            REQUIRE(rayhit.hit.Ng_y == Approx(0.f));
-            REQUIRE(rayhit.hit.Ng_z == Approx(-1.f));
+            CHECK(rayhit.hit.primID == 0);
+            CHECK(rayhit.ray.tfar == Approx(1));
+            CHECK(rayhit.hit.Ng_x == Approx(0.f));
+            CHECK(rayhit.hit.Ng_y == Approx(0.f));
+            CHECK(rayhit.hit.Ng_z == Approx(-1.f));
           }
           SUBCASE("hit shell 1") {
             Vec3r<T> org1{1, 2, 1};
@@ -1072,11 +1072,11 @@ TEST_CASE_TEMPLATE("EmbreeCylinder", T, float) {
             RTCRayHit rayhit{ray, hit};
             rtcIntersect1(S, &context, &rayhit);
 
-            REQUIRE(rayhit.hit.primID == 0);
-            REQUIRE(rayhit.ray.tfar == Approx(1));
-            REQUIRE(rayhit.hit.Ng_x == Approx(-1.f));
-            REQUIRE(rayhit.hit.Ng_y == Approx(0.f));
-            REQUIRE(rayhit.hit.Ng_z == Approx(0.f));
+            CHECK(rayhit.hit.primID == 0);
+            CHECK(rayhit.ray.tfar == Approx(1));
+            CHECK(rayhit.hit.Ng_x == Approx(-1.f));
+            CHECK(rayhit.hit.Ng_y == Approx(0.f));
+            CHECK(rayhit.hit.Ng_z == Approx(0.f));
           }
           SUBCASE("hit shell 2") {
             Vec3r<T> org1{1, 2, 1};
@@ -1095,11 +1095,11 @@ TEST_CASE_TEMPLATE("EmbreeCylinder", T, float) {
             RTCRayHit rayhit{ray, hit};
             rtcIntersect1(S, &context, &rayhit);
 
-            REQUIRE(rayhit.hit.primID == 0);
-            REQUIRE(rayhit.ray.tfar == Approx(1));
-            REQUIRE(rayhit.hit.Ng_x == Approx(1.f));
-            REQUIRE(rayhit.hit.Ng_y == Approx(0.f));
-            REQUIRE(rayhit.hit.Ng_z == Approx(0.f));
+            CHECK(rayhit.hit.primID == 0);
+            CHECK(rayhit.ray.tfar == Approx(1));
+            CHECK(rayhit.hit.Ng_x == Approx(1.f));
+            CHECK(rayhit.hit.Ng_y == Approx(0.f));
+            CHECK(rayhit.hit.Ng_z == Approx(0.f));
           }
           SUBCASE("hit shell 3") {
             Vec3r<T> org1{1, 2, 1};
@@ -1118,11 +1118,11 @@ TEST_CASE_TEMPLATE("EmbreeCylinder", T, float) {
             RTCRayHit rayhit{ray, hit};
             rtcIntersect1(S, &context, &rayhit);
 
-            REQUIRE(rayhit.hit.primID == 0);
-            REQUIRE(rayhit.ray.tfar == Approx(2));
-            REQUIRE(rayhit.hit.Ng_x == Approx(0.f));
-            REQUIRE(rayhit.hit.Ng_y == Approx(-1.f));
-            REQUIRE(rayhit.hit.Ng_z == Approx(0.f));
+            CHECK(rayhit.hit.primID == 0);
+            CHECK(rayhit.ray.tfar == Approx(2));
+            CHECK(rayhit.hit.Ng_x == Approx(0.f));
+            CHECK(rayhit.hit.Ng_y == Approx(-1.f));
+            CHECK(rayhit.hit.Ng_z == Approx(0.f));
           }
           SUBCASE("hit shell 4") {
             Vec3r<T> org1{1, 2, 1};
@@ -1141,11 +1141,11 @@ TEST_CASE_TEMPLATE("EmbreeCylinder", T, float) {
             RTCRayHit rayhit{ray, hit};
             rtcIntersect1(S, &context, &rayhit);
 
-            REQUIRE(rayhit.hit.primID == 0);
-            REQUIRE(rayhit.ray.tfar == Approx(2));
-            REQUIRE(rayhit.hit.Ng_x == Approx(0.f));
-            REQUIRE(rayhit.hit.Ng_y == Approx(1.f));
-            REQUIRE(rayhit.hit.Ng_z == Approx(0.f));
+            CHECK(rayhit.hit.primID == 0);
+            CHECK(rayhit.ray.tfar == Approx(2));
+            CHECK(rayhit.hit.Ng_x == Approx(0.f));
+            CHECK(rayhit.hit.Ng_y == Approx(1.f));
+            CHECK(rayhit.hit.Ng_z == Approx(0.f));
           }
         }
       }

@@ -38,8 +38,8 @@ static void BM_BLAZERT_BUILD_BVH_Sphere(benchmark::State& state)
     triangles_bvh.build(triangles, triangles_sah, build_options);
   }
 }
-BENCHMARK_TEMPLATE(BM_BLAZERT_BUILD_BVH_Sphere, float)->DenseRange(2,9,1)->Unit(benchmark::kMillisecond);
-BENCHMARK_TEMPLATE(BM_BLAZERT_BUILD_BVH_Sphere, double)->DenseRange(2,9,1)->Unit(benchmark::kMillisecond);
+BENCHMARK_TEMPLATE(BM_BLAZERT_BUILD_BVH_Sphere, float)->DenseRange(7,7,1)->Unit(benchmark::kMillisecond);
+//BENCHMARK_TEMPLATE(BM_BLAZERT_BUILD_BVH_Sphere, double)->DenseRange(7,7,1)->Unit(benchmark::kMillisecond);
 
 static void
 BM_EMBREE_BUILD_BVH_Sphere(benchmark::State& state)

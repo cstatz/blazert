@@ -98,7 +98,7 @@ unsigned int BVH<T>::build_recursive(std::vector<BVHNode<T>> &nodes, BVHBuildSta
   unsigned int mid_idx = left_idx;
   int cut_axis = min_cut_axis;
 
-  for (int axis_try = 0; axis_try < 3; axis_try++) {
+  for (int axis_try = 0; axis_try < 3; ++axis_try) {
 
     unsigned int *begin = &indices[left_idx];
     unsigned int *end = &indices[right_idx - 1] + 1;// mimics end() iterator.

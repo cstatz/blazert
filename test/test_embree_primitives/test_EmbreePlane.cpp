@@ -30,12 +30,12 @@ TEST_CASE_TEMPLATE("EmbreePlane", T, float) {
         RTCBounds bound;
         rtcGetSceneBounds(S, &bound);
 
-        REQUIRE(bound.lower_x == Approx(-1.f));
-        REQUIRE(bound.lower_y == Approx(-1.f));
-        REQUIRE(bound.lower_z == Approx(-std::numeric_limits<float>::min()));
-        REQUIRE(bound.upper_x == Approx(1.f));
-        REQUIRE(bound.upper_y == Approx(1.f));
-        REQUIRE(bound.upper_z == Approx(std::numeric_limits<float>::min()));
+        CHECK(bound.lower_x == Approx(-1.f));
+        CHECK(bound.lower_y == Approx(-1.f));
+        CHECK(bound.lower_z == Approx(-std::numeric_limits<float>::min()));
+        CHECK(bound.upper_x == Approx(1.f));
+        CHECK(bound.upper_y == Approx(1.f));
+        CHECK(bound.upper_z == Approx(std::numeric_limits<float>::min()));
       }
       SUBCASE("rotated about y-axis") {
         // matrix which rotates the plane about the y-axis ( x = 0 is now plane eq)
@@ -48,12 +48,12 @@ TEST_CASE_TEMPLATE("EmbreePlane", T, float) {
         RTCBounds bound;
         rtcGetSceneBounds(S, &bound);
 
-        REQUIRE(bound.lower_x == Approx(-std::numeric_limits<float>::min()));
-        REQUIRE(bound.lower_y == Approx(-1.f));
-        REQUIRE(bound.lower_z == Approx(-1.f));
-        REQUIRE(bound.upper_x == Approx(std::numeric_limits<float>::min()));
-        REQUIRE(bound.upper_y == Approx(1.f));
-        REQUIRE(bound.upper_z == Approx(1.f));
+        CHECK(bound.lower_x == Approx(-std::numeric_limits<float>::min()));
+        CHECK(bound.lower_y == Approx(-1.f));
+        CHECK(bound.lower_z == Approx(-1.f));
+        CHECK(bound.upper_x == Approx(std::numeric_limits<float>::min()));
+        CHECK(bound.upper_y == Approx(1.f));
+        CHECK(bound.upper_z == Approx(1.f));
       }
       SUBCASE("rotated about r=normalized(1,1,0)") {
         // plane on z=0, later rotated to x = 0
@@ -67,12 +67,12 @@ TEST_CASE_TEMPLATE("EmbreePlane", T, float) {
         RTCBounds bound;
         rtcGetSceneBounds(S, &bound);
 
-        REQUIRE(bound.lower_x == Approx(-1.f));
-        REQUIRE(bound.lower_y == Approx(-1.f));
-        REQUIRE(bound.lower_z == Approx(-std::sqrt(2)));
-        REQUIRE(bound.upper_x == Approx(1.f));
-        REQUIRE(bound.upper_y == Approx(1.f));
-        REQUIRE(bound.upper_z == Approx(std::sqrt(2)));
+        CHECK(bound.lower_x == Approx(-1.f));
+        CHECK(bound.lower_y == Approx(-1.f));
+        CHECK(bound.lower_z == Approx(-std::sqrt(2)));
+        CHECK(bound.upper_x == Approx(1.f));
+        CHECK(bound.upper_y == Approx(1.f));
+        CHECK(bound.upper_z == Approx(std::sqrt(2)));
       }
       SUBCASE("rotated in xy-plane") {
         const Vec3r<T> axis{0, 0, 1};
@@ -84,12 +84,12 @@ TEST_CASE_TEMPLATE("EmbreePlane", T, float) {
         RTCBounds bound;
         rtcGetSceneBounds(S, &bound);
 
-        REQUIRE(bound.lower_x == Approx(-std::sqrt(2)));
-        REQUIRE(bound.lower_y == Approx(-std::sqrt(2)));
-        REQUIRE(bound.lower_z == Approx(0));
-        REQUIRE(bound.upper_x == Approx(std::sqrt(2)));
-        REQUIRE(bound.upper_y == Approx(std::sqrt(2)));
-        REQUIRE(bound.upper_z == Approx(0));
+        CHECK(bound.lower_x == Approx(-std::sqrt(2)));
+        CHECK(bound.lower_y == Approx(-std::sqrt(2)));
+        CHECK(bound.lower_z == Approx(0));
+        CHECK(bound.upper_x == Approx(std::sqrt(2)));
+        CHECK(bound.upper_y == Approx(std::sqrt(2)));
+        CHECK(bound.upper_z == Approx(0));
       }
     }
     SUBCASE("shifted center") {
@@ -104,12 +104,12 @@ TEST_CASE_TEMPLATE("EmbreePlane", T, float) {
         RTCBounds bound;
         rtcGetSceneBounds(S, &bound);
 
-        REQUIRE(bound.lower_x == Approx(0.f));
-        REQUIRE(bound.lower_y == Approx(0.f));
-        REQUIRE(bound.lower_z == Approx(1.f));
-        REQUIRE(bound.upper_x == Approx(2.f));
-        REQUIRE(bound.upper_y == Approx(2.f));
-        REQUIRE(bound.upper_z == Approx(1.f));
+        CHECK(bound.lower_x == Approx(0.f));
+        CHECK(bound.lower_y == Approx(0.f));
+        CHECK(bound.lower_z == Approx(1.f));
+        CHECK(bound.upper_x == Approx(2.f));
+        CHECK(bound.upper_y == Approx(2.f));
+        CHECK(bound.upper_z == Approx(1.f));
       }
       SUBCASE("rotated about y-axis") {
         // matrix which rotates the plane about the y-axis ( x = 0 is now plane eq)
@@ -122,12 +122,12 @@ TEST_CASE_TEMPLATE("EmbreePlane", T, float) {
         RTCBounds bound;
         rtcGetSceneBounds(S, &bound);
 
-        REQUIRE(bound.lower_x == Approx(1.f));
-        REQUIRE(bound.lower_y == Approx(0.f));
-        REQUIRE(bound.lower_z == Approx(0.f));
-        REQUIRE(bound.upper_x == Approx(1.f));
-        REQUIRE(bound.upper_y == Approx(2.f));
-        REQUIRE(bound.upper_z == Approx(2.f));
+        CHECK(bound.lower_x == Approx(1.f));
+        CHECK(bound.lower_y == Approx(0.f));
+        CHECK(bound.lower_z == Approx(0.f));
+        CHECK(bound.upper_x == Approx(1.f));
+        CHECK(bound.upper_y == Approx(2.f));
+        CHECK(bound.upper_z == Approx(2.f));
       }
       SUBCASE("rotated about r=normalized(1,1,0)") {
         // plane on z=0, later rotated to x = 0
@@ -141,12 +141,12 @@ TEST_CASE_TEMPLATE("EmbreePlane", T, float) {
         RTCBounds bound;
         rtcGetSceneBounds(S, &bound);
 
-        REQUIRE(bound.lower_x == Approx(0));
-        REQUIRE(bound.lower_y == Approx(0));
-        REQUIRE(bound.lower_z == Approx(1 -  std::sqrt(2)));
-        REQUIRE(bound.upper_x == Approx(2));
-        REQUIRE(bound.upper_y == Approx(2));
-        REQUIRE(bound.upper_z == Approx(1 +  std::sqrt(2)));
+        CHECK(bound.lower_x == Approx(0));
+        CHECK(bound.lower_y == Approx(0));
+        CHECK(bound.lower_z == Approx(1 -  std::sqrt(2)));
+        CHECK(bound.upper_x == Approx(2));
+        CHECK(bound.upper_y == Approx(2));
+        CHECK(bound.upper_z == Approx(1 +  std::sqrt(2)));
       }
       SUBCASE("rotated in xy-plane") {
         const Vec3r<T> axis{0, 0, 1};
@@ -158,12 +158,12 @@ TEST_CASE_TEMPLATE("EmbreePlane", T, float) {
         RTCBounds bound;
         rtcGetSceneBounds(S, &bound);
 
-        REQUIRE(bound.lower_x == Approx(1 - std::sqrt(2)));
-        REQUIRE(bound.lower_y == Approx(1 - std::sqrt(2)));
-        REQUIRE(bound.lower_z == Approx(1));
-        REQUIRE(bound.upper_x == Approx(1 + std::sqrt(2)));
-        REQUIRE(bound.upper_y == Approx(1 + std::sqrt(2)));
-        REQUIRE(bound.upper_z == Approx(1));
+        CHECK(bound.lower_x == Approx(1 - std::sqrt(2)));
+        CHECK(bound.lower_y == Approx(1 - std::sqrt(2)));
+        CHECK(bound.lower_z == Approx(1));
+        CHECK(bound.upper_x == Approx(1 + std::sqrt(2)));
+        CHECK(bound.upper_y == Approx(1 + std::sqrt(2)));
+        CHECK(bound.upper_z == Approx(1));
       }
     }
   }
@@ -189,10 +189,10 @@ TEST_CASE_TEMPLATE("EmbreePlane", T, float) {
         RTCRayHit rayhit1{ray1, hit1};
         rtcIntersect1(S, &context, &rayhit1);
 
-        REQUIRE(rayhit1.ray.tfar == Approx(5));
-        REQUIRE(rayhit1.hit.Ng_x == Approx(0.f));
-        REQUIRE(rayhit1.hit.Ng_y == Approx(0.f));
-        REQUIRE(rayhit1.hit.Ng_z == Approx(1.f));
+        CHECK(rayhit1.ray.tfar == Approx(5));
+        CHECK(rayhit1.hit.Ng_x == Approx(0.f));
+        CHECK(rayhit1.hit.Ng_y == Approx(0.f));
+        CHECK(rayhit1.hit.Ng_z == Approx(1.f));
       }
       SUBCASE("rotated about (0,1,0)") {
         // matrix which rotates the plane 45 degrees about the z-axis ( x = 0 is now
@@ -216,10 +216,10 @@ TEST_CASE_TEMPLATE("EmbreePlane", T, float) {
         RTCRayHit rayhit1{ray1, hit1};
         rtcIntersect1(S, &context, &rayhit1);
 
-        REQUIRE(rayhit1.ray.tfar == Approx(5));
-        REQUIRE(rayhit1.hit.Ng_x == Approx(1.f));
-        REQUIRE(rayhit1.hit.Ng_y == Approx(0.f));
-        REQUIRE(rayhit1.hit.Ng_z == Approx(0.f));
+        CHECK(rayhit1.ray.tfar == Approx(5));
+        CHECK(rayhit1.hit.Ng_x == Approx(1.f));
+        CHECK(rayhit1.hit.Ng_y == Approx(0.f));
+        CHECK(rayhit1.hit.Ng_z == Approx(0.f));
       }
       SUBCASE("rotated about normalized(1,1,0), edge hit") {
         // matrix which rotates the plane about the y-axis ( x = 0 is now plane eq)
@@ -244,10 +244,10 @@ TEST_CASE_TEMPLATE("EmbreePlane", T, float) {
 
         // hits from the negative x direction -> normal vector should point towards
         // that direction
-        REQUIRE(rayhit1.ray.tfar == Approx(5 * std::sqrt(2)));
-        REQUIRE(rayhit1.hit.Ng_x == Approx(-1 / std::sqrt(2)));
-        REQUIRE(rayhit1.hit.Ng_y == Approx(1 / std::sqrt(2)));
-        REQUIRE(rayhit1.hit.Ng_z == Approx(0.f));// for rotated planes, you can expect small numerical
+        CHECK(rayhit1.ray.tfar == Approx(5 * std::sqrt(2)));
+        CHECK(rayhit1.hit.Ng_x == Approx(-1 / std::sqrt(2)));
+        CHECK(rayhit1.hit.Ng_y == Approx(1 / std::sqrt(2)));
+        CHECK(rayhit1.hit.Ng_z == Approx(0.f));// for rotated planes, you can expect small numerical
         // error of size 1e16
       }
       SUBCASE("non-rotated, ray origin outside plane boundaries") {
@@ -272,10 +272,10 @@ TEST_CASE_TEMPLATE("EmbreePlane", T, float) {
 
           // hits from the negative x direction -> normal vector should point towards
           // that direction
-          REQUIRE(rayhit1.ray.tfar == Approx(4 * std::sqrt(2.f)));
-          REQUIRE(rayhit1.hit.Ng_x == Approx(0.f));
-          REQUIRE(rayhit1.hit.Ng_y == Approx(0.f));
-          REQUIRE(rayhit1.hit.Ng_z == Approx(1.f));
+          CHECK(rayhit1.ray.tfar == Approx(4 * std::sqrt(2.f)));
+          CHECK(rayhit1.hit.Ng_x == Approx(0.f));
+          CHECK(rayhit1.hit.Ng_y == Approx(0.f));
+          CHECK(rayhit1.hit.Ng_z == Approx(1.f));
         }
         SUBCASE("outside on positive x-axis") {
           Vec3r<T> org2{-4.f, 0.f, -4.f};
@@ -290,11 +290,11 @@ TEST_CASE_TEMPLATE("EmbreePlane", T, float) {
 
           // hits from the negative x direction -> normal vector should point towards
           // that direction
-          REQUIRE(rayhit2.ray.tfar == Approx(4. * std::sqrt(2.f)));
+          CHECK(rayhit2.ray.tfar == Approx(4. * std::sqrt(2.f)));
 
-          REQUIRE(rayhit2.hit.Ng_x == Approx(0.f));
-          REQUIRE(rayhit2.hit.Ng_y == Approx(0.f));
-          REQUIRE(rayhit2.hit.Ng_z == Approx(-1.f));
+          CHECK(rayhit2.hit.Ng_x == Approx(0.f));
+          CHECK(rayhit2.hit.Ng_y == Approx(0.f));
+          CHECK(rayhit2.hit.Ng_z == Approx(-1.f));
         }
       }
       SUBCASE("non-rotated, edge intersection") {
@@ -319,10 +319,10 @@ TEST_CASE_TEMPLATE("EmbreePlane", T, float) {
 
           // hits from the negative x direction -> normal vector should point towards
           // that direction
-          REQUIRE(rayhit1.ray.tfar == Approx(4));
-          REQUIRE(rayhit1.hit.Ng_x == Approx(1.f / std::sqrt(2)));
-          REQUIRE(rayhit1.hit.Ng_y == Approx(0.f));
-          REQUIRE(rayhit1.hit.Ng_z == Approx(1.f / std::sqrt(2)));
+          CHECK(rayhit1.ray.tfar == Approx(4));
+          CHECK(rayhit1.hit.Ng_x == Approx(1.f / std::sqrt(2)));
+          CHECK(rayhit1.hit.Ng_y == Approx(0.f));
+          CHECK(rayhit1.hit.Ng_z == Approx(1.f / std::sqrt(2)));
         }
         SUBCASE("edge: x min") {
           // edge at x_min
@@ -339,10 +339,10 @@ TEST_CASE_TEMPLATE("EmbreePlane", T, float) {
 
           // hits from the negative x direction -> normal vector should point towards
           // that direction
-          REQUIRE(rayhit2.ray.tfar == Approx(4));
-          REQUIRE(rayhit2.hit.Ng_x == Approx(-1.f / std::sqrt(2)));
-          REQUIRE(rayhit2.hit.Ng_y == Approx(0.f));
-          REQUIRE(rayhit2.hit.Ng_z == Approx(1.f / std::sqrt(2)));
+          CHECK(rayhit2.ray.tfar == Approx(4));
+          CHECK(rayhit2.hit.Ng_x == Approx(-1.f / std::sqrt(2)));
+          CHECK(rayhit2.hit.Ng_y == Approx(0.f));
+          CHECK(rayhit2.hit.Ng_z == Approx(1.f / std::sqrt(2)));
         }
         SUBCASE("edge: y max") {
           // edge at y_max
@@ -358,10 +358,10 @@ TEST_CASE_TEMPLATE("EmbreePlane", T, float) {
 
           // hits from the negative x direction -> normal vector should point towards
           // that direction
-          REQUIRE(rayhit3.ray.tfar == Approx(4));
-          REQUIRE(rayhit3.hit.Ng_x == Approx(0.f));
-          REQUIRE(rayhit3.hit.Ng_y == Approx(1.f / std::sqrt(2)));
-          REQUIRE(rayhit3.hit.Ng_z == Approx(1.f / std::sqrt(2)));
+          CHECK(rayhit3.ray.tfar == Approx(4));
+          CHECK(rayhit3.hit.Ng_x == Approx(0.f));
+          CHECK(rayhit3.hit.Ng_y == Approx(1.f / std::sqrt(2)));
+          CHECK(rayhit3.hit.Ng_z == Approx(1.f / std::sqrt(2)));
         }
         SUBCASE("edge: y min") {      // edge at y_min
           Vec3r<T> org4{0.f, -1.f, 4.f};
@@ -376,10 +376,10 @@ TEST_CASE_TEMPLATE("EmbreePlane", T, float) {
 
           // hits from the negative x direction -> normal vector should point towards
           // that direction
-          REQUIRE(rayhit4.ray.tfar == Approx(4));
-          REQUIRE(rayhit4.hit.Ng_x == Approx(0.f));
-          REQUIRE(rayhit4.hit.Ng_y == Approx(-1.f / std::sqrt(2)));
-          REQUIRE(rayhit4.hit.Ng_z == Approx(1.f / std::sqrt(2)));
+          CHECK(rayhit4.ray.tfar == Approx(4));
+          CHECK(rayhit4.hit.Ng_x == Approx(0.f));
+          CHECK(rayhit4.hit.Ng_y == Approx(-1.f / std::sqrt(2)));
+          CHECK(rayhit4.hit.Ng_z == Approx(1.f / std::sqrt(2)));
         }
       }
       SUBCASE("non-rotated, corner intersection") {
@@ -404,10 +404,10 @@ TEST_CASE_TEMPLATE("EmbreePlane", T, float) {
 
           // hits from the negative x direction -> normal vector should point towards
           // that direction
-          REQUIRE(rayhit1.ray.tfar == Approx(4));
-          REQUIRE(rayhit1.hit.Ng_x == Approx(1.f / std::sqrt(3)));
-          REQUIRE(rayhit1.hit.Ng_y == Approx(1.f / std::sqrt(3)));
-          REQUIRE(rayhit1.hit.Ng_z == Approx(1.f / std::sqrt(3)));
+          CHECK(rayhit1.ray.tfar == Approx(4));
+          CHECK(rayhit1.hit.Ng_x == Approx(1.f / std::sqrt(3)));
+          CHECK(rayhit1.hit.Ng_y == Approx(1.f / std::sqrt(3)));
+          CHECK(rayhit1.hit.Ng_z == Approx(1.f / std::sqrt(3)));
         }
         SUBCASE("corner: x min, y max") {
           // corner at x_min, y_max
@@ -423,11 +423,11 @@ TEST_CASE_TEMPLATE("EmbreePlane", T, float) {
 
           // hits from the negative x direction -> normal vector should point towards
           // that direction
-          REQUIRE(rayhit2.ray.tfar == Approx(4));
+          CHECK(rayhit2.ray.tfar == Approx(4));
 
-          REQUIRE(rayhit2.hit.Ng_x == Approx(-1.f / std::sqrt(3)));
-          REQUIRE(rayhit2.hit.Ng_y == Approx(1.f / std::sqrt(3)));
-          REQUIRE(rayhit2.hit.Ng_z == Approx(1.f / std::sqrt(3)));
+          CHECK(rayhit2.hit.Ng_x == Approx(-1.f / std::sqrt(3)));
+          CHECK(rayhit2.hit.Ng_y == Approx(1.f / std::sqrt(3)));
+          CHECK(rayhit2.hit.Ng_z == Approx(1.f / std::sqrt(3)));
         }
         SUBCASE("corner: x max, y min") {
           // corner at x_max, y_min
@@ -443,10 +443,10 @@ TEST_CASE_TEMPLATE("EmbreePlane", T, float) {
 
           // hits from the negative x direction -> normal vector should point towards
           // that direction
-          REQUIRE(rayhit3.ray.tfar == Approx(4));
-          REQUIRE(rayhit3.hit.Ng_x == Approx(1.f / std::sqrt(3)));
-          REQUIRE(rayhit3.hit.Ng_y == Approx(-1.f / std::sqrt(3)));
-          REQUIRE(rayhit3.hit.Ng_z == Approx(1.f / std::sqrt(3)));
+          CHECK(rayhit3.ray.tfar == Approx(4));
+          CHECK(rayhit3.hit.Ng_x == Approx(1.f / std::sqrt(3)));
+          CHECK(rayhit3.hit.Ng_y == Approx(-1.f / std::sqrt(3)));
+          CHECK(rayhit3.hit.Ng_z == Approx(1.f / std::sqrt(3)));
         }
         SUBCASE("corner: x min, y min") {
           // corner at x_min, y_min
@@ -462,10 +462,10 @@ TEST_CASE_TEMPLATE("EmbreePlane", T, float) {
 
           // hits from the negative x direction -> normal vector should point towards
           // that direction
-          REQUIRE(rayhit4.ray.tfar == Approx(4));
-          REQUIRE(rayhit4.hit.Ng_x == Approx(-1.f / std::sqrt(3)));
-          REQUIRE(rayhit4.hit.Ng_y == Approx(-1.f / std::sqrt(3)));
-          REQUIRE(rayhit4.hit.Ng_z == Approx(1.f / std::sqrt(3)));
+          CHECK(rayhit4.ray.tfar == Approx(4));
+          CHECK(rayhit4.hit.Ng_x == Approx(-1.f / std::sqrt(3)));
+          CHECK(rayhit4.hit.Ng_y == Approx(-1.f / std::sqrt(3)));
+          CHECK(rayhit4.hit.Ng_z == Approx(1.f / std::sqrt(3)));
         }
       }
     }
@@ -490,10 +490,10 @@ TEST_CASE_TEMPLATE("EmbreePlane", T, float) {
         RTCRayHit rayhit1{ray1, hit1};
         rtcIntersect1(S, &context, &rayhit1);
 
-        REQUIRE(rayhit1.ray.tfar == Approx(4));
-        REQUIRE(rayhit1.hit.Ng_x == Approx(0.f));
-        REQUIRE(rayhit1.hit.Ng_y == Approx(0.f));
-        REQUIRE(rayhit1.hit.Ng_z == Approx(1.f));
+        CHECK(rayhit1.ray.tfar == Approx(4));
+        CHECK(rayhit1.hit.Ng_x == Approx(0.f));
+        CHECK(rayhit1.hit.Ng_y == Approx(0.f));
+        CHECK(rayhit1.hit.Ng_z == Approx(1.f));
       }
       SUBCASE("rotated about (0,1,0)") {
         // matrix which rotates the plane 45 degrees about the z-axis ( x = 0 is now
@@ -517,10 +517,10 @@ TEST_CASE_TEMPLATE("EmbreePlane", T, float) {
         RTCRayHit rayhit1{ray1, hit1};
         rtcIntersect1(S, &context, &rayhit1);
 
-        REQUIRE(rayhit1.ray.tfar == Approx(4));
-        REQUIRE(rayhit1.hit.Ng_x == Approx(1.f));
-        REQUIRE(rayhit1.hit.Ng_y == Approx(0.f));
-        REQUIRE(rayhit1.hit.Ng_z == Approx(0.f));
+        CHECK(rayhit1.ray.tfar == Approx(4));
+        CHECK(rayhit1.hit.Ng_x == Approx(1.f));
+        CHECK(rayhit1.hit.Ng_y == Approx(0.f));
+        CHECK(rayhit1.hit.Ng_z == Approx(0.f));
       }
       SUBCASE("rotated about normalized(1,1,0), edge hit") {
         // matrix which rotates the plane about the y-axis ( x = 0 is now plane eq)
@@ -545,10 +545,10 @@ TEST_CASE_TEMPLATE("EmbreePlane", T, float) {
 
         // hits from the negative x direction -> normal vector should point towards
         // that direction
-        REQUIRE(rayhit1.ray.tfar == Approx(5 * std::sqrt(2)));
-        REQUIRE(rayhit1.hit.Ng_x == Approx(-1 / std::sqrt(2)));
-        REQUIRE(rayhit1.hit.Ng_y == Approx(1 / std::sqrt(2)));
-        REQUIRE(rayhit1.hit.Ng_z == Approx(0.f));// for rotated planes, you can expect small numerical
+        CHECK(rayhit1.ray.tfar == Approx(5 * std::sqrt(2)));
+        CHECK(rayhit1.hit.Ng_x == Approx(-1 / std::sqrt(2)));
+        CHECK(rayhit1.hit.Ng_y == Approx(1 / std::sqrt(2)));
+        CHECK(rayhit1.hit.Ng_z == Approx(0.f));// for rotated planes, you can expect small numerical
         // error of size 1e16
       }
       SUBCASE("non-rotated, ray origin outside plane boundaries") {
@@ -573,10 +573,10 @@ TEST_CASE_TEMPLATE("EmbreePlane", T, float) {
 
           // hits from the negative x direction -> normal vector should point towards
           // that direction
-          REQUIRE(rayhit1.ray.tfar == Approx(4 * std::sqrt(2.f)));
-          REQUIRE(rayhit1.hit.Ng_x == Approx(0.f));
-          REQUIRE(rayhit1.hit.Ng_y == Approx(0.f));
-          REQUIRE(rayhit1.hit.Ng_z == Approx(1.f));
+          CHECK(rayhit1.ray.tfar == Approx(4 * std::sqrt(2.f)));
+          CHECK(rayhit1.hit.Ng_x == Approx(0.f));
+          CHECK(rayhit1.hit.Ng_y == Approx(0.f));
+          CHECK(rayhit1.hit.Ng_z == Approx(1.f));
         }
         SUBCASE("outside on negative x-axis") {
           Vec3r<T> org2{-3.f, 1.f, -3.f};
@@ -591,11 +591,11 @@ TEST_CASE_TEMPLATE("EmbreePlane", T, float) {
 
           // hits from the negative x direction -> normal vector should point towards
           // that direction
-          REQUIRE(rayhit2.ray.tfar == Approx(4. * std::sqrt(2.f)));
+          CHECK(rayhit2.ray.tfar == Approx(4. * std::sqrt(2.f)));
 
-          REQUIRE(rayhit2.hit.Ng_x == Approx(0.f));
-          REQUIRE(rayhit2.hit.Ng_y == Approx(0.f));
-          REQUIRE(rayhit2.hit.Ng_z == Approx(-1.f));
+          CHECK(rayhit2.hit.Ng_x == Approx(0.f));
+          CHECK(rayhit2.hit.Ng_y == Approx(0.f));
+          CHECK(rayhit2.hit.Ng_z == Approx(-1.f));
         }
       }
       SUBCASE("non-rotated, edge intersection") {
@@ -620,10 +620,10 @@ TEST_CASE_TEMPLATE("EmbreePlane", T, float) {
 
           // hits from the negative x direction -> normal vector should point towards
           // that direction
-          REQUIRE(rayhit1.ray.tfar == Approx(3));
-          REQUIRE(rayhit1.hit.Ng_x == Approx(1.f / std::sqrt(2)));
-          REQUIRE(rayhit1.hit.Ng_y == Approx(0.f));
-          REQUIRE(rayhit1.hit.Ng_z == Approx(1.f / std::sqrt(2)));
+          CHECK(rayhit1.ray.tfar == Approx(3));
+          CHECK(rayhit1.hit.Ng_x == Approx(1.f / std::sqrt(2)));
+          CHECK(rayhit1.hit.Ng_y == Approx(0.f));
+          CHECK(rayhit1.hit.Ng_z == Approx(1.f / std::sqrt(2)));
         }
         SUBCASE("edge: x min") {
           // edge at x_min
@@ -640,10 +640,10 @@ TEST_CASE_TEMPLATE("EmbreePlane", T, float) {
 
           // hits from the negative x direction -> normal vector should point towards
           // that direction
-          REQUIRE(rayhit2.ray.tfar == Approx(3));
-          REQUIRE(rayhit2.hit.Ng_x == Approx(-1.f / std::sqrt(2)));
-          REQUIRE(rayhit2.hit.Ng_y == Approx(0.f));
-          REQUIRE(rayhit2.hit.Ng_z == Approx(1.f / std::sqrt(2)));
+          CHECK(rayhit2.ray.tfar == Approx(3));
+          CHECK(rayhit2.hit.Ng_x == Approx(-1.f / std::sqrt(2)));
+          CHECK(rayhit2.hit.Ng_y == Approx(0.f));
+          CHECK(rayhit2.hit.Ng_z == Approx(1.f / std::sqrt(2)));
         }
         SUBCASE("edge: y max") {
           // edge at y_max
@@ -659,10 +659,10 @@ TEST_CASE_TEMPLATE("EmbreePlane", T, float) {
 
           // hits from the negative x direction -> normal vector should point towards
           // that direction
-          REQUIRE(rayhit3.ray.tfar == Approx(3));
-          REQUIRE(rayhit3.hit.Ng_x == Approx(0.f));
-          REQUIRE(rayhit3.hit.Ng_y == Approx(1.f / std::sqrt(2)));
-          REQUIRE(rayhit3.hit.Ng_z == Approx(1.f / std::sqrt(2)));
+          CHECK(rayhit3.ray.tfar == Approx(3));
+          CHECK(rayhit3.hit.Ng_x == Approx(0.f));
+          CHECK(rayhit3.hit.Ng_y == Approx(1.f / std::sqrt(2)));
+          CHECK(rayhit3.hit.Ng_z == Approx(1.f / std::sqrt(2)));
         }
         SUBCASE("edge: y min") {      // edge at y_min
           Vec3r<T> org4{1.f, 0.f, 4.f};
@@ -677,10 +677,10 @@ TEST_CASE_TEMPLATE("EmbreePlane", T, float) {
 
           // hits from the negative x direction -> normal vector should point towards
           // that direction
-          REQUIRE(rayhit4.ray.tfar == Approx(3));
-          REQUIRE(rayhit4.hit.Ng_x == Approx(0.f));
-          REQUIRE(rayhit4.hit.Ng_y == Approx(-1.f / std::sqrt(2)));
-          REQUIRE(rayhit4.hit.Ng_z == Approx(1.f / std::sqrt(2)));
+          CHECK(rayhit4.ray.tfar == Approx(3));
+          CHECK(rayhit4.hit.Ng_x == Approx(0.f));
+          CHECK(rayhit4.hit.Ng_y == Approx(-1.f / std::sqrt(2)));
+          CHECK(rayhit4.hit.Ng_z == Approx(1.f / std::sqrt(2)));
         }
       }
       SUBCASE("non-rotated, corner intersection") {
@@ -705,10 +705,10 @@ TEST_CASE_TEMPLATE("EmbreePlane", T, float) {
 
           // hits from the negative x direction -> normal vector should point towards
           // that direction
-          REQUIRE(rayhit1.ray.tfar == Approx(3));
-          REQUIRE(rayhit1.hit.Ng_x == Approx(1.f / std::sqrt(3)));
-          REQUIRE(rayhit1.hit.Ng_y == Approx(1.f / std::sqrt(3)));
-          REQUIRE(rayhit1.hit.Ng_z == Approx(1.f / std::sqrt(3)));
+          CHECK(rayhit1.ray.tfar == Approx(3));
+          CHECK(rayhit1.hit.Ng_x == Approx(1.f / std::sqrt(3)));
+          CHECK(rayhit1.hit.Ng_y == Approx(1.f / std::sqrt(3)));
+          CHECK(rayhit1.hit.Ng_z == Approx(1.f / std::sqrt(3)));
         }
         SUBCASE("corner: x min, y max") {
           // corner at x_min, y_max
@@ -724,11 +724,11 @@ TEST_CASE_TEMPLATE("EmbreePlane", T, float) {
 
           // hits from the negative x direction -> normal vector should point towards
           // that direction
-          REQUIRE(rayhit2.ray.tfar == Approx(3));
+          CHECK(rayhit2.ray.tfar == Approx(3));
 
-          REQUIRE(rayhit2.hit.Ng_x == Approx(-1.f / std::sqrt(3)));
-          REQUIRE(rayhit2.hit.Ng_y == Approx(1.f / std::sqrt(3)));
-          REQUIRE(rayhit2.hit.Ng_z == Approx(1.f / std::sqrt(3)));
+          CHECK(rayhit2.hit.Ng_x == Approx(-1.f / std::sqrt(3)));
+          CHECK(rayhit2.hit.Ng_y == Approx(1.f / std::sqrt(3)));
+          CHECK(rayhit2.hit.Ng_z == Approx(1.f / std::sqrt(3)));
         }
         SUBCASE("corner: x max, y min") {
           // corner at x_max, y_min
@@ -744,10 +744,10 @@ TEST_CASE_TEMPLATE("EmbreePlane", T, float) {
 
           // hits from the negative x direction -> normal vector should point towards
           // that direction
-          REQUIRE(rayhit3.ray.tfar == Approx(3));
-          REQUIRE(rayhit3.hit.Ng_x == Approx(1.f / std::sqrt(3)));
-          REQUIRE(rayhit3.hit.Ng_y == Approx(-1.f / std::sqrt(3)));
-          REQUIRE(rayhit3.hit.Ng_z == Approx(1.f / std::sqrt(3)));
+          CHECK(rayhit3.ray.tfar == Approx(3));
+          CHECK(rayhit3.hit.Ng_x == Approx(1.f / std::sqrt(3)));
+          CHECK(rayhit3.hit.Ng_y == Approx(-1.f / std::sqrt(3)));
+          CHECK(rayhit3.hit.Ng_z == Approx(1.f / std::sqrt(3)));
         }
         SUBCASE("corner: x min, y min") {
           // corner at x_min, y_min
@@ -763,10 +763,10 @@ TEST_CASE_TEMPLATE("EmbreePlane", T, float) {
 
           // hits from the negative x direction -> normal vector should point towards
           // that direction
-          REQUIRE(rayhit4.ray.tfar == Approx(3));
-          REQUIRE(rayhit4.hit.Ng_x == Approx(-1.f / std::sqrt(3)));
-          REQUIRE(rayhit4.hit.Ng_y == Approx(-1.f / std::sqrt(3)));
-          REQUIRE(rayhit4.hit.Ng_z == Approx(1.f / std::sqrt(3)));
+          CHECK(rayhit4.ray.tfar == Approx(3));
+          CHECK(rayhit4.hit.Ng_x == Approx(-1.f / std::sqrt(3)));
+          CHECK(rayhit4.hit.Ng_y == Approx(-1.f / std::sqrt(3)));
+          CHECK(rayhit4.hit.Ng_z == Approx(1.f / std::sqrt(3)));
         }
       }
     }
