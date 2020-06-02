@@ -28,7 +28,7 @@
 using namespace blazert;
 
 template<typename T>
-static void BM_BLAZERT_TRAVERSE_REALISTIC_BVH_Sphere(benchmark::State &state) {
+static void BM_BLAZERT_TRAVERSE_REALISTIC_Sphere(benchmark::State &state) {
   BVHBuildOptions<T> build_options;
   BVHTraceOptions<T> trace_options;
 
@@ -55,11 +55,11 @@ static void BM_BLAZERT_TRAVERSE_REALISTIC_BVH_Sphere(benchmark::State &state) {
     }
   }
 }
-BENCHMARK_TEMPLATE(BM_BLAZERT_TRAVERSE_REALISTIC_BVH_Sphere, float)->DenseRange(2, 10, 1)->Unit(benchmark::kMillisecond);
-BENCHMARK_TEMPLATE(BM_BLAZERT_TRAVERSE_REALISTIC_BVH_Sphere, double)->DenseRange(2, 10, 1)->Unit(benchmark::kMillisecond);
+BENCHMARK_TEMPLATE(BM_BLAZERT_TRAVERSE_REALISTIC_Sphere, float)->DenseRange(2, 9, 1)->Unit(benchmark::kMillisecond);
+BENCHMARK_TEMPLATE(BM_BLAZERT_TRAVERSE_REALISTIC_Sphere, double)->DenseRange(2, 9, 1)->Unit(benchmark::kMillisecond);
 
 static void
-BM_EMBREE_TRAVERSE_REALISTIC_BVH_Sphere(benchmark::State &state) {
+BM_EMBREE_TRAVERSE_REALISTIC_Sphere(benchmark::State &state) {
   using embreeVec3 = StaticVector<float, 3UL, columnVector, blaze::AlignmentFlag::aligned, blaze::PaddingFlag::padded>;
   using embreeVec3List = std::vector<embreeVec3, blaze::AlignedAllocator<embreeVec3>>;
 
@@ -69,8 +69,8 @@ BM_EMBREE_TRAVERSE_REALISTIC_BVH_Sphere(benchmark::State &state) {
   auto device = rtcNewDevice("verbose=0,start_threads=1,threads=1,set_affinity=1");
   auto scene = rtcNewScene(device);
 
-  constexpr const int bytestride_int = sizeof(embreeVec3ui) / 4 * sizeof(embreeVec3ui::ElementType);
-  constexpr const int bytestride_float = sizeof(embreeVec3) / 4 * sizeof(embreeVec3::ElementType);
+  constexpr const int bytestride_int = sizeof(embreeVec3ui) / 8 * sizeof(embreeVec3ui::ElementType);
+  constexpr const int bytestride_float = sizeof(embreeVec3) / 8 * sizeof(embreeVec3::ElementType);
 
   const auto os = std::make_unique<OriginSphere<float>>(state.range(0));
 
@@ -115,10 +115,10 @@ BM_EMBREE_TRAVERSE_REALISTIC_BVH_Sphere(benchmark::State &state) {
     }
   }
 }
-BENCHMARK(BM_EMBREE_TRAVERSE_REALISTIC_BVH_Sphere)->DenseRange(2, 10, 1)->Unit(benchmark::kMillisecond);
+BENCHMARK(BM_EMBREE_TRAVERSE_REALISTIC_Sphere)->DenseRange(2, 9, 1)->Unit(benchmark::kMillisecond);
 
 template<typename T>
-static void BM_nanoRT_TRAVERSE_REALISTIC_BVH_Sphere(benchmark::State &state) {
+static void BM_nanoRT_TRAVERSE_REALISTIC_Sphere(benchmark::State &state) {
   nanort::BVHBuildOptions<T> build_options;
   nanort::BVHTraceOptions trace_options;
 
@@ -159,11 +159,11 @@ static void BM_nanoRT_TRAVERSE_REALISTIC_BVH_Sphere(benchmark::State &state) {
     }
   }
 }
-BENCHMARK_TEMPLATE(BM_nanoRT_TRAVERSE_REALISTIC_BVH_Sphere, float)->DenseRange(2, 10, 1)->Unit(benchmark::kMillisecond);
-BENCHMARK_TEMPLATE(BM_nanoRT_TRAVERSE_REALISTIC_BVH_Sphere, double)->DenseRange(2, 10, 1)->Unit(benchmark::kMillisecond);
+BENCHMARK_TEMPLATE(BM_nanoRT_TRAVERSE_REALISTIC_Sphere, float)->DenseRange(2, 9, 1)->Unit(benchmark::kMillisecond);
+BENCHMARK_TEMPLATE(BM_nanoRT_TRAVERSE_REALISTIC_Sphere, double)->DenseRange(2, 9, 1)->Unit(benchmark::kMillisecond);
 
 template<typename T>
-static void BM_bvh_TRAVERSE_REALISTIC_BVH_Sphere_SweepSAH(benchmark::State &state) {
+static void BM_bvh_TRAVERSE_REALISTIC_Sphere_SweepSAH(benchmark::State &state) {
   using Scalar = T;
   using Vector3 = bvh::Vector3<Scalar>;
   using Triangle = bvh::Triangle<Scalar>;
@@ -219,11 +219,11 @@ static void BM_bvh_TRAVERSE_REALISTIC_BVH_Sphere_SweepSAH(benchmark::State &stat
     }
   }
 }
-BENCHMARK_TEMPLATE(BM_bvh_TRAVERSE_REALISTIC_BVH_Sphere_SweepSAH, float)->DenseRange(2, 10, 1)->Unit(benchmark::kMillisecond);
-BENCHMARK_TEMPLATE(BM_bvh_TRAVERSE_REALISTIC_BVH_Sphere_SweepSAH, double)->DenseRange(2, 10, 1)->Unit(benchmark::kMillisecond);
+BENCHMARK_TEMPLATE(BM_bvh_TRAVERSE_REALISTIC_Sphere_SweepSAH, float)->DenseRange(2, 9, 1)->Unit(benchmark::kMillisecond);
+BENCHMARK_TEMPLATE(BM_bvh_TRAVERSE_REALISTIC_Sphere_SweepSAH, double)->DenseRange(2, 9, 1)->Unit(benchmark::kMillisecond);
 
 template<typename T>
-static void BM_bvh_TRAVERSE_REALISTIC_BVH_Sphere_BinnedSAH(benchmark::State &state) {
+static void BM_bvh_TRAVERSE_REALISTIC_Sphere_BinnedSAH(benchmark::State &state) {
   using Scalar = T;
   using Vector3 = bvh::Vector3<Scalar>;
   using Triangle = bvh::Triangle<Scalar>;
@@ -279,5 +279,5 @@ static void BM_bvh_TRAVERSE_REALISTIC_BVH_Sphere_BinnedSAH(benchmark::State &sta
     }
   }
 }
-BENCHMARK_TEMPLATE(BM_bvh_TRAVERSE_REALISTIC_BVH_Sphere_BinnedSAH, float)->DenseRange(2, 10, 1)->Unit(benchmark::kMillisecond);
-BENCHMARK_TEMPLATE(BM_bvh_TRAVERSE_REALISTIC_BVH_Sphere_BinnedSAH, double)->DenseRange(2, 10, 1)->Unit(benchmark::kMillisecond);
+BENCHMARK_TEMPLATE(BM_bvh_TRAVERSE_REALISTIC_Sphere_BinnedSAH, float)->DenseRange(2, 9, 1)->Unit(benchmark::kMillisecond);
+BENCHMARK_TEMPLATE(BM_bvh_TRAVERSE_REALISTIC_Sphere_BinnedSAH, double)->DenseRange(2, 9, 1)->Unit(benchmark::kMillisecond);
