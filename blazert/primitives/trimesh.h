@@ -21,13 +21,56 @@ class TriangleMesh {
 public:
   const Vec3rList<T> &vertices;
   const Vec3iList &faces;
+  Vec3rList<T> centers;
+  std::vector<std::pair<Vec3r<T>, Vec3r<T>>> box;
+  Vec3rList<T> face_normals;
+  Vec3rList<T> vertex_normals;
 
 public:
   TriangleMesh() = delete;
   TriangleMesh(const Vec3rList<T> &vertices, const Vec3iList &faces) : vertices(vertices), faces(faces) {
-    // Compute centers
-    // Compute face normals
-    // Compute vertex normals
+
+    centers.reserve(faces.size());
+    box.reserve(faces.size());
+    face_normals.reserve(faces.size());
+    vertex_normals.resize(vertices.size());
+
+    for (auto &face : faces) {
+
+      centers.emplace_back(compute_center(face));
+      box.emplace_back(compute_bounding_box(face));
+      face_normals.emplace_back(compute_face_normal(face));
+
+      for (auto &v: face) {
+        vertex_normals[v] += face_normals.back()/static_cast<T>(3.);
+      }
+    }
+  }
+
+  inline std::pair<Vec3r<T>, Vec3r<T>> compute_bounding_box(const Vec3ui &face) {
+
+    Vec3r<T> min = vertices[face[0]];
+    Vec3r<T> max = vertices[face[0]];
+
+    for (unsigned int i = 1; i < 3; i++) {
+      const Vec3r<T> &vertex = vertices[face[i]];
+      for (int k = 0; k < 3; k++) {
+        min[k] = std::min(min[k], vertex[k]);
+        max[k] = std::max(max[k], vertex[k]);
+      }
+    }
+
+    return {min, max};
+  }
+
+  inline Vec3r<T> compute_center(const Vec3ui &face) {
+    return (vertices[face[0]] + vertices[face[1]] + vertices[face[2]]) / static_cast<T>(3.);
+  }
+
+  inline Vec3r<T> compute_face_normal(const Vec3ui &face) {
+    const Vec3r<T> e2{vertices[face[2]] - vertices[face[0]]};
+    const Vec3r<T> e1{vertices[face[0]] - vertices[face[1]]};
+    return normalize(cross(e1, e2));
   }
 
   /**
@@ -37,7 +80,7 @@ public:
   [[nodiscard]] inline unsigned int size() const { return faces.size(); }
 
   inline void BoundingBox(Vec3r<T> &bmin, Vec3r<T> &bmax, unsigned int prim_index) const {
-
+    /**
     const Vec3ui &face = faces[prim_index];
 
     {
@@ -52,12 +95,19 @@ public:
         bmax[k] = std::max(bmax[k], vertex[k]);
       }
     }
+    */
+    bmin, bmax = box[prim_index];
   }
 
   inline void BoundingBoxAndCenter(Vec3r<T> &bmin, Vec3r<T> &bmax, Vec3r<T> &center, unsigned int prim_index) const {
+
+    bmin, bmax = box[prim_index];
+    center = centers[prim_index];
+    /**
     BoundingBox(bmin, bmax, prim_index);
     const Vec3ui &face = faces[prim_index];
     center = (vertices[face[0]] + vertices[face[1]] + vertices[face[2]]) / static_cast<T>(3.);
+     */
   }
 };
 
@@ -96,6 +146,8 @@ public:
     return (center < pos_ * static_cast<T>(3.0));
   }
 };
+
+template<typename T, template<typename A>typename P> bool predict_sah() {}
 
 template<typename T>
 class TriangleIntersector {
@@ -136,7 +188,6 @@ inline void post_traversal(TriangleIntersector<T> &i, RayHit<T> &intersection) {
    */
 template<typename T>
 inline void prepare_traversal(TriangleIntersector<T> &i, const Ray<T> &ray) {
-
   // Copy
   //i.origin = ray.origin;
   i.min_hit_distance = ray.min_hit_distance;
@@ -144,38 +195,7 @@ inline void prepare_traversal(TriangleIntersector<T> &i, const Ray<T> &ray) {
   i.uv = 0.; //{0., 0.};  // Here happens an allocate.
   //i.cull_back_face = ray.cull_back_face;  //trace_options.cull_back_face;
   i.prim_id = -1;
-  /**
-  const Vec3r<T> &dir = ray.direction;
 
-  // Calculate dimension where the ray direction is maximal.
-  // TODO: Vectorize this.
-  i.k[2] = 0;
-  T abs_dir = std::abs(dir[0]);
-
-  if (abs_dir < std::abs(dir[1])) {
-    i.k[2] = 1;
-    abs_dir = std::abs(dir[1]);
-  }
-
-  if (abs_dir < std::abs(dir[2]))
-    i.k[2] = 2;
-
-  i.k[0] = i.k[2] + 1;
-  if (i.k[0] == 3)
-    i.k[0] = 0;
-
-  i.k[1] = i.k[0] + 1;
-  if (i.k[1] == 3)
-    i.k[1] = 0;
-
-  // Swap kx and ky dimension to preserve winding direction of triangles.
-  if (dir[i.k[2]] < static_cast<T>(0.0)) std::swap(i.k[1], i.k[2]);
-
-  // TODO: Removed static_cast. Was it really necessary here?
-  i.s[0] = -dir[i.k[0]] / dir[i.k[2]];
-  i.s[1] = -dir[i.k[1]] / dir[i.k[2]];
-  i.s[2] = static_cast<T>(1.) / dir[i.k[2]];
-  */
 }
 
 /// Safe function to reinterpret the bits of the given value as another type.
@@ -224,84 +244,6 @@ inline bool intersect2(TriangleIntersector<T> &i, const Tri<T> &tri, const Ray<T
     }
   }
   return false;
-}
-
-/**
-   * Do ray intersection stuff for `prim_index` th primitive and return hit
-   * distance `hit_distance`, barycentric coordinate `u` and `v`.
-   * Returns true if there's intersection.
-   */
-template<typename T>
-inline bool intersect(TriangleIntersector<T> &i, const Tri<T> &tri, const Ray<T> &ray) {
-
-  const Vec3ui &k = i.k;
-  const Vec3r<T> &s = i.s;
-  const Vec3r<T> A{tri.a - ray.origin};
-  const Vec3r<T> B{tri.b - ray.origin};
-  const Vec3r<T> C{tri.c - ray.origin};
-
-  const T Ax = A[k[0]] + s[0] * A[k[2]];
-  const T Ay = A[k[1]] + s[1] * A[k[2]];
-  const T Bx = B[k[0]] + s[0] * B[k[2]];
-  const T By = B[k[1]] + s[1] * B[k[2]];
-  const T Cx = C[k[0]] + s[0] * C[k[2]];
-  const T Cy = C[k[1]] + s[1] * C[k[2]];
-
-  T U = Cx * By - Cy * Bx;
-  T V = Ax * Cy - Ay * Cx;
-  T W = Bx * Ay - By * Ax;
-
-  /**
-  // Fall back to test against edges using double precision.
-  if constexpr (std::is_same<T, float>::value) {
-    if (U == static_cast<T>(0.) || V == static_cast<T>(0.) || W == static_cast<T>(0.)) {
-      double CxBy = static_cast<double>(Cx) * static_cast<double>(By);
-      double CyBx = static_cast<double>(Cy) * static_cast<double>(Bx);
-      U = static_cast<T>(CxBy - CyBx);
-
-      double AxCy = static_cast<double>(Ax) * static_cast<double>(Cy);
-      double AyCx = static_cast<double>(Ay) * static_cast<double>(Cx);
-      V = static_cast<T>(AxCy - AyCx);
-
-      double BxAy = static_cast<double>(Bx) * static_cast<double>(Ay);
-      double ByAx = static_cast<double>(By) * static_cast<double>(Ax);
-      W = static_cast<T>(BxAy - ByAx);
-    }
-  }
-   */
-
-  if (((U < static_cast<T>(0.)) | (V < static_cast<T>(0.)) | (W < static_cast<T>(0.))) && (i.cull_back_face | (U > static_cast<T>(0.)) | (V > static_cast<T>(0.)) | (W > static_cast<T>(0.)))) {
-      return false;
-  }
-
-  const T det = U + V + W;
-
-  if (det == static_cast<T>(0.0)) return false;
-
-  const T Az = s[2] * A[k[2]];
-  const T Bz = s[2] * B[k[2]];
-  const T Cz = s[2] * C[k[2]];
-
-  const T D = U * Az + V * Bz + W * Cz;
-
-  const T rcpDet = static_cast<T>(1.0) / det;
-  const T tt = D * rcpDet;
-
-  if ((tt >= i.hit_distance) | (tt < i.min_hit_distance)) return false;
-
-  //t_inout = tt;
-  /**
-     * TODO: Citation needed.
-     * Use Möller-Trumbore style barycentric coordinates
-     * U + V + W = 1.0 and interp(p) = U * p0 + V * p1 + W * p2
-     * We want interp(p) = (1 - u - v) * p0 + u * v1 + v * p2;
-     * => u = V, v = W.
-     */
-  i.uv = {V * rcpDet, W * rcpDet};
-  i.hit_distance = tt;
-  i.prim_id = tri.i;
-
-  return true;
 }
 
 }// namespace blazert
