@@ -28,40 +28,58 @@ static void BM_BLAZERT_TRAVERSE_WORST_BVH_Sphere(benchmark::State &state) {
   BVHBuildOptions<T> build_options;
   BVHTraceOptions<T> trace_options;
 
-  auto os = OriginSphere<T>(state.range(0));
+  const auto os = std::make_unique<OriginSphere<T>>(state.range(0));
 
-  TriangleMesh triangles(os.vertices, os.triangles);
-  TriangleSAHPred triangles_sah(os.vertices, os.triangles);
+  TriangleMesh triangles(os->vertices, os->triangles);
+  TriangleSAHPred triangles_sah(os->vertices, os->triangles);
 
   BVH<T> triangles_bvh;
   auto stats = triangles_bvh.build(triangles, triangles_sah, build_options);
   //std::cout << "success = " << success << "\n";
 
   for (auto _ : state) {
-    for (auto &dir : os.vertices) {
+    for (auto &dir : os->vertices) {
       const blazert::Ray<T> ray{{0.0, 0.0, 0.0}, dir};
-      TriangleIntersector<T> triangle_intersector{os.vertices, os.triangles};
+      TriangleIntersector<T> triangle_intersector{os->vertices, os->triangles};
       RayHit<T> temp_rayhit;
       traverse(triangles_bvh, ray, triangle_intersector, temp_rayhit, trace_options);
     }
   }
 }
-BENCHMARK_TEMPLATE(BM_BLAZERT_TRAVERSE_WORST_BVH_Sphere, float)->DenseRange(2, 9, 1)->Unit(benchmark::kMillisecond);
-BENCHMARK_TEMPLATE(BM_BLAZERT_TRAVERSE_WORST_BVH_Sphere, double)->DenseRange(2, 9, 1)->Unit(benchmark::kMillisecond);
+BENCHMARK_TEMPLATE(BM_BLAZERT_TRAVERSE_WORST_BVH_Sphere, float)->DenseRange(2, 10, 1)->Unit(benchmark::kMillisecond);
+BENCHMARK_TEMPLATE(BM_BLAZERT_TRAVERSE_WORST_BVH_Sphere, double)->DenseRange(2, 10, 1)->Unit(benchmark::kMillisecond);
 
 static void
 BM_EMBREE_TRAVERSE_WORST_BVH_Sphere(benchmark::State &state) {
+  using embreeVec3 = StaticVector<float, 3UL, columnVector, blaze::AlignmentFlag::aligned, blaze::PaddingFlag::padded>;
+  using embreeVec3List = std::vector<embreeVec3, blaze::AlignedAllocator<embreeVec3>>;
+
+  using embreeVec3ui = StaticVector<unsigned int, 3UL, columnVector, blaze::AlignmentFlag::aligned, blaze::PaddingFlag::padded>;
+  using embreeVec3iList = std::vector<embreeVec3ui,  blaze::AlignedAllocator<embreeVec3ui>>;
+
   auto device = rtcNewDevice("verbose=0,start_threads=1,threads=1,set_affinity=1");
   auto scene = rtcNewScene(device);
 
-  constexpr const int bytestride_int = sizeof(Vec3ui) / 4 * sizeof(Vec3ui::ElementType);
-  constexpr const int bytestride_float = sizeof(Vec3r<float>) / 4 * sizeof(Vec3r<float>::ElementType);
+  constexpr const int bytestride_int = sizeof(embreeVec3ui) / 4 * sizeof(embreeVec3ui::ElementType);
+  constexpr const int bytestride_float = sizeof(embreeVec3) / 4 * sizeof(embreeVec3::ElementType);
 
-  const auto os = OriginSphere<float>(state.range(0));
+  const auto os = std::make_unique<OriginSphere<float>>(state.range(0));
+
+  auto vertices = std::make_unique<embreeVec3List>();
+  vertices->reserve(os->vertices.size());
+  auto triangles = std::make_unique<embreeVec3iList>(os->triangles.size());
+  triangles->reserve(os->triangles.size());
+
+  for(auto &v : os->vertices) {
+    vertices->emplace_back(embreeVec3{v[0], v[1], v[2]});
+  }
+  for(auto &t : os->triangles) {
+    triangles->emplace_back(embreeVec3ui{t[0], t[1], t[2]});
+  }
 
   auto geometry = rtcNewGeometry(device, RTC_GEOMETRY_TYPE_TRIANGLE);
-  rtcSetSharedGeometryBuffer(geometry, RTC_BUFFER_TYPE_INDEX, 0, RTC_FORMAT_UINT3, (void *) (os.triangles.data()), 0, bytestride_int, os.triangles.size());
-  rtcSetSharedGeometryBuffer(geometry, RTC_BUFFER_TYPE_VERTEX, 0, RTC_FORMAT_FLOAT3, (void *) (os.vertices.data()), 0, bytestride_float, os.vertices.size());
+  rtcSetSharedGeometryBuffer(geometry, RTC_BUFFER_TYPE_INDEX, 0, RTC_FORMAT_UINT3, (void *) (triangles->data()), 0, bytestride_int, triangles->size());
+  rtcSetSharedGeometryBuffer(geometry, RTC_BUFFER_TYPE_VERTEX, 0, RTC_FORMAT_FLOAT3, (void *) (vertices->data()), 0, bytestride_float, vertices->size());
   rtcCommitGeometry(geometry);
   rtcAttachGeometry(scene, geometry);
   rtcCommitScene(scene);
@@ -71,7 +89,7 @@ BM_EMBREE_TRAVERSE_WORST_BVH_Sphere(benchmark::State &state) {
   const Vec3r<float> org{0, 0, 0};
 
   for (auto _ : state) {
-    for (auto &dir : os.vertices) {
+    for (auto &dir : os->vertices) {
       const RTCRay r{org[0], org[1], org[2],
                      0,
                      dir[0], dir[1], dir[2],
@@ -84,27 +102,27 @@ BM_EMBREE_TRAVERSE_WORST_BVH_Sphere(benchmark::State &state) {
     }
   }
 }
-BENCHMARK(BM_EMBREE_TRAVERSE_WORST_BVH_Sphere)->DenseRange(2, 9, 1)->Unit(benchmark::kMillisecond);
+BENCHMARK(BM_EMBREE_TRAVERSE_WORST_BVH_Sphere)->DenseRange(2, 10, 1)->Unit(benchmark::kMillisecond);
 
 template<typename T>
 static void BM_nanoRT_TRAVERSE_WORST_BVH_Sphere(benchmark::State &state) {
   nanort::BVHBuildOptions<T> build_options;
   nanort::BVHTraceOptions trace_options;
 
-  auto os = OriginSphere<T>(state.range(0));
+  const auto os = std::make_unique<OriginSphere<T>>(state.range(0));
 
-  const Vec3r<T> *verts = os.vertices.data();
-  const Vec3ui *tris = os.triangles.data();
+  const Vec3r<T> *verts = os->vertices.data();
+  const Vec3ui *tris = os->triangles.data();
 
   nanort::TriangleMesh<T> triangles{verts->data(), tris->data(), sizeof(Vec3r<T>)};
   nanort::TriangleSAHPred<T> triangles_sah{verts->data(), tris->data(), sizeof(Vec3r<T>)};
 
   nanort::BVHAccel<T> triangles_bvh;
-  const bool success = triangles_bvh.Build(os.triangle_count(), triangles, triangles_sah, build_options);
+  const bool success = triangles_bvh.Build(os->triangle_count(), triangles, triangles_sah, build_options);
   //std::cout << "success = " << success << "\n";
 
   for (auto _ : state) {
-    for (auto &dir : os.vertices) {
+    for (auto &dir : os->vertices) {
       nanort::Ray<T> ray;
       ray.min_t = 0.0f;
       ray.max_t = std::numeric_limits<T>::max();
@@ -125,8 +143,8 @@ static void BM_nanoRT_TRAVERSE_WORST_BVH_Sphere(benchmark::State &state) {
     }
   }
 }
-BENCHMARK_TEMPLATE(BM_nanoRT_TRAVERSE_WORST_BVH_Sphere, float)->DenseRange(2, 9, 1)->Unit(benchmark::kMillisecond);
-BENCHMARK_TEMPLATE(BM_nanoRT_TRAVERSE_WORST_BVH_Sphere, double)->DenseRange(2, 9, 1)->Unit(benchmark::kMillisecond);
+BENCHMARK_TEMPLATE(BM_nanoRT_TRAVERSE_WORST_BVH_Sphere, float)->DenseRange(2, 10, 1)->Unit(benchmark::kMillisecond);
+BENCHMARK_TEMPLATE(BM_nanoRT_TRAVERSE_WORST_BVH_Sphere, double)->DenseRange(2, 10, 1)->Unit(benchmark::kMillisecond);
 
 template<typename T>
 static void BM_bvh_TRAVERSE_WORST_BVH_Sphere_SweepSAH(benchmark::State &state) {
@@ -136,24 +154,24 @@ static void BM_bvh_TRAVERSE_WORST_BVH_Sphere_SweepSAH(benchmark::State &state) {
   using Ray = bvh::Ray<Scalar>;
   using Bvh = bvh::Bvh<Scalar>;
 
-  auto os = OriginSphere<T>(state.range(0));
+  const auto os = std::make_unique<OriginSphere<T>>(state.range(0));
 
   std::vector<Triangle> triangles;
-  triangles.reserve(os.triangles.size());
-  for (int i = 0; i < os.triangles.size(); i += 3) {
+  triangles.reserve(os->triangles.size());
+  for (int i = 0; i < os->triangles.size(); i += 3) {
     triangles.emplace_back(
         Vector3{
-            static_cast<Scalar>(os.triangles[i][0]),
-            static_cast<Scalar>(os.triangles[i][1]),
-            static_cast<Scalar>(os.triangles[i][2])},
+            static_cast<Scalar>(os->triangles[i][0]),
+            static_cast<Scalar>(os->triangles[i][1]),
+            static_cast<Scalar>(os->triangles[i][2])},
         Vector3{
-            static_cast<Scalar>(os.triangles[i + 1][0]),
-            static_cast<Scalar>(os.triangles[i + 1][1]),
-            static_cast<Scalar>(os.triangles[i + 1][2])},
+            static_cast<Scalar>(os->triangles[i + 1][0]),
+            static_cast<Scalar>(os->triangles[i + 1][1]),
+            static_cast<Scalar>(os->triangles[i + 1][2])},
         Vector3{
-            static_cast<Scalar>(os.triangles[i + 2][0]),
-            static_cast<Scalar>(os.triangles[i + 2][1]),
-            static_cast<Scalar>(os.triangles[i + 2][2])});
+            static_cast<Scalar>(os->triangles[i + 2][0]),
+            static_cast<Scalar>(os->triangles[i + 2][1]),
+            static_cast<Scalar>(os->triangles[i + 2][2])});
   }
 
   Bvh bvh;
@@ -165,7 +183,7 @@ static void BM_bvh_TRAVERSE_WORST_BVH_Sphere_SweepSAH(benchmark::State &state) {
   builder.build(global_bbox, bboxes.get(), centers.get(), triangles.size());
 
   for (auto _ : state) {
-    for (auto &dir : os.vertices) {
+    for (auto &dir : os->vertices) {
       // Intersect a ray with the data structure
       Ray ray(
           Vector3(0.0, 0.0, 0.0),         // origin
@@ -180,8 +198,8 @@ static void BM_bvh_TRAVERSE_WORST_BVH_Sphere_SweepSAH(benchmark::State &state) {
     }
   }
 }
-BENCHMARK_TEMPLATE(BM_bvh_TRAVERSE_WORST_BVH_Sphere_SweepSAH, float)->DenseRange(2, 7, 1)->Unit(benchmark::kMillisecond);
-BENCHMARK_TEMPLATE(BM_bvh_TRAVERSE_WORST_BVH_Sphere_SweepSAH, double)->DenseRange(2, 7, 1)->Unit(benchmark::kMillisecond);
+BENCHMARK_TEMPLATE(BM_bvh_TRAVERSE_WORST_BVH_Sphere_SweepSAH, float)->DenseRange(2, 8, 1)->Unit(benchmark::kMillisecond);
+BENCHMARK_TEMPLATE(BM_bvh_TRAVERSE_WORST_BVH_Sphere_SweepSAH, double)->DenseRange(2, 8, 1)->Unit(benchmark::kMillisecond);
 
 template<typename T>
 static void BM_bvh_TRAVERSE_WORST_BVH_Sphere_BinnedSAH(benchmark::State &state) {
@@ -191,24 +209,24 @@ static void BM_bvh_TRAVERSE_WORST_BVH_Sphere_BinnedSAH(benchmark::State &state) 
   using Ray = bvh::Ray<Scalar>;
   using Bvh = bvh::Bvh<Scalar>;
 
-  auto os = OriginSphere<T>(state.range(0));
+  const auto os = std::make_unique<OriginSphere<T>>(state.range(0));
 
   std::vector<Triangle> triangles;
-  triangles.reserve(os.triangles.size());
-  for (int i = 0; i < os.triangles.size(); i += 3) {
+  triangles.reserve(os->triangles.size());
+  for (int i = 0; i < os->triangles.size(); i += 3) {
     triangles.emplace_back(
         Vector3{
-            static_cast<Scalar>(os.triangles[i][0]),
-            static_cast<Scalar>(os.triangles[i][1]),
-            static_cast<Scalar>(os.triangles[i][2])},
+            static_cast<Scalar>(os->triangles[i][0]),
+            static_cast<Scalar>(os->triangles[i][1]),
+            static_cast<Scalar>(os->triangles[i][2])},
         Vector3{
-            static_cast<Scalar>(os.triangles[i + 1][0]),
-            static_cast<Scalar>(os.triangles[i + 1][1]),
-            static_cast<Scalar>(os.triangles[i + 1][2])},
+            static_cast<Scalar>(os->triangles[i + 1][0]),
+            static_cast<Scalar>(os->triangles[i + 1][1]),
+            static_cast<Scalar>(os->triangles[i + 1][2])},
         Vector3{
-            static_cast<Scalar>(os.triangles[i + 2][0]),
-            static_cast<Scalar>(os.triangles[i + 2][1]),
-            static_cast<Scalar>(os.triangles[i + 2][2])});
+            static_cast<Scalar>(os->triangles[i + 2][0]),
+            static_cast<Scalar>(os->triangles[i + 2][1]),
+            static_cast<Scalar>(os->triangles[i + 2][2])});
   }
 
   Bvh bvh;
@@ -220,7 +238,7 @@ static void BM_bvh_TRAVERSE_WORST_BVH_Sphere_BinnedSAH(benchmark::State &state) 
   builder.build(global_bbox, bboxes.get(), centers.get(), triangles.size());
 
   for (auto _ : state) {
-    for (auto &dir : os.vertices) {
+    for (auto &dir : os->vertices) {
       // Intersect a ray with the data structure
       Ray ray(
           Vector3(0.0, 0.0, 0.0),         // origin
@@ -235,5 +253,5 @@ static void BM_bvh_TRAVERSE_WORST_BVH_Sphere_BinnedSAH(benchmark::State &state) 
     }
   }
 }
-BENCHMARK_TEMPLATE(BM_bvh_TRAVERSE_WORST_BVH_Sphere_BinnedSAH, float)->DenseRange(2, 7, 1)->Unit(benchmark::kMillisecond);
-BENCHMARK_TEMPLATE(BM_bvh_TRAVERSE_WORST_BVH_Sphere_BinnedSAH, double)->DenseRange(2, 7, 1)->Unit(benchmark::kMillisecond);
+BENCHMARK_TEMPLATE(BM_bvh_TRAVERSE_WORST_BVH_Sphere_BinnedSAH, float)->DenseRange(2, 8, 1)->Unit(benchmark::kMillisecond);
+BENCHMARK_TEMPLATE(BM_bvh_TRAVERSE_WORST_BVH_Sphere_BinnedSAH, double)->DenseRange(2, 8, 1)->Unit(benchmark::kMillisecond);
