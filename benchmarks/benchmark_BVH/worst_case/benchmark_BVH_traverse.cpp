@@ -42,7 +42,8 @@ static void BM_BLAZERT_TRAVERSE_WORST_BVH_Sphere(benchmark::State &state) {
       const blazert::Ray<T> ray{{0.0, 0.0, 0.0}, dir};
       TriangleIntersector<T> triangle_intersector{os->vertices, os->triangles};
       RayHit<T> temp_rayhit;
-      traverse(triangles_bvh, ray, triangle_intersector, temp_rayhit, trace_options);
+      const auto hit = traverse(triangles_bvh, ray, triangle_intersector, temp_rayhit, trace_options);
+      benchmark::DoNotOptimize(hit);
     }
   }
 }
@@ -99,6 +100,7 @@ BM_EMBREE_TRAVERSE_WORST_BVH_Sphere(benchmark::State &state) {
       rh.hit.geomID = RTC_INVALID_GEOMETRY_ID;
       rh.hit.instID[0] = RTC_INVALID_GEOMETRY_ID;
       rtcIntersect1(scene, &context, &rh);
+      benchmark::DoNotOptimize(rh);
     }
   }
 }
@@ -139,7 +141,8 @@ static void BM_nanoRT_TRAVERSE_WORST_BVH_Sphere(benchmark::State &state) {
       ray.dir[2] = nanort_dir[2];
       nanort::TriangleIntersector<T> triangle_intersector{verts->data(), tris->data(), sizeof(Vec3r<T>)};
       nanort::TriangleIntersection<T> temp_rayhit;
-      triangles_bvh.Traverse(ray, triangle_intersector, &temp_rayhit, trace_options);
+      const auto hit = triangles_bvh.Traverse(ray, triangle_intersector, &temp_rayhit, trace_options);
+      benchmark::DoNotOptimize(hit);
     }
   }
 }
@@ -194,7 +197,8 @@ static void BM_bvh_TRAVERSE_WORST_BVH_Sphere_SweepSAH(benchmark::State &state) {
       bvh::ClosestIntersector<false, Bvh, Triangle> intersector(bvh, triangles.data());
       bvh::SingleRayTraverser<Bvh> traverser(bvh);
 
-      auto hit = traverser.traverse(ray, intersector);
+      const auto hit = traverser.traverse(ray, intersector);
+      benchmark::DoNotOptimize(hit);
     }
   }
 }
@@ -249,7 +253,8 @@ static void BM_bvh_TRAVERSE_WORST_BVH_Sphere_BinnedSAH(benchmark::State &state) 
       bvh::ClosestIntersector<false, Bvh, Triangle> intersector(bvh, triangles.data());
       bvh::SingleRayTraverser<Bvh> traverser(bvh);
 
-      auto hit = traverser.traverse(ray, intersector);
+      const auto hit = traverser.traverse(ray, intersector);
+      benchmark::DoNotOptimize(hit);
     }
   }
 }

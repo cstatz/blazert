@@ -35,7 +35,8 @@ static void BM_BLAZERT_BUILD_BVH_Sphere(benchmark::State& state)
   TriangleSAHPred triangles_sah(os->vertices, os->triangles);
 
   for (auto _ : state) {
-    triangles_bvh.build(triangles, triangles_sah, build_options);
+    const auto stats = triangles_bvh.build(triangles, triangles_sah, build_options);
+    benchmark::DoNotOptimize(stats);
   }
 }
 BENCHMARK_TEMPLATE(BM_BLAZERT_BUILD_BVH_Sphere, float)->DenseRange(2,10,1)->Unit(benchmark::kMillisecond);
@@ -97,7 +98,8 @@ static void BM_nanoRT_BUILD_BHV_Sphere(benchmark::State &state) {
 
   nanort::BVHAccel<T> triangles_bvh;
   for (auto _ : state) {
-    triangles_bvh.Build(os->triangle_count(), triangles, triangles_sah, build_options);
+    const auto success = triangles_bvh.Build(os.triangle_count(), triangles, triangles_sah, build_options);
+    benchmark::DoNotOptimize(success);
   }
 }
 BENCHMARK_TEMPLATE(BM_nanoRT_BUILD_BHV_Sphere, float)->DenseRange(2, 10, 1)->Unit(benchmark::kMillisecond);
