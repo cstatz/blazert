@@ -30,6 +30,22 @@ inline bool intersect_node(T &min_distance /* inout */, T &max_distance /* inout
 
   return (min_distance <= max_distance);
 }
+
+template<typename Node, typename Intersector, typename Ray>
+inline bool intersect_leaf(const Node &node, Intersector &intersector, const Ray &ray) {
+
+  bool hit = false;
+
+  for (auto &primitive: node.primitives) {
+    hit += intersect_primitive(intersector, primitive, ray);
+
+    if (hit && ray.any_hit) {
+      break;
+    }
+  }
+  return hit;
+}
+
 }// namespace blazert
 
 #endif// BLAZERT_BVH_AABB_H

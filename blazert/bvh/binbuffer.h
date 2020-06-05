@@ -5,77 +5,67 @@
 namespace blazert {
 
 template<typename T> inline T calculate_box_surface(const Vec3r<T> &min, const Vec3r<T> &max) {
-  const Vec3r<T> box = max - min;
+  const Vec3r<T> box{blaze::abs(max - min)};
   return static_cast<T>(2.0) * (box[0] * box[1] + box[1] * box[2] + box[2] * box[0]);
 }
 
 template <typename T>
 struct BLAZERTALIGN Bin {
-  Vec3r<T> min{std::numeric_limits<T>::max()};
-  Vec3r<T> max{-std::numeric_limits<T>::max()};
-  size_t  count;
+  Vec3r<T> min;
+  Vec3r<T> max;
+  unsigned int count;
   T cost;
 
-  Bin() : count(0), cost(0) {}
+  Bin() : min(std::numeric_limits<T>::max()), max(-std::numeric_limits<T>::max()), count(0), cost(static_cast<T>(0.)) {}
 };
 
 template<class T>
 struct BLAZERTALIGN BinBuffer {
-  explicit BinBuffer(unsigned int size) {
-    bin_size = size;
-    // TODO: This is not obvious ..
-    bin.resize(3 * size);
-    clear();
+  explicit BinBuffer(const unsigned int size) : size(size) {
+    bin.resize(3*size);  // For each axis.
   }
 
   void clear() {
-    std::fill(bin.begin(), bin.end(), Bin<T>());
+    bin.clear();
+    bin.resize(3*size);
   }
 
   std::vector<Bin<T>> bin;
-  unsigned int bin_size;
+  const unsigned int size;
 };
 
-template<typename T, class P>
-inline void ContributeBinBuffer(BinBuffer<T> &bins, const Vec3r<T> &scene_min, const Vec3r<T> &scene_max, const std::vector<unsigned int> &indices,
-                                const unsigned int left_idx, const unsigned int right_idx, const P &p) {
+template<typename T, class Collection>
+inline void contribute_bins(BinBuffer<T> &bins, const Vec3r<T> &scene_min, const Vec3r<T> &scene_max,
+                                const std::vector<unsigned int> &indices, const unsigned int left_idx,
+                                const unsigned int right_idx, const Collection &p) {
 
-  const T bin_size = static_cast<T>(bins.bin_size);
+  const Vec3r<T> scene_size{blaze::abs(scene_max - scene_min)};
+  Vec3r<T> scene_inv_size;
 
-  const Vec3r<T> scene_size{scene_max - scene_min};
-  Vec3r<T> scene_inv_size;;
+  for (unsigned int i = 0; i < 3; i++)
+    scene_inv_size[i] = (scene_size[i] > static_cast<T>(0.)) ? bins.size / scene_size[i] : static_cast<T>(0.);
 
-  for (int i = 0; i < 3; ++i) {
-    scene_inv_size[i] = (scene_size[i] > static_cast<T>(0.)) ? bin_size / scene_size[i] : static_cast<T>(0.);
-  }
-
-  // Clear bin data
   bins.clear();
 
-  Vec3r<T> bmin; //{std::numeric_limits<T>::max()};
-  Vec3r<T> bmax; //{-std::numeric_limits<T>::max()};
-  Vec3r<T> center;
+  Vec3r<T> bmin, bmax, center;
 
-  for (size_t i=left_idx; i<right_idx; i++) {
-    //
+  for (unsigned int i=left_idx; i<right_idx; i++) {
+
+    p.get_primitive_bounding_box(bmin, bmax, indices[i]);
+    p.get_primitive_center(center, indices[i]);
+
     // Quantize the center position into [0, BIN_SIZE)
-    //
-    // q[i] = (int)(p[i] - scene_bmin) / scene_size
-    //
+    // TODO: This fails if size in any axis =0.
+    const Vec3r<T> quantized_center{(center - scene_min) * scene_inv_size};  // TODO: in [0., T(bin_size)]
 
-    p.BoundingBoxAndCenter(bmin, bmax, center, indices[i]);
-    const Vec3r<T> quantized_center{(center - scene_min) * scene_inv_size};  // in [0., T(bin_size)]
-
-    // idx is now in [0, BIN_SIZE)
-    for (int j = 0; j < 3; ++j) {
-      // idx is now in [0, BIN_SIZE)
-      unsigned int idx = std::min(bins.bin_size-1, unsigned(std::max(0, int(quantized_center[j]))));
+    for (unsigned int j = 0; j < 3; j++) {
+      unsigned int idx = std::min(bins.size-1, unsigned(std::max(0, int(quantized_center[j]))));
 
       // Increment bin counter + extend bounding box of bin
-      Bin<T>& bin = bins.bin[j * bins.bin_size + idx];
+      Bin<T> &bin = bins.bin[j * bins.size + idx];
       bin.count++;
 
-      for (int k = 0; k < 3; ++k) {
+      for (unsigned int k = 0; k < 3; k++) {
         bin.min[k] = std::min(bin.min[k], bmin[k]);
         bin.max[k] = std::max(bin.max[k], bmax[k]);
       }
@@ -84,22 +74,21 @@ inline void ContributeBinBuffer(BinBuffer<T> &bins, const Vec3r<T> &scene_min, c
 }
 
 template<typename T>
-inline unsigned int FindCutFromBinBuffer(Vec3r<T> &cut_pos, BinBuffer<T> &bins, const Vec3r<T> &bmin, const Vec3r<T> &bmax) {// should be in [0.0, 1.0]
+inline unsigned int find_cut_from_bins(Vec3r<T> &cut_pos, BinBuffer<T> &bins, const Vec3r<T> &bmin, const Vec3r<T> &bmax) {
 
-  int minCostAxis;
-  T minCost[3];
+  T min_cost[3];
 
-  for (int j = 0; j < 3; ++j) {
-    minCost[j] = std::numeric_limits<T>::max();
+  for (unsigned int j = 0; j < 3; j++) {
+    min_cost[j] = std::numeric_limits<T>::max();
 
     // Sweep left to accumulate bounding boxes and compute the right-hand side of the cost
-    size_t count = 0;
+    unsigned int count = 0;
     Vec3r<T> bmin_{std::numeric_limits<T>::max()};
     Vec3r<T> bmax_{-std::numeric_limits<T>::max()};
 
-    for (size_t i = bins.bin_size - 1; i > 0; --i) {
-      Bin<T>& bin = bins.bin[j * bins.bin_size + i];
-      for (int k = 0; k < 3; ++k) {
+    for (unsigned int i = bins.size - 1; i > 0; i--) {
+      Bin<T>& bin = bins.bin[j * bins.size + i];
+      for (unsigned int k = 0; k < 3; k++) {
         bmin_[k] = std::min(bin.min[k], bmin_[k]);
         bmax_[k] = std::max(bin.max[k], bmax_[k]);
       }
@@ -112,11 +101,11 @@ inline unsigned int FindCutFromBinBuffer(Vec3r<T> &cut_pos, BinBuffer<T> &bins, 
     bmin_ = std::numeric_limits<T>::max();
     bmax_ = -std::numeric_limits<T>::max();
 
-    size_t minBin = 1;
+    unsigned int min_bin = 1;
 
-    for (size_t i = 0; i < bins.bin_size - 1; i++) {
-      Bin<T>& bin = bins.bin[j * bins.bin_size + i];
-      Bin<T>& next_bin = bins.bin[j * bins.bin_size + i + 1];
+    for (unsigned int i = 0; i < bins.size - 1; i++) {
+      Bin<T>& bin = bins.bin[j * bins.size + i];
+      Bin<T>& next_bin = bins.bin[j * bins.size + i + 1];
       for (int k = 0; k < 3; ++k) {
         bmin_[k] = std::min(bin.min[k], bmin_[k]);
         bmax_[k] = std::max(bin.max[k], bmax_[k]);
@@ -125,20 +114,20 @@ inline unsigned int FindCutFromBinBuffer(Vec3r<T> &cut_pos, BinBuffer<T> &bins, 
       // Traversal cost and intersection cost are irrelevant for minimization
       T cost = count * calculate_box_surface(bmin_, bmax_) + next_bin.cost;
 
-      if (cost < minCost[j]) {
-        minCost[j] = cost;
+      if (cost < min_cost[j]) {
+        min_cost[j] = cost;
         // Store the beginning of the right partition
-        minBin = i + 1;
+        min_bin = i + 1;
       }
     }
-    cut_pos[j] = minBin * ((bmax[j] - bmin[j]) / bins.bin_size) + bmin[j];
+    cut_pos[j] = min_bin * ((bmax[j] - bmin[j]) / bins.size) + bmin[j];
   }
 
-  minCostAxis = 0;
-  if (minCost[0] > minCost[1]) minCostAxis = 1;
-  if (minCost[minCostAxis] > minCost[2]) minCostAxis = 2;
+  unsigned int min_cost_axis = 0;
+  if (min_cost[0] > min_cost[1]) min_cost_axis = 1;
+  if (min_cost[min_cost_axis] > min_cost[2]) min_cost_axis = 2;
 
-  return minCostAxis;
+  return min_cost_axis;
 }
 
 }// namespace blazert

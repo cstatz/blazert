@@ -2,6 +2,7 @@
 #include <blazert/primitives/trimesh.h>
 #include <blazert/bvh/accel.h>
 #include <blazert/datatypes.h>
+#include <blazert/bvh/builder.h>
 #include <iostream>
 #include <vector>
 
@@ -44,8 +45,8 @@ bool LoadObj(Mesh &mesh, const char *filename) {
 
 int main(int argc, char **argv) {
 
-  int width = 4*8192;
-  int height = 4*8192;
+  int width = 8192;
+  int height = 8192;
 
   std::string objFilename = "../../../examples/models/cornellbox_suzanne_lucy.obj";
 
@@ -53,30 +54,27 @@ int main(int argc, char **argv) {
     objFilename = std::string(argv[1]);
   }
 
-  // The mesh needs to be on the heap
-  Mesh *mesh = new Mesh();
-  LoadObj(*mesh, objFilename.c_str());
+  Mesh mesh;
+  LoadObj(mesh, objFilename.c_str());
 
-  blazert::BVHBuildOptions<ft> build_options;// Use default option
+  blazert::TriangleMesh triangle_mesh(mesh.vertices, mesh.triangles);
+  blazert::BVH bvh(triangle_mesh);
+  blazert::SAHBinnedBuilder builder;
 
-  blazert::TriangleMesh<ft> triangle_mesh(mesh->vertices, mesh->triangles);   //, sizeof(float) * 3);
-  blazert::TriangleSAHPred<ft> triangle_pred(mesh->vertices, mesh->triangles);//, sizeof(float) * 3);
+  auto statistics = builder.build(bvh);
 
-  blazert::BVH<ft> bvh;
-  bvh.build(triangle_mesh, triangle_pred, build_options);
+  std::cout << statistics << std::endl;
 
-  blazert::BVHTraceOptions<ft> trace_options;
-
-#ifdef _OPENMP
-#pragma omp parallel for schedule(dynamic, 1)
-#endif
+//#ifdef _OPENMP
+//#pragma omp parallel for schedule(dynamic, 1)
+//#endif
   for (int y = 0; y < height; y++) {
+    std::cout << "Step: " << y << std::endl;
     for (int x = 0; x < width; x++) {
 
       const blazert::Ray<ft> ray{{0.0, 5.0, 20.0}, {(x / ft(width)) - 0.5, (y / ft(height)) - 0.5, -1.}};
-      blazert::TriangleIntersector<ft> triangle_intersector{mesh->vertices, mesh->triangles};
       blazert::RayHit<ft> rayhit{};
-      const bool hit = traverse(bvh, ray, triangle_intersector, rayhit, trace_options);
+      const bool hit = traverse(bvh, ray, rayhit);
     }
   }
 
