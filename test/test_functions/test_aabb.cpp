@@ -45,12 +45,12 @@ TEST_CASE_TEMPLATE("Intersect_node", T, float, double) {
     Vec3ui ray_dir_sign{0, 0, 1};
 
     const bool hit = intersect_node(tmin, tmax, node, ray);
-    REQUIRE(hit);
-    REQUIRE(tmin == Approx(tmin_cor));
-    REQUIRE(tmax == Approx(tmax_cor));
+    CHECK(hit);
+    CHECK(tmin == Approx(tmin_cor));
+    CHECK(tmax == Approx(tmax_cor));
   }
 
-  /*
+  
   SUBCASE("point-like bounding box") {
     SUBCASE("finite point") {
       // return variables
@@ -73,19 +73,15 @@ TEST_CASE_TEMPLATE("Intersect_node", T, float, double) {
       Vec3ui ray_dir_sign{1, 0, 0};
 
       const bool hit = IntersectRayAABB(tmin, tmax, min_t, max_t, bmin, bmax, ray_org, ray_inv_dir, ray_dir_sign);
-      REQUIRE(hit);
-      REQUIRE(tmin == Approx(tmin_cor));
-      REQUIRE(tmax == Approx(tmax_cor));
+      CHECK(hit);
+      CHECK(tmin == Approx(tmin_cor));
+      CHECK(tmax == Approx(tmax_cor));
     }
 
     SUBCASE("y-infinite point") {
       // return variables
       T tmin;
       T tmax;
-
-      // correct values
-      T tmin_cor = pos_inf;
-      T tmax_cor = pos_inf;
 
       // parameters
       T min_t = 0.0;
@@ -97,9 +93,7 @@ TEST_CASE_TEMPLATE("Intersect_node", T, float, double) {
       Vec3ui ray_dir_sign{1, 0, 0};
 
       const bool hit = IntersectRayAABB(tmin, tmax, min_t, max_t, bmin, bmax, ray_org, ray_inv_dir, ray_dir_sign);
-      REQUIRE(hit);
-      REQUIRE(tmin == Approx(tmin_cor));
-      REQUIRE(tmax == Approx(tmax_cor));
+      CHECK_FALSE(hit);
     }
   }
   SUBCASE("line-like bounding box") {
@@ -122,9 +116,9 @@ TEST_CASE_TEMPLATE("Intersect_node", T, float, double) {
       Vec3ui ray_dir_sign{1, 0, 0};
 
       const bool hit = IntersectRayAABB(tmin, tmax, min_t, max_t, bmin, bmax, ray_org, ray_inv_dir, ray_dir_sign);
-      REQUIRE(hit);
-      REQUIRE(tmin == Approx(tmin_cor));
-      REQUIRE(tmax == Approx(tmax_cor));
+      CHECK(hit);
+      CHECK(tmin == Approx(tmin_cor));
+      CHECK(tmax == Approx(tmax_cor));
     }
 
     SUBCASE("infinite line") {
@@ -146,9 +140,9 @@ TEST_CASE_TEMPLATE("Intersect_node", T, float, double) {
       Vec3ui ray_dir_sign{1, 0, 0};
 
       const bool hit = IntersectRayAABB(tmin, tmax, min_t, max_t, bmin, bmax, ray_org, ray_inv_dir, ray_dir_sign);
-      REQUIRE(hit);
-      REQUIRE(tmin == Approx(tmin_cor));
-      REQUIRE(tmax == Approx(tmax_cor));
+      CHECK(hit);
+      CHECK(tmin == Approx(tmin_cor));
+      CHECK(tmax == Approx(tmax_cor));
     }
   }
   SUBCASE("plane-like bounding box") {
@@ -171,10 +165,10 @@ TEST_CASE_TEMPLATE("Intersect_node", T, float, double) {
       Vec3ui ray_dir_sign{1, 0, 0};
 
       const bool hit = IntersectRayAABB(tmin, tmax, min_t, max_t, bmin, bmax, ray_org, ray_inv_dir, ray_dir_sign);
-      REQUIRE(hit);
-      REQUIRE(tmin == Approx(tmin_cor));
-      REQUIRE(tmax == Approx(tmax_cor));
+      CHECK(hit);
+      CHECK(tmin == Approx(tmin_cor));
+      CHECK(tmax == Approx(tmax_cor));
     }
   }
-  */
+  
 }
