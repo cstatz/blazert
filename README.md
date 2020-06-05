@@ -43,7 +43,8 @@ Before starting the build process please ensure all dependencies are properly in
  * cmake (>= 3.11.0)
  * blaze (>= 3.7)
  * embree (>= 3) if ```EMBREE_TRACING``` fallback is desired
- * doctest for testing
+ * doctest (for testing)
+ * google benchmark (for running the benchmarks)
 
 ### Build and test
 This is a header-only library. No need to build anything. Just drop it in your source directory and off you go.
@@ -58,6 +59,9 @@ cmake --build .
 cmake --build . -- install  # If package needs to be installed 
 ctest  # Runs the tests
 ```
+
+**For maximum performance**, we recommend building with **gcc** which results in a 15% to 20% better performance
+compared to clang. The provided benchmarks might be used to tune the compilation flags for your specific system.
 
 **A word of caution:** blazeRT will compile and work with compiler optimizations enabled (up to **-O3**), but needs infinite-math. If your application needs fast-math, ensure that the blazeRT code path is compiled with `-fno-finite-math-only` (in case of clang). In terms of performance, in its current form there is no major runtime difference between compilation with *-O2* and *-O3*. 
 
