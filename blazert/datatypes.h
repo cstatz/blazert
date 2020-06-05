@@ -59,19 +59,21 @@ struct Stack {
   [[nodiscard]] inline unsigned int size() const {return ss;}
 };
 
-template<typename T>
-struct Tri {
-  const Vec3r<T> a;
-  const Vec3r<T> b;
-  const Vec3r<T> c;
-  unsigned int i;
-  //Tri(Vec3r<T> a, Vec3r<T> b, Vec3r<T> c, unsigned int i) : a(a), b(b), c(c), i(i) {}
-  Tri(Vec3r<T> a, Vec3r<T> b_, Vec3r<T> c_, unsigned int i) : a(a), b(c_-a), c(a-b_), i(i) {}
-  Tri() = delete;
-  Tri(Tri&& rhs) noexcept : a(std::move(rhs.a)), b(std::move(rhs.b)), c(std::move(rhs.c)), i(std::exchange(i, -1)) {}
-  Tri(const Tri& rhs) =delete;
-  Tri &operator=(const Tri &rhs) =delete;
-};
+template <typename T, typename F>
+T as(F from) {
+  static_assert(sizeof(T) == sizeof(F));
+  T to;
+  std::memcpy(&to, &from, sizeof(from));
+  return to;
+}
+
+inline float product_sign(float x, float y) {
+  return as<float>(as<uint32_t>(x) ^ (as<uint32_t>(y) & UINT32_C(0x80000000)));
+}
+
+inline double product_sign(double x, double y) {
+  return as<double>(as<uint64_t>(x) ^ (as<uint64_t>(y) & UINT64_C(0x8000000000000000)));
+}
 
 }
 #endif  // BLAZERT_DATATYPES_H_
