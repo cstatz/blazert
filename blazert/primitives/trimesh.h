@@ -28,8 +28,6 @@ struct Triangle {
   Triangle &operator=(const Triangle &rhs) =delete;
 };
 
-// TODO: Implement primitive generator.
-
 template<typename T, template<typename A> typename Collection>
 inline Triangle<T> primitive_from_collection(const Collection<T> &collection, const unsigned int prim_idx) {
 
@@ -92,7 +90,7 @@ public:
     }
   }
 
-  inline std::pair<Vec3r<T>, Vec3r<T>> pre_compute_bounding_box(const Vec3ui &face) {
+  inline std::pair<Vec3r<T>, Vec3r<T>> pre_compute_bounding_box(const Vec3ui &face) const {
 
     Vec3r<T> min = vertices[face[0]];
     Vec3r<T> max = vertices[face[0]];
@@ -108,11 +106,11 @@ public:
     return {min, max};
   }
 
-  inline Vec3r<T> pre_compute_center(const Vec3ui &face) {
+  inline Vec3r<T> pre_compute_center(const Vec3ui &face) const {
     return (vertices[face[0]] + vertices[face[1]] + vertices[face[2]]) / static_cast<T>(3.);
   }
 
-  inline Vec3r<T> pre_compute_face_normal(const Vec3ui &face) {
+  inline Vec3r<T> pre_compute_face_normal(const Vec3ui &face) const {
     const Vec3r<T> e2{vertices[face[2]] - vertices[face[0]]};
     const Vec3r<T> e1{vertices[face[0]] - vertices[face[1]]};
     return normalize(cross(e1, e2));
@@ -120,23 +118,14 @@ public:
 
   [[nodiscard]] inline unsigned int size() const { return faces.size(); }
 
-  inline void get_primitive_bounding_box(Vec3r<T> &min, Vec3r<T> &max, const unsigned int prim_index) const {
-
-    const auto &bounds = box[prim_index];
-
-    min = bounds.first;
-    max = bounds.second;
+  inline std::pair<Vec3r<T>, Vec3r<T>> get_primitive_bounding_box(const unsigned int prim_index) const {
+    return box[prim_index];
   }
 
-  inline void get_primitive_center(Vec3r<T> &center, const unsigned int prim_index) const {
-    center = centers[prim_index];
+  inline Vec3r<T> get_primitive_center(const unsigned int prim_index) const {
+    return centers[prim_index];
   }
 };
-
-template<typename T, template<typename> typename Collection>
-inline bool predict_sah(const Collection<T> &collection, const unsigned int prim_id, const unsigned int axis, const T position) {
-  return (collection.centers[prim_id][axis] < position);
-}
 
 template<typename T, template<typename> typename Collection>
 inline void post_traversal(const TriangleIntersector<T, Collection> &i, RayHit<T> &rayhit) {
@@ -154,7 +143,7 @@ template<typename T, template<typename> typename Collection>
 inline void prepare_traversal(TriangleIntersector<T, Collection> &i, const Ray<T> &ray) {
   i.min_hit_distance = ray.min_hit_distance;
   i.hit_distance = ray.max_hit_distance;
-  i.uv = static_cast<T>(0.); //{0., 0.};  // Here happens an allocate.
+  i.uv = static_cast<T>(0.);
   i.prim_id = -1;
 }
 
