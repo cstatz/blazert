@@ -15,8 +15,9 @@ struct BLAZERTALIGN Bin {
   Vec3r<T> min;
   Vec3r<T> max;
   unsigned int count;
+  T cost;
 
-  Bin() : min(std::numeric_limits<T>::max()), max(-std::numeric_limits<T>::max()), count(0) {}
+  Bin() : min(std::numeric_limits<T>::max()), max(-std::numeric_limits<T>::max()), count(0), cost(static_cast<T>(0)) {}
 };
 
 template<class T>
@@ -78,6 +79,58 @@ inline std::pair<unsigned int, Vec3r<T>> find_best_split_binned(const Collection
   Vec3r<T> cut_pos;
   Vec3r<T> min_cost{std::numeric_limits<T>::max()};
 
+  for (int j = 0; j < 3; ++j) {
+    min_cost[j] = std::numeric_limits<T>::max();
+
+    // Sweep left to accumulate bounding boxes and compute the right-hand side of the cost
+    size_t count = 0;
+    Vec3r<T> bmin_{std::numeric_limits<T>::max()};
+    Vec3r<T> bmax_{-std::numeric_limits<T>::max()};
+
+    for (size_t i = bins.size - 1; i > 0; --i) {
+      Bin<T>& bin = bins.bin[j * bins.size + i];
+      for (int k = 0; k < 3; ++k) {
+        bmin_[k] = std::min(bin.min[k], bmin_[k]);
+        bmax_[k] = std::max(bin.max[k], bmax_[k]);
+      }
+      count += bin.count;
+      bin.cost = count * calculate_box_surface(bmin_, bmax_);
+    }
+
+    // Sweep right to compute the full cost
+    count = 0;
+    bmin_ = std::numeric_limits<T>::max();
+    bmax_ = -std::numeric_limits<T>::max();
+
+    size_t minBin = 1;
+
+    for (size_t i = 0; i < bins.size - 1; i++) {
+      Bin<T>& bin = bins.bin[j * bins.size + i];
+      Bin<T>& next_bin = bins.bin[j * bins.size + i + 1];
+      for (int k = 0; k < 3; ++k) {
+        bmin_[k] = std::min(bin.min[k], bmin_[k]);
+        bmax_[k] = std::max(bin.max[k], bmax_[k]);
+      }
+      count += bin.count;
+      // Traversal cost and intersection cost are irrelevant for minimization
+      T cost = count * calculate_box_surface(bmin_, bmax_) + next_bin.cost;
+
+      if (cost < min_cost[j]) {
+        min_cost[j] = cost;
+        // Store the beginning of the right partition
+        minBin = i + 1;
+      }
+    }
+    cut_pos[j] = minBin * ((max[j] - min[j]) / bins.size) + min[j];
+  }
+
+  unsigned int min_cost_axis = 0;
+  if (min_cost[0] > min_cost[1]) min_cost_axis = 1;
+  if (min_cost[min_cost_axis] > min_cost[2]) min_cost_axis = 2;
+
+  return std::make_pair(min_cost_axis, cut_pos);
+  
+  /*
   std::vector<T> left_cost, right_cost;
   left_cost.resize(options.bin_size);
   right_cost.resize(options.bin_size);
@@ -125,7 +178,7 @@ inline std::pair<unsigned int, Vec3r<T>> find_best_split_binned(const Collection
   if (min_cost[min_cost_axis] > min_cost[2])
     min_cost_axis = 2;
 
-  return std::make_pair(min_cost_axis, cut_pos);
+  return std::make_pair(min_cost_axis, cut_pos);*/
 }
 
 }// namespace blazert
