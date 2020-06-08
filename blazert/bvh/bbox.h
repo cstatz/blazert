@@ -18,11 +18,7 @@ inline std::pair<Vec3r<T>, Vec3r<T>> compute_bounding_box(const Collection& p, I
 
   for (auto it = first; it != last; ++it) {
     auto [min_, max_] = p.get_primitive_bounding_box(*it);
-
-    for (int k = 0; k < 3; k++) {
-      min[k] = std::min(min[k], min_[k]);
-      max[k] = std::max(max[k], max_[k]);
-    }
+    unity(min, max, min_, max_);
   }
 
   return {min, max};
