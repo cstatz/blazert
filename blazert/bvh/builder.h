@@ -108,15 +108,17 @@ inline std::pair<BVHNode<T, Collection>, Iterator> create_branch(const Collectio
                                        const Vec3r<T> &bmin, const Vec3r<T> &bmax, BVHBuildStatistics<T> &statistics,
                                        const BVHBuildOptions<T> &options) {
 
-  auto pair = split(collection, begin, end, bmin, bmax, statistics, options);
+  const auto pair = split(collection, begin, end, bmin, bmax, statistics, options);
+  const auto &axis = pair.first;
+  const auto &mid = pair.second;
 
   BVHNode<T, Collection> node;
   node.leaf = 0;
   node.min = bmin;
   node.max = bmax;
-  node.axis = pair.first;
+  node.axis = axis;
 
-  return std::make_pair(std::move(node), std::move(pair.second));
+  return std::make_pair(std::move(node), std::move(mid));
 }
 
 template<typename T, typename Iterator, template<typename> typename Collection>
@@ -124,20 +126,23 @@ inline std::pair<unsigned int, Iterator> split(const Collection<T> &collection, 
                                                          const Vec3r<T> &bmin, const Vec3r<T> &bmax, BVHBuildStatistics<T> &statistics, const BVHBuildOptions<T> &options) {
 
   auto pair = find_best_split_binned(collection, begin, end, bmin, bmax, options);
+  auto &cut_axis = pair.first;
+  const auto &cut_pos = pair.second;
   Iterator mid;
 
   for (unsigned int axis_try = 0; axis_try < 3; axis_try++) {
 
     mid = std::partition(begin, end,
-                         [&collection, &pair](const auto it) { return collection.get_primitive_center(it)[pair.first] < pair.second[pair.first]; });
+                         [&collection, &cut_axis, &cut_pos](const auto it) { return collection.get_primitive_center(it)[cut_axis] < cut_pos[cut_axis]; });
 
     if ((mid == begin) || (mid == end)) {
       statistics.bad_splits++;
       mid = begin + (std::distance(begin, end) >> 1);
-      pair.first = ++pair.first % 3;
+      cut_axis = ++cut_axis % 3;
+      //pair.first = ++pair.first % 3;
     } else break;
   }
-  return std::make_pair(pair.first, mid);
+  return std::make_pair(cut_axis, mid);
 }
 }
 #endif//BLAZERT_BLAZERT_BVH_BUILDER_H
