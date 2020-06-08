@@ -47,7 +47,7 @@ inline BinBuffer<T> sort_collection_into_bins(const Collection &p, Iterator begi
 
   for (auto it = begin; it != end; ++it) {
 
-    const auto [bmin, bmax] = p.get_primitive_bounding_box(*it);
+    auto [bmin, bmax] = p.get_primitive_bounding_box(*it);
     const auto center = p.get_primitive_center(*it);
 
     // assert center > min
@@ -60,7 +60,8 @@ inline BinBuffer<T> sort_collection_into_bins(const Collection &p, Iterator begi
 
         Bin<T> &bin = bins.bin[j * bins.size + idx];
         bin.count++;
-        unity(bin.min, bin.max, bmin, bmax);
+//        unity(bin.min, bin.max, bmin, bmax);
+        unity(bmin, bmax, bin.min, bin.max);
       }
     }
   }
@@ -110,7 +111,7 @@ inline std::pair<unsigned int, Vec3r<T>> find_best_split_binned(const Collection
     }
 
     // Store the beginning of the correct partition
-    for (unsigned int i = 1; i < bins.size ; i++) {
+    for (unsigned int i = 1; i < bins.size; i++) {
       if (right_cost[i - 1] < left_cost[i]) {
         min_cost[j] = right_cost[i - 1];
         cut_pos[j] = i * ((max[j] - min[j]) / bins.size) + min[j];
