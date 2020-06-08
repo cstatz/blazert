@@ -116,7 +116,7 @@ inline std::pair<BVHNode<T, Collection>, Iterator> create_branch(const Collectio
   node.max = bmax;
   node.axis = pair.first;
 
-  return std::make_pair(node, pair.second);
+  return std::make_pair(std::move(node), std::move(pair.second));
 }
 
 template<typename T, typename Iterator, template<typename> typename Collection>
