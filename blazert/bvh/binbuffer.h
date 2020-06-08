@@ -88,7 +88,7 @@ inline std::pair<unsigned int, Vec3r<T>> find_best_split_binned(const Collection
     Vec3r<T> min_{std::numeric_limits<T>::max()};
     Vec3r<T> max_{-std::numeric_limits<T>::max()};
 
-    for (unsigned int i = bins.size - 1; i >= 0; i--) {
+    for (unsigned int i = bins.size - 1; i > 0; i--) {
       Bin<T>& bin = bins.bin[j * bins.size + i];
       unity(min_, max_, bin.min, bin.max);
       count += bin.count;
