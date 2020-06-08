@@ -4,12 +4,13 @@
 
 namespace blazert {
 
-template<typename T> inline T calculate_box_surface(const Vec3r<T> &min, const Vec3r<T> &max) {
+template<typename T>
+inline T calculate_box_surface(const Vec3r<T> &min, const Vec3r<T> &max) {
   const Vec3r<T> box{blaze::abs(max - min)};
   return static_cast<T>(2.0) * (box[0] * box[1] + box[1] * box[2] + box[2] * box[0]);
 }
 
-template <typename T>
+template<typename T>
 struct BLAZERTALIGN Bin {
   Vec3r<T> min;
   Vec3r<T> max;
@@ -21,12 +22,12 @@ struct BLAZERTALIGN Bin {
 template<class T>
 struct BLAZERTALIGN BinBuffer {
   explicit BinBuffer(const unsigned int size) : size(size) {
-    bin.resize(3*size);  // For each axis.
+    bin.resize(3 * size);// For each axis.
   }
 
   void clear() {
     bin.clear();
-    bin.resize(3*size);
+    bin.resize(3 * size);
   }
 
   std::vector<Bin<T>> bin;
@@ -35,7 +36,7 @@ struct BLAZERTALIGN BinBuffer {
 
 template<typename T, typename Iterator, class Collection, typename Options>
 inline BinBuffer<T> sort_collection_into_bins(const Collection &p, Iterator begin, Iterator end,
-                                            const Vec3r<T> &min, const Vec3r<T> &max, const Options& options) {
+                                              const Vec3r<T> &min, const Vec3r<T> &max, const Options &options) {
 
   BinBuffer<T> bins(options.bin_size);
   const Vec3r<T> size{max - min};
@@ -46,11 +47,11 @@ inline BinBuffer<T> sort_collection_into_bins(const Collection &p, Iterator begi
 
   for (auto it = begin; it != end; ++it) {
 
-    auto [bmin, bmax] = p.get_primitive_bounding_box(*it);
-    auto center = p.get_primitive_center(*it);
+    const auto [bmin, bmax] = p.get_primitive_bounding_box(*it);
+    const auto center = p.get_primitive_center(*it);
 
     // assert center > min
-    const Vec3ui normalized_center{(center - min) * inv_size * (bins.size - 1)}; // 0 .. 63
+    const Vec3ui normalized_center{(center - min) * inv_size * (bins.size - 1)};// 0 .. 63
 
     for (unsigned int j = 0; j < 3; j++) {
 
@@ -81,6 +82,7 @@ inline std::pair<unsigned int, Vec3r<T>> find_best_split_binned(const Collection
   left_cost.resize(options.bin_size);
   right_cost.resize(options.bin_size);
 
+  // iterating over all 3 axes
   for (unsigned int j = 0; j < 3; j++) {
 
     // Sweep left to accumulate bounding boxes and compute the right-hand side of the cost
@@ -89,7 +91,7 @@ inline std::pair<unsigned int, Vec3r<T>> find_best_split_binned(const Collection
     Vec3r<T> max_{-std::numeric_limits<T>::max()};
 
     for (unsigned int i = bins.size - 1; i > 0; i--) {
-      Bin<T>& bin = bins.bin[j * bins.size + i];
+      Bin<T> &bin = bins.bin[j * bins.size + i];
       unity(min_, max_, bin.min, bin.max);
       count += bin.count;
       left_cost[i] = count * calculate_box_surface(min_, max_);
@@ -101,19 +103,16 @@ inline std::pair<unsigned int, Vec3r<T>> find_best_split_binned(const Collection
     max_ = -std::numeric_limits<T>::max();
 
     for (unsigned int i = 0; i < bins.size; i++) {
-      Bin<T>& bin = bins.bin[j * bins.size + i];
-      //Bin<T>& next_bin = bins.bin[j * bins.size + i + 1];
+      Bin<T> &bin = bins.bin[j * bins.size + i];
       unity(min_, max_, bin.min, bin.max);
-
       count += bin.count;
-      // Traversal cost and intersection cost are irrelevant for minimization
       right_cost[i] = count * calculate_box_surface(min_, max_);
     }
 
-    // Store the beginning of the right partition
-    for (unsigned int i=1; i < bins.size; i++) {
-      if (right_cost[i-1] < left_cost[i]) {
-        min_cost[j] = right_cost[i-1];
+    // Store the beginning of the correct partition
+    for (unsigned int i = 1; i < bins.size ; i++) {
+      if (right_cost[i - 1] < left_cost[i]) {
+        min_cost[j] = right_cost[i - 1];
         cut_pos[j] = i * ((max[j] - min[j]) / bins.size) + min[j];
         break;
       }
@@ -121,8 +120,10 @@ inline std::pair<unsigned int, Vec3r<T>> find_best_split_binned(const Collection
   }
 
   unsigned int min_cost_axis = 0;
-  if (min_cost[0] > min_cost[1]) min_cost_axis = 1;
-  if (min_cost[min_cost_axis] > min_cost[2]) min_cost_axis = 2;
+  if (min_cost[0] > min_cost[1])
+    min_cost_axis = 1;
+  if (min_cost[min_cost_axis] > min_cost[2])
+    min_cost_axis = 2;
 
   return std::make_pair(min_cost_axis, cut_pos);
 }
