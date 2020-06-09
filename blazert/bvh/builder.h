@@ -5,23 +5,23 @@
 #ifndef BLAZERT_BLAZERT_BVH_BUILDER_H
 #define BLAZERT_BLAZERT_BVH_BUILDER_H
 
-#include <iostream>
-#include <numeric>
-#include <utility>
-#include <string>
 #include <atomic>
+#include <iostream>
 #include <limits>
+#include <numeric>
 #include <queue>
+#include <string>
+#include <utility>
 
-#include <blazert/ray.h>
-#include <blazert/bvh/options.h>
-#include <blazert/bvh/intersect.h>
 #include <blazert/bvh/bbox.h>
 #include <blazert/bvh/binbuffer.h>
+#include <blazert/bvh/intersect.h>
 #include <blazert/bvh/node.h>
+#include <blazert/bvh/options.h>
 #include <blazert/bvh/statistics.h>
 #include <blazert/datatypes.h>
 #include <blazert/defines.h>
+#include <blazert/ray.h>
 
 namespace blazert {
 
@@ -56,14 +56,15 @@ public:
 template<typename T, typename Iterator, template<typename> typename Collection>
 unsigned int build_recursive(std::vector<BVHNode<T, Collection>> &nodes, const Collection<T> &collection,
                              Iterator begin, Iterator end, const unsigned int depth,
-                             BVHBuildStatistics<T> &statistics, const BVHBuildOptions<T> &options){
+                             BVHBuildStatistics<T> &statistics, const BVHBuildOptions<T> &options) {
 
   const auto offset = static_cast<unsigned int>(nodes.size());
 
-  if (statistics.max_tree_depth < depth) statistics.max_tree_depth = depth;
+  if (statistics.max_tree_depth < depth)
+    statistics.max_tree_depth = depth;
 
   const unsigned int n = std::distance(begin, end);
-  auto [min, max] = compute_bounding_box<T>(collection, begin, end);
+  const auto [min, max] = compute_bounding_box<T>(collection, begin, end);
 
   // Leaf
   if ((n <= options.min_leaf_primitives) || (depth >= options.max_tree_depth)) {
@@ -78,8 +79,8 @@ unsigned int build_recursive(std::vector<BVHNode<T, Collection>> &nodes, const C
   nodes.push_back(std::move(branch));
   statistics.branch_nodes++;
 
-  nodes[offset].children[0] = build_recursive(nodes, collection, begin, mid, depth+1, statistics, options);
-  nodes[offset].children[1] = build_recursive(nodes, collection, mid,   end, depth+1, statistics, options);
+  nodes[offset].children[0] = build_recursive(nodes, collection, begin, mid, depth + 1, statistics, options);
+  nodes[offset].children[1] = build_recursive(nodes, collection, mid, end, depth + 1, statistics, options);
 
   return offset;
 }
@@ -104,9 +105,9 @@ inline BVHNode<T, Collection> create_leaf(const Collection<T> &collection,
 
 template<typename T, typename Iterator, template<typename> typename Collection>
 inline std::pair<BVHNode<T, Collection>, Iterator> create_branch(const Collection<T> &collection,
-                                       Iterator begin, Iterator end,
-                                       const Vec3r<T> &bmin, const Vec3r<T> &bmax, BVHBuildStatistics<T> &statistics,
-                                       const BVHBuildOptions<T> &options) {
+                                                                 Iterator begin, Iterator end,
+                                                                 const Vec3r<T> &bmin, const Vec3r<T> &bmax, BVHBuildStatistics<T> &statistics,
+                                                                 const BVHBuildOptions<T> &options) {
 
   const auto pair = split(collection, begin, end, bmin, bmax, statistics, options);
   const auto &axis = pair.first;
@@ -123,10 +124,10 @@ inline std::pair<BVHNode<T, Collection>, Iterator> create_branch(const Collectio
 
 template<typename T, typename Iterator, template<typename> typename Collection>
 inline std::pair<unsigned int, Iterator> split(const Collection<T> &collection, Iterator begin, Iterator end,
-                                                         const Vec3r<T> &bmin, const Vec3r<T> &bmax, BVHBuildStatistics<T> &statistics, const BVHBuildOptions<T> &options) {
+                                               const Vec3r<T> &bmin, const Vec3r<T> &bmax, BVHBuildStatistics<T> &statistics, const BVHBuildOptions<T> &options) {
 
   auto pair = find_best_split_binned(collection, begin, end, bmin, bmax, options);
-  auto &cut_axis = pair.first;
+  auto cut_axis = pair.first;
   const auto &cut_pos = pair.second;
   Iterator mid;
 
@@ -140,9 +141,10 @@ inline std::pair<unsigned int, Iterator> split(const Collection<T> &collection, 
       mid = begin + (std::distance(begin, end) >> 1);
       cut_axis = ++cut_axis % 3;
       //pair.first = ++pair.first % 3;
-    } else break;
+    } else
+      break;
   }
   return std::make_pair(cut_axis, mid);
 }
-}
+}// namespace blazert
 #endif//BLAZERT_BLAZERT_BVH_BUILDER_H

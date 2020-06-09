@@ -96,13 +96,10 @@ public:
 
     for (unsigned int i = 1; i < 3; i++) {
       const Vec3r<T> &vertex = vertices[face[i]];
-      for (unsigned int k = 0; k < 3; k++) {
-        min[k] = std::min(min[k], vertex[k]);
-        max[k] = std::max(max[k], vertex[k]);
-      }
+      unity(min, max, vertex, vertex);
     }
 
-    return {min, max};
+    return std::make_pair(std::move(min), std::move(max));
   }
 
   inline Vec3r<T> pre_compute_center(const Vec3ui &face) const {
