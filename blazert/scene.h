@@ -23,31 +23,29 @@ class BlazertScene {
 public:
   BVHBuildOptions<T> build_options;
 
-  mutable bool has_been_committed = false;
+  bool has_been_committed = false;
   /***
    * geometries counts the amount of different geometry types
    * -> each geometry has its own BVH
    * -> for each geometry, we have various primitives; the hit prim_id will be saved in the RayHit structure
    ***/
-  mutable unsigned int geometries = 0;
+  unsigned int geometries = 0;
 
   std::unique_ptr<BVH<T, TriangleMesh>> triangles_bvh;
   size_t triangles_geom_id = -1;
-  mutable bool has_triangles = false;
+  bool has_triangles = false;
 
-  std::unique_ptr<BVH<T, Sphere>> spheres_bvh;
-  size_t spheres_geom_id = -1;
-  mutable bool has_spheres = false;
-
-  std::unique_ptr<BVH<T, Plane>> planes_bvh;
-  size_t planes_geom_id = -1;
-  mutable bool has_planes = false;
-
-  std::unique_ptr<BVH<T, Cylinder>> cylinders_bvh;
-  size_t cylinders_geom_id = -1;
-  mutable bool has_cylinders = false;
-
-
+//  std::unique_ptr<BVH<T, Sphere>> spheres_bvh;
+//  size_t spheres_geom_id = -1;
+//  bool has_spheres = false;
+//
+//  std::unique_ptr<BVH<T, Plane>> planes_bvh;
+//  size_t planes_geom_id = -1;
+//  bool has_planes = false;
+//
+//  std::unique_ptr<BVH<T, Cylinder>> cylinders_bvh;
+//  size_t cylinders_geom_id = -1;
+//  bool has_cylinders = false;
 
 public:
   BlazertScene() = default;
@@ -171,17 +169,17 @@ inline bool intersect1(const BlazertScene<T> &scene, const Ray<T> &ray, RayHit<T
 
 // Implementation of the add_ functions goes below ..
 template<typename T>
-unsigned int BlazertScene<T>::add_mesh(const Vec3rList<T> &vertices, const Vec3iList &faces) {
+unsigned int BlazertScene<T>::add_mesh(const Vec3rList<T> &vertices, const Vec3iList &triangles) {
 
   if ((!has_triangles) && (!has_been_committed)) {
-    auto triangles = TriangleMesh(vertices, faces);
-    triangles_bvh = std::make_unique<BVH<T, TriangleMesh>>(triangles);
+    auto triangle_collection = TriangleMesh(vertices, triangles);
+    triangles_bvh = std::make_unique<BVH<T, TriangleMesh>>(triangle_collection);
 
     has_triangles = true;
     triangles_geom_id = geometries++;
     return triangles_geom_id;
   } else {
-    return -1;
+    return static_cast<unsigned int>(-1);
   }
 }
 
