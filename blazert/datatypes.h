@@ -3,19 +3,12 @@
 #define BLAZERT_DATATYPES_H_
 
 #include <cmath>
+#include <cstring> //for memcpy
 //#define FP_FAST_FMA
 
 #include <iostream>
 #include <blaze/Math.h>
 #include <blaze/util/AlignedAllocator.h>
-
-using blaze::StaticVector;
-using blaze::DynamicVector;
-using blaze::columnVector;
-using blaze::aligned;
-using blaze::unaligned;
-using blaze::padded;
-using blaze::unpadded;
 
 #ifdef EMBREE_TRACING
 // Embree will not work if the data is not at least padded.
@@ -23,8 +16,8 @@ using blaze::unpadded;
 #endif
 
 #ifndef BLAZERT_USE_PADDED_AND_ALIGNED_TYPES
-#define P_ unpadded
-#define A_ unaligned
+#define P_ blaze::unpadded
+#define A_ blaze::unaligned
 #define BLAZERTALIGN
 #else
 #define P_ padded
@@ -36,10 +29,10 @@ using blaze::unpadded;
 namespace blazert {
 
 // Vectors
-template<class T> using Vec3r = StaticVector<T, 3UL, columnVector, A_, P_>;
-template<class T> using Vec2r = StaticVector<T, 2UL, columnVector, A_, P_>;
-using Vec3ui = StaticVector<unsigned int, 3UL, columnVector, A_, P_>;
-using vec2ui = StaticVector<unsigned int, 2UL, columnVector, A_, P_>;
+template<class T> using Vec3r = blaze::StaticVector<T, 3UL, blaze::columnVector, A_, P_>;
+template<class T> using Vec2r = blaze::StaticVector<T, 2UL, blaze::columnVector, A_, P_>;
+using Vec3ui = blaze::StaticVector<unsigned int, 3UL, blaze::columnVector, A_, P_>;
+using vec2ui = blaze::StaticVector<unsigned int, 2UL, blaze::columnVector, A_, P_>;
 
 // Matrices
 template<class T> using Mat3r = blaze::StaticMatrix<T, 3UL, 3UL, blaze::rowMajor, A_, P_>;
@@ -73,6 +66,23 @@ inline float product_sign(float x, float y) {
 
 inline double product_sign(double x, double y) {
   return as<double>(as<uint64_t>(x) ^ (as<uint64_t>(y) & UINT64_C(0x8000000000000000)));
+}
+
+
+template<typename T>
+inline void unity(Vec3r<T> &min_, Vec3r<T> &max_, const Vec3r<T> &min, const Vec3r<T> &max) {
+  for (unsigned int k = 0; k < 3; k++) {
+    min_[k] = std::min(min[k], min_[k]);
+    max_[k] = std::max(max[k], max_[k]);
+  }
+}
+
+template<typename T>
+inline void intersection(Vec3r<T> &min_, Vec3r<T> &max_, const Vec3r<T> &min, const Vec3r<T> &max) {
+  for (unsigned int k = 0; k < 3; k++) {
+    min_[k] = std::max(min[k], min_[k]);
+    max_[k] = std::min(max[k], max_[k]);
+  }
 }
 
 }

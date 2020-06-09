@@ -45,8 +45,8 @@ bool LoadObj(Mesh &mesh, const char *filename) {
 
 int main(int argc, char **argv) {
 
-  int width = 8192;
-  int height = 8192;
+  int width = 8;
+  int height = 8;
 
   std::string objFilename = "../../../examples/models/cornellbox_suzanne_lucy.obj";
 
@@ -69,7 +69,6 @@ int main(int argc, char **argv) {
 //#pragma omp parallel for schedule(dynamic, 1)
 //#endif
   for (int y = 0; y < height; y++) {
-    std::cout << "Step: " << y << std::endl;
     for (int x = 0; x < width; x++) {
 
       const blazert::Ray<ft> ray{{0.0, 5.0, 20.0}, {(x / ft(width)) - 0.5, (y / ft(height)) - 0.5, -1.}};

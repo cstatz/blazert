@@ -50,7 +50,6 @@ std::ostream& operator<<(std::ostream& stream, const BVHBuildStatistics<T>& stat
   stream << "{\n";
   stream << "  statistics: " << &stats << ",\n";
   stream << "  max_tree_depth: " << stats.max_tree_depth << ",\n";
-  stream << "  leaf_nodes: " << stats.leaf_nodes << ",\n";
   stream << "  max_num_prims_per_leaf: " << stats.max_num_prims_per_leaf << ",\n";
   stream << "  min_num_prims_per_leaf: " << stats.min_num_prims_per_leaf << ",\n";
   stream << "  leaf_nodes: " << stats.leaf_nodes << ",\n";

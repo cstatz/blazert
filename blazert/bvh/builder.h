@@ -5,37 +5,26 @@
 #ifndef BLAZERT_BLAZERT_BVH_BUILDER_H
 #define BLAZERT_BLAZERT_BVH_BUILDER_H
 
-#include <iostream>
-#include <utility>
-#include <string>
 #include <atomic>
+#include <iostream>
 #include <limits>
+#include <numeric>
 #include <queue>
+#include <string>
+#include <utility>
 
-#include <blazert/ray.h>
-#include <blazert/bvh/options.h>
-#include <blazert/bvh/intersect.h>
 #include <blazert/bvh/bbox.h>
 #include <blazert/bvh/binbuffer.h>
+#include <blazert/bvh/intersect.h>
 #include <blazert/bvh/node.h>
+#include <blazert/bvh/options.h>
 #include <blazert/bvh/statistics.h>
 #include <blazert/datatypes.h>
 #include <blazert/defines.h>
+#include <blazert/ray.h>
 
 namespace blazert {
 
-template<typename T, template<typename> typename Collection>
-struct SAH {
-  const unsigned int axis;
-  const T position;
-  const Collection<T> &collection;
-  SAH(const Collection<T> &collection, const unsigned int axis, const T position) : axis(axis), position(position), collection(collection) {};
-  inline bool operator()(const unsigned int prim_id) const {
-    return predict_sah(collection, prim_id, axis, position);
-  }
-};
-
-//template<typename T, template<typename> typename Collection, template<typename, template<typename> typename> typename BVH>
 class SAHBinnedBuilder {
 public:
   // TODO: statistics and options might be specific to builder type.
@@ -49,20 +38,11 @@ public:
     BVHBuildStatistics<T> statistics;
     statistics.start();
 
-    indices.clear();
-
-    // TODO: catch bad_alloc
     indices.resize(bvh.collection.size());
+    std::iota(indices.begin(), indices.end(), 0);
 
-#ifdef BLAZERT_PARALLEL_BUILD_OPENMP
-#pragma omp parallel for
-#endif
-    for (unsigned int i = 0; i < bvh.collection.size(); i++) indices[i] = i;
-
-    // TODO: catch bad_alloc
     bvh.nodes.reserve(2 * bvh.collection.size());
-
-    build_recursive(bvh.nodes, indices, statistics, options, 0, bvh.collection.size(), 0, bvh.collection);
+    build_recursive(bvh.nodes, bvh.collection, indices.begin(), indices.end(), 0, statistics, options);
 
     bvh.nodes.shrink_to_fit();
     indices.clear();
@@ -73,94 +53,98 @@ public:
   }
 };
 
-template<typename T, template<typename> typename Collection>
-unsigned int build_recursive(std::vector<BVHNode<T, Collection>> &nodes, std::vector<unsigned int> &indices,
-                             BVHBuildStatistics<T> &statistics, const BVHBuildOptions<T> &options,
-                             const unsigned int left_idx, const unsigned int right_idx, const unsigned int depth, const Collection<T> &collection) {
+template<typename T, typename Iterator, template<typename> typename Collection>
+unsigned int build_recursive(std::vector<BVHNode<T, Collection>> &nodes, const Collection<T> &collection,
+                             Iterator begin, Iterator end, const unsigned int depth,
+                             BVHBuildStatistics<T> &statistics, const BVHBuildOptions<T> &options) {
 
   const auto offset = static_cast<unsigned int>(nodes.size());
 
-  if (statistics.max_tree_depth < depth) statistics.max_tree_depth = depth;
+  if (statistics.max_tree_depth < depth)
+    statistics.max_tree_depth = depth;
 
-  Vec3r<T> bmin, bmax;
-  compute_bounding_box(bmin, bmax, indices, left_idx, right_idx, collection);
+  const unsigned int n = std::distance(begin, end);
+  const auto [min, max] = compute_bounding_box<T>(collection, begin, end);
 
-  const unsigned int n = right_idx - left_idx;
-  // Leaf node
+  // Leaf
   if ((n <= options.min_leaf_primitives) || (depth >= options.max_tree_depth)) {
-    BVHNode<T, Collection> node;
-    node.min = bmin;
-    node.max = bmax;
-
-    node.leaf = 1;
-    node.primitives.reserve(n);
-
-    for (unsigned int i = left_idx; i < left_idx + n; i++) {
-      // Primitives need to be move constructable
-      node.primitives.push_back(std::move(primitive_from_collection(collection, indices[i])));
-    }
-
+    nodes.push_back(std::move(create_leaf(collection, begin, end, min, max)));
     statistics.primitives_per_leaf(n);
     statistics.leaf_nodes++;
-    nodes.push_back(std::move(node));
     return offset;
   }
 
-  // Compute SAH and find best split axis and position
-  Vec3r<T> cut_pos{0.0, 0.0, 0.0};
-
-  BinBuffer<T> bins{options.bin_size};
-  contribute_bins(bins, bmin, bmax, indices, left_idx, right_idx, collection);
-  int min_cut_axis = find_cut_from_bins(cut_pos, bins, bmin, bmax);
-
-  // Try all 3 axis until good cut position available.
-  unsigned int mid_idx = left_idx;
-  unsigned int cut_axis = min_cut_axis;
-
-  for (unsigned int axis_try = 0; axis_try < 3; ++axis_try) {
-    unsigned int *begin = &indices[left_idx];
-    unsigned int *end = &indices[right_idx - 1] + 1;// mimics end() iterator.
-
-    // try min_cut_axis first.
-    cut_axis = (min_cut_axis + axis_try) % 3;
-
-    const SAH sah(collection, cut_axis, cut_pos[cut_axis]);
-
-    // Split at (cut_axis, cut_pos)
-    // indices will be modified.
-    unsigned int *mid = std::partition(begin, end, sah);
-
-    mid_idx = left_idx + static_cast<unsigned int>((mid - begin));
-
-    if ((mid_idx == left_idx) || (mid_idx == right_idx)) {
-      // Can't split well. Switch to object median(which may create unoptimized tree, but stable)
-      statistics.bad_splits++;
-      mid_idx = left_idx + (n >> 1);
-      // Try another axis to find better cut.
-    } else {
-      // Found good cut. exit loop.
-      break;
-    }
-  }
-
-  // Branch node
-  BVHNode<T, Collection> node;
-  node.axis = cut_axis;
-  node.leaf = 0;
-
-  nodes.push_back(std::move(node));
-
-  const unsigned int left_child_index = build_recursive(nodes, indices, statistics, options, left_idx, mid_idx, depth + 1, collection);
-  const unsigned int right_child_index = build_recursive(nodes, indices, statistics, options, mid_idx, right_idx, depth + 1, collection);
-
-  nodes[offset].children[0] = left_child_index;
-  nodes[offset].children[1] = right_child_index;
-  nodes[offset].min = bmin;
-  nodes[offset].max = bmax;
-
+  // Branch
+  auto [branch, mid] = create_branch(collection, begin, end, min, max, statistics, options);
+  nodes.push_back(std::move(branch));
   statistics.branch_nodes++;
+
+  nodes[offset].children[0] = build_recursive(nodes, collection, begin, mid, depth + 1, statistics, options);
+  nodes[offset].children[1] = build_recursive(nodes, collection, mid, end, depth + 1, statistics, options);
 
   return offset;
 }
+
+template<typename T, typename Iterator, template<typename> typename Collection>
+inline BVHNode<T, Collection> create_leaf(const Collection<T> &collection,
+                                          Iterator begin, Iterator end,
+                                          const Vec3r<T> &bmin, const Vec3r<T> &bmax) {
+  BVHNode<T, Collection> node;
+  node.min = bmin;
+  node.max = bmax;
+
+  node.leaf = 1;
+  node.primitives.reserve(std::distance(begin, end));
+
+  for (auto it = begin; it != end; ++it) {
+    node.primitives.push_back(std::move(primitive_from_collection(collection, *it)));
+  }
+
+  return node;
+};
+
+template<typename T, typename Iterator, template<typename> typename Collection>
+inline std::pair<BVHNode<T, Collection>, Iterator> create_branch(const Collection<T> &collection,
+                                                                 Iterator begin, Iterator end,
+                                                                 const Vec3r<T> &bmin, const Vec3r<T> &bmax, BVHBuildStatistics<T> &statistics,
+                                                                 const BVHBuildOptions<T> &options) {
+
+  const auto pair = split(collection, begin, end, bmin, bmax, statistics, options);
+  const auto &axis = pair.first;
+  const auto &mid = pair.second;
+
+  BVHNode<T, Collection> node;
+  node.leaf = 0;
+  node.min = bmin;
+  node.max = bmax;
+  node.axis = axis;
+
+  return std::make_pair(std::move(node), std::move(mid));
 }
+
+template<typename T, typename Iterator, template<typename> typename Collection>
+inline std::pair<unsigned int, Iterator> split(const Collection<T> &collection, Iterator begin, Iterator end,
+                                               const Vec3r<T> &bmin, const Vec3r<T> &bmax, BVHBuildStatistics<T> &statistics, const BVHBuildOptions<T> &options) {
+
+  auto pair = find_best_split_binned(collection, begin, end, bmin, bmax, options);
+  auto cut_axis = pair.first;
+  const auto &cut_pos = pair.second;
+  Iterator mid;
+
+  for (unsigned int axis_try = 0; axis_try < 3; axis_try++) {
+
+    mid = std::partition(begin, end,
+                         [&collection, &cut_axis, &cut_pos](const auto it) { return collection.get_primitive_center(it)[cut_axis] < cut_pos[cut_axis]; });
+
+    if ((std::distance(begin,mid) == 0) || (std::distance(mid,end) == 0)) {
+      statistics.bad_splits++;
+      mid = begin + (std::distance(begin, end) >> 1);
+      cut_axis = ++cut_axis % 3;
+      //pair.first = ++pair.first % 3;
+    } else
+      break;
+  }
+  return std::make_pair(cut_axis, mid);
+}
+}// namespace blazert
 #endif//BLAZERT_BLAZERT_BVH_BUILDER_H
