@@ -25,6 +25,8 @@ struct BLAZERTALIGN BinBuffer {
     bin.resize(3 * size);// For each axis.
   }
 
+  BinBuffer(BinBuffer &&rhs) noexcept : bin(std::move(rhs.bin)), size(rhs.size){};
+
   void clear() {
     bin.clear();
     bin.resize(3 * size);
@@ -65,7 +67,7 @@ inline BinBuffer<T> sort_collection_into_bins(const Collection &p, Iterator begi
     }
   }
 
-  return bins;
+  return std::move(bins);
 }
 
 template<typename T, typename Iterator, template<typename> typename Collection, typename Options>
@@ -125,7 +127,7 @@ inline std::pair<unsigned int, Vec3r<T>> find_best_split_binned(const Collection
   if (min_cost[min_cost_axis] > min_cost[2])
     min_cost_axis = 2;
 
-  return std::make_pair(min_cost_axis, cut_pos);
+  return std::make_pair(min_cost_axis, std::move(cut_pos));
 }
 
 }// namespace blazert
