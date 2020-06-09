@@ -48,7 +48,7 @@ inline BinBuffer<T> sort_collection_into_bins(const Collection &p, Iterator begi
   Vec3r<T> inv_size;
 
   for (unsigned int i = 0; i < 3; i++)
-    inv_size[i] =  (size[i] > static_cast<T>(0.)) ? static_cast<T>(1.) / size[i] * static_cast<T>(bins.size) : static_cast<T>(0.);
+    inv_size[i] = (size[i] > static_cast<T>(0.)) ? static_cast<T>(1.) / size[i] : static_cast<T>(0.);
 
   for (auto it = begin; it != end; ++it) {
 
@@ -56,7 +56,7 @@ inline BinBuffer<T> sort_collection_into_bins(const Collection &p, Iterator begi
     const auto center = p.get_primitive_center(*it);
 
     // assert center > min
-    const Vec3r<T> normalized_center = (center - min) * inv_size; // 0 .. 63
+    const Vec3ui normalized_center{(center - min) * inv_size * (bins.size)};// 0 .. 63
 
     for (unsigned int j = 0; j < 3; j++) {
 
@@ -79,7 +79,13 @@ inline std::pair<unsigned int, Vec3r<T>> find_best_split_binned(const Collection
   auto bins = sort_collection_into_bins(collection, begin, end, min, max, options);
 
   Vec3r<T> cut_pos;
-  Vec3r<T> min_cost{std::numeric_limits<T>::max()};
+  Vec3r<T> min_cost(std::numeric_limits<T>::max());
+  for (int j = 0; j < 3; ++j) {
+    //min_cost[j] = std::numeric_limits<T>::max();
+    // Sweep left to accumulate bounding boxes and compute the right-hand side of the cost
+    size_t count = 0;
+    Vec3r<T> bmin_(std::numeric_limits<T>::max());
+    Vec3r<T> bmax_(-std::numeric_limits<T>::max());
 
   // iterating over all 3 axes
   for (unsigned int j = 0; j < 3; j++) {
@@ -125,7 +131,7 @@ inline std::pair<unsigned int, Vec3r<T>> find_best_split_binned(const Collection
   if (min_cost[min_cost_axis] > min_cost[2])
     min_cost_axis = 2;
 
-  return std::make_pair(min_cost_axis, std::move(cut_pos));
+  return std::make_pair(min_cost_axis, std::move(cut_pos));*/
 }
 
 }// namespace blazert
