@@ -17,6 +17,8 @@ struct BLAZERTALIGN Bin {
   unsigned int count;
 
   Bin() : min(std::numeric_limits<T>::max()), max(-std::numeric_limits<T>::max()), count(0) {}
+  Bin(Bin &&rhs) : min(std::move(rhs.min)), max(std::move(rhs.max)), count(std::exchange(rhs.count, 0)) {};
+
 };
 
 template<class T>
@@ -49,7 +51,7 @@ inline BinBuffer<T> sort_collection_into_bins(const Collection &p, Iterator begi
 
   for (auto it = begin; it != end; ++it) {
 
-    auto [bmin, bmax] = p.get_primitive_bounding_box(*it);
+    const auto [bmin, bmax] = p.get_primitive_bounding_box(*it);
     const auto center = p.get_primitive_center(*it);
 
     // assert center > min
