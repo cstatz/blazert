@@ -15,9 +15,10 @@ struct BLAZERTALIGN Bin {
   Vec3r<T> min;
   Vec3r<T> max;
   unsigned int count;
+  T cost;
 
-  Bin() : min(std::numeric_limits<T>::max()), max(-std::numeric_limits<T>::max()), count(0) {}
-  Bin(Bin &&rhs) : min(std::move(rhs.min)), max(std::move(rhs.max)), count(std::exchange(rhs.count, 0)) {};
+  Bin() : min(std::numeric_limits<T>::max()), max(-std::numeric_limits<T>::max()), count(0), cost(static_cast<T>(0.)) {}
+  Bin(Bin &&rhs) noexcept : min(std::move(rhs.min)), max(std::move(rhs.max)), count(std::exchange(rhs.count, 0)), cost(std::exchange(rhs.cost, static_cast<T>(0.))) {};
 
 };
 
@@ -47,7 +48,7 @@ inline BinBuffer<T> sort_collection_into_bins(const Collection &p, Iterator begi
   Vec3r<T> inv_size;
 
   for (unsigned int i = 0; i < 3; i++)
-    inv_size[i] = (size[i] > static_cast<T>(0.)) ? 1. / size[i] : static_cast<T>(0.);
+    inv_size[i] =  (size[i] > static_cast<T>(0.)) ? static_cast<T>(1.) / size[i] * static_cast<T>(bins.size) : static_cast<T>(0.);
 
   for (auto it = begin; it != end; ++it) {
 
@@ -55,21 +56,19 @@ inline BinBuffer<T> sort_collection_into_bins(const Collection &p, Iterator begi
     const auto center = p.get_primitive_center(*it);
 
     // assert center > min
-    const Vec3ui normalized_center{(center - min) * inv_size * (bins.size - 1)};// 0 .. 63
+    const Vec3r<T> normalized_center = (center - min) * inv_size; // 0 .. 63
 
     for (unsigned int j = 0; j < 3; j++) {
 
-      if (inv_size[j] > static_cast<T>(0.)) {
-        unsigned int idx = std::min(bins.size - 1, unsigned(std::max(static_cast<unsigned int>(0), normalized_center[j])));
+      const auto idx = std::min(bins.size - 1, std::max(static_cast<unsigned int >(0), unsigned(std::floor(normalized_center[j]))));
 
-        Bin<T> &bin = bins.bin[j * bins.size + idx];
-        bin.count++;
-        unity(bin.min, bin.max, bmin, bmax);
-      }
+      Bin<T> &bin = bins.bin[j * bins.size + idx];
+      bin.count++;
+      unity(bin.min, bin.max, bmin, bmax);
     }
   }
 
-  return std::move(bins);
+  return bins;
 }
 
 template<typename T, typename Iterator, template<typename> typename Collection, typename Options>
@@ -81,10 +80,6 @@ inline std::pair<unsigned int, Vec3r<T>> find_best_split_binned(const Collection
 
   Vec3r<T> cut_pos;
   Vec3r<T> min_cost{std::numeric_limits<T>::max()};
-
-  std::vector<T> left_cost, right_cost;
-  left_cost.resize(options.bin_size);
-  right_cost.resize(options.bin_size);
 
   // iterating over all 3 axes
   for (unsigned int j = 0; j < 3; j++) {
@@ -98,29 +93,30 @@ inline std::pair<unsigned int, Vec3r<T>> find_best_split_binned(const Collection
       Bin<T> &bin = bins.bin[j * bins.size + i];
       unity(min_, max_, bin.min, bin.max);
       count += bin.count;
-      left_cost[i] = count * calculate_box_surface(min_, max_);
+      bin.cost = count * calculate_box_surface(min_, max_);
     }
 
     // Sweep right to compute the full cost
     count = 0;
     min_ = std::numeric_limits<T>::max();
     max_ = -std::numeric_limits<T>::max();
+    unsigned int min_bin = 1;
 
-    for (unsigned int i = 0; i < bins.size; i++) {
-      Bin<T> &bin = bins.bin[j * bins.size + i];
+    for (unsigned int i = 0; i < bins.size - 1; i++) {
+      Bin<T> &bin      = bins.bin[j * bins.size + i];
+      Bin<T>& next_bin = bins.bin[j * bins.size + i + 1];
+
       unity(min_, max_, bin.min, bin.max);
       count += bin.count;
-      right_cost[i] = count * calculate_box_surface(min_, max_);
-    }
+      T cost = count * calculate_box_surface(min_, max_) + next_bin.cost;
 
-    // Store the beginning of the correct partition
-    for (unsigned int i = 1; i < bins.size; i++) {
-      if (right_cost[i - 1] < left_cost[i]) {
-        min_cost[j] = right_cost[i - 1];
-        cut_pos[j] = i * ((max[j] - min[j]) / bins.size) + min[j];
-        break;
+      if (cost < min_cost[j]) {
+        min_cost[j] = cost;
+        // Store the beginning of the right partition
+        min_bin = i + 1;
       }
     }
+    cut_pos[j] = min_bin/bins.size * (max[j] - min[j]) + min[j];
   }
 
   unsigned int min_cost_axis = 0;
