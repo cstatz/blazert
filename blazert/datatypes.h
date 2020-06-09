@@ -3,6 +3,7 @@
 #define BLAZERT_DATATYPES_H_
 
 #include <cmath>
+#include <cstring> //for memcpy
 //#define FP_FAST_FMA
 
 #include <iostream>
