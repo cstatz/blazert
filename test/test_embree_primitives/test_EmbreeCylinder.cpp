@@ -2,6 +2,7 @@
 // Created by ogarten on 18/05/2020.
 //
 
+/*
 #include <third_party/doctest/doctest/doctest.h>
 #include <blazert/embree/primitives/EmbreeCylinder.h>
 #include <blazert/embree/scene.h>
@@ -1152,3 +1153,4 @@ TEST_CASE_TEMPLATE("EmbreeCylinder", T, float) {
     }
   }
 }
+ */

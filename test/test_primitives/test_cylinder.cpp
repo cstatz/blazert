@@ -2,6 +2,7 @@
 // Created by ogarten on 15/05/2020.
 //
 
+/*
 #include <blazert/blazert.h>
 #include <blazert/bvh/accel.h>
 #include <blazert/datatypes.h>
@@ -2453,3 +2454,4 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
     }
   }
 }
+ */

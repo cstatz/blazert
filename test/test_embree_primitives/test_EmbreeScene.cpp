@@ -1,13 +1,14 @@
 //
 // Created by ogarten on 13/05/2020.
 //
-
+/*
 #include <third_party/doctest/doctest/doctest.h>
 #include <blazert/embree/primitives/EmbreeSphere.h>
 #include <blazert/embree/scene.h>
 
 using namespace blazert;
 using namespace doctest;
+
 
 TEST_CASE_TEMPLATE("EmbreeScene", T, float, double) {
   SUBCASE("Sphere") {
@@ -233,3 +234,4 @@ TEST_CASE_TEMPLATE("EmbreeScene", T, float, double) {
     }
   }
 }
+ */

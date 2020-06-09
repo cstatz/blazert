@@ -1,7 +1,7 @@
 //
 // Created by ogarten on 12/05/2020.
 //
-
+/*
 #include <blazert/blazert.h>
 #include <blazert/bvh/accel.h>
 #include <blazert/datatypes.h>
@@ -246,4 +246,4 @@ TEST_CASE_TEMPLATE("Sphere", T, float, double) {
     }
   }
 }
-
+*/

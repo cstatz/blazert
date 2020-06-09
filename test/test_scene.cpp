@@ -1,7 +1,7 @@
 //
 // Created by ogarten on 13/05/2020.
 //
-
+/*
 #include <blazert/blazert.h>
 #include <blazert/bvh/accel.h>
 #include <blazert/datatypes.h>
@@ -14,6 +14,7 @@
 
 using namespace blazert;
 using namespace doctest;
+
 
 TEST_CASE_TEMPLATE("Scene with Sphere", T, float, double) {
   SUBCASE("Intersection") {
@@ -163,3 +164,4 @@ TEST_CASE_TEMPLATE("Scene with 2 different primitives", T, float, double) {
     CHECK(rayhit.normal[2] == Approx(1));
   }
 }
+*/

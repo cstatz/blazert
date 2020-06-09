@@ -1,6 +1,7 @@
 //
 // Created by ogarten on 13/05/2020.
 //
+/*
 #include <blazert/blazert.h>
 #include <blazert/bvh/accel.h>
 #include <blazert/datatypes.h>
@@ -14,6 +15,7 @@
 
 using namespace blazert;
 using namespace doctest;
+
 
 TEST_CASE_TEMPLATE("Plane", TestType, float, double) {
   const TestType d1 = 2.f;
@@ -896,3 +898,4 @@ TEST_CASE_TEMPLATE("Plane", TestType, float, double) {
     }
   }
 }
+ */
