@@ -89,6 +89,17 @@ public:
     }
   }
 
+  [[nodiscard]] inline unsigned int size() const { return faces.size(); }
+
+  inline std::pair<Vec3r<T>, Vec3r<T>> get_primitive_bounding_box(const unsigned int prim_index) const {
+    return box[prim_index];
+  }
+
+  inline Vec3r<T> get_primitive_center(const unsigned int prim_index) const {
+    return centers[prim_index];
+  }
+
+private:
   inline std::pair<Vec3r<T>, Vec3r<T>> pre_compute_bounding_box(const Vec3ui &face) const {
 
     Vec3r<T> min = vertices[face[0]];
@@ -110,16 +121,6 @@ public:
     const Vec3r<T> e2{vertices[face[2]] - vertices[face[0]]};
     const Vec3r<T> e1{vertices[face[0]] - vertices[face[1]]};
     return normalize(cross(e1, e2));
-  }
-
-  [[nodiscard]] inline unsigned int size() const { return faces.size(); }
-
-  inline std::pair<Vec3r<T>, Vec3r<T>> get_primitive_bounding_box(const unsigned int prim_index) const {
-    return box[prim_index];
-  }
-
-  inline Vec3r<T> get_primitive_center(const unsigned int prim_index) const {
-    return centers[prim_index];
   }
 };
 
