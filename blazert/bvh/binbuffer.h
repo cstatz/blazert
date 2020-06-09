@@ -60,8 +60,7 @@ inline BinBuffer<T> sort_collection_into_bins(const Collection &p, Iterator begi
 
         Bin<T> &bin = bins.bin[j * bins.size + idx];
         bin.count++;
-//        unity(bin.min, bin.max, bmin, bmax);
-        unity(bmin, bmax, bin.min, bin.max);
+        unity(bin.min, bin.max, bmin, bmax);
       }
     }
   }
