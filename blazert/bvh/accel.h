@@ -101,9 +101,10 @@ std::ostream& operator<<(std::ostream& stream, const BVH<T, Primitive>& b) {
   stream << "{" << "\n";
   stream << R"("nodes": [ )" << "\n";
 
-  for (auto & it: b.nodes) {
+  for (auto &it: b.nodes) {
+    stream << it;
 
-    if (std::distance(begin(b.nodes), it) < b.nodes.size()-1) { stream << ", ";}
+    if (&it-&*(b.nodes.begin()) < b.nodes.size()-1) { stream << ", ";}
     else {stream << "]";}
     stream << "\n";
   }
