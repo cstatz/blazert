@@ -38,6 +38,12 @@ inline void assert_primitive_center(const Collection<T> &collection, const unsig
 }
 
 template<typename T, template<typename> typename Collection>
+inline void assert_distance_to_surface(const Collection<T> &collection, const unsigned int prim_id,
+                                       const Vec3r<T> &point, const T true_distance) {
+  CHECK(collection.distance_to_surface(point, prim_id) == Approx(true_distance));
+}
+
+template<typename T, template<typename> typename Collection>
 inline void assert_intersect_primitive_hit(const Collection<T> &collection, const Ray<T> &ray,
                                            const unsigned int prim_id, const T distance, const Vec3r<T> &normal) {
   typename Collection<T>::intersector intersector(collection);
