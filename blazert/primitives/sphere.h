@@ -23,8 +23,10 @@ public:
 
 public:
   Sphere() = delete;
-  Sphere(const Vec3r<T> &center, const T radius, const unsigned int prim_id) : center(center), radius(radius), prim_id(prim_id){};
-  Sphere(Sphere &&rhs) noexcept : center(std::move(rhs.center)), radius(std::move(rhs.radius)), prim_id(std::exchange(rhs.prim_id, -1)) {}
+  Sphere(const Vec3r<T> &center, const T radius, const unsigned int prim_id)
+      : center(center), radius(radius), prim_id(prim_id){};
+  Sphere(Sphere &&rhs) noexcept
+      : center(std::move(rhs.center)), radius(std::move(rhs.radius)), prim_id(std::exchange(rhs.prim_id, -1)) {}
   Sphere &operator=(const Sphere &rhs) = delete;
 };
 
@@ -50,7 +52,8 @@ public:
   unsigned int prim_id;
 
   SphereIntersector() = delete;
-  explicit SphereIntersector(const Collection<T> &collection) : collection(collection), prim_id(-1), hit_distance(std::numeric_limits<T>::max()) {}
+  explicit SphereIntersector(const Collection<T> &collection)
+      : collection(collection), prim_id(-1), hit_distance(std::numeric_limits<T>::max()) {}
 };
 
 template<typename T>
@@ -80,9 +83,7 @@ public:
     return box[prim_id];
   }
 
-  inline Vec3r<T> get_primitive_center(const unsigned int prim_id) const {
-    return centers[prim_id];
-  }
+  inline Vec3r<T> get_primitive_center(const unsigned int prim_id) const { return centers[prim_id]; }
 
   T distance_to_surface(const Vec3r<T> &point, const unsigned int prim_index) {
     const Vec3r<T> &distance = centers[prim_index] - point;
@@ -98,7 +99,6 @@ private:
     return std::make_pair(std::move(min), std::move(max));
   }
 };
-
 
 /**
    * Post BVH traversal stuff.
@@ -175,7 +175,6 @@ inline bool intersect_primitive(SphereIntersector<T, Collection> &i, const Spher
   }
   return false;
 }
-
 
 }// namespace blazert
 
