@@ -4,7 +4,7 @@ PROJECT(blazert)
 # Compiler Flags
 set(CMAKE_CXX_STANDARD 17)
 IF (CMAKE_COMPILER_IS_GNUCXX)
-    set(CMAKE_CXX_FLAGS "-std=c++17 -Ofast -Wall -fPIC -funroll-loops -march=native")
+    set(CMAKE_CXX_FLAGS "-std=c++17 -O3 -Wall -fPIC -funroll-loops -march=native")
 ELSEIF (MSVC)
     # this currently work but is not really the way to go..
     set(CMAKE_CXX_FLAGS "/std:c++17 /Wall /arch:AVX")
