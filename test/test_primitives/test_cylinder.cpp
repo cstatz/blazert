@@ -145,9 +145,9 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               SUBCASE("intersect primitive") {
                 assert_intersect_primitive_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
               }
-              //              SUBCASE("traverse bvh") {
-              //                assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
-              //              }
+              SUBCASE("traverse bvh") {
+                assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
+              }
             }
             SUBCASE("oblique incidence on top") {
               Vec3r<T> org1{5.f, 0.f, 7.f};
@@ -164,9 +164,9 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               SUBCASE("intersect primitive") {
                 assert_intersect_primitive_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
               }
-              //              SUBCASE("traverse bvh") {
-              //                assert_traverse_bvh_hit(cylinders, ray, true_prim_id, true_distance, true_normal);
-              //              }
+              SUBCASE("traverse bvh") {
+                assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
+              }
             }
             SUBCASE("oblique incidence on shell 1") {
               Vec3r<T> org1{5, 0, 5};
@@ -182,9 +182,9 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               SUBCASE("intersect primitive") {
                 assert_intersect_primitive_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
               }
-              //              SUBCASE("traverse bvh") {
-              //                assert_traverse_bvh_hit(cylinders, ray, true_prim_id, true_distance, true_normal);
-              //              }
+              SUBCASE("traverse bvh") {
+                assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
+              }
             }
             SUBCASE("oblique incidence on shell 2") {
               Vec3r<T> org1{-5, 0, 5};
@@ -200,9 +200,9 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               SUBCASE("intersect primitive") {
                 assert_intersect_primitive_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
               }
-              //              SUBCASE("traverse bvh") {
-              //                assert_traverse_bvh_hit(cylinders, ray, true_prim_id, true_distance, true_normal);
-              //              }
+              SUBCASE("traverse bvh") {
+                assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
+              }
             }
             SUBCASE("oblique incidence on shell 3") {
               Vec3r<T> org1{0, 5, 4};
@@ -218,9 +218,9 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               SUBCASE("intersect primitive") {
                 assert_intersect_primitive_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
               }
-              //              SUBCASE("traverse bvh") {
-              //                assert_traverse_bvh_hit(cylinders, ray, true_prim_id, true_distance, true_normal);
-              //              }
+              SUBCASE("traverse bvh") {
+                assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
+              }
             }
             SUBCASE("oblique incidence on shell 4") {
               Vec3r<T> org1{0, -5, 4};
@@ -236,12 +236,11 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               SUBCASE("intersect primitive") {
                 assert_intersect_primitive_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
               }
-              //              SUBCASE("traverse bvh") {
-              //                assert_traverse_bvh_hit(cylinders, ray, true_prim_id, true_distance, true_normal);
-              //              }
+              SUBCASE("traverse bvh") {
+                assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
+              }
             }
           }
-
           SUBCASE("origin below") {
             SUBCASE("perpendicular incidence on bottom") {
               Vec3r<T> org1{0.f, 0.f, -7.5f};
@@ -258,9 +257,9 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               SUBCASE("intersect primitive") {
                 assert_intersect_primitive_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
               }
-              //              SUBCASE("traverse bvh") {
-              //                assert_traverse_bvh_hit(cylinders, ray, true_prim_id, true_distance, true_normal);
-              //              }
+              SUBCASE("traverse bvh") {
+                assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
+              }
             }
             SUBCASE("oblique incidence on bottom") {
               Vec3r<T> org1{5.f, 0.f, -5.f};
@@ -276,16 +275,15 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               SUBCASE("intersect primitive") {
                 assert_intersect_primitive_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
               }
-              //              SUBCASE("traverse bvh") {
-              //                assert_traverse_bvh_hit(cylinders, ray, true_prim_id, true_distance, true_normal);
-              //              }
+              SUBCASE("traverse bvh") {
+                assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
+              }
             }
             SUBCASE("oblique incidence on shell 1") {
-              Vec3r<T> org1{5, 0, -3};
-              Vec3r<T> dir1{-1, 0, 1};
-              Ray<T> ray{org1, dir1};
+              const Vec3r<T> org1{5, 0, -3};
+              const Vec3r<T> dir1{-1, 0, 1};
+              const Ray<T> ray{org1, dir1};
               CylinderCollection<T> cylinders{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
-
               const bool true_hit = true;
               const unsigned int true_prim_id = 0;
               const T true_distance = std::sqrt(32);
@@ -293,9 +291,9 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               SUBCASE("intersect primitive") {
                 assert_intersect_primitive_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
               }
-              //              SUBCASE("traverse bvh") {
-              //                assert_traverse_bvh_hit(cylinders, ray, true_prim_id, true_distance, true_normal);
-              //              }
+              SUBCASE("traverse bvh") {
+                assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
+              }
             }
             SUBCASE("oblique incidence on shell 2") {
               Vec3r<T> org1{-5, 0, -3};
@@ -310,9 +308,9 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               SUBCASE("intersect primitive") {
                 assert_intersect_primitive_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
               }
-              //              SUBCASE("traverse bvh") {
-              //                assert_traverse_bvh_hit(cylinders, ray, true_prim_id, true_distance, true_normal);
-              //              }
+              SUBCASE("traverse bvh") {
+                assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
+              }
             }
             SUBCASE("oblique incidence on shell 3") {
               Vec3r<T> org1{0, 5, -2};
@@ -328,9 +326,9 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               SUBCASE("intersect primitive") {
                 assert_intersect_primitive_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
               }
-              //              SUBCASE("traverse bvh") {
-              //                assert_traverse_bvh_hit(cylinders, ray, true_prim_id, true_distance, true_normal);
-              //              }
+              SUBCASE("traverse bvh") {
+                assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
+              }
             }
             SUBCASE("oblique incidence on shell 4") {
               Vec3r<T> org1{0, -5, -2};
@@ -344,11 +342,12 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               SUBCASE("intersect primitive") {
                 assert_intersect_primitive_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
               }
-              //              SUBCASE("traverse bvh") {
-              //                assert_traverse_bvh_hit(cylinders, ray, true_prim_id, true_distance, true_normal);
-              //              }
+              SUBCASE("traverse bvh") {
+                assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
+              }
             }
           }
+
           SUBCASE("origin around shell") {
             SUBCASE("perpendicular incidence") {
               SUBCASE("origin: x+") {
@@ -364,9 +363,9 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
                 SUBCASE("intersect primitive") {
                   assert_intersect_primitive_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
                 }
-                //              SUBCASE("traverse bvh") {
-                //                assert_traverse_bvh_hit(cylinders, ray, true_prim_id, true_distance, true_normal);
-                //              }
+                SUBCASE("traverse bvh") {
+                  assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
+                }
               }
               SUBCASE("origin: x-") {
                 Vec3r<T> org1{-5, 0, 1};
@@ -381,9 +380,9 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
                 SUBCASE("intersect primitive") {
                   assert_intersect_primitive_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
                 }
-                //              SUBCASE("traverse bvh") {
-                //                assert_traverse_bvh_hit(cylinders, ray, true_prim_id, true_distance, true_normal);
-                //              }
+                SUBCASE("traverse bvh") {
+                  assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
+                }
               }
               SUBCASE("origin: y+") {
                 Vec3r<T> org1{0, 5, 1};
@@ -398,9 +397,9 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
                 SUBCASE("intersect primitive") {
                   assert_intersect_primitive_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
                 }
-                //              SUBCASE("traverse bvh") {
-                //                assert_traverse_bvh_hit(cylinders, ray, true_prim_id, true_distance, true_normal);
-                //              }
+                SUBCASE("traverse bvh") {
+                  assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
+                }
               }
               SUBCASE("origin: y-") {
                 Vec3r<T> org1{0, -5, 1};
@@ -415,9 +414,9 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
                 SUBCASE("intersect primitive") {
                   assert_intersect_primitive_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
                 }
-                //              SUBCASE("traverse bvh") {
-                //                assert_traverse_bvh_hit(cylinders, ray, true_prim_id, true_distance, true_normal);
-                //              }
+                SUBCASE("traverse bvh") {
+                  assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
+                }
               }
             }
           }
@@ -435,9 +434,9 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               SUBCASE("intersect primitive") {
                 assert_intersect_primitive_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
               }
-              //              SUBCASE("traverse bvh") {
-              //                assert_traverse_bvh_hit(cylinders, ray, true_prim_id, true_distance, true_normal);
-              //              }
+              SUBCASE("traverse bvh") {
+                assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
+              }
             }
             SUBCASE("hit bottom") {
               Vec3r<T> org1{0, 0, 1};
@@ -452,9 +451,9 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               SUBCASE("intersect primitive") {
                 assert_intersect_primitive_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
               }
-              //              SUBCASE("traverse bvh") {
-              //                assert_traverse_bvh_hit(cylinders, ray, true_prim_id, true_distance, true_normal);
-              //              }
+              SUBCASE("traverse bvh") {
+                assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
+              }
             }
             SUBCASE("hit shell 1") {
               Vec3r<T> org1{0, 0, 1};
@@ -469,9 +468,9 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               SUBCASE("intersect primitive") {
                 assert_intersect_primitive_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
               }
-              //              SUBCASE("traverse bvh") {
-              //                assert_traverse_bvh_hit(cylinders, ray, true_prim_id, true_distance, true_normal);
-              //              }
+              SUBCASE("traverse bvh") {
+                assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
+              }
             }
             SUBCASE("hit shell 2") {
               Vec3r<T> org1{0, 0, 1};
@@ -486,9 +485,9 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               SUBCASE("intersect primitive") {
                 assert_intersect_primitive_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
               }
-              //              SUBCASE("traverse bvh") {
-              //                assert_traverse_bvh_hit(cylinders, ray, true_prim_id, true_distance, true_normal);
-              //              }
+              SUBCASE("traverse bvh") {
+                assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
+              }
             }
             SUBCASE("hit shell 3") {
               Vec3r<T> org1{0, 0, 1};
@@ -503,9 +502,9 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               SUBCASE("intersect primitive") {
                 assert_intersect_primitive_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
               }
-              //              SUBCASE("traverse bvh") {
-              //                assert_traverse_bvh_hit(cylinders, ray, true_prim_id, true_distance, true_normal);
-              //              }
+              SUBCASE("traverse bvh") {
+                assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
+              }
             }
             SUBCASE("hit shell 4") {
               Vec3r<T> org1{0, 0, 1};
@@ -520,12 +519,13 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               SUBCASE("intersect primitive") {
                 assert_intersect_primitive_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
               }
-              //              SUBCASE("traverse bvh") {
-              //                assert_traverse_bvh_hit(cylinders, ray, true_prim_id, true_distance, true_normal);
-              //              }
+              SUBCASE("traverse bvh") {
+                assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
+              }
             }
           }
         }
+
         SUBCASE("no hits") {
           SUBCASE("origin above (direction inverted)") {
             SUBCASE("perpendicular incidence on top") {
@@ -835,9 +835,9 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
             SUBCASE("intersect primitive") {
               assert_intersect_primitive_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
             }
-            //              SUBCASE("traverse bvh") {
-            //                assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
-            //              }
+            SUBCASE("traverse bvh") {
+              assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
+            }
           }
           SUBCASE("about y-axis") {
             const Vec3r<T> axis{0, 1, 0};
@@ -857,9 +857,9 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
             SUBCASE("intersect primitive") {
               assert_intersect_primitive_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
             }
-            //              SUBCASE("traverse bvh") {
-            //                assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
-            //              }
+            SUBCASE("traverse bvh") {
+              assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
+            }
           }
           SUBCASE("about x-axis") {
             const Vec3r<T> axis{1, 0, 0};
@@ -879,9 +879,9 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
             SUBCASE("intersect primitive") {
               assert_intersect_primitive_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
             }
-            //              SUBCASE("traverse bvh") {
-            //                assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
-            //              }
+            SUBCASE("traverse bvh") {
+              assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
+            }
           }
         }
         SUBCASE("no hits") {
@@ -903,9 +903,9 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
             SUBCASE("intersect primitive") {
               assert_intersect_primitive_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
             }
-            //              SUBCASE("traverse bvh") {
-            //                assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
-            //              }
+            SUBCASE("traverse bvh") {
+              assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
+            }
           }
           SUBCASE("about y-axis") {
             const Vec3r<T> axis{0, 1, 0};
@@ -925,9 +925,9 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
             SUBCASE("intersect primitive") {
               assert_intersect_primitive_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
             }
-            //              SUBCASE("traverse bvh") {
-            //                assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
-            //              }
+            SUBCASE("traverse bvh") {
+              assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
+            }
           }
           SUBCASE("about x-axis") {
             const Vec3r<T> axis{1, 0, 0};
@@ -947,9 +947,9 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
             SUBCASE("intersect primitive") {
               assert_intersect_primitive_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
             }
-            //              SUBCASE("traverse bvh") {
-            //                assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
-            //              }
+            SUBCASE("traverse bvh") {
+              assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
+            }
           }
         }
       }
@@ -979,9 +979,9 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               SUBCASE("intersect primitive") {
                 assert_intersect_primitive_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
               }
-              //              SUBCASE("traverse bvh") {
-              //                assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
-              //              }
+              SUBCASE("traverse bvh") {
+                assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
+              }
             }
             SUBCASE("oblique incidence on top") {
               Vec3r<T> org1{6.f, 2.f, 7.f};
@@ -997,9 +997,9 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               SUBCASE("intersect primitive") {
                 assert_intersect_primitive_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
               }
-              //              SUBCASE("traverse bvh") {
-              //                assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
-              //              }
+              SUBCASE("traverse bvh") {
+                assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
+              }
             }
             SUBCASE("oblique incidence on shell 1") {
               Vec3r<T> org1{6, 2, 5};
@@ -1014,9 +1014,9 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               SUBCASE("intersect primitive") {
                 assert_intersect_primitive_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
               }
-              //              SUBCASE("traverse bvh") {
-              //                assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
-              //              }
+              SUBCASE("traverse bvh") {
+                assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
+              }
             }
             SUBCASE("oblique incidence on shell 2") {
               Vec3r<T> org1{-4, 2, 5};
@@ -1031,9 +1031,9 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               SUBCASE("intersect primitive") {
                 assert_intersect_primitive_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
               }
-              //              SUBCASE("traverse bvh") {
-              //                assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
-              //              }
+              SUBCASE("traverse bvh") {
+                assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
+              }
             }
             SUBCASE("oblique incidence on shell 3") {
               Vec3r<T> org1{1, 7, 4};
@@ -1048,9 +1048,9 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               SUBCASE("intersect primitive") {
                 assert_intersect_primitive_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
               }
-              //              SUBCASE("traverse bvh") {
-              //                assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
-              //              }
+              SUBCASE("traverse bvh") {
+                assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
+              }
             }
             SUBCASE("oblique incidence on shell 4") {
               Vec3r<T> org1{1, -3, 4};
@@ -1065,9 +1065,9 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               SUBCASE("intersect primitive") {
                 assert_intersect_primitive_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
               }
-              //              SUBCASE("traverse bvh") {
-              //                assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
-              //              }
+              SUBCASE("traverse bvh") {
+                assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
+              }
             }
           }
           SUBCASE("origin below") {
@@ -1085,9 +1085,9 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               SUBCASE("intersect primitive") {
                 assert_intersect_primitive_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
               }
-              //              SUBCASE("traverse bvh") {
-              //                assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
-              //              }
+              SUBCASE("traverse bvh") {
+                assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
+              }
             }
             SUBCASE("oblique incidence on bottom") {
               Vec3r<T> org1{6.f, 2.f, -5.f};
@@ -1103,9 +1103,9 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               SUBCASE("intersect primitive") {
                 assert_intersect_primitive_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
               }
-              //              SUBCASE("traverse bvh") {
-              //                assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
-              //              }
+              SUBCASE("traverse bvh") {
+                assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
+              }
             }
             SUBCASE("oblique incidence on shell 1") {
               Vec3r<T> org1{6, 2, -3};
@@ -1120,9 +1120,9 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               SUBCASE("intersect primitive") {
                 assert_intersect_primitive_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
               }
-              //              SUBCASE("traverse bvh") {
-              //                assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
-              //              }
+              SUBCASE("traverse bvh") {
+                assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
+              }
             }
             SUBCASE("oblique incidence on shell 2") {
               Vec3r<T> org1{-4, 2, -3};
@@ -1137,9 +1137,9 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               SUBCASE("intersect primitive") {
                 assert_intersect_primitive_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
               }
-              //              SUBCASE("traverse bvh") {
-              //                assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
-              //              }
+              SUBCASE("traverse bvh") {
+                assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
+              }
             }
             SUBCASE("oblique incidence on shell 3") {
               Vec3r<T> org1{1, 7, -2};
@@ -1154,9 +1154,9 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               SUBCASE("intersect primitive") {
                 assert_intersect_primitive_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
               }
-              //              SUBCASE("traverse bvh") {
-              //                assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
-              //              }
+              SUBCASE("traverse bvh") {
+                assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
+              }
             }
             SUBCASE("oblique incidence on shell 4") {
               Vec3r<T> org1{1, -3, -2};
@@ -1171,9 +1171,9 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               SUBCASE("intersect primitive") {
                 assert_intersect_primitive_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
               }
-              //              SUBCASE("traverse bvh") {
-              //                assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
-              //              }
+              SUBCASE("traverse bvh") {
+                assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
+              }
             }
           }
           SUBCASE("origin around shell") {
@@ -1191,9 +1191,9 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
                 SUBCASE("intersect primitive") {
                   assert_intersect_primitive_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
                 }
-                //              SUBCASE("traverse bvh") {
-                //                assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
-                //              }
+                SUBCASE("traverse bvh") {
+                  assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
+                }
               }
               SUBCASE("origin: x-") {
                 Vec3r<T> org1{-4, 2, 1};
@@ -1208,9 +1208,9 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
                 SUBCASE("intersect primitive") {
                   assert_intersect_primitive_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
                 }
-                //              SUBCASE("traverse bvh") {
-                //                assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
-                //              }
+                SUBCASE("traverse bvh") {
+                  assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
+                }
               }
               SUBCASE("origin: y+") {
                 Vec3r<T> org1{1, 7, 1};
@@ -1225,9 +1225,9 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
                 SUBCASE("intersect primitive") {
                   assert_intersect_primitive_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
                 }
-                //              SUBCASE("traverse bvh") {
-                //                assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
-                //              }
+                SUBCASE("traverse bvh") {
+                  assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
+                }
               }
               SUBCASE("origin: y-") {
                 Vec3r<T> org1{1, -3, 1};
@@ -1242,9 +1242,9 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
                 SUBCASE("intersect primitive") {
                   assert_intersect_primitive_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
                 }
-                //              SUBCASE("traverse bvh") {
-                //                assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
-                //              }
+                SUBCASE("traverse bvh") {
+                  assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
+                }
               }
             }
           }
@@ -1262,9 +1262,9 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               SUBCASE("intersect primitive") {
                 assert_intersect_primitive_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
               }
-              //              SUBCASE("traverse bvh") {
-              //                assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
-              //              }
+              SUBCASE("traverse bvh") {
+                assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
+              }
             }
             SUBCASE("hit bottom") {
               Vec3r<T> org1{1, 2, 1};
@@ -1279,9 +1279,9 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               SUBCASE("intersect primitive") {
                 assert_intersect_primitive_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
               }
-              //              SUBCASE("traverse bvh") {
-              //                assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
-              //              }
+              SUBCASE("traverse bvh") {
+                assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
+              }
             }
             SUBCASE("hit shell 1") {
               Vec3r<T> org1{1, 2, 1};
@@ -1296,9 +1296,9 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               SUBCASE("intersect primitive") {
                 assert_intersect_primitive_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
               }
-              //              SUBCASE("traverse bvh") {
-              //                assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
-              //              }
+              SUBCASE("traverse bvh") {
+                assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
+              }
             }
             SUBCASE("hit shell 2") {
               Vec3r<T> org1{1, 2, 1};
@@ -1313,9 +1313,9 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               SUBCASE("intersect primitive") {
                 assert_intersect_primitive_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
               }
-              //              SUBCASE("traverse bvh") {
-              //                assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
-              //              }
+              SUBCASE("traverse bvh") {
+                assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
+              }
             }
             SUBCASE("hit shell 3") {
               Vec3r<T> org1{1, 2, 1};
@@ -1330,9 +1330,9 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               SUBCASE("intersect primitive") {
                 assert_intersect_primitive_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
               }
-              //              SUBCASE("traverse bvh") {
-              //                assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
-              //              }
+              SUBCASE("traverse bvh") {
+                assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
+              }
             }
             SUBCASE("hit shell 4") {
               Vec3r<T> org1{1, 2, 1};
@@ -1347,9 +1347,9 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               SUBCASE("intersect primitive") {
                 assert_intersect_primitive_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
               }
-              //              SUBCASE("traverse bvh") {
-              //                assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
-              //              }
+              SUBCASE("traverse bvh") {
+                assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
+              }
             }
           }
         }
@@ -1370,9 +1370,9 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               SUBCASE("intersect primitive") {
                 assert_intersect_primitive_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
               }
-              //              SUBCASE("traverse bvh") {
-              //                assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
-              //              }
+              SUBCASE("traverse bvh") {
+                assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
+              }
             }
             SUBCASE("oblique incidence on top") {
               Vec3r<T> org1{6.f, 2.f, 7.f};
@@ -1388,9 +1388,9 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               SUBCASE("intersect primitive") {
                 assert_intersect_primitive_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
               }
-              //              SUBCASE("traverse bvh") {
-              //                assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
-              //              }
+              SUBCASE("traverse bvh") {
+                assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
+              }
             }
             SUBCASE("oblique incidence on shell 1") {
               Vec3r<T> org1{6, 2, 5};
@@ -1405,9 +1405,9 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               SUBCASE("intersect primitive") {
                 assert_intersect_primitive_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
               }
-              //              SUBCASE("traverse bvh") {
-              //                assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
-              //              }
+              SUBCASE("traverse bvh") {
+                assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
+              }
             }
             SUBCASE("oblique incidence on shell 2") {
               Vec3r<T> org1{-4, 2, 5};
@@ -1422,9 +1422,9 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               SUBCASE("intersect primitive") {
                 assert_intersect_primitive_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
               }
-              //              SUBCASE("traverse bvh") {
-              //                assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
-              //              }
+              SUBCASE("traverse bvh") {
+                assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
+              }
             }
             SUBCASE("oblique incidence on shell 3") {
               Vec3r<T> org1{1, 7, 4};
@@ -1439,9 +1439,9 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               SUBCASE("intersect primitive") {
                 assert_intersect_primitive_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
               }
-              //              SUBCASE("traverse bvh") {
-              //                assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
-              //              }
+              SUBCASE("traverse bvh") {
+                assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
+              }
             }
             SUBCASE("oblique incidence on shell 4") {
               Vec3r<T> org1{1, -3, 4};
@@ -1456,9 +1456,9 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               SUBCASE("intersect primitive") {
                 assert_intersect_primitive_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
               }
-              //              SUBCASE("traverse bvh") {
-              //                assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
-              //              }
+              SUBCASE("traverse bvh") {
+                assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
+              }
             }
           }
           SUBCASE("origin below (direction inverted)") {
@@ -1476,9 +1476,9 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               SUBCASE("intersect primitive") {
                 assert_intersect_primitive_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
               }
-              //              SUBCASE("traverse bvh") {
-              //                assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
-              //              }
+              SUBCASE("traverse bvh") {
+                assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
+              }
             }
             SUBCASE("oblique incidence on bottom") {
               Vec3r<T> org1{6.f, 2.f, -5.f};
@@ -1494,9 +1494,9 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               SUBCASE("intersect primitive") {
                 assert_intersect_primitive_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
               }
-              //              SUBCASE("traverse bvh") {
-              //                assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
-              //              }
+              SUBCASE("traverse bvh") {
+                assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
+              }
             }
             SUBCASE("oblique incidence on shell 1") {
               Vec3r<T> org1{6, 2, -3};
@@ -1511,9 +1511,9 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               SUBCASE("intersect primitive") {
                 assert_intersect_primitive_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
               }
-              //              SUBCASE("traverse bvh") {
-              //                assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
-              //              }
+              SUBCASE("traverse bvh") {
+                assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
+              }
             }
             SUBCASE("oblique incidence on shell 2") {
               Vec3r<T> org1{-4, 2, -3};
@@ -1528,9 +1528,9 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               SUBCASE("intersect primitive") {
                 assert_intersect_primitive_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
               }
-              //              SUBCASE("traverse bvh") {
-              //                assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
-              //              }
+              SUBCASE("traverse bvh") {
+                assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
+              }
             }
             SUBCASE("oblique incidence on shell 3") {
               Vec3r<T> org1{1, 7, -2};
@@ -1545,9 +1545,9 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               SUBCASE("intersect primitive") {
                 assert_intersect_primitive_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
               }
-              //              SUBCASE("traverse bvh") {
-              //                assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
-              //              }
+              SUBCASE("traverse bvh") {
+                assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
+              }
             }
             SUBCASE("oblique incidence on shell 4") {
               Vec3r<T> org1{1, -3, -2};
@@ -1562,9 +1562,9 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               SUBCASE("intersect primitive") {
                 assert_intersect_primitive_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
               }
-              //              SUBCASE("traverse bvh") {
-              //                assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
-              //              }
+              SUBCASE("traverse bvh") {
+                assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
+              }
             }
           }
           SUBCASE("origin around shell (direction inverted)") {
@@ -1582,9 +1582,9 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
                 SUBCASE("intersect primitive") {
                   assert_intersect_primitive_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
                 }
-                //              SUBCASE("traverse bvh") {
-                //                assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
-                //              }
+                SUBCASE("traverse bvh") {
+                  assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
+                }
               }
               SUBCASE("origin: x-") {
                 Vec3r<T> org1{-4, 2, 1};
@@ -1599,9 +1599,9 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
                 SUBCASE("intersect primitive") {
                   assert_intersect_primitive_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
                 }
-                //              SUBCASE("traverse bvh") {
-                //                assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
-                //              }
+                SUBCASE("traverse bvh") {
+                  assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
+                }
               }
               SUBCASE("origin: y+") {
                 Vec3r<T> org1{1, 7, 1};
@@ -1616,9 +1616,9 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
                 SUBCASE("intersect primitive") {
                   assert_intersect_primitive_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
                 }
-                //              SUBCASE("traverse bvh") {
-                //                assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
-                //              }
+                SUBCASE("traverse bvh") {
+                  assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
+                }
               }
               SUBCASE("origin: y-") {
                 Vec3r<T> org1{1, -3, 1};
@@ -1633,9 +1633,9 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
                 SUBCASE("intersect primitive") {
                   assert_intersect_primitive_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
                 }
-                //              SUBCASE("traverse bvh") {
-                //                assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
-                //              }
+                SUBCASE("traverse bvh") {
+                  assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
+                }
               }
             }
           }
@@ -1661,9 +1661,9 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
             SUBCASE("intersect primitive") {
               assert_intersect_primitive_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
             }
-            //              SUBCASE("traverse bvh") {
-            //                assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
-            //              }
+            SUBCASE("traverse bvh") {
+              assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
+            }
           }
           SUBCASE("about y-axis") {
             const Vec3r<T> axis{0, 1, 0};
@@ -1683,9 +1683,9 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
             SUBCASE("intersect primitive") {
               assert_intersect_primitive_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
             }
-            //              SUBCASE("traverse bvh") {
-            //                assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
-            //              }
+            SUBCASE("traverse bvh") {
+              assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
+            }
           }
           SUBCASE("about x-axis") {
             const Vec3r<T> axis{1, 0, 0};
@@ -1702,12 +1702,12 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
             const unsigned int true_prim_id = 0;
             const T true_distance = 7.5;
             const Vec3r<T> true_normal{0, 1, 0};
-                SUBCASE("intersect primitive") {
+            SUBCASE("intersect primitive") {
               assert_intersect_primitive_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
             }
-            //              SUBCASE("traverse bvh") {
-            //                assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
-            //              }
+            SUBCASE("traverse bvh") {
+              assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
+            }
           }
         }
         SUBCASE("no hits") {
@@ -1726,12 +1726,12 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
             const unsigned int true_prim_id = -1;
             const T true_distance = std::numeric_limits<T>::max();
             const Vec3r<T> true_normal{0, 0, 0};
-                SUBCASE("intersect primitive") {
+            SUBCASE("intersect primitive") {
               assert_intersect_primitive_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
             }
-            //              SUBCASE("traverse bvh") {
-            //                assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
-            //              }
+            SUBCASE("traverse bvh") {
+              assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
+            }
           }
           SUBCASE("about y-axis") {
             const Vec3r<T> axis{0, 1, 0};
@@ -1748,12 +1748,12 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
             const unsigned int true_prim_id = -1;
             const T true_distance = std::numeric_limits<T>::max();
             const Vec3r<T> true_normal{0, 0, 0};
-                SUBCASE("intersect primitive") {
+            SUBCASE("intersect primitive") {
               assert_intersect_primitive_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
             }
-            //              SUBCASE("traverse bvh") {
-            //                assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
-            //              }
+            SUBCASE("traverse bvh") {
+              assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
+            }
           }
           SUBCASE("about x-axis") {
             const Vec3r<T> axis{1, 0, 0};
@@ -1770,12 +1770,12 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
             const unsigned int true_prim_id = -1;
             const T true_distance = std::numeric_limits<T>::max();
             const Vec3r<T> true_normal{0, 0, 0};
-                SUBCASE("intersect primitive") {
+            SUBCASE("intersect primitive") {
               assert_intersect_primitive_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
             }
-            //              SUBCASE("traverse bvh") {
-            //                assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
-            //              }
+            SUBCASE("traverse bvh") {
+              assert_traverse_bvh_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
+            }
           }
         }
       }

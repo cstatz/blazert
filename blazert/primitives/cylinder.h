@@ -29,13 +29,13 @@ public:
 
 public:
   Cylinder() = delete;
-  Cylinder(const Vec3r<T> &center, const T semi_axis_a, const T semi_axis_b, const T height, const Mat3r<T> &rotation,
+  Cylinder(const Vec3r<T> center, const T semi_axis_a, const T semi_axis_b, const T height, const Mat3r<T> rotation,
            const unsigned int prim_id)
       : center(center), semi_axis_a(semi_axis_a), semi_axis_b(semi_axis_b), height(height), rotation(rotation),
         prim_id(prim_id){};
   Cylinder(Cylinder &&rhs) noexcept
       : center(std::move(rhs.center)), semi_axis_a(std::move(rhs.semi_axis_a)), semi_axis_b(std::move(rhs.semi_axis_b)),
-        height(std::move(height)), rotation(std::move(rhs.rotation)), prim_id(std::exchange(rhs.prim_id, -1)) {}
+        height(std::move(rhs.height)), rotation(std::move(rhs.rotation)), prim_id(std::exchange(rhs.prim_id, -1)) {}
   Cylinder &operator=(const Cylinder &rhs) = delete;
 };
 
@@ -43,10 +43,10 @@ template<typename T, template<typename A> typename Collection>
 inline Cylinder<T> primitive_from_collection(const Collection<T> &collection, const unsigned int prim_idx) {
 
   const Vec3r<T> &center = collection.centers[prim_idx];
-  const T semi_axis_a = collection.semi_axes_a[prim_idx];
-  const T semi_axis_b = collection.semi_axes_b[prim_idx];
-  const T height = collection.heights[prim_idx];
-  const Mat3r<T> rotation = collection.rotations[prim_idx];
+  const T &semi_axis_a = collection.semi_axes_a[prim_idx];
+  const T &semi_axis_b = collection.semi_axes_b[prim_idx];
+  const T &height = collection.heights[prim_idx];
+  const Mat3r<T> &rotation = collection.rotations[prim_idx];
   return {center, semi_axis_a, semi_axis_b, height, rotation, prim_idx};
 };
 
@@ -181,7 +181,8 @@ inline void prepare_traversal(CylinderIntersector<T, Collection> &i, const Ray<T
 template<typename T, template<typename> typename Collection>
 inline bool intersect_primitive(CylinderIntersector<T, Collection> &i, const Cylinder<T> &cylinder, const Ray<T> ray) {
 
-  const Vec3r<T> &center = cylinder.center;
+  const Vec3r<T> &vtmp = Vec3r<T>{0,0,cylinder.height/2.};
+  const Vec3r<T> &center = cylinder.center + vtmp;
   const T semi_axis_a = cylinder.semi_axis_a;
   const T semi_axis_b = cylinder.semi_axis_b;
   const T height = cylinder.height;
