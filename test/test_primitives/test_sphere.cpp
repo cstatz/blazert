@@ -93,8 +93,8 @@ TEST_CASE_TEMPLATE("Sphere", T, float, double) {
       const T true_distance = 1;
       const Vec3r<T> true_normal{1, 0, 0};
 
-      test_intersect_primitive_hit(spheres, ray, true_prim_id, true_distance, true_normal);
-      test_traverse_bvh_hit(spheres, ray, true_prim_id, true_distance, true_normal);
+      assert_intersect_primitive_hit(spheres, ray, true_prim_id, true_distance, true_normal);
+      assert_traverse_bvh_hit(spheres, ray, true_prim_id, true_distance, true_normal);
     }
     SUBCASE("Ray origin inside sphere") {
       Vec3r<T> center1{0.f, 0.f, 0.f};
@@ -117,8 +117,8 @@ TEST_CASE_TEMPLATE("Sphere", T, float, double) {
         const T true_distance = 1;
         const Vec3r<T> true_normal{-1, 0, 0};
 
-        test_intersect_primitive_hit(spheres, ray, true_prim_id, true_distance, true_normal);
-        test_traverse_bvh_hit(spheres, ray, true_prim_id, true_distance, true_normal);
+        assert_intersect_primitive_hit(spheres, ray, true_prim_id, true_distance, true_normal);
+        assert_traverse_bvh_hit(spheres, ray, true_prim_id, true_distance, true_normal);
       }
       SUBCASE("Ray 2") {
         const Vec3r<T> org{0.f, 0.f, 0.5f};
@@ -132,8 +132,8 @@ TEST_CASE_TEMPLATE("Sphere", T, float, double) {
         const T true_distance = 1.5;
         const Vec3r<T> true_normal{0, 0, -1};
 
-        test_intersect_primitive_hit(spheres, ray, true_prim_id, true_distance, true_normal);
-        test_traverse_bvh_hit(spheres, ray, true_prim_id, true_distance, true_normal);
+        assert_intersect_primitive_hit(spheres, ray, true_prim_id, true_distance, true_normal);
+        assert_traverse_bvh_hit(spheres, ray, true_prim_id, true_distance, true_normal);
       }
     }
 
@@ -159,8 +159,8 @@ TEST_CASE_TEMPLATE("Sphere", T, float, double) {
         const T true_distance = 2;
         const Vec3r<T> true_normal{1, 0, 0};
 
-        test_intersect_primitive_hit(spheres, ray, true_prim_id, true_distance, true_normal);
-        test_traverse_bvh_hit(spheres, ray, true_prim_id, true_distance, true_normal);
+        assert_intersect_primitive_hit(spheres, ray, true_prim_id, true_distance, true_normal);
+        assert_traverse_bvh_hit(spheres, ray, true_prim_id, true_distance, true_normal);
       }
       SUBCASE("Ray 2") {
         Vec3r<T> org{0.f, 0.f, 0.f};
@@ -170,8 +170,8 @@ TEST_CASE_TEMPLATE("Sphere", T, float, double) {
 
         SphereCollection spheres(*centers, *radii);
 
-        test_intersect_primitive_no_hit(spheres, ray);
-        test_traverse_bvh_no_hit(spheres, ray);
+        assert_intersect_primitive_no_hit(spheres, ray);
+        assert_traverse_bvh_no_hit(spheres, ray);
       }
     }
 
@@ -197,8 +197,8 @@ TEST_CASE_TEMPLATE("Sphere", T, float, double) {
                                  std::sqrt(static_cast<T>(1)) / static_cast<T>(2.),
                                  static_cast<T>(0)};
 
-      test_intersect_primitive_hit(spheres, ray, true_prim_id, true_distance, true_normal);
-      test_traverse_bvh_hit(spheres, ray, true_prim_id, true_distance, true_normal);
+      assert_intersect_primitive_hit(spheres, ray, true_prim_id, true_distance, true_normal);
+      assert_traverse_bvh_hit(spheres, ray, true_prim_id, true_distance, true_normal);
     }
   }
 }

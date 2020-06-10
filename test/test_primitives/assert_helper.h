@@ -15,7 +15,31 @@ using namespace blazert;
 using namespace doctest;
 
 template<typename T, template<typename> typename Collection>
-void test_intersect_primitive_hit(const Collection<T> &collection, const Ray<T> &ray, const unsigned int prim_id, const T distance, const Vec3r<T> &normal) {
+inline void assert_bounding_box(const Collection<T> &collection, const unsigned int prim_id, const Vec3r<T> &true_min,
+                                const Vec3r<T> &true_max) {
+  const auto [bmin, bmax] = collection.get_primitive_bounding_box(prim_id);
+
+  CHECK(bmin[0] == Approx(true_min[0]));
+  CHECK(bmin[1] == Approx(true_min[1]));
+  CHECK(bmin[2] == Approx(true_min[2]));
+  CHECK(bmax[0] == Approx(true_max[0]));
+  CHECK(bmax[1] == Approx(true_max[1]));
+  CHECK(bmax[2] == Approx(true_max[2]));
+}
+
+template<typename T, template<typename> typename Collection>
+inline void assert_primitive_center(const Collection<T> &collection, const unsigned int prim_id,
+                                    const Vec3r<T> &true_center) {
+  const auto center = collection.get_primitive_center(prim_id);
+
+  CHECK(center[0] == Approx(true_center[0]));
+  CHECK(center[1] == Approx(true_center[1]));
+  CHECK(center[2] == Approx(true_center[2]));
+}
+
+template<typename T, template<typename> typename Collection>
+inline void assert_intersect_primitive_hit(const Collection<T> &collection, const Ray<T> &ray,
+                                           const unsigned int prim_id, const T distance, const Vec3r<T> &normal) {
   typename Collection<T>::intersector intersector(collection);
   RayHit<T> rayhit;
   // Test intersections
@@ -32,7 +56,7 @@ void test_intersect_primitive_hit(const Collection<T> &collection, const Ray<T> 
 }
 
 template<typename T, template<typename> typename Collection>
-void test_intersect_primitive_no_hit(const Collection<T> &collection, const Ray<T> &ray) {
+inline void assert_intersect_primitive_no_hit(const Collection<T> &collection, const Ray<T> &ray) {
   typename Collection<T>::intersector intersector(collection);
   RayHit<T> rayhit;
   // Test intersections
@@ -44,7 +68,8 @@ void test_intersect_primitive_no_hit(const Collection<T> &collection, const Ray<
 }
 
 template<typename T, template<typename> typename Collection>
-void test_traverse_bvh_hit(const Collection<T> &collection, const Ray<T> &ray, const unsigned int prim_id, const T distance, const Vec3r<T> &normal) {
+inline void assert_traverse_bvh_hit(const Collection<T> &collection, const Ray<T> &ray, const unsigned int prim_id,
+                                    const T distance, const Vec3r<T> &normal) {
 
   BVH bvh(collection);
   SAHBinnedBuilder builder;
@@ -62,7 +87,7 @@ void test_traverse_bvh_hit(const Collection<T> &collection, const Ray<T> &ray, c
 }
 
 template<typename T, template<typename> typename Collection>
-void test_traverse_bvh_no_hit(const Collection<T> &collection, const Ray<T> &ray) {
+inline void assert_traverse_bvh_no_hit(const Collection<T> &collection, const Ray<T> &ray) {
 
   BVH bvh(collection);
   SAHBinnedBuilder builder;
