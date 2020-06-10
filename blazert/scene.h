@@ -7,9 +7,9 @@
 #include <blazert/bvh/options.h>
 #include <blazert/datatypes.h>
 
-#include <blazert/primitives/cylinder.h>
-#include <blazert/primitives/plane.h>
-#include <blazert/primitives/sphere.h>
+//#include <blazert/primitives/cylinder.h>
+//#include <blazert/primitives/plane.h>
+//#include <blazert/primitives/sphere.h>
 #include <blazert/primitives/trimesh.h>
 
 #include <blazert/bvh/builder.h>
@@ -94,7 +94,7 @@ public:
 
     if (has_triangles) {
       SAHBinnedBuilder builder;
-      builder.build(triangles_bvh, build_options);
+      builder.build(*triangles_bvh, build_options);
     }
 
 //    if (has_spheres) {
@@ -124,7 +124,7 @@ inline bool intersect1(const BlazertScene<T> &scene, const Ray<T> &ray, RayHit<T
 
   // Do the traversal for all primitives ...
   if (scene.has_triangles) {
-    const bool hit_mesh = traverse(scene.triangles_bvh, ray, temp_rayhit);
+    const bool hit_mesh = traverse(*scene.triangles_bvh, ray, temp_rayhit);
     if (hit_mesh) {
       rayhit = temp_rayhit;
       rayhit.geom_id = scene.triangles_geom_id;
