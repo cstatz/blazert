@@ -75,7 +75,7 @@ public:
   typedef CylinderIntersector<T, CylinderCollection> intersector;
   typedef Cylinder<T> primitive_type;
 
-  const Vec3rList<T> &centers;// center of bottom ellipse
+  const Vec3rList<T> &centers;
   const std::vector<T> &semi_axes_a;
   const std::vector<T> &semi_axes_b;
   const std::vector<T> &heights;
@@ -105,8 +105,7 @@ public:
   }
 
   inline Vec3r<T> get_primitive_center(const unsigned int prim_id) const {
-    // centers is on the bottom of the cylinder
-    return centers[prim_id] + rotations[prim_id] * Vec3r<T>{0, 0, heights[prim_id] / static_cast<T>(2)};
+    return centers[prim_id];
   }
 
 private:
@@ -119,28 +118,29 @@ private:
 
     const Vec3r<T> &a1_tmp{a, 0, 0};
     const Vec3r<T> &b1_tmp{0, b, 0};
-    const Vec3r<T> &h1_tmp{0, 0, height};
-    const Vec3r<T> &a2_tmp{a, 0, 0};
-    const Vec3r<T> &b2_tmp{0, b, 0};
-    //    const Vec3r<T> &h2_tmp{0, 0, height};
+    const Vec3r<T> &h1_tmp{0, 0, static_cast<T>(height/2.)};
+//    const Vec3r<T> &a2_tmp{a, 0, 0};
+//    const Vec3r<T> &b2_tmp{0, b, 0};
+//    const Vec3r<T> &h2_tmp{0, 0, static_cast<T>(height/2.)};
 
     // These vectors describe the cylinder in the global coordinate system
     const Vec3r<T> &a1 = center + rotation * a1_tmp;
     const Vec3r<T> &b1 = center + rotation * b1_tmp;
     const Vec3r<T> &h1 = center + rotation * h1_tmp;
 
-    const Vec3r<T> &a2 = center - rotation * a2_tmp;
-    const Vec3r<T> &b2 = center - rotation * b2_tmp;
+    const Vec3r<T> &a2 = center - rotation * a1_tmp;
+    const Vec3r<T> &b2 = center - rotation * b1_tmp;
+    const Vec3r<T> &h2 = center - rotation * h1_tmp;
 
     Vec3r<T> min{};
     Vec3r<T> max{};
     // maximum / minimum is also the max/min of the bounding box
-    min[0] = std::min({a1[0], b1[0], a2[0], b2[0], h1[0]});
-    min[1] = std::min({a1[1], b1[1], a2[1], b2[1], h1[1]});
-    min[2] = std::min({a1[2], b1[2], a2[2], b2[2], h1[2]});
-    max[0] = std::max({a1[0], b1[0], a2[0], b2[0], h1[0]});
-    max[1] = std::max({a1[1], b1[1], a2[1], b2[1], h1[1]});
-    max[2] = std::max({a1[2], b1[2], a2[2], b2[2], h1[2]});
+    min[0] = std::min({a1[0], b1[0], a2[0], b2[0], h1[0], h2[0]});
+    min[1] = std::min({a1[1], b1[1], a2[1], b2[1], h1[1], h2[1]});
+    min[2] = std::min({a1[2], b1[2], a2[2], b2[2], h1[2], h2[2]});
+    max[0] = std::max({a1[0], b1[0], a2[0], b2[0], h1[0], h2[0]});
+    max[1] = std::max({a1[1], b1[1], a2[1], b2[1], h1[1], h2[1]});
+    max[2] = std::max({a1[2], b1[2], a2[2], b2[2], h1[2], h2[2]});
 
     return std::make_pair(std::move(min), std::move(max));
   }
@@ -181,18 +181,19 @@ inline void prepare_traversal(CylinderIntersector<T, Collection> &i, const Ray<T
 template<typename T, template<typename> typename Collection>
 inline bool intersect_primitive(CylinderIntersector<T, Collection> &i, const Cylinder<T> &cylinder, const Ray<T> ray) {
 
-  const Vec3r<T> &vtmp = Vec3r<T>{0,0,cylinder.height/2.};
-  const Vec3r<T> &center = cylinder.center + vtmp;
+
   const T semi_axis_a = cylinder.semi_axis_a;
   const T semi_axis_b = cylinder.semi_axis_b;
   const T height = cylinder.height;
   const Mat3r<T> &rotation = cylinder.rotation;
+  const Vec3r<T> &vtmp = Vec3r<T>{0,0, static_cast<T>(height/2.)};
+  const Vec3r<T> &center = cylinder.center - rotation*vtmp;
+
   const Mat3r<T> &inverse_rotation = trans(rotation);
 
   // center on coordinate system of object
   const Vec3r<T> &org = inverse_rotation * (i.ray_org - center);
   const Vec3r<T> &dir = inverse_rotation * i.ray_dir;
-  //const Vec3r<T> &center = inverse_rotation * center_;
 
   // cylinder does not have to have a circle as base area, can also be ellipse
   // test in which area the source is
@@ -225,7 +226,7 @@ inline bool intersect_primitive(CylinderIntersector<T, Collection> &i, const Cyl
    * TODO: This legacy code which works...but is not nice at all. Needs refactoring!
    */
   // area 1
-  if (z0 > h) {
+  if (z0 > h/2) {
     if (l == 0)
       return false;
     const T t0 = (h - z0) / l;
