@@ -79,19 +79,23 @@ public:
 
   [[nodiscard]] inline unsigned int size() const { return centers.size(); }
 
-  inline std::pair<Vec3r<T>, Vec3r<T>> get_primitive_bounding_box(const unsigned int prim_id) const {
+  [[nodiscard]] inline std::pair<Vec3r<T>, Vec3r<T>>
+  get_primitive_bounding_box(const unsigned int prim_id) const noexcept {
     return box[prim_id];
   }
 
-  inline Vec3r<T> get_primitive_center(const unsigned int prim_id) const { return centers[prim_id]; }
+  [[nodiscard]] inline Vec3r<T> get_primitive_center(const unsigned int prim_id) const noexcept {
+    return centers[prim_id];
+  }
 
-  T distance_to_surface(const Vec3r<T> &point, const unsigned int prim_index) {
+  [[nodiscard]] T distance_to_surface(const Vec3r<T> &point, const unsigned int prim_index) const noexcept {
     const Vec3r<T> &distance = centers[prim_index] - point;
     return abs(norm(distance) - radii[prim_index]);
   }
 
 private:
-  inline std::pair<Vec3r<T>, Vec3r<T>> pre_compute_bounding_box(const unsigned int prim_id) const {
+  [[nodiscard]] inline std::pair<Vec3r<T>, Vec3r<T>>
+  pre_compute_bounding_box(const unsigned int prim_id) const noexcept {
 
     Vec3r<T> min = centers[prim_id] - radii[prim_id];
     Vec3r<T> max = centers[prim_id] + radii[prim_id];
