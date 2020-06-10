@@ -45,8 +45,8 @@ bool LoadObj(Mesh &mesh, const char *filename) {
 
 int main(int argc, char **argv) {
 
-  int width = 8;
-  int height = 8;
+  int width = 4 * 8192;
+  int height = 4 * 8192;
 
   std::string objFilename = "../../../examples/models/cornellbox_suzanne_lucy.obj";
 
@@ -65,9 +65,9 @@ int main(int argc, char **argv) {
 
   std::cout << statistics << std::endl;
 
-//#ifdef _OPENMP
-//#pragma omp parallel for schedule(dynamic, 1)
-//#endif
+#ifdef _OPENMP
+#pragma omp parallel for schedule(dynamic, 1)
+#endif
   for (int y = 0; y < height; y++) {
     for (int x = 0; x < width; x++) {
 

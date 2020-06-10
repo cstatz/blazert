@@ -11,7 +11,7 @@
 namespace blazert {
 
 template<typename T, typename Node>
-inline bool intersect_node(T &min_distance /* inout */, T &max_distance /* inout*/, const Node &node, const Ray<T> &ray) {
+inline bool intersect_node(T &min_distance /* inout */, T &max_distance /* inout*/, const Node &node, const Ray<T> &ray) noexcept {
 
   // This is hard to beat.
   constexpr T l1 = static_cast<T>(1) + static_cast<T>(4) * std::numeric_limits<T>::epsilon();
@@ -32,7 +32,7 @@ inline bool intersect_node(T &min_distance /* inout */, T &max_distance /* inout
 }
 
 template<typename Node, typename Intersector, typename Ray>
-inline bool intersect_leaf(const Node &node, Intersector &intersector, const Ray &ray) {
+inline bool intersect_leaf(const Node &node, Intersector &intersector, const Ray &ray) noexcept {
 
   bool hit = false;
 

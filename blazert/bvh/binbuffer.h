@@ -55,10 +55,10 @@ inline BinBuffer<T> sort_collection_into_bins(const Collection &p, Iterator begi
     const auto center = p.get_primitive_center(*it);
 
     // assert center > min
-    const Vec3ui normalized_center{(center - min) * inv_size * (bins.size)};// 0 .. 63
+    const Vec3r<T> normalized_center{(center - min) * inv_size * (bins.size-1)};// 0 .. 63
 
     for (unsigned int j = 0; j < 3; j++) {
-      unsigned int idx = std::min(bins.size - 1, unsigned(std::max(static_cast<unsigned int>(0), normalized_center[j])));
+      unsigned int idx = std::min(bins.size - 1, unsigned(std::max(static_cast<unsigned int>(0), unsigned(std::round(normalized_center[j])))));
       Bin<T> &bin = bins.bin[j * bins.size + idx];
       bin.count++;
       unity(bin.min, bin.max, bmin, bmax);
