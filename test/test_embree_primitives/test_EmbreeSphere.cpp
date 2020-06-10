@@ -1,11 +1,13 @@
 //
 // Created by ogarten on 1/23/19.
 //
+/*
 #include <third_party/doctest/doctest/doctest.h>
 #include <blazert/embree/primitives/EmbreeSphere.h>
 
 using namespace blazert;
 using namespace doctest;
+
 
 TEST_CASE_TEMPLATE("EmbreeSphere", T, float) {
   auto device = rtcNewDevice("verbose=0,start_threads=1,threads=4,set_affinity=1");
@@ -214,3 +216,4 @@ TEST_CASE_TEMPLATE("EmbreeSphere", T, float) {
     }
   }
 }
+*/
