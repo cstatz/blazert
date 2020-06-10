@@ -80,17 +80,8 @@ struct Mesh {
   Vec3rList<T> vertices;
   Vec3iList faces;/// [xyz] * num_vertices
   std::vector<unsigned int> material_ids;
-  Mat3rList<T> facevarying_normals;/// [xyz] * 3(triangle) * num_faces
   Mat3rList<T> facevarying_uvs;    /// [xyz] * 3(triangle) * num_faces -> this may be Mat2rList<T>
 };
-
-template<typename T>
-void calc_normal(Vec3r<T> &N, const Vec3r<T> &v0, const Vec3r<T> &v1, const Vec3r<T> &v2) {
-  const Vec3r<T> v10{v1 - v0};
-  const Vec3r<T> v20{v2 - v0};
-
-  N = normalize(cross(v20, v10));
-}
 
 class EmissiveFace {
 public:
@@ -229,45 +220,6 @@ bool LoadObj(Mesh<T> &mesh, std::vector<tinyobj::material_t> &materials, const c
 
     vertexIdxOffset = mesh.vertices.size();
 
-    if (!shapes[i].mesh.normals.empty()) {
-      for (size_t f = 0; f < shapes[i].mesh.indices.size() / 3; f++) {
-
-        const int f0 = shapes[i].mesh.indices[3 * f + 0];
-        const int f1 = shapes[i].mesh.indices[3 * f + 1];
-        const int f2 = shapes[i].mesh.indices[3 * f + 2];
-
-        const Vec3r<T> n0{shapes[i].mesh.normals[3 * f0 + 0], shapes[i].mesh.normals[3 * f0 + 1], shapes[i].mesh.normals[3 * f0 + 2]};
-        const Vec3r<T> n1{shapes[i].mesh.normals[3 * f1 + 0], shapes[i].mesh.normals[3 * f1 + 1], shapes[i].mesh.normals[3 * f1 + 2]};
-        const Vec3r<T> n2{shapes[i].mesh.normals[3 * f2 + 0], shapes[i].mesh.normals[3 * f2 + 1], shapes[i].mesh.normals[3 * f2 + 2]};
-
-        Mat3r<ft> n{};
-        blaze::column<0UL>(n) = n0;
-        blaze::column<1UL>(n) = n1;
-        blaze::column<2UL>(n) = n2;
-        mesh.facevarying_normals.push_back(n);
-      }
-    } else {
-      // calc geometric normal
-      for (size_t f = 0; f < shapes[i].mesh.indices.size() / 3; f++) {
-
-        const int f0 = shapes[i].mesh.indices[3 * f + 0];
-        const int f1 = shapes[i].mesh.indices[3 * f + 1];
-        const int f2 = shapes[i].mesh.indices[3 * f + 2];
-
-        const Vec3r<ft> v0{shapes[i].mesh.positions[3 * f0 + 0], shapes[i].mesh.positions[3 * f0 + 1], shapes[i].mesh.positions[3 * f0 + 2]};
-        const Vec3r<ft> v1{shapes[i].mesh.positions[3 * f1 + 0], shapes[i].mesh.positions[3 * f1 + 1], shapes[i].mesh.positions[3 * f1 + 2]};
-        const Vec3r<ft> v2{shapes[i].mesh.positions[3 * f2 + 0], shapes[i].mesh.positions[3 * f2 + 1], shapes[i].mesh.positions[3 * f2 + 2]};
-
-        Vec3r<ft> N;
-        calc_normal(N, v0, v1, v2);
-        Mat3r<ft> n{};
-        blaze::column<0UL>(n) = N;
-        blaze::column<1UL>(n) = N;
-        blaze::column<2UL>(n) = N;
-        mesh.facevarying_normals.push_back(n);
-      }
-    }
-
     if (shapes[i].mesh.texcoords.size() > 0) {
       for (size_t f = 0; f < shapes[i].mesh.indices.size() / 3; f++) {
 
@@ -329,27 +281,17 @@ void progressBar(int tick, int total, int width = 100) {
 
 /// Check for occlusion
 template<typename T>
-inline bool check_for_occluder(const Vec3r<T> &p1, const Vec3r<T> &p2, const Mesh<T> &mesh, const blazert::BVH<T> &bvh, const blazert::BVHTraceOptions<T> &trace_options) {
+inline bool check_for_occluder(const Vec3r<T> &p1, const Vec3r<T> &p2, const Mesh<T> &mesh, const blazert::BVH<T, TriangleMesh> &bvh) {
 
   static const T ray_eps = T(0.00001);
 
   Vec3r<T> dir{p2 - p1};
   const T dist = length(dir);
-  //std::cout << dist << std::endl;
-  dir = normalize(dir);
 
-  blazert::Ray<T> shadow_ray{p1, dir};
-  shadow_ray.min_hit_distance = ray_eps;
-  shadow_ray.max_hit_distance = dist - ray_eps;
+  const blazert::Ray<T> shadow_ray{p1, dir, ray_eps, dist - ray_eps, false, true};
 
-  blazert::TriangleIntersector<T> triangle_intersector{mesh.vertices, mesh.faces};
-  blazert::RayHit<T> rayhit{};
-  const bool hit = traverse(bvh, shadow_ray, triangle_intersector, rayhit, trace_options);
-
-  if (!hit) {
-    return false;
-  }
-  return true;
+  blazert::RayHit<T> rayhit;
+  return traverse(bvh, shadow_ray, rayhit);
 }
 
 int main(int argc, char **argv) {
@@ -380,8 +322,6 @@ int main(int argc, char **argv) {
 
 #ifdef _OPENMP
   std::cout << "using OpenMP: yes!\n";
-#else
-  std::cout << "Using OpenMP: no!\n";
 #endif
 
   auto *mesh = new Mesh<ft>;
@@ -401,19 +341,16 @@ int main(int argc, char **argv) {
             << "    # of leaf primitives: " << build_options.min_leaf_primitives << "\n"
             << "    SAH binsize         : " << build_options.bin_size << "\n";
 
-  blazert::TriangleMesh<ft> triangle_mesh(mesh->vertices, mesh->faces);
-  blazert::TriangleSAHPred<ft> triangle_pred(mesh->vertices, mesh->faces);
+  blazert::TriangleMesh triangle_mesh(mesh->vertices, mesh->faces);
+  blazert::BVH accel(triangle_mesh);
 
   std::cout << "num_triangles = " << mesh->faces.size() << "\n";
-  //printf("faces = %p\n", mesh.faces);
 
-  blazert::BVH<ft> accel;
-  auto build_statistics = accel.build(triangle_mesh, triangle_pred, build_options);
+  blazert::SAHBinnedBuilder builder;
+  auto build_statistics = builder.build(accel, build_options);
 
-  //printf("  BVH build time: %f secs\n", t.msec() / 1000.0);
 
   std::vector<float> rgb(width * height * 3, 0.0f);
-  blazert::BVHTraceOptions<ft> trace_options;
 
   std::srand(0);
 
@@ -433,7 +370,7 @@ int main(int argc, char **argv) {
         Vec3r<ft> rayDir{(px / static_cast<ft>(width)) - static_cast<ft>(0.5),
                          (py / static_cast<ft>(height)) - static_cast<ft>(0.5),
                          static_cast<ft>(-1.0)};
-        rayDir = normalize(rayDir);
+        //rayDir = normalize(rayDir);
 
         Vec3r<ft> color{0., 0., 0.};
         Vec3r<ft> weight{1., 1., 1.};
@@ -452,33 +389,20 @@ int main(int argc, char **argv) {
           }
           weight *= (1.0 / rr_fac);
 
-          blazert::Ray<ft> ray{rayOrg, rayDir};
-          ft kFar{1.0e+30};
-          ray.min_hit_distance = ft(0.001);
-          ray.max_hit_distance = kFar;
+          const blazert::Ray<ft> ray{rayOrg, rayDir, ft(0.001)};
 
-          blazert::TriangleIntersector<ft> triangle_intersector{mesh->vertices, mesh->faces};
-          blazert::RayHit<ft> rayhit{};
-          const bool hit = traverse(accel, ray, triangle_intersector, rayhit, trace_options);
-
-          if (!hit) {
+          blazert::RayHit<ft> rayhit;
+          if (!traverse(accel, ray, rayhit))
             break;
-          }
 
-          rayOrg += (rayDir * rayhit.hit_distance);
+          rayOrg += (ray.direction * rayhit.hit_distance);
 
           unsigned int fid = rayhit.prim_id;
-          Vec3r<ft> norm{0, 0, 0};
-          if (!mesh->facevarying_normals.empty()) {
-            Mat3r<ft> normals{mesh->facevarying_normals[fid]};
-            ft u = rayhit.uv[0];
-            ft v = rayhit.uv[1];
-            norm = normalize((1.0 - u - v) * blaze::column<0UL>(normals) + u * blaze::column<1UL>(normals) + v * blaze::column<2UL>(normals));
-          }
+          Vec3r<ft> norm = -rayhit.normal;
 
           // Flip normal torwards incoming ray for backface shading
           Vec3r<ft> originalNorm{norm};
-          if (dot(norm, rayDir) > static_cast<ft>(0.)) {
+          if (dot(norm, ray.direction) > static_cast<ft>(0.)) {
             norm *= static_cast<ft>(-1.);
           }
 
@@ -493,12 +417,12 @@ int main(int argc, char **argv) {
           ft ior = mat.ior;
 
           // Calculate fresnel factor based on ior.
-          ft inside = sign(dot(rayDir, originalNorm));// 1 for inside, -1 for outside
+          ft inside = sign(dot(ray.direction, originalNorm));// 1 for inside, -1 for outside
           // Assume ior of medium outside of objects = 1.0
           ft n1 = inside < 0 ? static_cast<ft>(1.0) / ior : ior;
           ft n2 = static_cast<ft>(1.0) / n1;
 
-          ft fresnel = fresnel_schlick(Vec3r<ft>{-rayDir}, norm, static_cast<ft>((n1 - n2) / (n1 + n2)));
+          ft fresnel = fresnel_schlick(Vec3r<ft>{-ray.direction}, norm, static_cast<ft>((n1 - n2) / (n1 + n2)));
 
           // Compute probabilities for each surface interaction.
           // Specular is just regular reflectiveness * fresnel.
@@ -527,7 +451,7 @@ int main(int argc, char **argv) {
           Vec3r<ft> outDir;
           // REFLECT glossy
           if (rand < rhoS) {
-            outDir = reflect(rayDir, norm);
+            outDir = reflect(ray.direction, norm);
             weight *= specularColor;
             do_emission = true;
           }
@@ -541,7 +465,7 @@ int main(int argc, char **argv) {
             if (lpdf > static_cast<ft>(0.0)) {
               ft cosTheta = std::abs(dot(ldir, norm));
               Vec3r<ft> directLight{brdfEval * ll * cosTheta / lpdf};
-              bool visible = !check_for_occluder(rayOrg, Vec3r<ft>{rayOrg + ldir * ldist}, *mesh, accel, trace_options);
+              bool visible = !check_for_occluder(rayOrg, Vec3r<ft>{rayOrg + ldir * ldist}, *mesh, accel);
 
               Vec3r<ft> temp_color = directLight * weight;
               temp_color *=  static_cast<ft>(visible);
@@ -555,7 +479,7 @@ int main(int argc, char **argv) {
           }
           // REFRACT
           else if (rand < (rhoD + rhoS + rhoR)) {
-            outDir = refract(rayDir, Vec3r<ft>{-inside * originalNorm}, n1);
+            outDir = refract(ray.direction, Vec3r<ft>{-inside * originalNorm}, n1);
             weight *= refractionColor;
             do_emission = true;
           }
@@ -564,7 +488,7 @@ int main(int argc, char **argv) {
             // Weight light by cosine factor (surface emits most light in normal
             // direction)
             if (do_emission) {
-              color += std::max(dot(originalNorm, -rayDir), static_cast<ft>(0.0)) * (emissiveColor * weight);
+              color += std::max(dot(originalNorm, -ray.direction), static_cast<ft>(0.0)) * (emissiveColor * weight);
             }
             break;
           }

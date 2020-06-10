@@ -134,13 +134,13 @@ inline std::pair<unsigned int, Iterator> split(const Collection<T> &collection, 
   for (unsigned int axis_try = 0; axis_try < 3; axis_try++) {
 
     mid = std::partition(begin, end,
-                         [&collection, &cut_axis, &cut_pos](const auto it) { return collection.get_primitive_center(it)[cut_axis] < cut_pos[cut_axis]; });
+                         [&collection, cut_axis, &cut_pos](const auto it) { return collection.get_primitive_center(it)[cut_axis] < cut_pos[cut_axis]; });
 
     if ((std::distance(begin,mid) == 0) || (std::distance(mid,end) == 0)) {
       statistics.bad_splits++;
       mid = begin + (std::distance(begin, end) >> 1);
-      cut_axis = ++cut_axis % 3;
-      //pair.first = ++pair.first % 3;
+      cut_axis++;
+      cut_axis %= 3;
     } else
       break;
   }

@@ -124,17 +124,19 @@ public:
 };
 
 template<typename T, template<typename> typename Collection>
-inline void post_traversal(const TriangleIntersector<T, Collection> &i, RayHit<T> &rayhit) {
+inline void post_traversal(const TriangleIntersector<T, Collection> &i, RayHit<T> &rayhit) noexcept {
   rayhit.hit_distance = i.hit_distance;
   rayhit.uv = i.uv;
   rayhit.prim_id = i.prim_id;
   const Vec3ui &f = i.collection.faces[i.prim_id];
   // Barycentric interpolation: a =  u * p0 + v * p1 + (1-u-v) * p2;
-  rayhit.normal = i.uv[0] * i.collection.vertex_normals[f[0]] + i.uv[1] * i.collection.vertex_normals[f[1]] + (static_cast<T>(1.) - i.uv[0] - i.uv[1]) * i.collection.vertex_normals[f[2]];
+  rayhit.normal = normalize((static_cast<T>(1.) - i.uv[0] - i.uv[1]) * i.collection.vertex_normals[f[0]] +
+                                                            i.uv[0]  * i.collection.vertex_normals[f[1]] +
+                                                            i.uv[1]  * i.collection.vertex_normals[f[2]]);
 }
 
 template<typename T, template<typename> typename Collection>
-inline void prepare_traversal(TriangleIntersector<T, Collection> &i, const Ray<T> &ray) {
+inline void prepare_traversal(TriangleIntersector<T, Collection> &i, const Ray<T> &ray) noexcept {
   i.min_hit_distance = ray.min_hit_distance;
   i.hit_distance = ray.max_hit_distance;
   i.uv = static_cast<T>(0.);
@@ -142,7 +144,7 @@ inline void prepare_traversal(TriangleIntersector<T, Collection> &i, const Ray<T
 }
 
 template<typename T, template<typename> typename Collection>
-inline bool intersect_primitive(TriangleIntersector<T, Collection> &i, const Triangle<T> &tri, const Ray<T> &ray) {
+inline bool intersect_primitive(TriangleIntersector<T, Collection> &i, const Triangle<T> &tri, const Ray<T> &ray) noexcept {
   static constexpr T tolerance = 4 * std::numeric_limits<T>::epsilon();
 
   const auto &e2 = tri.b;//tri.c - tri.a;
