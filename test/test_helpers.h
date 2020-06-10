@@ -12,7 +12,7 @@
 
 #include "pmmintrin.h"
 #include "xmmintrin.h"
-#include <blazert/blazert.h>
+#include <blazert/datatypes.h>
 
 using namespace std::literals::complex_literals;
 using namespace blazert;

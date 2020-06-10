@@ -15,12 +15,13 @@
 using namespace blazert;
 using namespace doctest;
 
+
 TEST_CASE_TEMPLATE("Scene with Sphere", T, float, double) {
   SUBCASE("Intersection") {
     auto centers = std::make_unique<Vec3rList<T>>();
     auto radiuss = std::make_unique<std::vector<T>>();
 
-    centers->emplace_back(Vec3r<T>{0.});
+    centers->emplace_back(Vec3r<T>{0., 0., 0.});
     radiuss->emplace_back(1.);
 
     Vec3r<T> org{2.f, 0.f, 0.f};
@@ -93,7 +94,7 @@ TEST_CASE_TEMPLATE("Scene with Cylinder", T, float, double) {
     heights->emplace_back(2.);
     rotations->emplace_back(blaze::IdentityMatrix<T>(3UL));
 
-    Vec3r<T> org{0.f, 0.f, 5.f};
+    Vec3r<T> org{0.f, 0.f, 4.f};
     Vec3r<T> dir{0.f, 0.f, -1.f};
 
     Scene<T> scene;

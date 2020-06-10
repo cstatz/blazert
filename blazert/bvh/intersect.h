@@ -27,7 +27,6 @@ inline bool intersect_node(T &min_distance /* inout */, T &max_distance /* inout
     min_distance = std::max(min_, min_distance);
     max_distance = std::min(max_, max_distance);
   }
-
   return (min_distance <= max_distance);
 }
 
@@ -38,7 +37,6 @@ inline bool intersect_leaf(const Node &node, Intersector &intersector, const Ray
 
   for (auto &primitive: node.primitives) {
     hit += intersect_primitive(intersector, primitive, ray);
-
     if (hit && ray.any_hit) {
       break;
     }

@@ -1,13 +1,14 @@
 //
 // Created by ogarten on 14/05/2020.
 //
-
+/*
 #include <blazert/embree/primitives/EmbreePlane.h>
 #include <third_party/doctest/doctest/doctest.h>
 #include "../test_helpers.h"
 
 using namespace blazert;
 using namespace doctest;
+
 
 TEST_CASE_TEMPLATE("EmbreePlane", T, float) {
 
@@ -772,3 +773,4 @@ TEST_CASE_TEMPLATE("EmbreePlane", T, float) {
     }
   }
 }
+ */
