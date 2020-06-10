@@ -124,7 +124,7 @@ public:
 };
 
 template<typename T, template<typename> typename Collection>
-inline void post_traversal(const TriangleIntersector<T, Collection> &i, RayHit<T> &rayhit) {
+inline void post_traversal(const TriangleIntersector<T, Collection> &i, RayHit<T> &rayhit) noexcept {
   rayhit.hit_distance = i.hit_distance;
   rayhit.uv = i.uv;
   rayhit.prim_id = i.prim_id;
@@ -136,7 +136,7 @@ inline void post_traversal(const TriangleIntersector<T, Collection> &i, RayHit<T
 }
 
 template<typename T, template<typename> typename Collection>
-inline void prepare_traversal(TriangleIntersector<T, Collection> &i, const Ray<T> &ray) {
+inline void prepare_traversal(TriangleIntersector<T, Collection> &i, const Ray<T> &ray) noexcept {
   i.min_hit_distance = ray.min_hit_distance;
   i.hit_distance = ray.max_hit_distance;
   i.uv = static_cast<T>(0.);
@@ -144,7 +144,7 @@ inline void prepare_traversal(TriangleIntersector<T, Collection> &i, const Ray<T
 }
 
 template<typename T, template<typename> typename Collection>
-inline bool intersect_primitive(TriangleIntersector<T, Collection> &i, const Triangle<T> &tri, const Ray<T> &ray) {
+inline bool intersect_primitive(TriangleIntersector<T, Collection> &i, const Triangle<T> &tri, const Ray<T> &ray) noexcept {
   static constexpr T tolerance = 4 * std::numeric_limits<T>::epsilon();
 
   const auto &e2 = tri.b;//tri.c - tri.a;

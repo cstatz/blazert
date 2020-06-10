@@ -49,14 +49,14 @@ public:
 };
 
 template<typename T, template<typename> typename Collection>
-inline bool traverse(const BVH<T, Collection> &bvh, const Ray<T> &ray, RayHit<T> &rayhit) {
+inline bool traverse(const BVH<T, Collection> &bvh, const Ray<T> &ray, RayHit<T> &rayhit) noexcept {
   typename Collection<T>::intersector intersector(bvh.collection);
   return traverse(bvh, ray, rayhit, intersector);
 }
 
 template<typename T, template<typename> typename Collection>
 inline bool traverse(const BVH<T, Collection> &bvh, const Ray<T> &ray, RayHit<T> &rayhit,
-                     typename Collection<T>::intersector &intersector) {
+                     typename Collection<T>::intersector &intersector) noexcept {
 
   Stack<unsigned int, BLAZERT_MAX_TREE_DEPTH> node_stack;
   node_stack.push_back(0);
