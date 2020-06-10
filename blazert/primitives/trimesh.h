@@ -130,7 +130,9 @@ inline void post_traversal(const TriangleIntersector<T, Collection> &i, RayHit<T
   rayhit.prim_id = i.prim_id;
   const Vec3ui &f = i.collection.faces[i.prim_id];
   // Barycentric interpolation: a =  u * p0 + v * p1 + (1-u-v) * p2;
-  rayhit.normal = i.uv[0] * i.collection.vertex_normals[f[0]] + i.uv[1] * i.collection.vertex_normals[f[1]] + (static_cast<T>(1.) - i.uv[0] - i.uv[1]) * i.collection.vertex_normals[f[2]];
+  rayhit.normal = normalize((static_cast<T>(1.) - i.uv[0] - i.uv[1]) * i.collection.vertex_normals[f[0]] +
+                                                            i.uv[0]  * i.collection.vertex_normals[f[1]] +
+                                                            i.uv[1]  * i.collection.vertex_normals[f[2]]);
 }
 
 template<typename T, template<typename> typename Collection>
