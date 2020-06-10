@@ -35,14 +35,17 @@ public:
   size_t triangles_geom_id = -1;
   bool has_triangles = false;
 
+  std::unique_ptr<SphereCollection<T>> sphere_collection;
   std::unique_ptr<BVH<T, SphereCollection>> spheres_bvh;
   size_t spheres_geom_id = -1;
   bool has_spheres = false;
 
+  std::unique_ptr<PlaneCollection<T>> plane_collection;
   std::unique_ptr<BVH<T, PlaneCollection>> planes_bvh;
   size_t planes_geom_id = -1;
   bool has_planes = false;
 
+  std::unique_ptr<CylinderCollection<T>> cylinder_collection; // these are needed for lifetime management...
   std::unique_ptr<BVH<T, CylinderCollection>> cylinders_bvh;
   size_t cylinders_geom_id = -1;
   bool has_cylinders = false;
@@ -190,8 +193,8 @@ template<typename T>
 unsigned int BlazertScene<T>::add_spheres(const Vec3rList<T> &centers, const std::vector<T> &radii) {
 
   if ((!has_spheres) && (!has_been_committed)) {
-    auto sphere_collection = SphereCollection<T>(centers, radii);
-    spheres_bvh = std::make_unique<BVH<T, SphereCollection>>(sphere_collection);
+    sphere_collection = std::make_unique<SphereCollection<T>>(centers, radii);
+    spheres_bvh = std::make_unique<BVH<T, SphereCollection>>(*sphere_collection);
 
     has_spheres = true;
     spheres_geom_id = geometries++;
@@ -205,8 +208,8 @@ template<typename T>
 unsigned int BlazertScene<T>::add_planes(const Vec3rList<T> &centers, const std::vector<T> &dxs, const std::vector<T> &dys, const Mat3rList<T> &rotations) {
 
   if ((!has_planes) && (!has_been_committed)) {
-    auto plane_collection = PlaneCollection(centers, dxs, dys, rotations);
-    planes_bvh = std::make_unique<BVH<T, PlaneCollection>>(plane_collection);
+    plane_collection = std::make_unique<PlaneCollection<T>>(centers, dxs, dys, rotations);
+    planes_bvh = std::make_unique<BVH<T, PlaneCollection>>(*plane_collection);
 
     has_planes = true;
     planes_geom_id = geometries++;
@@ -219,8 +222,8 @@ template<typename T>
 unsigned int BlazertScene<T>::add_cylinders(const Vec3rList<T> &centers, const std::vector<T> &semi_axes_a, const std::vector<T> &semi_axes_b,
                                             const std::vector<T> &heights, const Mat3rList<T> &rotations) {
   if ((!has_cylinders) && (!has_been_committed)) {
-    auto cylinder_collection = CylinderCollection(centers, semi_axes_a, semi_axes_b, heights, rotations);
-    cylinders_bvh = std::make_unique<BVH<T, CylinderCollection>>(cylinder_collection);
+    cylinder_collection = std::make_unique<CylinderCollection<T>>(centers, semi_axes_a, semi_axes_b, heights, rotations);
+    cylinders_bvh = std::make_unique<BVH<T, CylinderCollection>>(*cylinder_collection);
     has_cylinders = true;
 
     cylinders_geom_id = geometries++;

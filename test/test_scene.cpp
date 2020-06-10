@@ -30,22 +30,22 @@ TEST_CASE_TEMPLATE("Scene with Sphere", T, float, double) {
     Scene<T> scene;
     unsigned int geom_id = scene.add_spheres(*centers, *radiuss);
     scene.commit();
-//
-//    const Ray<T> ray{org, dir};
-//    RayHit<T> rayhit;
 
-//    const bool hit = intersect1(scene, ray, rayhit);
-//
-//    CHECK(geom_id == 0);
-//    CHECK(geom_id == rayhit.geom_id);
-//    CHECK(hit);
-//    CHECK(rayhit.hit_distance == Approx(1));
-//    CHECK(rayhit.normal[0] == Approx(1));
-//    CHECK(rayhit.normal[1] == Approx(0));
-//    CHECK(rayhit.normal[2] == Approx(0));
+    const Ray<T> ray{org, dir};
+    RayHit<T> rayhit;
+
+    const bool hit = intersect1(scene, ray, rayhit);
+
+    CHECK(geom_id == 0);
+    CHECK(geom_id == rayhit.geom_id);
+    CHECK(hit);
+    CHECK(rayhit.hit_distance == Approx(1));
+    CHECK(rayhit.normal[0] == Approx(1));
+    CHECK(rayhit.normal[1] == Approx(0));
+    CHECK(rayhit.normal[2] == Approx(0));
   }
 }
-/*
+
 TEST_CASE_TEMPLATE("Scene with Plane", T, float, double) {
   SUBCASE("Intersection") {
     auto centers = std::make_unique<Vec3rList<T>>();
@@ -94,7 +94,7 @@ TEST_CASE_TEMPLATE("Scene with Cylinder", T, float, double) {
     heights->emplace_back(2.);
     rotations->emplace_back(blaze::IdentityMatrix<T>(3UL));
 
-    Vec3r<T> org{0.f, 0.f, 5.f};
+    Vec3r<T> org{0.f, 0.f, 4.f};
     Vec3r<T> dir{0.f, 0.f, -1.f};
 
     Scene<T> scene;
@@ -164,4 +164,3 @@ TEST_CASE_TEMPLATE("Scene with 2 different primitives", T, float, double) {
     CHECK(rayhit.normal[2] == Approx(1));
   }
 }
-*/
