@@ -38,7 +38,8 @@ public:
   Plane &operator=(const Plane &rhs) = delete;
 };
 
-template<typename T, template<typename A> typename Collection>
+template<typename T, template<typename A> typename Collection,
+         typename = std::enable_if_t<std::is_same<typename Collection<T>::primitive_type, Plane<T>>::value>>
 inline Plane<T> primitive_from_collection(const Collection<T> &collection, const unsigned int prim_idx) {
 
   const Vec3r<T> &center = collection.centers[prim_idx];

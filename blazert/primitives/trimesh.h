@@ -24,11 +24,13 @@ struct Triangle {
   unsigned int i;
   Triangle() = delete;
   Triangle(Vec3r<T> a, Vec3r<T> b_, Vec3r<T> c_, const unsigned int i) : a(a), b(c_ - a), c(a - b_), i(i) {}
-  Triangle(Triangle &&rhs) noexcept : a(std::move(rhs.a)), b(std::move(rhs.b)), c(std::move(rhs.c)), i(std::exchange(rhs.i, -1)) {}
+  Triangle(Triangle &&rhs) noexcept
+      : a(std::move(rhs.a)), b(std::move(rhs.b)), c(std::move(rhs.c)), i(std::exchange(rhs.i, -1)) {}
   Triangle &operator=(const Triangle &rhs) = delete;
 };
 
-template<typename T, template<typename A> typename Collection>
+template<typename T, template<typename A> typename Collection,
+         typename = std::enable_if_t<std::is_same<typename Collection<T>::primitive_type, Triangle<T>>::value>>
 inline Triangle<T> primitive_from_collection(const Collection<T> &collection, const unsigned int prim_idx) {
 
   const Vec3ui &face = collection.faces[prim_idx];
@@ -95,9 +97,7 @@ public:
     return box[prim_index];
   }
 
-  inline Vec3r<T> get_primitive_center(const unsigned int prim_index) const {
-    return centers[prim_index];
-  }
+  inline Vec3r<T> get_primitive_center(const unsigned int prim_index) const { return centers[prim_index]; }
 
 private:
   inline std::pair<Vec3r<T>, Vec3r<T>> pre_compute_bounding_box(const Vec3ui &face) const {
@@ -131,9 +131,9 @@ inline void post_traversal(const TriangleIntersector<T, Collection> &i, RayHit<T
   rayhit.prim_id = i.prim_id;
   const Vec3ui &f = i.collection.faces[i.prim_id];
   // Barycentric interpolation: a =  u * p0 + v * p1 + (1-u-v) * p2;
-  rayhit.normal = normalize((static_cast<T>(1.) - i.uv[0] - i.uv[1]) * i.collection.vertex_normals[f[0]] +
-                                                            i.uv[0]  * i.collection.vertex_normals[f[1]] +
-                                                            i.uv[1]  * i.collection.vertex_normals[f[2]]);
+  rayhit.normal =
+      normalize((static_cast<T>(1.) - i.uv[0] - i.uv[1]) * i.collection.vertex_normals[f[0]]
+                + i.uv[0] * i.collection.vertex_normals[f[1]] + i.uv[1] * i.collection.vertex_normals[f[2]]);
 }
 
 template<typename T, template<typename> typename Collection>
@@ -145,7 +145,8 @@ inline void prepare_traversal(TriangleIntersector<T, Collection> &i, const Ray<T
 }
 
 template<typename T, template<typename> typename Collection>
-inline bool intersect_primitive(TriangleIntersector<T, Collection> &i, const Triangle<T> &tri, const Ray<T> &ray) noexcept {
+inline bool intersect_primitive(TriangleIntersector<T, Collection> &i, const Triangle<T> &tri,
+                                const Ray<T> &ray) noexcept {
   static constexpr T tolerance = 4 * std::numeric_limits<T>::epsilon();
 
   const auto &e2 = tri.b;//tri.c - tri.a;

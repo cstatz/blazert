@@ -23,14 +23,15 @@ public:
 
 public:
   Sphere() = delete;
-  Sphere(const Vec3r<T> &center, const T radius, const unsigned int prim_id)
+  Sphere(const Vec3r<T> center, const T radius, const unsigned int prim_id)
       : center(center), radius(radius), prim_id(prim_id){};
   Sphere(Sphere &&rhs) noexcept
       : center(std::move(rhs.center)), radius(std::move(rhs.radius)), prim_id(std::exchange(rhs.prim_id, -1)) {}
   Sphere &operator=(const Sphere &rhs) = delete;
 };
 
-template<typename T, template<typename A> typename Collection>
+template<typename T, template<typename A> typename Collection,
+         typename = std::enable_if_t<std::is_same<typename Collection<T>::primitive_type, Sphere<T>>::value>>
 inline Sphere<T> primitive_from_collection(const Collection<T> &collection, const unsigned int prim_idx) {
 
   const Vec3r<T> &center = collection.centers[prim_idx];

@@ -39,7 +39,8 @@ public:
   Cylinder &operator=(const Cylinder &rhs) = delete;
 };
 
-template<typename T, template<typename A> typename Collection>
+template<typename T, template<typename A> typename Collection,
+         typename = std::enable_if_t<std::is_same<typename Collection<T>::primitive_type, Cylinder<T>>::value>>
 inline Cylinder<T> primitive_from_collection(const Collection<T> &collection, const unsigned int prim_idx) {
 
   const Vec3r<T> &center = collection.centers[prim_idx];
@@ -181,7 +182,6 @@ inline bool intersect_primitive(CylinderIntersector<T, Collection> &i, const Cyl
   const T semi_axis_b = cylinder.semi_axis_b;
   const T height = cylinder.height;
   const Mat3r<T> &rotation = cylinder.rotation;
-
 
   const Mat3r<T> &inverse_rotation = trans(rotation);
 
