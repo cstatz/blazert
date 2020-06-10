@@ -27,15 +27,14 @@ template<typename T>
 static void BM_BLAZERT_BUILD_Sphere(benchmark::State& state)
 {
   BVHBuildOptions<T> build_options;
-  BVH<T> triangles_bvh;
 
   const auto os = std::make_unique<OriginSphere<T>>(state.range(0));
-  //std::cout << sizeof(Vec3r<float>) << "\n";
   TriangleMesh triangles(os->vertices, os->triangles);
-  TriangleSAHPred triangles_sah(os->vertices, os->triangles);
+  BVH triangles_bvh(triangles);
 
   for (auto _ : state) {
-    const auto stats = triangles_bvh.build(triangles, triangles_sah, build_options);
+    SAHBinnedBuilder builder;
+    auto stats = builder.build(triangles_bvh, build_options);
     benchmark::DoNotOptimize(stats);
   }
 }
@@ -45,10 +44,10 @@ BENCHMARK_TEMPLATE(BM_BLAZERT_BUILD_Sphere, double)->DenseRange(2,9,1)->Unit(ben
 static void
 BM_EMBREE_BUILD_Sphere(benchmark::State& state)
 {
-  using embreeVec3 = StaticVector<float, 3UL, columnVector, blaze::AlignmentFlag::aligned, blaze::PaddingFlag::padded>;
+  using embreeVec3 = blaze::StaticVector<float, 3UL, blaze::columnVector, blaze::AlignmentFlag::aligned, blaze::PaddingFlag::padded>;
   using embreeVec3List = std::vector<embreeVec3, blaze::AlignedAllocator<embreeVec3>>;
 
-  using embreeVec3ui = StaticVector<unsigned int, 3UL, columnVector, blaze::AlignmentFlag::aligned, blaze::PaddingFlag::padded>;
+  using embreeVec3ui = blaze::StaticVector<unsigned int, 3UL, blaze::columnVector, blaze::AlignmentFlag::aligned, blaze::PaddingFlag::padded>;
   using embreeVec3iList = std::vector<embreeVec3ui,  blaze::AlignedAllocator<embreeVec3ui>>;
 
   auto device = rtcNewDevice("verbose=0,start_threads=1,threads=1,set_affinity=1");

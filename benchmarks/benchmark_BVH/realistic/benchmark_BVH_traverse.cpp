@@ -30,15 +30,14 @@ using namespace blazert;
 template<typename T>
 static void BM_BLAZERT_TRAVERSE_REALISTIC_Sphere(benchmark::State &state) {
   BVHBuildOptions<T> build_options;
-  BVHTraceOptions<T> trace_options;
 
   const auto os = std::make_unique<OriginSphere<T>>(state.range(0));
 
   TriangleMesh triangles(os->vertices, os->triangles);
-  TriangleSAHPred triangles_sah(os->vertices, os->triangles);
 
-  BVH<T> triangles_bvh;
-  auto statistics = triangles_bvh.build(triangles, triangles_sah, build_options);
+  BVH triangles_bvh(triangles);
+  SAHBinnedBuilder builder;
+  auto statistics = builder.build(triangles_bvh, build_options);
   //std::cout << "success = " << success << "\n";
 
   constexpr int height = 4 * 2048;
@@ -47,9 +46,8 @@ static void BM_BLAZERT_TRAVERSE_REALISTIC_Sphere(benchmark::State &state) {
     for (int y = 0; y < height; y++) {
       for (int x = 0; x < width; x++) {
         const blazert::Ray<T> ray{{0.0, 0.0, 10.0}, {static_cast<T>((x / T(width)) - 0.5), static_cast<T>((y / T(height)) - 0.5), T(-1.)}};
-        TriangleIntersector<T> triangle_intersector{os->vertices, os->triangles};
         RayHit<T> temp_rayhit;
-        const auto hit = traverse(triangles_bvh, ray, triangle_intersector, temp_rayhit, trace_options);
+        const auto hit = traverse(triangles_bvh, ray, temp_rayhit);
         benchmark::DoNotOptimize(hit);
       }
     }
@@ -60,10 +58,10 @@ BENCHMARK_TEMPLATE(BM_BLAZERT_TRAVERSE_REALISTIC_Sphere, double)->DenseRange(2, 
 
 static void
 BM_EMBREE_TRAVERSE_REALISTIC_Sphere(benchmark::State &state) {
-  using embreeVec3 = StaticVector<float, 3UL, columnVector, blaze::AlignmentFlag::aligned, blaze::PaddingFlag::padded>;
+  using embreeVec3 = blaze::StaticVector<float, 3UL, blaze::columnVector, blaze::AlignmentFlag::aligned, blaze::PaddingFlag::padded>;
   using embreeVec3List = std::vector<embreeVec3, blaze::AlignedAllocator<embreeVec3>>;
 
-  using embreeVec3ui = StaticVector<unsigned int, 3UL, columnVector, blaze::AlignmentFlag::aligned, blaze::PaddingFlag::padded>;
+  using embreeVec3ui = blaze::StaticVector<unsigned int, 3UL, blaze::columnVector, blaze::AlignmentFlag::aligned, blaze::PaddingFlag::padded>;
   using embreeVec3iList = std::vector<embreeVec3ui,  blaze::AlignedAllocator<embreeVec3ui>>;
 
   auto device = rtcNewDevice("verbose=0,start_threads=1,threads=1,set_affinity=1");
