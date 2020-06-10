@@ -71,7 +71,7 @@ inline void assert_traverse_bvh_hit(const Collection<T> &collection, const Ray<T
 
   auto statistics = builder.build(bvh);
 
-  RayHit<T> rayhit{};
+  RayHit<T> rayhit;
   const bool hit = traverse(bvh, ray, rayhit);
   CHECK(hit == true_hit);
   CHECK(rayhit.prim_id == prim_id);

@@ -231,7 +231,7 @@ inline bool intersect_primitive(CylinderIntersector<T, Collection> &i, const Cyl
     if (t0 < 0)
       return false;
 
-    const Vec3r<T> intercept = org + /*center + */ t0 * dir;
+    const Vec3r<T> intercept = org + t0 * dir;
 
     // intercept point in circle
     if (b * b * intercept[0] * intercept[0] + a * a * intercept[1] * intercept[1] <= a * a * b * b) {
@@ -282,7 +282,7 @@ inline bool intersect_primitive(CylinderIntersector<T, Collection> &i, const Cyl
     if (t0 < 0)
       return false;
 
-    const Vec3r<T> intercept = org + /*center + */ t0 * dir;
+    const Vec3r<T> intercept = org + t0 * dir;
 
     // intercept point in circle
     if (b * b * intercept[0] * intercept[0] + a * a * intercept[1] * intercept[1] <= a * a * b * b) {
@@ -303,8 +303,8 @@ inline bool intersect_primitive(CylinderIntersector<T, Collection> &i, const Cyl
       const T t0 = 1.0 / A * (-B + a * b * sqrt(C));
       const T t1 = -1.0 / A * (B + a * b * sqrt(C));
 
-      const Vec3r<T> intercept0 = org + /*center + */ dir * t0;
-      const Vec3r<T> intercept1 = org + /*center + */ dir * t1;
+      const Vec3r<T> intercept0 = org + dir * t0;
+      const Vec3r<T> intercept1 = org + dir * t1;
       // t1 is right intercept
       if ((t1 > 0) && (t1 < t0) && (intercept1[2] <= h) && (intercept1[2] >= 0)) {
         const Vec3r<T> normal{2 * intercept1[0] / (a * a), 2 * intercept1[1] / (b * b), 0.f};
@@ -335,8 +335,8 @@ inline bool intersect_primitive(CylinderIntersector<T, Collection> &i, const Cyl
     const T t0 = 1.0 / A * (-B + a * b * sqrt(C));
     const T t1 = -1.0 / A * (B + a * b * sqrt(C));
 
-    const Vec3r<T> intercept0 = org + /*center + */ dir * t0;
-    const Vec3r<T> intercept1 = org + /*center + */ dir * t1;
+    const Vec3r<T> intercept0 = org + dir * t0;
+    const Vec3r<T> intercept1 = org + dir * t1;
     // t1 is right intercept
     if ((t1 > 0) && (t1 < t0) && (intercept1[2] <= h) && (intercept1[2] >= 0)) {
       const Vec3r<T> normal{2 * intercept1[0] / (a * a), 2 * intercept1[1] / (b * b), 0.f};
@@ -374,8 +374,8 @@ inline bool intersect_primitive(CylinderIntersector<T, Collection> &i, const Cyl
       const T t0 = 1.0 / A * (-B + a * b * sqrt(C));
       const T t1 = -1.0 / A * (B + a * b * sqrt(C));
 
-      const Vec3r<T> intercept0 = org + /*center + */ dir * t0;
-      const Vec3r<T> intercept1 = org + /*center + */ dir * t1;
+      const Vec3r<T> intercept0 = org + dir * t0;
+      const Vec3r<T> intercept1 = org + dir * t1;
       // t1 is right intercept
       if ((t1 > 0) && (intercept1[2] <= h) && (intercept1[2] >= 0)) {
         const Vec3r<T> normal{2 * intercept1[0] / (a * a), 2 * intercept1[1] / (b * b), 0.f};
@@ -436,8 +436,8 @@ inline bool intersect_primitive(CylinderIntersector<T, Collection> &i, const Cyl
       const T t0 = 1.0 / A * (-B + a * b * sqrt(C));
       const T t1 = -1.0 / A * (B + a * b * sqrt(C));
 
-      const Vec3r<T> intercept0 = org + /*center + */ dir * t0;
-      const Vec3r<T> intercept1 = org + /*center + */ dir * t1;
+      const Vec3r<T> intercept0 = org + dir * t0;
+      const Vec3r<T> intercept1 = org + dir * t1;
       // t1 is right intercept
 
       if ((t1 > 0) && (intercept1[2] <= h) && (intercept1[2] >= 0)) {
