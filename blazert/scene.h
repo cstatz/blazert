@@ -7,9 +7,9 @@
 #include <blazert/bvh/options.h>
 #include <blazert/datatypes.h>
 
-//#include <blazert/primitives/cylinder.h>
-//#include <blazert/primitives/plane.h>
-//#include <blazert/primitives/sphere.h>
+#include <blazert/primitives/cylinder.h>
+#include <blazert/primitives/plane.h>
+#include <blazert/primitives/sphere.h>
 #include <blazert/primitives/trimesh.h>
 
 #include <blazert/bvh/builder.h>
@@ -35,17 +35,17 @@ public:
   size_t triangles_geom_id = -1;
   bool has_triangles = false;
 
-//  std::unique_ptr<BVH<T, Sphere>> spheres_bvh;
-//  size_t spheres_geom_id = -1;
-//  bool has_spheres = false;
-//
-//  std::unique_ptr<BVH<T, Plane>> planes_bvh;
-//  size_t planes_geom_id = -1;
-//  bool has_planes = false;
-//
-//  std::unique_ptr<BVH<T, Cylinder>> cylinders_bvh;
-//  size_t cylinders_geom_id = -1;
-//  bool has_cylinders = false;
+  std::unique_ptr<BVH<T, SphereCollection>> spheres_bvh;
+  size_t spheres_geom_id = -1;
+  bool has_spheres = false;
+
+  std::unique_ptr<BVH<T, PlaneCollection>> planes_bvh;
+  size_t planes_geom_id = -1;
+  bool has_planes = false;
+
+  std::unique_ptr<BVH<T, CylinderCollection>> cylinders_bvh;
+  size_t cylinders_geom_id = -1;
+  bool has_cylinders = false;
 
 public:
   BlazertScene() = default;
@@ -59,36 +59,36 @@ public:
    */
   unsigned int add_mesh(const Vec3rList<T> &vertices, const Vec3iList &triangles);
 
-//  /***
-//   * Adds centers.size() spheres to the scene -> results in centers.size() primitive ideas
-//   * @brief Adds spheres at centers with radii
-//   * @param centers specifies centers of the spheres (needs to be allocated on heap)
-//   * @param radii specifies radii of the spheres (needs to be allocated on heap)
-//   * @return geometry id of the spheres
-//   */
-//  unsigned int add_spheres(const Vec3rList<T> &centers, const std::vector<T> &radii);
-//
-//  /***
-//   * @brief Adds planes at centers with dimensions dxs and dys rotated around rotations
-//   * @param centers center of planes
-//   * @param dxs dimensions in x direction
-//   * @param dys dimensions in y direction
-//   * @param rotations local rotation matrices
-//   * @return geometry id of the planes
-//   */
-//  unsigned int add_planes(const Vec3rList<T> &centers, const std::vector<T> &dxs, const std::vector<T> &dys, const Mat3rList<T> &rotations);
-//
-//  /***
-//   * @brief Adds cylinders with the bottom ellipsoid centered at centers, described by two semi_axes and heights.
-//   * @param centers
-//   * @param semi_axes_a
-//   * @param semi_axes_b
-//   * @param heights
-//   * @param rotations
-//   * @return geometry id of the cylinders
-//   */
-//  unsigned int add_cylinders(const Vec3rList<T> &centers, const std::vector<T> &semi_axes_a, const std::vector<T> &semi_axes_b,
-//                             const std::vector<T> &heights, const Mat3rList<T> &rotations);
+  /***
+   * Adds centers.size() spheres to the scene -> results in centers.size() primitive ideas
+   * @brief Adds spheres at centers with radii
+   * @param centers specifies centers of the spheres (needs to be allocated on heap)
+   * @param radii specifies radii of the spheres (needs to be allocated on heap)
+   * @return geometry id of the spheres
+   */
+  unsigned int add_spheres(const Vec3rList<T> &centers, const std::vector<T> &radii);
+
+  /***
+   * @brief Adds planes at centers with dimensions dxs and dys rotated around rotations
+   * @param centers center of planes
+   * @param dxs dimensions in x direction
+   * @param dys dimensions in y direction
+   * @param rotations local rotation matrices
+   * @return geometry id of the planes
+   */
+  unsigned int add_planes(const Vec3rList<T> &centers, const std::vector<T> &dxs, const std::vector<T> &dys, const Mat3rList<T> &rotations);
+
+  /***
+   * @brief Adds cylinders with the bottom ellipsoid centered at centers, described by two semi_axes and heights.
+   * @param centers
+   * @param semi_axes_a
+   * @param semi_axes_b
+   * @param heights
+   * @param rotations
+   * @return geometry id of the cylinders
+   */
+  unsigned int add_cylinders(const Vec3rList<T> &centers, const std::vector<T> &semi_axes_a, const std::vector<T> &semi_axes_b,
+                             const std::vector<T> &heights, const Mat3rList<T> &rotations);
 
   bool commit() {
 
@@ -97,17 +97,20 @@ public:
       builder.build(*triangles_bvh, build_options);
     }
 
-//    if (has_spheres) {
-//      spheres_bvh.build(spheres, build_options);
-//    }
-//
-//    if (has_planes) {
-//      planes_bvh.build(planes, build_options);
-//    }
-//
-//    if (has_cylinders) {
-//      cylinders_bvh.build(cylinders, build_options);
-//    }
+    if (has_spheres) {
+      SAHBinnedBuilder builder;
+      builder.build(*spheres_bvh, build_options);
+    }
+
+    if (has_planes) {
+      SAHBinnedBuilder builder;
+      builder.build(*planes_bvh, build_options);
+    }
+
+    if (has_cylinders) {
+      SAHBinnedBuilder builder;
+      builder.build(*cylinders_bvh, build_options);
+    }
 
     has_been_committed = true;
     return has_been_committed;
@@ -132,38 +135,38 @@ inline bool intersect1(const BlazertScene<T> &scene, const Ray<T> &ray, RayHit<T
     }
   }
 
-//  if (scene.has_spheres) {
-//    const bool hit_sphere = traverse(scene.spheres_bvh, ray, temp_rayhit);
-//    if (hit_sphere) {
-//      if (temp_rayhit.hit_distance < rayhit.hit_distance) {
-//        rayhit = temp_rayhit;
-//        rayhit.geom_id = scene.spheres_geom_id;
-//        hit += hit_sphere;
-//      }
-//    }
-//  }
-//
-//  if (scene.has_planes) {
-//    const bool hit_plane = traverse(scene.planes_bvh, ray, temp_rayhit);
-//    if (hit_plane) {
-//      if (temp_rayhit.hit_distance < rayhit.hit_distance) {
-//        rayhit = temp_rayhit;
-//        rayhit.geom_id = scene.planes_geom_id;
-//        hit += hit_plane;
-//      }
-//    }
-//  }
-//
-//  if (scene.has_cylinders) {
-//    const bool hit_cylinder = traverse(scene.cylinders_bvh, ray, temp_rayhit);
-//    if (hit_cylinder) {
-//      if (temp_rayhit.hit_distance < rayhit.hit_distance) {
-//        rayhit = temp_rayhit;
-//        rayhit.geom_id = scene.cylinders_geom_id;
-//        hit += hit_cylinder;
-//      }
-//    }
-//  }
+  if (scene.has_spheres) {
+    const bool hit_sphere = traverse(*scene.spheres_bvh, ray, temp_rayhit);
+    if (hit_sphere) {
+      if (temp_rayhit.hit_distance < rayhit.hit_distance) {
+        rayhit = temp_rayhit;
+        rayhit.geom_id = scene.spheres_geom_id;
+        hit += hit_sphere;
+      }
+    }
+  }
+
+  if (scene.has_planes) {
+    const bool hit_plane = traverse(*scene.planes_bvh, ray, temp_rayhit);
+    if (hit_plane) {
+      if (temp_rayhit.hit_distance < rayhit.hit_distance) {
+        rayhit = temp_rayhit;
+        rayhit.geom_id = scene.planes_geom_id;
+        hit += hit_plane;
+      }
+    }
+  }
+
+  if (scene.has_cylinders) {
+    const bool hit_cylinder = traverse(*scene.cylinders_bvh, ray, temp_rayhit);
+    if (hit_cylinder) {
+      if (temp_rayhit.hit_distance < rayhit.hit_distance) {
+        rayhit = temp_rayhit;
+        rayhit.geom_id = scene.cylinders_geom_id;
+        hit += hit_cylinder;
+      }
+    }
+  }
   return hit;
 }
 
@@ -183,49 +186,49 @@ unsigned int BlazertScene<T>::add_mesh(const Vec3rList<T> &vertices, const Vec3i
   }
 }
 
-//template<typename T>
-//unsigned int BlazertScene<T>::add_spheres(const Vec3rList<T> &centers, const std::vector<T> &radii) {
-//
-//  if ((!has_spheres) && (!has_been_committed)) {
-//    spheres = Sphere(centers, radii);
-//    spheres_sah = SphereSAHPred(centers, radii);
-//    has_spheres = true;
-//
-//    spheres_geom_id = geometries++;
-//    return spheres_geom_id;
-//  } else {
-//    return -1;
-//  }
-//}
-//
-//template<typename T>
-//unsigned int BlazertScene<T>::add_planes(const Vec3rList<T> &centers, const std::vector<T> &dxs, const std::vector<T> &dys, const Mat3rList<T> &rotations) {
-//
-//  if ((!has_planes) && (!has_been_committed)) {
-//    planes = Plane(centers, dxs, dys, rotations);
-//    planes_sah = PlaneSAHPred(centers, dxs, dys, rotations);
-//    has_planes = true;
-//
-//    planes_geom_id = geometries++;
-//    return planes_geom_id;
-//  } else {
-//    return -1;
-//  }
-//}
-//template<typename T>
-//unsigned int BlazertScene<T>::add_cylinders(const Vec3rList<T> &centers, const std::vector<T> &semi_axes_a, const std::vector<T> &semi_axes_b,
-//                                            const std::vector<T> &heights, const Mat3rList<T> &rotations) {
-//  if ((!has_cylinders) && (!has_been_committed)) {
-//    cylinders = Cylinder(centers, semi_axes_a, semi_axes_b, heights, rotations);
-//    cylinders_sah = CylinderSAHPred(centers, semi_axes_a, semi_axes_b, heights, rotations);
-//    has_cylinders = true;
-//
-//    cylinders_geom_id = geometries++;
-//    return cylinders_geom_id;
-//  } else {
-//    return -1;
-//  }
-//}
+template<typename T>
+unsigned int BlazertScene<T>::add_spheres(const Vec3rList<T> &centers, const std::vector<T> &radii) {
+
+  if ((!has_spheres) && (!has_been_committed)) {
+    auto sphere_collection = SphereCollection<T>(centers, radii);
+    spheres_bvh = std::make_unique<BVH<T, SphereCollection>>(sphere_collection);
+
+    has_spheres = true;
+    spheres_geom_id = geometries++;
+    return spheres_geom_id;
+  } else {
+    return static_cast<unsigned int>(-1);
+  }
+}
+
+template<typename T>
+unsigned int BlazertScene<T>::add_planes(const Vec3rList<T> &centers, const std::vector<T> &dxs, const std::vector<T> &dys, const Mat3rList<T> &rotations) {
+
+  if ((!has_planes) && (!has_been_committed)) {
+    auto plane_collection = PlaneCollection(centers, dxs, dys, rotations);
+    planes_bvh = std::make_unique<BVH<T, PlaneCollection>>(plane_collection);
+
+    has_planes = true;
+    planes_geom_id = geometries++;
+    return planes_geom_id;
+  } else {
+    return -1;
+  }
+}
+template<typename T>
+unsigned int BlazertScene<T>::add_cylinders(const Vec3rList<T> &centers, const std::vector<T> &semi_axes_a, const std::vector<T> &semi_axes_b,
+                                            const std::vector<T> &heights, const Mat3rList<T> &rotations) {
+  if ((!has_cylinders) && (!has_been_committed)) {
+    auto cylinder_collection = CylinderCollection(centers, semi_axes_a, semi_axes_b, heights, rotations);
+    cylinders_bvh = std::make_unique<BVH<T, CylinderCollection>>(cylinder_collection);
+    has_cylinders = true;
+
+    cylinders_geom_id = geometries++;
+    return cylinders_geom_id;
+  } else {
+    return -1;
+  }
+}
 
 }// namespace blazert
 

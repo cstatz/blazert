@@ -1,7 +1,7 @@
 //
 // Created by ogarten on 13/05/2020.
 //
-/*
+
 #include <blazert/blazert.h>
 #include <blazert/bvh/accel.h>
 #include <blazert/datatypes.h>
@@ -21,7 +21,7 @@ TEST_CASE_TEMPLATE("Scene with Sphere", T, float, double) {
     auto centers = std::make_unique<Vec3rList<T>>();
     auto radiuss = std::make_unique<std::vector<T>>();
 
-    centers->emplace_back(Vec3r<T>{0.});
+    centers->emplace_back(Vec3r<T>{0., 0., 0.});
     radiuss->emplace_back(1.);
 
     Vec3r<T> org{2.f, 0.f, 0.f};
@@ -30,22 +30,22 @@ TEST_CASE_TEMPLATE("Scene with Sphere", T, float, double) {
     Scene<T> scene;
     unsigned int geom_id = scene.add_spheres(*centers, *radiuss);
     scene.commit();
+//
+//    const Ray<T> ray{org, dir};
+//    RayHit<T> rayhit;
 
-    const Ray<T> ray{org, dir};
-    RayHit<T> rayhit;
-
-    const bool hit = intersect1(scene, ray, rayhit);
-
-    CHECK(geom_id == 0);
-    CHECK(geom_id == rayhit.geom_id);
-    CHECK(hit);
-    CHECK(rayhit.hit_distance == Approx(1));
-    CHECK(rayhit.normal[0] == Approx(1));
-    CHECK(rayhit.normal[1] == Approx(0));
-    CHECK(rayhit.normal[2] == Approx(0));
+//    const bool hit = intersect1(scene, ray, rayhit);
+//
+//    CHECK(geom_id == 0);
+//    CHECK(geom_id == rayhit.geom_id);
+//    CHECK(hit);
+//    CHECK(rayhit.hit_distance == Approx(1));
+//    CHECK(rayhit.normal[0] == Approx(1));
+//    CHECK(rayhit.normal[1] == Approx(0));
+//    CHECK(rayhit.normal[2] == Approx(0));
   }
 }
-
+/*
 TEST_CASE_TEMPLATE("Scene with Plane", T, float, double) {
   SUBCASE("Intersection") {
     auto centers = std::make_unique<Vec3rList<T>>();
