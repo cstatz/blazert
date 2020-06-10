@@ -44,16 +44,17 @@ inline void assert_distance_to_surface(const Collection<T> &collection, const un
 }
 
 template<typename T, template<typename> typename Collection>
-inline void assert_intersect_primitive_hit(const Collection<T> &collection, const Ray<T> &ray,
+inline void assert_intersect_primitive_hit(const Collection<T> &collection, const Ray<T> &ray, const bool true_hit,
                                            const unsigned int prim_id, const T distance, const Vec3r<T> &normal) {
   typename Collection<T>::intersector intersector(collection);
   RayHit<T> rayhit;
   // Test intersections
   prepare_traversal(intersector, ray);
   const bool hit = intersect_primitive(intersector, primitive_from_collection(collection, 0), ray);
-  post_traversal(intersector, rayhit);
+  if (hit)
+    post_traversal(intersector, rayhit);
 
-  CHECK(hit);
+  CHECK(hit == true_hit);
   CHECK(rayhit.prim_id == prim_id);
   CHECK(rayhit.hit_distance == Approx(static_cast<T>(distance)));
   CHECK(rayhit.normal[0] == Approx(static_cast<T>(normal[0])));
@@ -62,20 +63,8 @@ inline void assert_intersect_primitive_hit(const Collection<T> &collection, cons
 }
 
 template<typename T, template<typename> typename Collection>
-inline void assert_intersect_primitive_no_hit(const Collection<T> &collection, const Ray<T> &ray) {
-  typename Collection<T>::intersector intersector(collection);
-  RayHit<T> rayhit;
-  // Test intersections
-  prepare_traversal(intersector, ray);
-  const bool hit = intersect_primitive(intersector, primitive_from_collection(collection, 0), ray);
-  post_traversal(intersector, rayhit);
-
-  CHECK_FALSE(hit);
-}
-
-template<typename T, template<typename> typename Collection>
-inline void assert_traverse_bvh_hit(const Collection<T> &collection, const Ray<T> &ray, const unsigned int prim_id,
-                                    const T distance, const Vec3r<T> &normal) {
+inline void assert_traverse_bvh_hit(const Collection<T> &collection, const Ray<T> &ray, const bool true_hit,
+                                    const unsigned int prim_id, const T distance, const Vec3r<T> &normal) {
 
   BVH bvh(collection);
   SAHBinnedBuilder builder;
@@ -84,7 +73,7 @@ inline void assert_traverse_bvh_hit(const Collection<T> &collection, const Ray<T
 
   RayHit<T> rayhit{};
   const bool hit = traverse(bvh, ray, rayhit);
-  CHECK(hit);
+  CHECK(hit == true_hit);
   CHECK(rayhit.prim_id == prim_id);
   CHECK(rayhit.hit_distance == Approx(static_cast<T>(distance)));
   CHECK(rayhit.normal[0] == Approx(static_cast<T>(normal[0])));
@@ -92,17 +81,5 @@ inline void assert_traverse_bvh_hit(const Collection<T> &collection, const Ray<T
   CHECK(rayhit.normal[2] == Approx(static_cast<T>(normal[2])));
 }
 
-template<typename T, template<typename> typename Collection>
-inline void assert_traverse_bvh_no_hit(const Collection<T> &collection, const Ray<T> &ray) {
-
-  BVH bvh(collection);
-  SAHBinnedBuilder builder;
-
-  auto statistics = builder.build(bvh);
-
-  RayHit<T> rayhit{};
-  const bool hit = traverse(bvh, ray, rayhit);
-  CHECK_FALSE(hit);
-}
 
 #endif//BLAZERT_ASSERT_HELPER_H
