@@ -12,7 +12,7 @@ message("= Configuring blazeRT:                 =")
 message(" * Build test: ${BUILD_TEST}")
 message(" * Build benchmark: ${BUILD_BENCHMARK}")
 message(" * Build examples: ${BUILD_EXAMPLES}")
-message(" * Embree bachend: ${EMBREE_BACKEND}")
+message(" * Embree backend: ${EMBREE_BACKEND}")
 message("========================================")
 
 # Compiler Flags
@@ -39,15 +39,15 @@ INCLUDE(GNUInstallDirs)
 
 # Hopefully this works in blaze 3.8 ...
 IF(MSVC)
-FIND_PACKAGE(blaze OPTIONAL 3.7)
+FIND_PACKAGE(blaze 3.7)
 INCLUDE_DIRECTORIES(${BLAZE_INCLUDE_DIRS} ${BLAZE_INCLUDE})
 ELSE()
-FIND_PACKAGE(blaze REQUIRED 3.7)
+FIND_PACKAGE(blaze 3.7)
 INCLUDE_DIRECTORIES(${BLAZE_INCLUDE_DIRS} ${BLAZE_INCLUDE})
 ENDIF()
 
 IF(EMBREE_BACKEND)
-FIND_PACKAGE(embree REQUIRED 3.0)
+find_package(embree 3.9)
 ENDIF()
 
 FIND_PACKAGE(Threads)
