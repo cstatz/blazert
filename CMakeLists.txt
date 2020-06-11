@@ -5,7 +5,7 @@ SET(BUILD_TEST false CACHE BOOL "Build tests.")
 SET(BUILD_BENCHMARK false CACHE BOOL "Build benchmark.")
 SET(BUILD_EXAMPLES false CACHE BOOL "Build examples.")
 SET(EMBREE_BACKEND false CACHE BOOL "Use embree as tracing backend.")
-SET(BLAZE_INCLUDE "" CACHE STRING "Where to find the blaze includes. Must set on windows for blaze <= 3.7")
+SET(BLAZE_INCLUDE_OVERRIDE "" CACHE STRING "Where to find the blaze includes. Must set on windows for blaze <= 3.7")
 
 message("========================================")
 message("= Configuring blazeRT:                 =")
@@ -13,6 +13,9 @@ message(" * Build test: ${BUILD_TEST}")
 message(" * Build benchmark: ${BUILD_BENCHMARK}")
 message(" * Build examples: ${BUILD_EXAMPLES}")
 message(" * Embree backend: ${EMBREE_BACKEND}")
+IF(NOT ("${BLAZE_INCLUDE_OVERRIDE}" STREQUAL ""))
+    message(" * Blaze include dir: ${BLAZE_INCLUDE_OVERRIDE}")
+ENDIF()
 message("========================================")
 
 # Compiler Flags
@@ -37,13 +40,12 @@ ENDIF (FORCE_COLOR_OUTPUT)
 INCLUDE(CheckCXXCompilerFlag)
 INCLUDE(GNUInstallDirs)
 
-# Hopefully this works in blaze 3.8 ...
-IF(MSVC)
-FIND_PACKAGE(blaze 3.7)
-INCLUDE_DIRECTORIES(${BLAZE_INCLUDE_DIRS} ${BLAZE_INCLUDE})
+
+IF(NOT ("${BLAZE_INCLUDE_OVERRIDE}" STREQUAL ""))
+    INCLUDE_DIRECTORIES(${BLAZE_INCLUDE_OVERRIDE})
 ELSE()
-FIND_PACKAGE(blaze 3.7)
-INCLUDE_DIRECTORIES(${BLAZE_INCLUDE_DIRS} ${BLAZE_INCLUDE})
+    FIND_PACKAGE(blaze 3.7)
+    INCLUDE_DIRECTORIES(${BLAZE_INCLUDE_DIRS})
 ENDIF()
 
 IF(EMBREE_BACKEND)
@@ -51,8 +53,8 @@ find_package(embree 3.9)
 ENDIF()
 
 FIND_PACKAGE(Threads)
-
 FIND_PACKAGE(OpenMP)
+
 IF (OpenMP_CXX_FOUND)
     SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
     link_libraries(${OpenMP_CXX_LIBRARIES})
