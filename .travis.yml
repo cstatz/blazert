@@ -39,6 +39,7 @@ jobs:
     - os: osx
 
 before_script:
+  - echo `pwd`
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
       export BLAZE_INSTALL_DIR=`pwd`/deps/blaze;
     wget https://bitbucket.org/blaze-lib/blaze/downloads/blaze-3.7.tar.gz;
@@ -56,8 +57,11 @@ before_script:
     fi
 
 script:
+  - echo `pwd`
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
       export BLAZE_INCLUDE=`pwd`/deps/blaze/include;
+      echo ${BLAZE_INCLUDE};
+      ls -l ${BLAZE_INCLUDE};
     fi
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
       export CXX=${TRAVIS_COMPILER};
