@@ -30,8 +30,11 @@ floating-type values.
 blazeRT works with triangular meshes and simple primitives, but it should be easy to extend blazeRT 
 to work on polygons or more complex primitives.
 
+blazeRT has unit test which will increase as development continues and we try to ensure code 
+quality and a reproducible build experience via continuous integration.
+
 ### Contributing
-We appreciate all contributions from issues to pull requests.
+We appreciate all contributions from issues to pull requests. 
 
 For contributing, please read the [contribution guide](CONTRIBUTING.md).
 
