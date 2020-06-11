@@ -6,7 +6,8 @@
 #include "../test_helpers.h"
 #include <blazert/datatypes.h>
 #include <blazert/primitives/plane.h>
-#include <blazert/bvh/accel.h>
+#include <blazert/bvh/node.h>
+#include <blazert/bvh/intersect.h>
 
 using namespace blazert;
 using namespace doctest;
