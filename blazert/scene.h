@@ -180,7 +180,7 @@ unsigned int BlazertScene<T>::add_mesh(const Vec3rList<T> &vertices, const Vec3i
 
   if ((!has_triangles) && (!has_been_committed)) {
     triangle_collection = std::make_unique<TriangleMesh<T>>(vertices, triangles);
-    triangles_bvh = std::make_unique<BVH<T, TriangleMesh>>(triangle_collection);
+    triangles_bvh = std::make_unique<BVH<T, TriangleMesh>>(*triangle_collection);
 
     has_triangles = true;
     triangles_geom_id = geometries++;
