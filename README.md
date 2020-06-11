@@ -86,6 +86,9 @@ infinite-math. If your application needs fast-math, ensure that the blazeRT code
 difference between compilation with *-O2* and *-O3*. 
 
 ### Configuration
+The easiest way to set the configration variables is by using ```ccmake``` or pass the variables
+via ```cmake ../ -D<VARIABLE>:<TYPE>=value```.
+
 - ```ENABLE_OMP```: Enable OpenMP in examples (for traversal)
 - ```BUILD_TEST```: Build tests
 - ```BUILD_BENCHMARK```: Build the benchmarks
