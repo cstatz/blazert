@@ -41,6 +41,7 @@ static void BM_BLAZERT_BUILD_Sphere(benchmark::State& state)
 BENCHMARK_TEMPLATE(BM_BLAZERT_BUILD_Sphere, float)->DenseRange(2,9,1)->Unit(benchmark::kMillisecond);
 BENCHMARK_TEMPLATE(BM_BLAZERT_BUILD_Sphere, double)->DenseRange(2,9,1)->Unit(benchmark::kMillisecond);
 
+#ifdef EMBREE_TRACING
 static void
 BM_EMBREE_BUILD_Sphere(benchmark::State& state)
 {
@@ -81,6 +82,7 @@ BM_EMBREE_BUILD_Sphere(benchmark::State& state)
   }
 }
 BENCHMARK(BM_EMBREE_BUILD_Sphere)->DenseRange(2,9,1)->Unit(benchmark::kMillisecond);
+#endif
 
 template<typename T>
 static void BM_nanoRT_BUILD_BHV_Sphere(benchmark::State &state) {

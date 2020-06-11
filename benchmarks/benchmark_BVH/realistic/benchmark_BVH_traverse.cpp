@@ -55,6 +55,7 @@ static void BM_BLAZERT_TRAVERSE_REALISTIC_Sphere(benchmark::State &state) {
 BENCHMARK_TEMPLATE(BM_BLAZERT_TRAVERSE_REALISTIC_Sphere, float)->DenseRange(2, 9, 1)->Unit(benchmark::kMillisecond);
 BENCHMARK_TEMPLATE(BM_BLAZERT_TRAVERSE_REALISTIC_Sphere, double)->DenseRange(2, 9, 1)->Unit(benchmark::kMillisecond);
 
+#ifdef EMBREE_TRACING
 static void
 BM_EMBREE_TRAVERSE_REALISTIC_Sphere(benchmark::State &state) {
   using embreeVec3 = blaze::StaticVector<float, 3UL, blaze::columnVector, blaze::AlignmentFlag::aligned, blaze::PaddingFlag::padded>;
@@ -113,6 +114,7 @@ BM_EMBREE_TRAVERSE_REALISTIC_Sphere(benchmark::State &state) {
   }
 }
 BENCHMARK(BM_EMBREE_TRAVERSE_REALISTIC_Sphere)->DenseRange(2, 9, 1)->Unit(benchmark::kMillisecond);
+#endif
 
 template<typename T>
 static void BM_nanoRT_TRAVERSE_REALISTIC_Sphere(benchmark::State &state) {
