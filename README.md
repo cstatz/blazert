@@ -69,7 +69,7 @@ compared to clang. The provided benchmarks might be used to tune the compilation
 To get familiar with the usage of blazeRT, look at the provided examples and test cases. To get started quickly,
 checkout the minimal examples below.
 ### Examples
-- [x] [path tracerfor mesh geometries](examples/path_tracer) with rendered output
+- [x] [path tracer for mesh geometries](examples/path_tracer) with rendered output
 - [x] [path tracer based on the scene facility](examples/scene_mesh) of blazeRT without rendered output
 - [x] [cylinder and sphere primitives](examples/scene_primitives) within a blazeRT scene and color-coded output
 - [ ] Embree fallback
