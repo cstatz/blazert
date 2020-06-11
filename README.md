@@ -3,31 +3,44 @@
 # blazeRT
 
 1. [Introduction](#introduction)
+    1. [Contributing](#contributing)
 2. [Features](#features)
 3. [Installation](#installation)
     1. [Dependencies](#dependencies)
     2. [Build and Test](#build-and-test)
+    3. [Configuration](#configuration)
 4. [Usage](#usage)
     1. [Examples](#examples)
     2. [Minimal Examples](#minimal-example)
-5. [License](#license)
-6. [Contributing](#contributing)
+    3. [Notes](#notes)
+5. [Benchmarks](#benchmarks)
+6. [License](#license)
+
 
 ## Introduction
-A **double precision ray tracer** for physics applications based on a [nanort](https://github.com/lighttransport/nanort) fork using blaze datatypes. blazeRTs scene interface is similar to embree and intents to be a minimal effort (nearly plugin-) replacement. 
+A **double precision ray tracer** for physics applications based on a [nanort](https://github.com/lighttransport/nanort) 
+fork using blaze datatypes. blazeRTs scene interface is similar to [embree](https://github.com/embree/embree) and 
+intents to be a minimal effort (nearly plugin-) replacement. 
 
-You can use your own (vector) dataypes (e.g. as provided by eigen3) and it also works with single-precision floating-type values.
+![image](examples/baseline/path_tracer_blaze.png) 
+
+You can use your own (vector) dataypes (e.g. as provided by eigen3) and it also works with single-precision 
+floating-type values.
 
 blazeRT works with triangular meshes and simple primitives, but it should be easy to extend blazeRT 
 to work on polygons or more complex primitives.
 
-Please read the [contribution guide](CONTRIBUTING.md) if you are interested in improving blazeRT.
+### Contributing
+We appreciate all contributions from issues to pull requests.
+
+For contributing, please read the [contribution guide](CONTRIBUTING.md).
 
 ## Features
 - [x] modern C++
-- [x] using vector and matrix type from [blaze](https://bitbucket.org/blaze-lib/blaze/src/master/) for efficient linear algebra
+- [x] using vector and matrix type from [blaze](https://bitbucket.org/blaze-lib/blaze/src/master/) for efficient 
+linear algebra
 - [x] single and double precision ray tracing 
-- [x] Embree fall back for single precision floats
+- [x] [Embree](https://github.com/embree/embree) fall back for single precision floats
 - [x] currently supported geometry
     - [x] triangular meshes
     - [x] spheres
@@ -35,19 +48,20 @@ Please read the [contribution guide](CONTRIBUTING.md) if you are interested in i
     - [x] cylinders
 - [x] BVH accelerated ray racing
 - [x] unit tests via [doctest](https://github.com/onqtam/doctest)
+- [x] documentation of the test cases in ```test/doc```
 - [x] benchmark (comparing embree, nanort, bvh and blazeRT) via [google benchmark](https://github.com/google/benchmark)
 
 ## Installation
-Installation and build is tested on linux (e.g. ubuntu bionic, arch-linux) and macos.
+Installation and build is tested on linux (e.g. ubuntu bionic, arch linux) and macOS.
 Before starting the build process please ensure all dependencies are properly installed and available to the project.
 
 ### Dependencies
  * c++17 capable compiler
  * cmake (>= 3.11.0)
- * blaze (>= 3.7)
- * embree (>= 3) if ```EMBREE_TRACING``` fallback is desired
- * doctest (for testing)
- * google benchmark (for running the benchmarks)
+ * [blaze](https://bitbucket.org/blaze-lib/blaze/src/master/) (>= 3.7)
+ * [Embree](https://github.com/embree/embree) (>= 3) if ```EMBREE_TRACING``` fallback is desired 
+ * [doctest](https://github.com/onqtam/doctest) (for testing)
+ * [google benchmark](https://github.com/google/benchmark) (for running the benchmarks)
 
 ### Build and test
 This is a header-only library. No need to build anything. Just drop it in your source directory and off you go.
@@ -57,7 +71,7 @@ Starting in the source directory to project is build from the commandline as fol
 ```shell script
 mkdir build
 cd build 
-cmake ../ 
+ccmake ../  # create cache and configuration
 cmake --build .
 cmake --build . -- install  # If package needs to be installed 
 ctest  # Runs the tests
@@ -66,11 +80,37 @@ ctest  # Runs the tests
 **For maximum performance**, we recommend building with **gcc** which results in a 15% to 20% better performance
 compared to clang. The provided benchmarks might be used to tune the compilation flags for your specific system.
 
-**A word of caution:** blazeRT will compile and work with compiler optimizations enabled (up to **-O3**), but needs infinite-math. If your application needs fast-math, ensure that the blazeRT code path is compiled with `-fno-finite-math-only` (in case of clang). In terms of performance, in its current form there is no major runtime difference between compilation with *-O2* and *-O3*. 
+**A word of caution:** blazeRT will compile and work with compiler optimizations enabled (up to **-O3**), but needs 
+infinite-math. If your application needs fast-math, ensure that the blazeRT code path is compiled with 
+`-fno-finite-math-only` (in case of clang). In terms of performance, in its current form there is no major runtime 
+difference between compilation with *-O2* and *-O3*. 
+
+### Configuration
+- ```ENABLE_OMP```: Enable OpenMP in examples (for traversal)
+- ```BUILD_TEST```: Build tests
+- ```BUILD_BENCHMARK```: Build the benchmarks
+- ```BUILD_EXAMPLES```: Build examples
+- ```EMBREE_BACKEND```: Use [Embree](https://github.com/embree/embree) as single-precision floating point tracing 
+backend
+- ```BLAZE_INCLUDE_OVERRIDE```: Where to find the blaze includes. Must set on windows for 
+[blaze](https://bitbucket.org/blaze-lib/blaze/src/master/) <= 3.7
 
 ## Usage
 To get familiar with the usage of blazeRT, look at the provided examples and test cases. To get started quickly,
 checkout the minimal examples below.
+
+- The [scene](blazert/scene.h) API can be considered **stable**, while the low-level API of the [BVH](blazert/BVH) 
+(```build```, ```traverse```, ...) are not to be considered stable as they might change when requierements 
+change with time.
+
+- To control the maximum tree depth set the ```BLAZERT_MAX_TREE_DEPTH``` to a sensible value
+before including ```blazert/blazert.h```. Default value is 28 which corresponds to ca. 134 million
+leafs in the BVH.
+
+- If single-precision floating-point ray tracing with [Embree](https://github.com/embree/embree) is desired
+define ```EMBREE_TRACING``` before including ```blazert/blazert.h```. When tracing with embree vector types 
+with an alignment of 16 bytes is needed.
+
 ### Examples
 - [x] [path tracer with randomly distributed rays](examples/path_tracer) for meshed geometries with rendered output
 - [x] [deterministic path tracer for reproducibility](examples/renderer) for meshed geometries
@@ -135,7 +175,10 @@ int main(int argc, char **argv) {
   for (int y = 0; y < height; y++) {
     for (int x = 0; x < width; x++) {
 
-      const blazert::Ray<ft> ray{{0.0, 5.0, 20.0}, {static_cast<ft>((x / ft(width)) - 0.5), static_cast<ft>((y / ft(height)) - 0.5), ft(-1.)}};
+      const blazert::Ray<ft> ray{{0.0, 5.0, 20.0}, 
+      		                    {static_cast<ft>((x / ft(width)) - 0.5),
+                                    static_cast<ft>((y / ft(height)) - 0.5), 
+                                    static_cast<ft>(-1.)}};
       blazert::RayHit<ft> rayhit;
 
       const bool hit = intersect1(scene, ray, rayhit);
@@ -148,18 +191,25 @@ int main(int argc, char **argv) {
   return 0;
 }
 ```
+### Notes
+- Compared to nanort the BVH accelerator is not built in parallel. For meshes with 5 million triangles, blazeRT
+needs about 5 seconds to build the bvh and about 20 seconds for 20 million meshes. For scientific ray tracing 
+applications the scene is usually static and the ray origin and direction are varied.
+- ```BLAZERTALIGN``` is currently not used but might be used in the future. 
+## Benchmarks
+**added tomorrow**
+
 ## License
 
 blazeRT is licensed under the new **BSD (3-clause) license**.
-blazeRT is based on and inspired by `nanort.h` which is licensed under:
+blazeRT is based on and inspired by `nanort.h` which is licensed under MIT-License.
 
-The purpose of this fork is the simplified inclusion of the blaze-lib vector-types (or similar types that provided the necessary operators and datalayout) and an enhanced maintainability of the code.
+The purpose of this fork is the simplified inclusion of the blaze-lib vector-types 
+(or similar types that provided the necessary operators and datalayout) and an enhanced maintainability of the code.
 
-The examples are built around third party libraries (e.g. `tiny_obj_loader` and `stb_image_write`) which adhere to their own respective licenses (found in the included files).
+The examples are built around third party libraries (e.g. `tiny_obj_loader` and `stb_image_write`) 
+which adhere to their own respective licenses (found in the included files).
 
-The rendering example is taken from the `nanort` repo and serves as a baseline. The Lucy model included in this demo scene is taken from the Stanford 3D Scanning Repository: http://graphics.stanford.edu/data/3Dscanrep/
+The rendering example is taken from the `nanort` repo and serves as a baseline. The Lucy model included 
+in this demo scene is taken from the Stanford 3D Scanning Repository: http://graphics.stanford.edu/data/3Dscanrep/
 
-## Contributing
-We appreciate all contributions from issues to pull requests.
-
-For contributing, please read the [contribution guide](CONTRIBUTING.md).
