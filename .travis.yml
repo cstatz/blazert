@@ -70,7 +70,7 @@ script:
   - pwd
   - mkdir -p cmake_build_release
   - pushd cmake_build_release
-  - cmake -DCMAKE_BUILD_TYPE=Release ../ -DBUILD_TEST:BOOL=true -DENABLE_TEST:BOOL=true
+  - cmake -DCMAKE_BUILD_TYPE=Release ../ -DBUILD_TEST:BOOL=true -DENABLE_TEST:BOOL=true -DBLAZE_INCLUDE:STRING=`pwd`/deps/blaze/include
   - cmake --build .
   - ctest -V
   - popd
