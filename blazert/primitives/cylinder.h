@@ -20,16 +20,16 @@ template<typename T>
 class Cylinder {
 
 public:
-  const Vec3r<T> center;
-  const T semi_axis_a;
-  const T semi_axis_b;
-  const T height;
-  const Mat3r<T> rotation;
+  const Vec3r<T> &center;
+  const T &semi_axis_a;
+  const T &semi_axis_b;
+  const T &height;
+  const Mat3r<T> &rotation;
   unsigned int prim_id;
 
 public:
   Cylinder() = delete;
-  Cylinder(const Vec3r<T> center, const T semi_axis_a, const T semi_axis_b, const T height, const Mat3r<T> rotation,
+  Cylinder(const Vec3r<T> &center, const T &semi_axis_a, const T &semi_axis_b, const T &height, const Mat3r<T> &rotation,
            const unsigned int prim_id)
       : center(center), semi_axis_a(semi_axis_a), semi_axis_b(semi_axis_b), height(height), rotation(rotation),
         prim_id(prim_id){};

@@ -20,17 +20,17 @@ template<typename T>
 class Plane {
 
 public:
-  const Vec3r<T> center;
+  const Vec3r<T> &center;
   const T dx;
   const T dy;
-  const Mat3r<T> rotation;
+  const Mat3r<T> &rotation;
   unsigned int prim_id;
 
   constexpr static T thickness = std::numeric_limits<T>::min();
 
 public:
   Plane() = delete;
-  Plane(const Vec3r<T> center, const T dx, const T dy, const Mat3r<T> rotation, const unsigned int prim_id)
+  Plane(const Vec3r<T> &center, const T dx, const T dy, const Mat3r<T> &rotation, const unsigned int prim_id)
       : center(center), dx(dx), dy(dy), rotation(rotation), prim_id{prim_id} {};
   Plane(Plane &&rhs) noexcept
       : center(std::move(rhs.center)), dx(std::move(rhs.dx)), dy(std::move(rhs.dy)), rotation(std::move(rhs.rotation)),

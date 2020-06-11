@@ -18,12 +18,12 @@ namespace blazert {
 
 template<typename T>
 struct Triangle {
-  const Vec3r<T> a;
+  const Vec3r<T> &a;
   const Vec3r<T> b;
   const Vec3r<T> c;
   unsigned int i;
   Triangle() = delete;
-  Triangle(Vec3r<T> a, Vec3r<T> b_, Vec3r<T> c_, const unsigned int i) : a(a), b(c_ - a), c(a - b_), i(i) {}
+  Triangle(const Vec3r<T> &a, const Vec3r<T> &b_, const Vec3r<T> &c_, const unsigned int i) : a(a), b(c_ - a), c(a - b_), i(i) {}
   Triangle(Triangle &&rhs) noexcept
       : a(std::move(rhs.a)), b(std::move(rhs.b)), c(std::move(rhs.c)), i(std::exchange(rhs.i, -1)) {}
   Triangle &operator=(const Triangle &rhs) = delete;

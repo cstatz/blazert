@@ -17,13 +17,13 @@ template<typename T>
 class Sphere {
 
 public:
-  const Vec3r<T> center;
+  const Vec3r<T> &center;
   const T radius;
   unsigned int prim_id;
 
 public:
   Sphere() = delete;
-  Sphere(const Vec3r<T> center, const T radius, const unsigned int prim_id)
+  Sphere(const Vec3r<T> &center, const T radius, const unsigned int prim_id)
       : center(center), radius(radius), prim_id(prim_id){};
   Sphere(Sphere &&rhs) noexcept
       : center(std::move(rhs.center)), radius(std::move(rhs.radius)), prim_id(std::exchange(rhs.prim_id, -1)) {}
