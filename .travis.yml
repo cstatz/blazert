@@ -72,9 +72,9 @@ script:
   - pushd cmake_build_release
   - export BLAZE_INCLUDE=""
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
-    export BLAZE_INCLUDE="`pwd`/deps/blaze/include";
-  - fi
-  - cmake -DCMAKE_BUILD_TYPE=Release ../ -DBUILD_TEST:BOOL=true -DENABLE_TEST:BOOL=true -DBLAZE_INCLUDE:STRING="$BLAZE_INCLUDE"
+    export BLAZE_INCLUDE=`pwd`/deps/blaze/include;
+    fi
+  - cmake -DCMAKE_BUILD_TYPE=Release ../ -DBUILD_TEST:BOOL=true -DBLAZE_INCLUDE:STRING=${BLAZE_INCLUDE}
   - cmake --build .
   - ctest -V
   - popd
