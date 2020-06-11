@@ -79,10 +79,12 @@ inline void unity(Vec3r<T> &min_, Vec3r<T> &max_, const Vec3r<T> &min, const Vec
 
 template<typename T>
 inline void intersection(Vec3r<T> &min_, Vec3r<T> &max_, const Vec3r<T> &min, const Vec3r<T> &max) {
-  for (unsigned int k = 0; k < 3; k++) {
-    min_[k] = std::max(min[k], min_[k]);
-    max_[k] = std::min(max[k], max_[k]);
-  }
+    min_ = blaze::min(min, min_);
+    max_ = blaze::max(max, max_);
+//  for (unsigned int k = 0; k < 3; k++) {
+//    min_[k] = std::max(min[k], min_[k]);
+//    max_[k] = std::min(max[k], max_[k]);
+//  }
 }
 
 }
