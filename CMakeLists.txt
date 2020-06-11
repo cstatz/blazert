@@ -1,6 +1,7 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.7.0)
 PROJECT(blazert)
 
+SET(ENABLE_OMP true CACHE BOOL "Enable OpenMP in examples.")
 SET(BUILD_TEST false CACHE BOOL "Build tests.")
 SET(BUILD_BENCHMARK false CACHE BOOL "Build benchmark.")
 SET(BUILD_EXAMPLES false CACHE BOOL "Build examples.")
@@ -55,11 +56,13 @@ ENDIF()
 FIND_PACKAGE(Threads)
 FIND_PACKAGE(OpenMP)
 
+IF (ENABLE_OMP)
 IF (OpenMP_CXX_FOUND)
     SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
     link_libraries(OpenMP::OpenMP_CXX)
     include_directories(${OpenMP_CXX_INCLUDE_DIRS})
-ENDIF ()
+ENDIF()
+ENDIF()
 
 IF(BUILD_EXAMPLES)
 ADD_SUBDIRECTORY(examples)
