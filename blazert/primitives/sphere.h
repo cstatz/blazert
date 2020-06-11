@@ -78,7 +78,7 @@ public:
     }
   }
 
-  [[nodiscard]] inline unsigned int size() const { return centers.size(); }
+  [[nodiscard]] inline unsigned int size() const noexcept { return centers.size(); }
 
   [[nodiscard]] inline std::pair<Vec3r<T>, Vec3r<T>>
   get_primitive_bounding_box(const unsigned int prim_id) const noexcept {
@@ -89,7 +89,7 @@ public:
     return centers[prim_id];
   }
 
-  [[nodiscard]] T distance_to_surface(const Vec3r<T> &point, const unsigned int prim_index) const noexcept {
+  [[nodiscard]] inline T distance_to_surface(const Vec3r<T> &point, const unsigned int prim_index) const noexcept {
     const Vec3r<T> &distance = centers[prim_index] - point;
     return abs(norm(distance) - radii[prim_index]);
   }
@@ -183,22 +183,4 @@ inline bool intersect_primitive(SphereIntersector<T, Collection> &i, const Spher
 
 }// namespace blazert
 
-// TODO: keep them around for now
-/*
-
-
-
-
-inline unsigned int size() const { return centers->size(); }
-
-inline void BoundingBox(Vec3r<T> &bmin, Vec3r<T> &bmax, unsigned int prim_index) const {
-  bmin = (*centers)[prim_index] - (*radii)[prim_index];
-  bmax = (*centers)[prim_index] + (*radii)[prim_index];
-}
-
-inline void BoundingBoxAndCenter(Vec3r<T> &bmin, Vec3r<T> &bmax, Vec3r<T> &center, unsigned int prim_index) const {
-  BoundingBox(bmin, bmax, prim_index);
-  center = (*centers)[prim_index];
-}
- */
 #endif// BLAZERT_PRIMITIVES_SPHERE_H_
