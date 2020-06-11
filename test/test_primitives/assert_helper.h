@@ -69,7 +69,7 @@ inline void assert_traverse_bvh_hit(const Collection<T> &collection, const Ray<T
   BVH bvh(collection);
   SAHBinnedBuilder builder;
 
-  auto statistics = builder.build(bvh);
+  [[maybe_unused]] auto statistics = builder.build(bvh);
 
   RayHit<T> rayhit;
   const bool hit = traverse(bvh, ray, rayhit);

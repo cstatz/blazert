@@ -23,7 +23,9 @@
 #include <third_party/bvh/include/bvh/triangle.hpp>
 #include <third_party/bvh/include/bvh/vector.hpp>
 
+#ifdef EMBREE_TRACING
 #include <embree3/rtcore.h>
+#endif
 
 using namespace blazert;
 
@@ -37,8 +39,7 @@ static void BM_BLAZERT_TRAVERSE_REALISTIC_Sphere(benchmark::State &state) {
 
   BVH triangles_bvh(triangles);
   SAHBinnedBuilder builder;
-  auto statistics = builder.build(triangles_bvh, build_options);
-  //std::cout << "success = " << success << "\n";
+  [[maybe_unused]] auto statistics = builder.build(triangles_bvh, build_options);
 
   constexpr int height = 4 * 2048;
   constexpr int width = 4 * 2048;
@@ -56,6 +57,7 @@ static void BM_BLAZERT_TRAVERSE_REALISTIC_Sphere(benchmark::State &state) {
 BENCHMARK_TEMPLATE(BM_BLAZERT_TRAVERSE_REALISTIC_Sphere, float)->DenseRange(2, 9, 1)->Unit(benchmark::kMillisecond);
 BENCHMARK_TEMPLATE(BM_BLAZERT_TRAVERSE_REALISTIC_Sphere, double)->DenseRange(2, 9, 1)->Unit(benchmark::kMillisecond);
 
+#ifdef EMBREE_TRACING
 static void
 BM_EMBREE_TRAVERSE_REALISTIC_Sphere(benchmark::State &state) {
   using embreeVec3 = blaze::StaticVector<float, 3UL, blaze::columnVector, blaze::AlignmentFlag::aligned, blaze::PaddingFlag::padded>;
@@ -114,6 +116,7 @@ BM_EMBREE_TRAVERSE_REALISTIC_Sphere(benchmark::State &state) {
   }
 }
 BENCHMARK(BM_EMBREE_TRAVERSE_REALISTIC_Sphere)->DenseRange(2, 9, 1)->Unit(benchmark::kMillisecond);
+#endif
 
 template<typename T>
 static void BM_nanoRT_TRAVERSE_REALISTIC_Sphere(benchmark::State &state) {
@@ -129,8 +132,7 @@ static void BM_nanoRT_TRAVERSE_REALISTIC_Sphere(benchmark::State &state) {
   nanort::TriangleSAHPred<T> triangles_sah{verts->data(), tris->data(), sizeof(Vec3r<T>)};
 
   nanort::BVHAccel<T> triangles_bvh;
-  const bool success = triangles_bvh.Build(os->triangle_count(), triangles, triangles_sah, build_options);
-  //std::cout << "success = " << success << "\n";
+  [[maybe_unused]] const bool success = triangles_bvh.Build(os->triangle_count(), triangles, triangles_sah, build_options);
 
   constexpr int height = 4 * 2048;
   constexpr int width = 4 * 2048;
@@ -172,7 +174,7 @@ static void BM_bvh_TRAVERSE_REALISTIC_Sphere_SweepSAH(benchmark::State &state) {
 
   std::vector<Triangle> triangles;
   triangles.reserve(os->triangles.size());
-  for (int i = 0; i < os->triangles.size(); i += 3) {
+  for (uint32_t i = 0; i < os->triangles.size(); i += 3) {
     triangles.emplace_back(
         Vector3{
             static_cast<Scalar>(os->triangles[i][0]),
@@ -232,7 +234,7 @@ static void BM_bvh_TRAVERSE_REALISTIC_Sphere_BinnedSAH(benchmark::State &state) 
 
   std::vector<Triangle> triangles;
   triangles.reserve(os->triangles.size());
-  for (int i = 0; i < os->triangles.size(); i += 3) {
+  for (uint32_t i = 0; i < os->triangles.size(); i += 3) {
     triangles.emplace_back(
         Vector3{
             static_cast<Scalar>(os->triangles[i][0]),

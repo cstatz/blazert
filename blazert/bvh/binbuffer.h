@@ -121,57 +121,6 @@ inline std::pair<unsigned int, Vec3r<T>> find_best_split_binned(const Collection
     min_cost_axis = 2;
 
   return std::make_pair(min_cost_axis, std::move(cut_pos));
-  /*
-   * TODO: REFACTORED WAY, TRY AGAIN LATER
-   *
-  std::vector<T> left_cost, right_cost;
-  left_cost.resize(options.bin_size);
-  right_cost.resize(options.bin_size);
-
-  // iterating over all 3 axes
-  for (unsigned int j = 0; j < 3; j++) {
-
-    // Sweep left to accumulate bounding boxes and compute the right-hand side of the cost
-    unsigned int count = 0;
-    Vec3r<T> min_{std::numeric_limits<T>::max()};
-    Vec3r<T> max_{-std::numeric_limits<T>::max()};
-
-    for (unsigned int i = bins.size - 1; i > 0; i--) {
-      Bin<T> &bin = bins.bin[j * bins.size + i];
-      unity(min_, max_, bin.min, bin.max);
-      count += bin.count;
-      left_cost[i] = count * calculate_box_surface(min_, max_);
-    }
-
-    // Sweep right to compute the full cost
-    count = 0;
-    min_ = std::numeric_limits<T>::max();
-    max_ = -std::numeric_limits<T>::max();
-
-    for (unsigned int i = 0; i < bins.size; i++) {
-      Bin<T> &bin = bins.bin[j * bins.size + i];
-      unity(min_, max_, bin.min, bin.max);
-      count += bin.count;
-      right_cost[i] = count * calculate_box_surface(min_, max_);
-    }
-
-    // Store the beginning of the correct partition
-    for (unsigned int i = 1; i < bins.size; i++) {
-      if (right_cost[i - 1] < left_cost[i]) {
-        min_cost[j] = right_cost[i - 1];
-        cut_pos[j] = i * ((max[j] - min[j]) / bins.size) + min[j];
-        break;
-      }
-    }
-  }
-
-  unsigned int min_cost_axis = 0;
-  if (min_cost[0] > min_cost[1])
-    min_cost_axis = 1;
-  if (min_cost[min_cost_axis] > min_cost[2])
-    min_cost_axis = 2;
-
-  return std::make_pair(min_cost_axis, std::move(cut_pos));*/
 }
 
 }// namespace blazert

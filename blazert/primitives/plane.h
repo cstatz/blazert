@@ -20,17 +20,17 @@ template<typename T>
 class Plane {
 
 public:
-  const Vec3r<T> center;
+  const Vec3r<T> &center;
   const T dx;
   const T dy;
-  const Mat3r<T> rotation;
+  const Mat3r<T> &rotation;
   unsigned int prim_id;
 
   constexpr static T thickness = std::numeric_limits<T>::min();
 
 public:
   Plane() = delete;
-  Plane(const Vec3r<T> center, const T dx, const T dy, const Mat3r<T> rotation, const unsigned int prim_id)
+  Plane(const Vec3r<T> &center, const T dx, const T dy, const Mat3r<T> &rotation, const unsigned int prim_id)
       : center(center), dx(dx), dy(dy), rotation(rotation), prim_id{prim_id} {};
   Plane(Plane &&rhs) noexcept
       : center(std::move(rhs.center)), dx(std::move(rhs.dx)), dy(std::move(rhs.dy)), rotation(std::move(rhs.rotation)),
@@ -64,8 +64,7 @@ public:
   unsigned int prim_id;
 
   PlaneIntersector() = delete;
-  explicit PlaneIntersector(const Collection<T> &collection)
-      : collection(collection), prim_id(-1), hit_distance(std::numeric_limits<T>::max()) {}
+  explicit PlaneIntersector(const Collection<T> &collection) : collection(collection), prim_id(-1) {}
 };
 
 template<typename T>
@@ -98,16 +97,20 @@ public:
     }
   }
 
-  [[nodiscard]] inline unsigned int size() const { return centers.size(); }
+  [[nodiscard]] inline unsigned int size() const noexcept { return centers.size(); }
 
-  inline std::pair<Vec3r<T>, Vec3r<T>> get_primitive_bounding_box(const unsigned int prim_id) const {
+  [[nodiscard]] inline std::pair<Vec3r<T>, Vec3r<T>>
+  get_primitive_bounding_box(const unsigned int prim_id) const noexcept {
     return box[prim_id];
   }
 
-  inline Vec3r<T> get_primitive_center(const unsigned int prim_id) const { return centers[prim_id]; }
+  [[nodiscard]] inline Vec3r<T> get_primitive_center(const unsigned int prim_id) const noexcept {
+    return centers[prim_id];
+  }
 
 private:
-  inline std::pair<Vec3r<T>, Vec3r<T>> pre_compute_bounding_box(const unsigned int prim_id) const {
+  [[nodiscard]] inline std::pair<Vec3r<T>, Vec3r<T>>
+  pre_compute_bounding_box(const unsigned int prim_id) const noexcept {
     const Vec3r<T> &center = centers[prim_id];
     const T dx = dxs[prim_id];
     const T dy = dys[prim_id];
@@ -264,55 +267,6 @@ inline bool intersect_primitive(PlaneIntersector<T, Collection> &i, const Plane<
   return false;
 }
 
-template<typename T>
-T distance_to_surface(Plane<T> &sphere, const Vec3r<T> &point, const unsigned int prim_index) {
-  //TODO
-  return 0;
-}
-
 }// namespace blazert
-
-// TODO: OLD SHIT
-//inline void BoundingBox(Vec3r<T> &bmin, Vec3r<T> &bmax, unsigned int prim_index) const {
-//
-//  const Vec3r<T> &center = (*centers)[prim_index];
-//  const T dx = (*dxs)[prim_index];
-//  const T dy = (*dys)[prim_index];
-//  const Mat3r<T> &rotation = (*rotations)[prim_index];
-//
-//  // vectors describing extent in x direction
-//  const Vec3r<T> &a1_tmp{-dx / static_cast<T>(2.0), -dy / static_cast<T>(2.0), 0.0};
-//  const Vec3r<T> &a2_tmp{dx / static_cast<T>(2.0), -dy / static_cast<T>(2.0), 0.0};
-//  // vectors describing extent in y direction
-//  const Vec3r<T> &a3_tmp{-dx / static_cast<T>(2.0), dy / static_cast<T>(2.0), 0.0};
-//  const Vec3r<T> &a4_tmp{dx / static_cast<T>(2.0), dy / static_cast<T>(2.0), 0.0};
-//
-//  // vectors describing extent in y direction
-//  const Vec3r<T> &c1_tmp{0.0, 0.0, -thickness};
-//  const Vec3r<T> &c2_tmp{0.0, 0.0, thickness};
-//
-//  // std::cout << rot_internal << std::endl;
-//  // vectors describing the plane in the global coordinate system
-//  const Vec3r<T> &a1 = center + rotation * a1_tmp;
-//  const Vec3r<T> &a2 = center + rotation * a2_tmp;
-//  const Vec3r<T> &a3 = center + rotation * a3_tmp;
-//  const Vec3r<T> &a4 = center + rotation * a4_tmp;
-//  const Vec3r<T> &c1 = center + rotation * c1_tmp;
-//  const Vec3r<T> &c2 = center + rotation * c2_tmp;
-//
-//  // maximum / minimum is also the max/min of the bounding box
-//
-//  bmin[0] = std::min({a1[0], a2[0], a3[0], a4[0], c1[0], c2[0]});
-//  bmin[1] = std::min({a1[1], a2[1], a3[1], a4[1], c1[1], c2[1]});
-//  bmin[2] = std::min({a1[2], a2[2], a3[2], a4[2], c1[2], c2[2]});
-//  bmax[0] = std::max({a1[0], a2[0], a3[0], a4[0], c1[0], c2[0]});
-//  bmax[1] = std::max({a1[1], a2[1], a3[1], a4[1], c1[1], c2[1]});
-//  bmax[2] = std::max({a1[2], a2[2], a3[2], a4[2], c1[2], c2[2]});
-//}
-//
-//inline void BoundingBoxAndCenter(Vec3r<T> &bmin, Vec3r<T> &bmax, Vec3r<T> &center, unsigned int prim_index) const {
-//  BoundingBox(bmin, bmax, prim_index);
-//  center = (*centers)[prim_index];
-//}
 
 #endif//BLAZERT_PLANE_H

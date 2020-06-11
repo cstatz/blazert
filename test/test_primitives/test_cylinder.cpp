@@ -1,6 +1,44 @@
-//
-// Created by ogarten on 15/05/2020.
-//
+/*
+ * Created by ogarten on 15/05/2020.
+ * Modified on 11/06/202 by ogarten
+ *
+ * This file holds test cases for the cylinder primitive for the following cases:
+ * 1. correct bounding box
+ * 1.1 center at origin ( rotated, non-rotated cylinder)
+ * 1.1 center not at origin (rotated, non-rotated cylinder)
+ *
+ * 2. testing primitive center function
+ * 2.1 center at origin ( rotated, non-rotated cylinder)
+ * 2.2 center not at origin ( rotated, non-rotated cylinder)
+ *
+ * 3. intersection tests
+ * 3.1 center at origin
+ *  3.1.1 non-rotated cylinder
+ *      origin    hit where?
+ *      __________________________
+ *      above     top, perpendicular
+ *      above     top, oblique indcidence
+ *      above     shell surface
+ *      below     bottom, perpendicular
+ *      below     bottom, oblique indcidence
+ *      below     shell surface
+ *      outside   shell surface
+ *      inside    top, bottom, shell surface
+ *      above     no hits
+ *      below     no hits
+ *      outside   no hits
+ *  3.1.2 rotated cylinder
+ *      rotation  origin  hit where?
+ *      ____________________________
+ *      z-axis    z-axis  top + no hit
+ *      y-axis    x-axis  top + no hit
+ *      x-axis    y-axis  top + no hit
+ *
+ *
+ * 3.2 center not at origin
+ *  The same cases as in 3.1 are implemented for shifted center
+ */
+
 
 #include <blazert/bvh/accel.h>
 #include <blazert/bvh/builder.h>

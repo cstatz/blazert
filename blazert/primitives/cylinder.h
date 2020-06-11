@@ -20,17 +20,17 @@ template<typename T>
 class Cylinder {
 
 public:
-  const Vec3r<T> center;
-  const T semi_axis_a;
-  const T semi_axis_b;
-  const T height;
-  const Mat3r<T> rotation;
+  const Vec3r<T> &center;
+  const T &semi_axis_a;
+  const T &semi_axis_b;
+  const T &height;
+  const Mat3r<T> &rotation;
   unsigned int prim_id;
 
 public:
   Cylinder() = delete;
-  Cylinder(const Vec3r<T> center, const T semi_axis_a, const T semi_axis_b, const T height, const Mat3r<T> rotation,
-           const unsigned int prim_id)
+  Cylinder(const Vec3r<T> &center, const T &semi_axis_a, const T &semi_axis_b, const T &height,
+           const Mat3r<T> &rotation, const unsigned int prim_id)
       : center(center), semi_axis_a(semi_axis_a), semi_axis_b(semi_axis_b), height(height), rotation(rotation),
         prim_id(prim_id){};
   Cylinder(Cylinder &&rhs) noexcept
@@ -66,8 +66,7 @@ public:
   unsigned int prim_id;
 
   CylinderIntersector() = delete;
-  explicit CylinderIntersector(const Collection<T> &collection)
-      : collection(collection), prim_id(-1), hit_distance(std::numeric_limits<T>::max()) {}
+  explicit CylinderIntersector(const Collection<T> &collection) : collection(collection), prim_id(-1) {}
 };
 
 template<typename T>
@@ -99,16 +98,20 @@ public:
     }
   }
 
-  [[nodiscard]] inline unsigned int size() const { return centers.size(); }
+  [[nodiscard]] inline unsigned int size() const noexcept { return centers.size(); }
 
-  inline std::pair<Vec3r<T>, Vec3r<T>> get_primitive_bounding_box(const unsigned int prim_id) const {
+  [[nodiscard]] inline std::pair<Vec3r<T>, Vec3r<T>>
+  get_primitive_bounding_box(const unsigned int prim_id) const noexcept {
     return box[prim_id];
   }
 
-  inline Vec3r<T> get_primitive_center(const unsigned int prim_id) const { return centers[prim_id]; }
+  [[nodiscard]] inline Vec3r<T> get_primitive_center(const unsigned int prim_id) const noexcept {
+    return centers[prim_id];
+  }
 
 private:
-  inline std::pair<Vec3r<T>, Vec3r<T>> pre_compute_bounding_box(const unsigned int prim_id) const {
+  [[nodiscard]] inline std::pair<Vec3r<T>, Vec3r<T>>
+  pre_compute_bounding_box(const unsigned int prim_id) const noexcept {
     const Vec3r<T> &center = centers[prim_id];
     const T a = semi_axes_a[prim_id];
     const T b = semi_axes_b[prim_id];
@@ -489,55 +492,6 @@ inline bool intersect_primitive(CylinderIntersector<T, Collection> &i, const Cyl
   return false;
 }
 
-template<typename T>
-double distance_to_surface(Cylinder<T> &cylinder, const Vec3r<T> &point, const unsigned int prim_index) {
-  /**
-   * TODO: calculate the distance to the surface of the object from point
-   */
-  /***
-   * TODO: calculate distance to top and bottom, and shell surface, take minimum
-   */
-  return 0;
-}
-
 }// namespace blazert
-
-// TODO: OLD SHIT; clean up
-//
-//inline void BoundingBox(Vec3r<T> &bmin, Vec3r<T> &bmax, unsigned int prim_index) const {
-//  const Vec3r<T> &center = (*centers)[prim_index];
-//  const T a = (*semi_axes_a)[prim_index];
-//  const T b = (*semi_axes_b)[prim_index];
-//  const T height = (*heights)[prim_index];
-//  const Mat3r<T> &rotation = (*rotations)[prim_index];
-//
-//  const Vec3r<T> &a1_tmp{a, 0, 0};
-//  const Vec3r<T> &b1_tmp{0, b, 0};
-//  const Vec3r<T> &h1_tmp{0, 0, height};
-//  const Vec3r<T> &a2_tmp{a, 0, 0};
-//  const Vec3r<T> &b2_tmp{0, b, 0};
-//  //const Vec3r<T> &h2_tmp{0, 0, height};
-//
-//  // These vectors describe the cylinder in the global coordinate system
-//  const Vec3r<T> &a1 = center + rotation * a1_tmp;
-//  const Vec3r<T> &b1 = center + rotation * b1_tmp;
-//  const Vec3r<T> &h1 = center + rotation * h1_tmp;
-//
-//  const Vec3r<T> &a2 = center - rotation * a2_tmp;
-//  const Vec3r<T> &b2 = center - rotation * b2_tmp;
-//
-//  // maximum / minimum is also the max/min of the bounding box
-//  bmin[0] = std::min({a1[0], b1[0], a2[0], b2[0], h1[0]});
-//  bmin[1] = std::min({a1[1], b1[1], a2[1], b2[1], h1[1]});
-//  bmin[2] = std::min({a1[2], b1[2], a2[2], b2[2], h1[2]});
-//  bmax[0] = std::max({a1[0], b1[0], a2[0], b2[0], h1[0]});
-//  bmax[1] = std::max({a1[1], b1[1], a2[1], b2[1], h1[1]});
-//  bmax[2] = std::max({a1[2], b1[2], a2[2], b2[2], h1[2]});
-//}
-//
-//inline void BoundingBoxAndCenter(Vec3r<T> &bmin, Vec3r<T> &bmax, Vec3r<T> &center, unsigned int prim_index) const {
-//  BoundingBox(bmin, bmax, prim_index);
-//  center = (*centers)[prim_index] + (*rotations)[prim_index] * Vec3r<T>{0, 0, (*heights)[prim_index] / 2};
-//}
 
 #endif//BLAZERT_CYLINDER_H

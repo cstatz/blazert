@@ -18,12 +18,12 @@ namespace blazert {
 
 template<typename T>
 struct Triangle {
-  const Vec3r<T> a;
+  const Vec3r<T> &a;
   const Vec3r<T> b;
   const Vec3r<T> c;
   unsigned int i;
   Triangle() = delete;
-  Triangle(Vec3r<T> a, Vec3r<T> b_, Vec3r<T> c_, const unsigned int i) : a(a), b(c_ - a), c(a - b_), i(i) {}
+  Triangle(const Vec3r<T> &a, const Vec3r<T> &b_, const Vec3r<T> &c_, const unsigned int i) : a(a), b(c_ - a), c(a - b_), i(i) {}
   Triangle(Triangle &&rhs) noexcept
       : a(std::move(rhs.a)), b(std::move(rhs.b)), c(std::move(rhs.c)), i(std::exchange(rhs.i, -1)) {}
   Triangle &operator=(const Triangle &rhs) = delete;
@@ -91,16 +91,16 @@ public:
     }
   }
 
-  [[nodiscard]] inline unsigned int size() const { return faces.size(); }
+  [[nodiscard]] inline unsigned int size() const noexcept { return faces.size(); }
 
-  inline std::pair<Vec3r<T>, Vec3r<T>> get_primitive_bounding_box(const unsigned int prim_index) const {
+  [[nodiscard]] inline std::pair<Vec3r<T>, Vec3r<T>> get_primitive_bounding_box(const unsigned int prim_index) const noexcept {
     return box[prim_index];
   }
 
-  inline Vec3r<T> get_primitive_center(const unsigned int prim_index) const { return centers[prim_index]; }
+  [[nodiscard]] inline Vec3r<T> get_primitive_center(const unsigned int prim_index) const noexcept { return centers[prim_index]; }
 
 private:
-  inline std::pair<Vec3r<T>, Vec3r<T>> pre_compute_bounding_box(const Vec3ui &face) const {
+  [[nodiscard]] inline std::pair<Vec3r<T>, Vec3r<T>> pre_compute_bounding_box(const Vec3ui &face) const noexcept {
 
     Vec3r<T> min = vertices[face[0]];
     Vec3r<T> max = vertices[face[0]];
@@ -113,11 +113,11 @@ private:
     return std::make_pair(std::move(min), std::move(max));
   }
 
-  inline Vec3r<T> pre_compute_center(const Vec3ui &face) const {
+  [[nodiscard]] inline Vec3r<T> pre_compute_center(const Vec3ui &face) const noexcept {
     return (vertices[face[0]] + vertices[face[1]] + vertices[face[2]]) / static_cast<T>(3.);
   }
 
-  inline Vec3r<T> pre_compute_face_normal(const Vec3ui &face) const {
+  [[nodiscard]] inline Vec3r<T> pre_compute_face_normal(const Vec3ui &face) const noexcept {
     const Vec3r<T> e2{vertices[face[2]] - vertices[face[0]]};
     const Vec3r<T> e1{vertices[face[0]] - vertices[face[1]]};
     return normalize(cross(e1, e2));

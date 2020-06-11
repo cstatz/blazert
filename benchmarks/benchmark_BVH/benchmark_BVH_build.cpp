@@ -19,7 +19,9 @@
 #include <third_party/bvh/include/bvh/triangle.hpp>
 #include <third_party/bvh/include/bvh/vector.hpp>
 
+#ifdef EMBREE_TRACING
 #include <embree3/rtcore.h>
+#endif
 
 using namespace blazert;
 
@@ -41,6 +43,7 @@ static void BM_BLAZERT_BUILD_Sphere(benchmark::State& state)
 BENCHMARK_TEMPLATE(BM_BLAZERT_BUILD_Sphere, float)->DenseRange(2,9,1)->Unit(benchmark::kMillisecond);
 BENCHMARK_TEMPLATE(BM_BLAZERT_BUILD_Sphere, double)->DenseRange(2,9,1)->Unit(benchmark::kMillisecond);
 
+#ifdef EMBREE_TRACING
 static void
 BM_EMBREE_BUILD_Sphere(benchmark::State& state)
 {
@@ -81,6 +84,7 @@ BM_EMBREE_BUILD_Sphere(benchmark::State& state)
   }
 }
 BENCHMARK(BM_EMBREE_BUILD_Sphere)->DenseRange(2,9,1)->Unit(benchmark::kMillisecond);
+#endif
 
 template<typename T>
 static void BM_nanoRT_BUILD_BHV_Sphere(benchmark::State &state) {
@@ -115,7 +119,7 @@ static void BM_bvh_BUILD_BHV_Sphere_SweepSAH(benchmark::State &state) {
 
   std::vector<Triangle> triangles;
   triangles.reserve(os->triangles.size());
-  for (int i = 0; i < os->triangles.size(); i += 3) {
+  for (uint32_t i = 0; i < os->triangles.size(); i += 3) {
     triangles.emplace_back(
         Vector3{
             static_cast<Scalar>(os->triangles[i][0]),
@@ -156,7 +160,7 @@ static void BM_bvh_BUILD_BHV_Sphere_BinnedSAH(benchmark::State &state) {
 
   std::vector<Triangle> triangles;
   triangles.reserve(os->triangles.size());
-  for (int i = 0; i < os->triangles.size(); i += 3) {
+  for (uint32_t i = 0; i < os->triangles.size(); i += 3) {
     triangles.emplace_back(
         Vector3{
             static_cast<Scalar>(os->triangles[i][0]),
