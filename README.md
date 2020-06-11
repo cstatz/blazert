@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.com/cstatz/blazert.svg?token=MzD1bv55cBzChUswxdrj&branch=develop)](https://travis-ci.com/cstatz/blazert)
+
 # blazeRT
 
 1. [Introduction](#introduction)
@@ -20,8 +22,6 @@ blazeRT works with triangular meshes and simple primitives, but it should be eas
 to work on polygons or more complex primitives.
 
 Please read the [contribution guide](CONTRIBUTING.md) if you are interested in improving blazeRT.
-
-Current build status (develop branch): [![Build Status](https://travis-ci.com/cstatz/blazert.svg?token=MzD1bv55cBzChUswxdrj&branch=develop)](https://travis-ci.com/cstatz/blazert)
 
 ## Features
 - [x] modern C++
