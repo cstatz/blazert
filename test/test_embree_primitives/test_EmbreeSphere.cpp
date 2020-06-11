@@ -1,7 +1,7 @@
 //
 // Created by ogarten on 1/23/19.
 //
-/*
+
 #include <third_party/doctest/doctest/doctest.h>
 #include <blazert/embree/primitives/EmbreeSphere.h>
 
@@ -216,4 +216,3 @@ TEST_CASE_TEMPLATE("EmbreeSphere", T, float) {
     }
   }
 }
-*/

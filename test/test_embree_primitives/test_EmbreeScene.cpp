@@ -1,7 +1,7 @@
 //
 // Created by ogarten on 13/05/2020.
 //
-/*
+
 #include <third_party/doctest/doctest/doctest.h>
 #include <blazert/embree/primitives/EmbreeSphere.h>
 #include <blazert/embree/scene.h>
@@ -227,11 +227,11 @@ TEST_CASE_TEMPLATE("EmbreeScene", T, float, double) {
 
       CHECK(hit);
       CHECK(rayhit.prim_id == prim_id);
-      CHECK(rayhit.hit_distance == Approx(3));
+      CHECK(rayhit.hit_distance == Approx(4));
       CHECK(rayhit.normal[0] == Approx(0));
       CHECK(rayhit.normal[1] == Approx(0));
       CHECK(rayhit.normal[2] == Approx(1));
     }
   }
 }
- */
+
