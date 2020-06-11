@@ -58,7 +58,7 @@ int main(int argc, char **argv) {
   LoadObj(*mesh, objFilename.c_str());
 
   blazert::Scene<ft> scene;
-  unsigned int prim_id = scene.add_mesh(mesh->vertices, mesh->triangles);
+  [[maybe_unused]] unsigned int prim_id = scene.add_mesh(mesh->vertices, mesh->triangles);
   scene.commit();
 
 #ifdef _OPENMP
@@ -70,7 +70,7 @@ int main(int argc, char **argv) {
       const blazert::Ray<ft> ray{{0.0, 5.0, 20.0}, {static_cast<ft>((x / ft(width)) - 0.5), static_cast<ft>((y / ft(height)) - 0.5), ft(-1.)}};
       blazert::RayHit<ft> rayhit;
 
-      const bool hit = intersect1(scene, ray, rayhit);
+      [[maybe_unused]] const bool hit = intersect1(scene, ray, rayhit);
     }
   }
 

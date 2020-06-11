@@ -140,7 +140,7 @@ int main(int argc, char** argv) {
   auto *mesh = new Mesh<ft>;
 
   std::vector<tinyobj::material_t> materials;
-  const bool ret = LoadObj(*mesh, materials, objFilename.c_str(), ft(1.0), mtlPath.c_str());
+  [[maybe_unused]] const bool ret = LoadObj(*mesh, materials, objFilename.c_str(), ft(1.0), mtlPath.c_str());
 
     Camera camera{{0, 5, 10}, {0., 0., -1.}, {0, 1, 0}, 60};
 

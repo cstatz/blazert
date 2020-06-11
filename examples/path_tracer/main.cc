@@ -347,7 +347,7 @@ int main(int argc, char **argv) {
   std::cout << "num_triangles = " << mesh->faces.size() << "\n";
 
   blazert::SAHBinnedBuilder builder;
-  auto build_statistics = builder.build(accel, build_options);
+  [[maybe_unused]] auto build_statistics = builder.build(accel, build_options);
 
 
   std::vector<float> rgb(width * height * 3, 0.0f);

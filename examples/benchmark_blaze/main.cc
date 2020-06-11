@@ -73,7 +73,7 @@ int main(int argc, char **argv) {
 
       const blazert::Ray<ft> ray{{0.0, 5.0, 20.0}, {(x / ft(width)) - 0.5, (y / ft(height)) - 0.5, -1.}};
       blazert::RayHit<ft> rayhit{};
-      const bool hit = traverse(bvh, ray, rayhit);
+      [[maybe_unused]] const bool hit = traverse(bvh, ray, rayhit);
     }
   }
 
