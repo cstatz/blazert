@@ -95,6 +95,35 @@ TARGET_INCLUDE_DIRECTORIES(test_blazert PUBLIC ${CMAKE_SOURCE_DIR} ${EMBREE_INCL
 TARGET_LINK_LIBRARIES(test_blazert ${EMBREE_LIBRARY})
 SET_TARGET_PROPERTIES(test_blazert PROPERTIES LINKER_LANGUAGE CXX)
 ADD_TEST(main test_blazert)
+
+find_package(ImageMagick COMPONENTS compare QUIET)
+if (NOT ImageMagick_compare_FOUND)
+    message(WARNING "Cannot find ImageMagick's compare tool. Images will not be compared to the reference.")
+else()
+    add_test(
+            NAME "render_trimesh"
+            COMMAND
+            ${CMAKE_COMMAND}
+            -DCOMPARE_EXECUTABLE=${ImageMagick_compare_EXECUTABLE}
+            -DRENDER_EXECUTABLE=${CMAKE_BINARY_DIR}/examples/renderer/renderer
+            -DREFERENCE=${CMAKE_SOURCE_DIR}/examples/baseline/renderer.ppm
+            -DOUTPUT=${CMAKE_SOURCE_DIR}/examples/render.ppm
+            -DDIFFERENCE=${CMAKE_CURRENT_BINARY_DIR}/difference_renderer.png
+            -P ${PROJECT_SOURCE_DIR}/cmake/compare_image_test.cmake
+            WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/examples)
+    add_test(
+            NAME "render_other_primitives"
+            COMMAND
+            ${CMAKE_COMMAND}
+            -DCOMPARE_EXECUTABLE=${ImageMagick_compare_EXECUTABLE}
+            -DRENDER_EXECUTABLE=${CMAKE_BINARY_DIR}/examples/scene_primitives/scene_primitives
+            -DREFERENCE=${CMAKE_SOURCE_DIR}/examples/baseline/scene_primitives.png
+            -DOUTPUT=${CMAKE_SOURCE_DIR}/examples/render.png
+            -DDIFFERENCE=${CMAKE_CURRENT_BINARY_DIR}/difference_scene_primitives.png
+            -P ${PROJECT_SOURCE_DIR}/cmake/compare_image_test.cmake
+            WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/examples)
+endif ()
+
 ENDIF()
 
 IF(BUILD_BENCHMARK)

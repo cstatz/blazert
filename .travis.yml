@@ -17,6 +17,7 @@ addons:
       - cmake-data
       - cmake
       - libopenblas-dev
+      - imagemagick
   homebrew:
     taps:
       - cstatz/homebrew-visit
@@ -24,6 +25,7 @@ addons:
       - ccache
       - cmake
       - blaze
+      - imagemagick
     update: true
 
 os:
