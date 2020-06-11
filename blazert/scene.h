@@ -31,6 +31,7 @@ public:
    ***/
   unsigned int geometries = 0;
 
+  std::unique_ptr<TriangleMesh<T>> triangle_collection;
   std::unique_ptr<BVH<T, TriangleMesh>> triangles_bvh;
   size_t triangles_geom_id = -1;
   bool has_triangles = false;
@@ -178,7 +179,7 @@ template<typename T>
 unsigned int BlazertScene<T>::add_mesh(const Vec3rList<T> &vertices, const Vec3iList &triangles) {
 
   if ((!has_triangles) && (!has_been_committed)) {
-    auto triangle_collection = TriangleMesh(vertices, triangles);
+    triangle_collection = std::make_unique<TriangleMesh<T>>(vertices, triangles);
     triangles_bvh = std::make_unique<BVH<T, TriangleMesh>>(triangle_collection);
 
     has_triangles = true;
