@@ -115,7 +115,7 @@ static void BM_bvh_BUILD_BHV_Sphere_SweepSAH(benchmark::State &state) {
 
   std::vector<Triangle> triangles;
   triangles.reserve(os->triangles.size());
-  for (int i = 0; i < os->triangles.size(); i += 3) {
+  for (uint32_t i = 0; i < os->triangles.size(); i += 3) {
     triangles.emplace_back(
         Vector3{
             static_cast<Scalar>(os->triangles[i][0]),
@@ -156,7 +156,7 @@ static void BM_bvh_BUILD_BHV_Sphere_BinnedSAH(benchmark::State &state) {
 
   std::vector<Triangle> triangles;
   triangles.reserve(os->triangles.size());
-  for (int i = 0; i < os->triangles.size(); i += 3) {
+  for (uint32_t i = 0; i < os->triangles.size(); i += 3) {
     triangles.emplace_back(
         Vector3{
             static_cast<Scalar>(os->triangles[i][0]),

@@ -64,8 +64,7 @@ public:
   unsigned int prim_id;
 
   PlaneIntersector() = delete;
-  explicit PlaneIntersector(const Collection<T> &collection)
-      : collection(collection), prim_id(-1), hit_distance(std::numeric_limits<T>::max()) {}
+  explicit PlaneIntersector(const Collection<T> &collection) : collection(collection), prim_id(-1) {}
 };
 
 template<typename T>
@@ -110,7 +109,8 @@ public:
   }
 
 private:
-  [[nodiscard]] inline std::pair<Vec3r<T>, Vec3r<T>> pre_compute_bounding_box(const unsigned int prim_id) const noexcept {
+  [[nodiscard]] inline std::pair<Vec3r<T>, Vec3r<T>>
+  pre_compute_bounding_box(const unsigned int prim_id) const noexcept {
     const Vec3r<T> &center = centers[prim_id];
     const T dx = dxs[prim_id];
     const T dy = dys[prim_id];

@@ -29,8 +29,8 @@ public:
 
 public:
   Cylinder() = delete;
-  Cylinder(const Vec3r<T> &center, const T &semi_axis_a, const T &semi_axis_b, const T &height, const Mat3r<T> &rotation,
-           const unsigned int prim_id)
+  Cylinder(const Vec3r<T> &center, const T &semi_axis_a, const T &semi_axis_b, const T &height,
+           const Mat3r<T> &rotation, const unsigned int prim_id)
       : center(center), semi_axis_a(semi_axis_a), semi_axis_b(semi_axis_b), height(height), rotation(rotation),
         prim_id(prim_id){};
   Cylinder(Cylinder &&rhs) noexcept
@@ -66,8 +66,7 @@ public:
   unsigned int prim_id;
 
   CylinderIntersector() = delete;
-  explicit CylinderIntersector(const Collection<T> &collection)
-      : collection(collection), prim_id(-1), hit_distance(std::numeric_limits<T>::max()) {}
+  explicit CylinderIntersector(const Collection<T> &collection) : collection(collection), prim_id(-1) {}
 };
 
 template<typename T>
@@ -111,7 +110,8 @@ public:
   }
 
 private:
-  [[nodiscard]] inline std::pair<Vec3r<T>, Vec3r<T>> pre_compute_bounding_box(const unsigned int prim_id) const noexcept {
+  [[nodiscard]] inline std::pair<Vec3r<T>, Vec3r<T>>
+  pre_compute_bounding_box(const unsigned int prim_id) const noexcept {
     const Vec3r<T> &center = centers[prim_id];
     const T a = semi_axes_a[prim_id];
     const T b = semi_axes_b[prim_id];

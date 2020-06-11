@@ -53,8 +53,7 @@ public:
   unsigned int prim_id;
 
   SphereIntersector() = delete;
-  explicit SphereIntersector(const Collection<T> &collection)
-      : collection(collection), prim_id(-1), hit_distance(std::numeric_limits<T>::max()) {}
+  explicit SphereIntersector(const Collection<T> &collection) : collection(collection), prim_id(-1) {}
 };
 
 template<typename T>
