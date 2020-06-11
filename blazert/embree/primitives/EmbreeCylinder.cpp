@@ -75,25 +75,27 @@ cylinderBoundsFunc(const RTCBoundsFunctionArguments* args)
   const Vec3r<float> &center = cylinder.center;
   const Vec3r<float> &a1_tmp{cylinder.a, 0, 0};
   const Vec3r<float> &b1_tmp{0, cylinder.b, 0};
-  const Vec3r<float> &h1_tmp{0, 0, cylinder.height};
-  const Vec3r<float> &a2_tmp{cylinder.a, 0, 0};
-  const Vec3r<float> &b2_tmp{0, cylinder.b, 0};
+  const Vec3r<float> &h1_tmp{0, 0, cylinder.height/2};
+//  const Vec3r<float> &a2_tmp{cylinder.a, 0, 0};
+//  const Vec3r<float> &b2_tmp{0, cylinder.b, 0};
+//  const Vec3r<float> &h2_tmp{0, 0, cylinder.height/2};
 
   // These vectors describe the cylinder in the global coordinate system
   const Vec3r<float> &a1 = center + rot * a1_tmp;
   const Vec3r<float> &b1 = center + rot * b1_tmp;
   const Vec3r<float> &h1 = center + rot * h1_tmp;
 
-  const Vec3r<float> &a2 = center - rot * a2_tmp;
-  const Vec3r<float> &b2 = center - rot * b2_tmp;
+  const Vec3r<float> &a2 = center - rot * a1_tmp;
+  const Vec3r<float> &b2 = center - rot * b1_tmp;
+  const Vec3r<float> &h2 = center - rot * h1_tmp;
 
   // maximum / minimum is also the max/min of the bounding box
-  args->bounds_o->lower_x = std::min({ a1[0], b1[0], a2[0], b2[0], h1[0] });
-  args->bounds_o->lower_y = std::min({ a1[1], b1[1], a2[1], b2[1], h1[1] });
-  args->bounds_o->lower_z = std::min({ a1[2], b1[2], a2[2], b2[2], h1[2] });
-  args->bounds_o->upper_x = std::max({ a1[0], b1[0], a2[0], b2[0], h1[0] });
-  args->bounds_o->upper_y = std::max({ a1[1], b1[1], a2[1], b2[1], h1[1] });
-  args->bounds_o->upper_z = std::max({ a1[2], b1[2], a2[2], b2[2], h1[2] });
+  args->bounds_o->lower_x = std::min({ a1[0], b1[0], a2[0], b2[0], h1[0], h2[0] });
+  args->bounds_o->lower_y = std::min({ a1[1], b1[1], a2[1], b2[1], h1[1], h2[1] });
+  args->bounds_o->lower_z = std::min({ a1[2], b1[2], a2[2], b2[2], h1[2], h2[2] });
+  args->bounds_o->upper_x = std::max({ a1[0], b1[0], a2[0], b2[0], h1[0], h2[0] });
+  args->bounds_o->upper_y = std::max({ a1[1], b1[1], a2[1], b2[1], h1[1], h2[1] });
+  args->bounds_o->upper_z = std::max({ a1[2], b1[2], a2[2], b2[2], h1[2], h2[2] });
 }
 
 void
@@ -154,10 +156,10 @@ cylinderIntersectFunc(const RTCIntersectFunctionNArguments* args)
   const float h = cylinder.height;
 
   // area 1
-  if (z0 > h) {
+  if (z0 > h/2.) {
     if (l == 0)
       return;
-    const float t0 = (h - z0) / l;
+    const float t0 = (h/2 - z0) / l;
     if (t0 < 0)
       return;
     const Vec3r<float> &intercept = org + t0 * dir;
@@ -183,13 +185,13 @@ cylinderIntersectFunc(const RTCIntersectFunctionNArguments* args)
       const Vec3r<float> &intercept1 = org + dir * t1;
 
       // t1 is right intercept
-      if ((t1 > 0) && (t1 < t0) && (intercept1[2] <= h) && (intercept1[2] >= 0)) {
+      if ((t1 > 0) && (t1 < t0) && (intercept1[2] <= h/2) && (intercept1[2] >= -h/2)) {
         const Vec3r<float> &normal{2 * intercept1[0] / (a * a), 2 * intercept1[1] / (b * b), 0.f};
         const Vec3r<float> &Ng = rot * normal / norm(normal);
 
         setRayHit(rayhit, Ng, 0.f, 0.f, primID, geomID, instID, norm(t1 * dir));
       }
-      if ((t0 > 0) && (t0 < t1) && (intercept0[2] <= h) && (intercept0[2] >= 0)) {
+      if ((t0 > 0) && (t0 < t1) && (intercept0[2] <= h/2) && (intercept0[2] >= -h/2)) {
         const Vec3r<float> &normal{2 * intercept0[0] / (a * a), 2 * intercept0[1] / (b * b), 0.f};
         const Vec3r<float> &Ng = rot * normal / norm(normal);
 
@@ -198,10 +200,10 @@ cylinderIntersectFunc(const RTCIntersectFunctionNArguments* args)
     }
   } else
     // area 2
-    if (z0 < 0) {
+    if (z0 < -h/2) {
     if (l == 0)
       return;
-    const float t0 = -z0 / l;
+    const float t0 = (-h/2 - z0) / l;
     if (t0 < 0)
       return;
 
@@ -226,13 +228,13 @@ cylinderIntersectFunc(const RTCIntersectFunctionNArguments* args)
       const Vec3r<float> &intercept0 = org + dir * t0;
       const Vec3r<float> &intercept1 = org + dir * t1;
       // t1 is right intercept
-      if ((t1 > 0) && (t1 < t0) && (intercept1[2] <= h) && (intercept1[2] >= 0)) {
+      if ((t1 > 0) && (t1 < t0) && (intercept1[2] <= h/2) && (intercept1[2] >= -h/2)) {
         const Vec3r<float> &normal{2 * intercept1[0] / (a * a), 2 * intercept1[1] / (b * b), 0.f};
         const Vec3r<float> &Ng = rot * normal / norm(normal);
 
         setRayHit(rayhit, Ng, 0.f, 0.f, primID, geomID, instID, norm(t1 * dir));
       }
-      if ((t0 > 0) && (t0 < t1) && (intercept0[2] <= h) && (intercept0[2] >= 0)) {
+      if ((t0 > 0) && (t0 < t1) && (intercept0[2] <= h/2) && (intercept0[2] >= -h/2)) {
         const Vec3r<float> &normal{2 * intercept0[0] / (a * a), 2 * intercept0[1] / (b * b), 0.f};
         const Vec3r<float> &Ng = rot * normal / norm(normal);
 
@@ -241,7 +243,7 @@ cylinderIntersectFunc(const RTCIntersectFunctionNArguments* args)
     }
   }
   // area 3
-  else if ((z0 > 0) && (z0 < h) && (x0 * x0 * b * b + y0 * y0 * a * a > a * a * b * b)) {
+  else if ((z0 > -h/2) && (z0 < h/2) && (x0 * x0 * b * b + y0 * y0 * a * a > a * a * b * b)) {
     const float A = a * a * k * k + b * b * j * j;
     const float B = a * a * k * y0 + b * b * j * x0;
     const float C = a * a * k * k + b * b * j * j - j * j * y0 * y0 + 2 * j * k * x0 * y0 - k * k * x0 * x0;
@@ -254,13 +256,13 @@ cylinderIntersectFunc(const RTCIntersectFunctionNArguments* args)
     const Vec3r<float> &intercept0 = org + dir * t0;
     const Vec3r<float> &intercept1 = org + dir * t1;
     // t1 is right intercept
-    if ((t1 > 0) && (t1 < t0) && (intercept1[2] <= h) && (intercept1[2] >= 0)) {
+    if ((t1 > 0) && (t1 < t0) && (intercept1[2] <= h/2) && (intercept1[2] >= -h/2)) {
       const Vec3r<float> &normal{2* intercept1[0] / (a * a), 2 * intercept1[1] / (b * b), 0.f};
       const Vec3r<float> &Ng = rot * normal / norm(normal);
 
       setRayHit(rayhit, Ng, 0.f, 0.f, primID, geomID, instID, norm(t1 * dir));
     }
-    if ((t0 > 0) && (t0 < t1) && (intercept0[2] <= h) && (intercept0[2] >= 0)) {
+    if ((t0 > 0) && (t0 < t1) && (intercept0[2] <= h/2) && (intercept0[2] >= -h/20)) {
       const Vec3r<float> &normal{2 * intercept0[0] / (a * a), 2 * intercept0[1] / (b * b), 0.f};
       const Vec3r<float> &Ng = rot * normal / norm(normal);
 
@@ -268,12 +270,12 @@ cylinderIntersectFunc(const RTCIntersectFunctionNArguments* args)
     }
   }
   // area 4
-  if ((z0 >= 0) && (z0 <= h) && (x0 * x0 * b * b + y0 * y0 * a * a <= a * a * b * b)) {
+  if ((z0 >= -h/2) && (z0 <= h/2) && (x0 * x0 * b * b + y0 * y0 * a * a <= a * a * b * b)) {
     // only surrounding surface can have an intersection
     if (l == 0) {
       // if the z-component of the direction vector points along the
       // bottom or top circle, we will not have a intersection
-      if ((z0 == 0) || (z0 == h))
+      if ((z0 == -h/2) || (z0 == h/2))
         return;
 
       const float A = a * a * k * k + b * b * j * j;
@@ -289,13 +291,13 @@ cylinderIntersectFunc(const RTCIntersectFunctionNArguments* args)
       const Vec3r<float> &intercept1 = org + dir * t1;
       // t1 is right intercept
 
-      if ((t1 > 0) && (intercept1[2] <= h) && (intercept1[2] >= 0)) {
+      if ((t1 > 0) && (intercept1[2] <= h/2) && (intercept1[2] >= -h/2)) {
         const Vec3r<float> &normal{2 * intercept1[0] / (a * a), 2 * intercept1[1] / (b * b), 0.f};
         const Vec3r<float> &Ng = rot * normal / norm(normal);
 
         setRayHit(rayhit, Ng, 0.f, 0.f, primID, geomID, instID, norm(t1 * dir));
       }
-      if ((t0 > 0) && (intercept0[2] <= h) && (intercept0[2] >= 0)) {
+      if ((t0 > 0) && (intercept0[2] <= h/2) && (intercept0[2] >= -h/2)) {
         const Vec3r<float> &normal{2 * intercept0[0] / (a * a), 2 * intercept0[1] / (b * b), 0.f};
         const Vec3r<float> &Ng = rot * normal / norm(normal);
 
@@ -311,7 +313,7 @@ cylinderIntersectFunc(const RTCIntersectFunctionNArguments* args)
         return;
       // bottom circle
       if (l < 0) {
-        const float t0 = -z0 / l;
+        const float t0 = (-h/2 - z0) / l;
 
         const Vec3r<float> &normal{0.f, 0.f, -1.f};
         const Vec3r<float> &Ng = rot * normal / norm(normal);
@@ -320,7 +322,7 @@ cylinderIntersectFunc(const RTCIntersectFunctionNArguments* args)
       }
       // top circle
       if (l > 0) {
-        const float t0 = (h - z0) / l;
+        const float t0 = (h/2 - z0) / l;
 
         const Vec3r<float> &normal{0.f, 0.f, 1.f};
         const Vec3r<float> &Ng = rot * normal / norm(normal);
@@ -344,14 +346,14 @@ cylinderIntersectFunc(const RTCIntersectFunctionNArguments* args)
       const Vec3r<float> &intercept1 = org + dir * t1;
       // t1 is right intercept
 
-      if ((t1 > 0) && (intercept1[2] <= h) && (intercept1[2] >= 0)) {
+      if ((t1 > 0) && (intercept1[2] <= h/2) && (intercept1[2] >= -h/2)) {
         const Vec3r<float> &normal{2 * intercept1[0] / (a * a), 2 * intercept1[1] / (b * b), 0.f};
         const Vec3r<float> &Ng = rot * normal / norm(normal);
 
         setRayHit(rayhit, Ng, 0.f, 0.f, primID, geomID, instID, norm(t1 * dir));
         return;
       }
-      if ((t0 > 0) && (intercept0[2] <= h) && (intercept0[2] >= 0)) {
+      if ((t0 > 0) && (intercept0[2] <= h/2) && (intercept0[2] >= -h/2)) {
         const Vec3r<float> &normal{2 * intercept0[0] / (a * a), 2 * intercept0[1] / (b * b), 0.f};
         const Vec3r<float> &Ng = rot * normal / norm(normal);
 
@@ -361,7 +363,7 @@ cylinderIntersectFunc(const RTCIntersectFunctionNArguments* args)
 
       // bottom circle
       if (l < 0) {
-        const float t0 = -z0 / l;
+        const float t0 = (-h/2 - z0) / l;
 
         const Vec3r<float> &normal{0.f, 0.f, -1.f};
         const Vec3r<float> &Ng = rot * normal / norm(normal);
@@ -370,7 +372,7 @@ cylinderIntersectFunc(const RTCIntersectFunctionNArguments* args)
       }
       // top circle
       if (l > 0) {
-        const float t0 = (h - z0) / l;
+        const float t0 = (h/2 - z0) / l;
 
         const Vec3r<float> &normal{0.f, 0.f, 1.f};
         const Vec3r<float> &Ng = rot * normal / norm(normal);
@@ -438,10 +440,10 @@ cylinderOccludedFunc(const RTCOccludedFunctionNArguments* args)
   // area 1
   // if the ray does not hit the they cylinder if it does not hit the plane
   // which bounds the cylinder on the top.
-  if (z0 > h) {
+  if (z0 > h/2) {
     if (l == 0)
       return; // ray parallel to the circular surface
-    const float t0 = (h - z0) / l;
+    const float t0 = (h/2 - z0) / l;
     if (t0 < 0)
       return; // no intersection
     const Vec3r<float> &intercept = org + t0 * dir;
@@ -463,20 +465,20 @@ cylinderOccludedFunc(const RTCOccludedFunctionNArguments* args)
       const Vec3r<float> &intercept0 = org + dir * t0;
       const Vec3r<float> &intercept1 = org + dir * t1;
       // t1 is right intercept
-      if ((t1 > 0) && (t1 < t0) && (intercept1[2] <= h) && (intercept1[2] >= 0)) {
+      if ((t1 > 0) && (t1 < t0) && (intercept1[2] <= h/2) && (intercept1[2] >= -h/2)) {
         ray->tfar = -std::numeric_limits<float>().infinity();
         return;
       }
-      if ((t0 > 0) && (t0 < t1) && (intercept0[2] <= h) && (intercept0[2] >= 0)) {
+      if ((t0 > 0) && (t0 < t1) && (intercept0[2] <= h/2) && (intercept0[2] >= -h/2)) {
         ray->tfar = -std::numeric_limits<float>().infinity();
         return;
       }
     }
   } else // area 2
-    if (z0 < 0) {
+    if (z0 < -h/2) {
     if (l == 0)
       return;
-    const float t0 = -z0 / l;
+    const float t0 = (-h/2 - z0) / l;
     if (t0 < 0)
       return;
     const Vec3r<float> &intercept = org + t0 * dir;
@@ -499,18 +501,18 @@ cylinderOccludedFunc(const RTCOccludedFunctionNArguments* args)
       const Vec3r<float> &intercept0 = org + dir * t0;
       const Vec3r<float> &intercept1 = org + dir * t1;
       // t1 is right intercept
-      if ((t1 > 0) && (t1 < t0) && (intercept1[2] <= h) && (intercept1[2] >= 0)) {
+      if ((t1 > 0) && (t1 < t0) && (intercept1[2] <= h/2) && (intercept1[2] >= -h/2)) {
         ray->tfar = -std::numeric_limits<float>().infinity();
         return;
       }
-      if ((t0 > 0) && (t0 < t1) && (intercept0[2] <= h) && (intercept0[2] >= 0)) {
+      if ((t0 > 0) && (t0 < t1) && (intercept0[2] <= h/2) && (intercept0[2] >= -h/2)) {
         ray->tfar = -std::numeric_limits<float>().infinity();
         return;
       }
     }
 
   } else // area 3
-    if ((z0 > 0) && (z0 < h) && (x0 * x0 * b * b + y0 * y0 * a * a > a * a * b * b)) {
+    if ((z0 > -h/2) && (z0 < h/2) && (x0 * x0 * b * b + y0 * y0 * a * a > a * a * b * b)) {
     const float A = a * a * k * k + b * b * j * j;
     const float B = a * a * k * y0 + b * b * j * x0;
     const float C = a * a * k * k + b * b * j * j - j * j * y0 * y0 + 2 * j * k * x0 * y0 - k * k * x0 * x0;
@@ -526,10 +528,10 @@ cylinderOccludedFunc(const RTCOccludedFunctionNArguments* args)
     // intersection
     ray->tfar = -std::numeric_limits<float>().infinity();
   }
-  if ((z0 >= 0) && (z0 <= h) && (x0 * x0 * b * b + y0 * y0 * a * a <= a * a * b * b)) {
+  if ((z0 >= -h/2) && (z0 <= h/2) && (x0 * x0 * b * b + y0 * y0 * a * a <= a * a * b * b)) {
     // if ray origin is on bottom or top circle and points outwards, there
     // is no intersection
-    if (((z0 == 0) && (l < 0)) || ((z0 == h) && (l > 0)))
+    if (((z0 == -h/2) && (l < 0)) || ((z0 == h/2) && (l > 0)))
       return;
 
     // if ray origin is on shell surface, t0 and t1 need to be GREATER than
