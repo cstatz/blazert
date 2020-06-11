@@ -19,7 +19,9 @@
 #include <third_party/bvh/include/bvh/triangle.hpp>
 #include <third_party/bvh/include/bvh/vector.hpp>
 
+#ifdef EMBREE_TRACING
 #include <embree3/rtcore.h>
+#endif
 
 using namespace blazert;
 
