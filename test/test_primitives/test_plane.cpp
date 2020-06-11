@@ -1,6 +1,28 @@
-//
-// Created by ogarten on 13/05/2020.
-//
+/*
+ * Created by ogarten on 13/05/2020.
+ * Modified on 11/06/202 by ogarten
+ *
+ * This file holds test cases for the plane primitive for the following cases:
+ * 1. correct bounding box
+ * 1.1 center at origin ( rotated, non-rotated cylinder)
+ * 1.1 center not at origin (rotated, non-rotated cylinder)
+ *
+ * 2. testing primitive center function
+ * 2.1 center at origin ( rotated, non-rotated cylinder)
+ * 2.2 center not at origin ( rotated, non-rotated cylinder)
+ *
+ * 3. intersection tests
+ * 3.1 center at origin
+ *  3.1.1 non-rotated plane
+ *  3.1.2 rotated, hit on plane
+ *  3.1.3 rotated, edge hit
+ *  3.1.4 non-rotated, ray origin outside sphere bounds
+ *  3.1.5 non-rotated, all edge hits
+ *  3.1.6 non-rotated, all corner hits
+ *
+ * 3.2 center not at origin
+ *  3.1.1 - 3.1.6 are implemented here as well
+ */
 
 #include <blazert/bvh/accel.h>
 #include <blazert/bvh/builder.h>
@@ -237,13 +259,6 @@ TEST_CASE_TEMPLATE("Plane", T, float, double) {
         SUBCASE("traverse bvh") {
           assert_traverse_bvh_hit(planes, ray, true_hit, true_prim_id, true_distance, true_normal);
         }
-
-        //        CHECK(hit_plane);
-        //        CHECK(rayhit.prim_id == 0);
-        //        CHECK(rayhit.hit_distance == Approx(5));
-        //        CHECK(rayhit.normal[0] == Approx(0.f));
-        //        CHECK(rayhit.normal[1] == Approx(0.f));
-        //        CHECK(rayhit.normal[2] == Approx(1.f));
       }
       SUBCASE("rotated about (0,1,0)") {
         // matrix which rotates the plane 45 degrees about the z-axis ( x = 0 is now
@@ -268,13 +283,6 @@ TEST_CASE_TEMPLATE("Plane", T, float, double) {
         SUBCASE("traverse bvh") {
           assert_traverse_bvh_hit(planes, ray, true_hit, true_prim_id, true_distance, true_normal);
         }
-
-        //        CHECK(hit_plane);
-        //        CHECK(rayhit.prim_id == 0);
-        //        CHECK(rayhit.hit_distance == Approx(5));
-        //        CHECK(rayhit.normal[0] == Approx(1.f));
-        //        CHECK(rayhit.normal[1] == Approx(0.f));
-        //        CHECK(rayhit.normal[2] == Approx(0.f));
       }
       SUBCASE("rotated about normalized(1,1,0), edge hit") {
         // matrix which rotates the plane about the y-axis ( x = 0 is now plane eq)
@@ -297,16 +305,6 @@ TEST_CASE_TEMPLATE("Plane", T, float, double) {
         SUBCASE("traverse bvh") {
           assert_traverse_bvh_hit(planes, ray, true_hit, true_prim_id, true_distance, true_normal);
         }
-
-        // hits from the negative x direction -> normal vector should point towards
-        // that direction
-        //        CHECK(hit_plane);
-        //        CHECK(rayhit.prim_id == 0);
-        //        CHECK(rayhit.hit_distance == Approx(5 * std::sqrt(2)));
-        //        CHECK(rayhit.normal[0] == Approx(-1 / std::sqrt(2)));
-        //        CHECK(rayhit.normal[1] == Approx(1 / std::sqrt(2)));
-        //        CHECK(rayhit.normal[2] == Approx(0.f));// for rotated planes, you can expect small numerical error
-        //        // of size 1e16
       }
       SUBCASE("non-rotated, ray origin outside plane bounds") {
         // matrix which rotates the plane about the y-axis ( x = 0 is now plane eq)
@@ -330,15 +328,6 @@ TEST_CASE_TEMPLATE("Plane", T, float, double) {
           SUBCASE("traverse bvh") {
             assert_traverse_bvh_hit(planes, ray, true_hit, true_prim_id, true_distance, true_normal);
           }
-
-          // hits from the negative x direction -> normal vector should point towards
-          // that direction
-          //          CHECK(hit_plane);
-          //          CHECK(rayhit.prim_id == 0);
-          //          CHECK(rayhit.hit_distance == Approx(4 * std::sqrt(2.f)));
-          //          CHECK(rayhit.normal[0] == Approx(0.f));
-          //          CHECK(rayhit.normal[1] == Approx(0.f));
-          //          CHECK(rayhit.normal[2] == Approx(1.f));
         }
         SUBCASE("outside on negative x-axis") {
           Vec3r<T> org2{-4.f, 0.f, -4.f};
@@ -388,15 +377,6 @@ TEST_CASE_TEMPLATE("Plane", T, float, double) {
           SUBCASE("traverse bvh") {
             assert_traverse_bvh_hit(planes, ray, true_hit, true_prim_id, true_distance, true_normal);
           }
-
-          // hits from the negative x direction -> normal vector should point towards
-          // that direction
-          //          CHECK(hit_plane);
-          //          CHECK(rayhit.prim_id == 0);
-          //          CHECK(rayhit.hit_distance == Approx(4));
-          //          CHECK(rayhit.normal[0] == Approx(1.f / std::sqrt(2)));
-          //          CHECK(rayhit.normal[1] == Approx(0.f));
-          //          CHECK(rayhit.normal[2] == Approx(1.f / std::sqrt(2)));
         }
         SUBCASE("edge: x_min") {
           // edge at x_min
@@ -497,15 +477,6 @@ TEST_CASE_TEMPLATE("Plane", T, float, double) {
           SUBCASE("traverse bvh") {
             assert_traverse_bvh_hit(planes, ray, true_hit, true_prim_id, true_distance, true_normal);
           }
-
-          // hits from the negative x direction -> normal vector should point towards
-          //          // that direction
-          //          CHECK(hit_plane);
-          //          CHECK(rayhit.prim_id == 0);
-          //          CHECK(rayhit.hit_distance == Approx(4));
-          //          CHECK(rayhit.normal[0] == Approx(1.f / std::sqrt(3)));
-          //          CHECK(rayhit.normal[1] == Approx(1.f / std::sqrt(3)));
-          //          CHECK(rayhit.normal[2] == Approx(1.f / std::sqrt(3)));
         }
         SUBCASE("corner: x min, y max") {
           Vec3r<T> org2{-1.f, 1.f, 4.f};
@@ -523,15 +494,6 @@ TEST_CASE_TEMPLATE("Plane", T, float, double) {
           SUBCASE("traverse bvh") {
             assert_traverse_bvh_hit(planes, ray, true_hit, true_prim_id, true_distance, true_normal);
           }
-
-          // hits from the negative x direction -> normal vector should point towards
-          //          // that direction
-          //          CHECK(hit_plane);
-          //          CHECK(rayhit.prim_id == 0);
-          //          CHECK(rayhit.hit_distance == Approx(4));
-          //          CHECK(rayhit.normal[0] == Approx(-1.f / std::sqrt(3)));
-          //          CHECK(rayhit.normal[1] == Approx(1.f / std::sqrt(3)));
-          //          CHECK(rayhit.normal[2] == Approx(1.f / std::sqrt(3)));
         }
         SUBCASE("corner: x max, y min") {
           Vec3r<T> org3{1.f, -1.f, 4.f};
@@ -549,15 +511,6 @@ TEST_CASE_TEMPLATE("Plane", T, float, double) {
           SUBCASE("traverse bvh") {
             assert_traverse_bvh_hit(planes, ray, true_hit, true_prim_id, true_distance, true_normal);
           }
-
-          // hits from the negative x direction -> normal vector should point towards
-          //          // that direction
-          //          CHECK(hit_plane);
-          //          CHECK(rayhit.prim_id == 0);
-          //          CHECK(rayhit.hit_distance == Approx(4));
-          //          CHECK(rayhit.normal[0] == Approx(1.f / std::sqrt(3)));
-          //          CHECK(rayhit.normal[1] == Approx(-1.f / std::sqrt(3)));
-          //          CHECK(rayhit.normal[2] == Approx(1.f / std::sqrt(3)));
         }
         SUBCASE("corner: x min, y min") {
           // corner at x_min, y_min
@@ -576,15 +529,6 @@ TEST_CASE_TEMPLATE("Plane", T, float, double) {
           SUBCASE("traverse bvh") {
             assert_traverse_bvh_hit(planes, ray, true_hit, true_prim_id, true_distance, true_normal);
           }
-
-          // hits from the negative x direction -> normal vector should point towards
-          // that direction
-          //          CHECK(hit_plane);
-          //          CHECK(rayhit.prim_id == 0);
-          //          CHECK(rayhit.hit_distance == Approx(4));
-          //          CHECK(rayhit.normal[0] == Approx(-1.f / std::sqrt(3)));
-          //          CHECK(rayhit.normal[1] == Approx(-1.f / std::sqrt(3)));
-          //          CHECK(rayhit.normal[2] == Approx(1.f / std::sqrt(3)));
         }
       }
     }
@@ -611,13 +555,6 @@ TEST_CASE_TEMPLATE("Plane", T, float, double) {
         SUBCASE("traverse bvh") {
           assert_traverse_bvh_hit(planes, ray, true_hit, true_prim_id, true_distance, true_normal);
         }
-
-        //        CHECK(hit_plane);
-        //        CHECK(rayhit.prim_id == 0);
-        //        CHECK(rayhit.hit_distance == Approx(4));
-        //        CHECK(rayhit.normal[0] == Approx(0.f));
-        //        CHECK(rayhit.normal[1] == Approx(0.f));
-        //        CHECK(rayhit.normal[2] == Approx(1.f));
       }
       SUBCASE("rotated, non-shifted") {
         // matrix which rotates the plane 90 degrees about the y-axis ( x = 0 is now
@@ -641,13 +578,6 @@ TEST_CASE_TEMPLATE("Plane", T, float, double) {
         SUBCASE("traverse bvh") {
           assert_traverse_bvh_hit(planes, ray, true_hit, true_prim_id, true_distance, true_normal);
         }
-
-        //        CHECK(hit_plane);
-        //        CHECK(rayhit.prim_id == 0);
-        //        CHECK(rayhit.hit_distance == Approx(4));
-        //        CHECK(rayhit.normal[0] == Approx(1.f));
-        //        CHECK(rayhit.normal[1] == Approx(0.f));
-        //        CHECK(rayhit.normal[2] == Approx(0.f));
       }
       SUBCASE("rotated about r=normalized(1,1,0), edge hit") {
         // matrix which rotates the plane about axis = normalized(1,1,0)
@@ -670,16 +600,6 @@ TEST_CASE_TEMPLATE("Plane", T, float, double) {
         SUBCASE("traverse bvh") {
           assert_traverse_bvh_hit(planes, ray, true_hit, true_prim_id, true_distance, true_normal);
         }
-
-        // hits from the negative x direction -> normal vector should point towards
-        // that direction
-        //        CHECK(hit_plane);
-        //        CHECK(rayhit.prim_id == 0);
-        //        CHECK(rayhit.hit_distance == Approx(5 * std::sqrt(2)));
-        //        CHECK(rayhit.normal[0] == Approx(-1 / std::sqrt(2)));
-        //        CHECK(rayhit.normal[1] == Approx(1 / std::sqrt(2)));
-        //        CHECK(rayhit.normal[2] == Approx(0.f));// for rotated planes, you can expect small numerical error
-        //        // of size 1e16
       }
       SUBCASE("non-rotated, ray origin outside plane bounds") {
         // matrix which rotates the plane about the y-axis ( x = 0 is now plane eq)
@@ -702,15 +622,6 @@ TEST_CASE_TEMPLATE("Plane", T, float, double) {
           SUBCASE("traverse bvh") {
             assert_traverse_bvh_hit(planes, ray, true_hit, true_prim_id, true_distance, true_normal);
           }
-
-          // hits from the negative x direction -> normal vector should point towards
-          // that direction
-          //          CHECK(hit_plane);
-          //          CHECK(rayhit.prim_id == 0);
-          //          CHECK(rayhit.hit_distance == Approx(4 * std::sqrt(2.f)));
-          //          CHECK(rayhit.normal[0] == Approx(0.f));
-          //          CHECK(rayhit.normal[1] == Approx(0.f));
-          //          CHECK(rayhit.normal[2] == Approx(1.f));
         }
         SUBCASE("outside on negative x-axis") {
           Vec3r<T> org2{-3.f, 1.f, -3.f};
@@ -727,15 +638,6 @@ TEST_CASE_TEMPLATE("Plane", T, float, double) {
           SUBCASE("traverse bvh") {
             assert_traverse_bvh_hit(planes, ray, true_hit, true_prim_id, true_distance, true_normal);
           }
-
-          // hits from the negative x direction -> normal vector should point towards
-          // that direction
-          //          CHECK(hit_plane);
-          //          CHECK(rayhit2.prim_id == 0);
-          //          CHECK(rayhit2.hit_distance == Approx(4. * std::sqrt(2.f)));
-          //          CHECK(rayhit2.normal[0] == Approx(0.f));
-          //          CHECK(rayhit2.normal[1] == Approx(0.f));
-          //          CHECK(rayhit2.normal[2] == Approx(-1.f));
         }
       }
       SUBCASE("non-rotated, edge intersection") {
@@ -760,15 +662,6 @@ TEST_CASE_TEMPLATE("Plane", T, float, double) {
           SUBCASE("traverse bvh") {
             assert_traverse_bvh_hit(planes, ray, true_hit, true_prim_id, true_distance, true_normal);
           }
-
-          // hits from the negative x direction -> normal vector should point towards
-          // that direction
-          //          CHECK(hit_plane);
-          //          CHECK(rayhit.prim_id == 0);
-          //          CHECK(rayhit.hit_distance == Approx(3));
-          //          CHECK(rayhit.normal[0] == Approx(1.f / std::sqrt(2)));
-          //          CHECK(rayhit.normal[1] == Approx(0.f));
-          //          CHECK(rayhit.normal[2] == Approx(1.f / std::sqrt(2)));
         }
         SUBCASE("edge: x_min") {
           // edge at x_min
@@ -786,15 +679,6 @@ TEST_CASE_TEMPLATE("Plane", T, float, double) {
           SUBCASE("traverse bvh") {
             assert_traverse_bvh_hit(planes, ray, true_hit, true_prim_id, true_distance, true_normal);
           }
-
-          // hits from the negative x direction -> normal vector should point towards
-          // that direction
-          //          CHECK(hit_plane);
-          //          CHECK(rayhit.prim_id == 0);
-          //          CHECK(rayhit.hit_distance == Approx(3));
-          //          CHECK(rayhit.normal[0] == Approx(-1.f / std::sqrt(2)));
-          //          CHECK(rayhit.normal[1] == Approx(0.f));
-          //          CHECK(rayhit.normal[2] == Approx(1.f / std::sqrt(2)));
         }
         SUBCASE("edge: y max") {
           Vec3r<T> org3{1.f, 2.f, 4.f};
@@ -811,15 +695,6 @@ TEST_CASE_TEMPLATE("Plane", T, float, double) {
           SUBCASE("traverse bvh") {
             assert_traverse_bvh_hit(planes, ray, true_hit, true_prim_id, true_distance, true_normal);
           }
-
-          // hits from the negative x direction -> normal vector should point towards
-          // that direction
-          //          CHECK(hit_plane);
-          //          CHECK(rayhit.prim_id == 0);
-          //          CHECK(rayhit.hit_distance == Approx(3));
-          //          CHECK(rayhit.normal[0] == Approx(0.f));
-          //          CHECK(rayhit.normal[1] == Approx(1.f / std::sqrt(2)));
-          //          CHECK(rayhit.normal[2] == Approx(1.f / std::sqrt(2)));
         }
         SUBCASE("edge: y min") {
           // edge at y_min
@@ -837,15 +712,6 @@ TEST_CASE_TEMPLATE("Plane", T, float, double) {
           SUBCASE("traverse bvh") {
             assert_traverse_bvh_hit(planes, ray, true_hit, true_prim_id, true_distance, true_normal);
           }
-
-          // hits from the negative x direction -> normal vector should point towards
-          // that direction
-          //          CHECK(hit_plane);
-          //          CHECK(rayhit.prim_id == 0);
-          //          CHECK(rayhit.hit_distance == Approx(3));
-          //          CHECK(rayhit.normal[0] == Approx(0.f));
-          //          CHECK(rayhit.normal[1] == Approx(-1.f / std::sqrt(2)));
-          //          CHECK(rayhit.normal[2] == Approx(1.f / std::sqrt(2)));
         }
       }
       SUBCASE("non-rotated, corner intersection") {
@@ -870,15 +736,6 @@ TEST_CASE_TEMPLATE("Plane", T, float, double) {
           SUBCASE("traverse bvh") {
             assert_traverse_bvh_hit(planes, ray, true_hit, true_prim_id, true_distance, true_normal);
           }
-
-          // hits from the negative x direction -> normal vector should point towards
-          // that direction
-//          CHECK(hit_plane);
-//          CHECK(rayhit.prim_id == 0);
-//          CHECK(rayhit.hit_distance == Approx(3));
-//          CHECK(rayhit.normal[0] == Approx(1.f / std::sqrt(3)));
-//          CHECK(rayhit.normal[1] == Approx(1.f / std::sqrt(3)));
-//          CHECK(rayhit.normal[2] == Approx(1.f / std::sqrt(3)));
         }
         SUBCASE("corner: x min, y max") {
           Vec3r<T> org2{0.f, 2.f, 4.f};
@@ -896,16 +753,6 @@ TEST_CASE_TEMPLATE("Plane", T, float, double) {
               SUBCASE("traverse bvh") {
             assert_traverse_bvh_hit(planes, ray, true_hit, true_prim_id, true_distance, true_normal);
           }
-
-
-          // hits from the negative x direction -> normal vector should point towards
-          // that direction
-//          CHECK(hit_plane);
-//          CHECK(rayhit.prim_id == 0);
-//          CHECK(rayhit.hit_distance == Approx(3));
-//          CHECK(rayhit.normal[0] == Approx(-1.f / std::sqrt(3)));
-//          CHECK(rayhit.normal[1] == Approx(1.f / std::sqrt(3)));
-//          CHECK(rayhit.normal[2] == Approx(1.f / std::sqrt(3)));
         }
         SUBCASE("corner: x max, y min") {
           Vec3r<T> org3{2.f, 0.f, 4.f};
@@ -923,16 +770,6 @@ TEST_CASE_TEMPLATE("Plane", T, float, double) {
               SUBCASE("traverse bvh") {
             assert_traverse_bvh_hit(planes, ray, true_hit, true_prim_id, true_distance, true_normal);
           }
-
-
-          // hits from the negative x direction -> normal vector should point towards
-//          // that direction
-//          CHECK(hit_plane);
-//          CHECK(rayhit.prim_id == 0);
-//          CHECK(rayhit.hit_distance == Approx(3));
-//          CHECK(rayhit.normal[0] == Approx(1.f / std::sqrt(3)));
-//          CHECK(rayhit.normal[1] == Approx(-1.f / std::sqrt(3)));
-//          CHECK(rayhit.normal[2] == Approx(1.f / std::sqrt(3)));
         }
         SUBCASE("corner: x min, y min") {
           // corner at x_min, y_min
@@ -951,16 +788,6 @@ TEST_CASE_TEMPLATE("Plane", T, float, double) {
               SUBCASE("traverse bvh") {
             assert_traverse_bvh_hit(planes, ray, true_hit, true_prim_id, true_distance, true_normal);
           }
-
-
-          // hits from the negative x direction -> normal vector should point towards
-//          // that direction
-//          CHECK(hit_plane);
-//          CHECK(rayhit.prim_id == 0);
-//          CHECK(rayhit.hit_distance == Approx(3));
-//          CHECK(rayhit.normal[0] == Approx(-1.f / std::sqrt(3)));
-//          CHECK(rayhit.normal[1] == Approx(-1.f / std::sqrt(3)));
-//          CHECK(rayhit.normal[2] == Approx(1.f / std::sqrt(3)));
         }
       }
     }
