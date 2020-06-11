@@ -31,8 +31,8 @@ void SaveImagePNG(const char *filename, const float *rgb, int width,
 
 int main(int argc, char **argv) {
 
-  int width = 8192;
-  int height = 8192;
+  int width = 1080;
+  int height = 720;
 
   // the properties of the cylinders need to be saved on the heap
   auto centers = std::make_unique<blazert::Vec3rList<ft>>();

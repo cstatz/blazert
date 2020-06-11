@@ -17,6 +17,7 @@ addons:
       - cmake-data
       - cmake
       - libopenblas-dev
+      - imagemagick
   homebrew:
     taps:
       - cstatz/homebrew-visit
@@ -24,6 +25,7 @@ addons:
       - ccache
       - cmake
       - blaze
+      - imagemagick
     update: true
 
 os:
@@ -39,8 +41,9 @@ jobs:
     - os: osx
 
 before_script:
+  - echo `pwd`
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
-    export BLAZE_INSTALL_DIR=`pwd`/deps/blaze;
+      export BLAZE_INSTALL_DIR=`pwd`/deps/blaze;
     wget https://bitbucket.org/blaze-lib/blaze/downloads/blaze-3.7.tar.gz;
     export BLAZE_INSTALL_DIR=`pwd`/deps/blaze;
     echo ${BLAZE_INSTALL_DIR};
@@ -56,6 +59,10 @@ before_script:
     fi
 
 script:
+  - export BLAZE_INCLUDE=""
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
+      export BLAZE_INCLUDE=`pwd`/deps/blaze/include;
+    fi
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
       export CXX=${TRAVIS_COMPILER};
     fi
@@ -64,15 +71,15 @@ script:
       export CXX=g++-9;
     fi
   - if [[ "$TRAVIS_OS_NAME" == "linux" && "$TRAVIS_COMPILER" == "clang" ]]; then
-    export CC=clang;
-    export CXX=clang++;
+      export CC=clang;
+      export CXX=clang++;
     fi
   - pwd
   - mkdir -p cmake_build_release
   - pushd cmake_build_release
-  - cmake -DCMAKE_BUILD_TYPE=Release ../
+  - cmake -DCMAKE_BUILD_TYPE=Release ../ -DBUILD_TEST:BOOL=true -DBUILD_EXAMPLES:BOOL=true -DBLAZE_INCLUDE_OVERRIDE:STRING=${BLAZE_INCLUDE} -DENABLE_OMP:BOOL=false
   - cmake --build .
-  - ctest -V
+  - ctest -R main --progress
   - popd
   - rm -rf cmake_build_release
 
