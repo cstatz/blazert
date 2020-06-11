@@ -1,11 +1,12 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.7.0)
 PROJECT(blazert)
 
+SET(ENABLE_OMP true CACHE BOOL "Enable OpenMP in examples.")
 SET(BUILD_TEST false CACHE BOOL "Build tests.")
 SET(BUILD_BENCHMARK false CACHE BOOL "Build benchmark.")
 SET(BUILD_EXAMPLES false CACHE BOOL "Build examples.")
 SET(EMBREE_BACKEND false CACHE BOOL "Use embree as tracing backend.")
-SET(BLAZE_INCLUDE "" CACHE STRING "Where to find the blaze includes. Must set on windows for blaze <= 3.7")
+SET(BLAZE_INCLUDE_OVERRIDE "" CACHE STRING "Where to find the blaze includes. Must set on windows for blaze <= 3.7")
 
 message("========================================")
 message("= Configuring blazeRT:                 =")
@@ -13,6 +14,9 @@ message(" * Build test: ${BUILD_TEST}")
 message(" * Build benchmark: ${BUILD_BENCHMARK}")
 message(" * Build examples: ${BUILD_EXAMPLES}")
 message(" * Embree backend: ${EMBREE_BACKEND}")
+IF(NOT ("${BLAZE_INCLUDE_OVERRIDE}" STREQUAL ""))
+    message(" * Blaze include dir: ${BLAZE_INCLUDE_OVERRIDE}")
+ENDIF()
 message("========================================")
 
 # Compiler Flags
@@ -37,13 +41,12 @@ ENDIF (FORCE_COLOR_OUTPUT)
 INCLUDE(CheckCXXCompilerFlag)
 INCLUDE(GNUInstallDirs)
 
-# Hopefully this works in blaze 3.8 ...
-IF(MSVC)
-FIND_PACKAGE(blaze 3.7)
-INCLUDE_DIRECTORIES(${BLAZE_INCLUDE_DIRS} ${BLAZE_INCLUDE})
+
+IF(NOT ("${BLAZE_INCLUDE_OVERRIDE}" STREQUAL ""))
+    INCLUDE_DIRECTORIES(${BLAZE_INCLUDE_OVERRIDE})
 ELSE()
-FIND_PACKAGE(blaze 3.7)
-INCLUDE_DIRECTORIES(${BLAZE_INCLUDE_DIRS} ${BLAZE_INCLUDE})
+    FIND_PACKAGE(blaze 3.7)
+    INCLUDE_DIRECTORIES(${BLAZE_INCLUDE_DIRS})
 ENDIF()
 
 IF(EMBREE_BACKEND)
@@ -51,13 +54,15 @@ find_package(embree 3.9)
 ENDIF()
 
 FIND_PACKAGE(Threads)
-
 FIND_PACKAGE(OpenMP)
+
+IF (ENABLE_OMP)
 IF (OpenMP_CXX_FOUND)
     SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
-    link_libraries(${OpenMP_CXX_LIBRARIES})
+    link_libraries(OpenMP::OpenMP_CXX)
     include_directories(${OpenMP_CXX_INCLUDE_DIRS})
-ENDIF ()
+ENDIF()
+ENDIF()
 
 IF(BUILD_EXAMPLES)
 ADD_SUBDIRECTORY(examples)
@@ -83,6 +88,7 @@ INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/blazertConfig.cmake ${CMAKE_CURRENT_BI
 INSTALL(DIRECTORY blazert DESTINATION include)
 
 IF(BUILD_TEST)
+ENABLE_TESTING()
 FILE(GLOB_RECURSE TEST_SRC ${CMAKE_SOURCE_DIR}/test/*.cpp)
 IF(EMBREE_BACKEND)
 FILE(GLOB_RECURSE EMBREE_PRIMITIVES_SRC ${CMAKE_SOURCE_DIR}/blazert/embree/primitives/*.cpp)
@@ -92,6 +98,35 @@ TARGET_INCLUDE_DIRECTORIES(test_blazert PUBLIC ${CMAKE_SOURCE_DIR} ${EMBREE_INCL
 TARGET_LINK_LIBRARIES(test_blazert ${EMBREE_LIBRARY})
 SET_TARGET_PROPERTIES(test_blazert PROPERTIES LINKER_LANGUAGE CXX)
 ADD_TEST(main test_blazert)
+
+find_package(ImageMagick COMPONENTS compare QUIET)
+if (NOT ImageMagick_compare_FOUND)
+    message(WARNING "Cannot find ImageMagick's compare tool. Images will not be compared to the reference.")
+else()
+    add_test(
+            NAME "render_trimesh"
+            COMMAND
+            ${CMAKE_COMMAND}
+            -DCOMPARE_EXECUTABLE=${ImageMagick_compare_EXECUTABLE}
+            -DRENDER_EXECUTABLE=${CMAKE_BINARY_DIR}/examples/renderer/renderer
+            -DREFERENCE=${CMAKE_SOURCE_DIR}/examples/baseline/renderer.ppm
+            -DOUTPUT=${CMAKE_SOURCE_DIR}/examples/render.ppm
+            -DDIFFERENCE=${CMAKE_CURRENT_BINARY_DIR}/difference_renderer.png
+            -P ${PROJECT_SOURCE_DIR}/cmake/compare_image_test.cmake
+            WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/examples)
+    add_test(
+            NAME "render_other_primitives"
+            COMMAND
+            ${CMAKE_COMMAND}
+            -DCOMPARE_EXECUTABLE=${ImageMagick_compare_EXECUTABLE}
+            -DRENDER_EXECUTABLE=${CMAKE_BINARY_DIR}/examples/scene_primitives/scene_primitives
+            -DREFERENCE=${CMAKE_SOURCE_DIR}/examples/baseline/scene_primitives.png
+            -DOUTPUT=${CMAKE_SOURCE_DIR}/examples/render.png
+            -DDIFFERENCE=${CMAKE_CURRENT_BINARY_DIR}/difference_scene_primitives.png
+            -P ${PROJECT_SOURCE_DIR}/cmake/compare_image_test.cmake
+            WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/examples)
+endif ()
+
 ENDIF()
 
 IF(BUILD_BENCHMARK)

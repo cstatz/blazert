@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.com/cstatz/blazert.svg?token=MzD1bv55cBzChUswxdrj&branch=develop)](https://travis-ci.com/cstatz/blazert)
+
 # blazeRT
 
 1. [Introduction](#introduction)
@@ -12,12 +14,12 @@
 6. [Contributing](#contributing)
 
 ## Introduction
-A **double precision ray tracer** for physics applications based on a [nanort](https://github.com/lighttransport/nanort) fork using blaze datatypes. blazeRTs scene interface is similar to embree and intents to be a minimal effort (nearly plugin) replacement. 
+A **double precision ray tracer** for physics applications based on a [nanort](https://github.com/lighttransport/nanort) fork using blaze datatypes. blazeRTs scene interface is similar to embree and intents to be a minimal effort (nearly plugin-) replacement. 
 
-You can use your own (vector) dataypes (e.g. as provided by eigen3) and it also works with single precision floats.
+You can use your own (vector) dataypes (e.g. as provided by eigen3) and it also works with single-precision floating-type values.
 
-At the moment blazeRT works with triangular meshes and simple primitives, but it should be easy to extend blazeRT 
-to  work on polygons or more complex primitives.
+blazeRT works with triangular meshes and simple primitives, but it should be easy to extend blazeRT 
+to work on polygons or more complex primitives.
 
 Please read the [contribution guide](CONTRIBUTING.md) if you are interested in improving blazeRT.
 
@@ -33,6 +35,7 @@ Please read the [contribution guide](CONTRIBUTING.md) if you are interested in i
     - [x] cylinders
 - [x] BVH accelerated ray racing
 - [x] unit tests via [doctest](https://github.com/onqtam/doctest)
+- [x] benchmark (comparing embree, nanort, bvh and blazeRT) via [google benchmark](https://github.com/google/benchmark)
 
 ## Installation
 Installation and build is tested on linux (e.g. ubuntu bionic, arch-linux) and macos.
@@ -150,35 +153,11 @@ int main(int argc, char **argv) {
 blazeRT is licensed under the new **BSD (3-clause) license**.
 blazeRT is based on and inspired by `nanort.h` which is licensed under:
 
-```
-MIT License
-
-Copyright (c) 2015-2018 Light Transport Entertainment, Inc.
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-```
-
 The purpose of this fork is the simplified inclusion of the blaze-lib vector-types (or similar types that provided the necessary operators and datalayout) and an enhanced maintainability of the code.
 
 The examples are built around third party libraries (e.g. `tiny_obj_loader` and `stb_image_write`) which adhere to their own respective licenses (found in the included files).
 
-The rendering example is take from the `nanort` repo and serves as a baseline. The Lucy model included in this demo scene is taken from the Stanford 3D Scanning Repository: http://graphics.stanford.edu/data/3Dscanrep/
+The rendering example is taken from the `nanort` repo and serves as a baseline. The Lucy model included in this demo scene is taken from the Stanford 3D Scanning Repository: http://graphics.stanford.edu/data/3Dscanrep/
 
 ## Contributing
 We appreciate all contributions from issues to pull requests.

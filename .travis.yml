@@ -17,6 +17,7 @@ addons:
       - cmake-data
       - cmake
       - libopenblas-dev
+      - imagemagick
   homebrew:
     taps:
       - cstatz/homebrew-visit
@@ -24,6 +25,7 @@ addons:
       - ccache
       - cmake
       - blaze
+      - imagemagick
     update: true
 
 os:
@@ -57,11 +59,9 @@ before_script:
     fi
 
 script:
-  - echo `pwd`
+  - export BLAZE_INCLUDE=""
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
       export BLAZE_INCLUDE=`pwd`/deps/blaze/include;
-      echo ${BLAZE_INCLUDE};
-      ls -l ${BLAZE_INCLUDE};
     fi
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
       export CXX=${TRAVIS_COMPILER};
@@ -77,10 +77,9 @@ script:
   - pwd
   - mkdir -p cmake_build_release
   - pushd cmake_build_release
-  - export BLAZE_INCLUDE=""
-  - cmake -DCMAKE_BUILD_TYPE=Release ../ -DBUILD_TEST:BOOL=true -DBLAZE_INCLUDE:STRING=${BLAZE_INCLUDE}
+  - cmake -DCMAKE_BUILD_TYPE=Release ../ -DBUILD_TEST:BOOL=true -DBUILD_EXAMPLES:BOOL=true -DBLAZE_INCLUDE_OVERRIDE:STRING=${BLAZE_INCLUDE} -DENABLE_OMP:BOOL=false
   - cmake --build .
-  - ctest -V
+  - ctest -R main --progress
   - popd
   - rm -rf cmake_build_release
 
