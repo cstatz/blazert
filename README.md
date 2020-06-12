@@ -134,6 +134,9 @@ leafs in the BVH.
 define ```EMBREE_TRACING``` before including ```blazert/blazert.h```. When tracing with embree vector types 
 with an alignment of 16 bytes is needed.
 
+Either prim-references, -indices or primitives are stored in the bvh-nodes. Which case is 
+implemented depends on the prim-collection.
+
 ### Examples
 - [x] [path tracer with randomly distributed rays](examples/path_tracer) for meshed geometries with rendered output
 - [x] [deterministic path tracer for reproducibility](examples/renderer) for meshed geometries
