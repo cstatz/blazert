@@ -20,7 +20,7 @@
 
 ## Introduction
 blazeRT is a **double precision ray tracer** for scientific or engineering applications derived from 
-[nanort](https://github.com/lighttransport/nanort) using blaze datatypes and written in modern C++17. 
+[nanoRT](https://github.com/lighttransport/nanort) using blaze datatypes and written in modern C++17. 
 blazeRTs scene interface is similar to [embree](https://github.com/embree/embree) and intents to be a minimal 
 effort (nearly plugin-) replacement. blazeRT should work on any system and architecture for which a recent 
 (C++17 compatible) compiler is available.
@@ -47,7 +47,7 @@ blazeRT is CI-tested on Ubuntu 18.04 and macOS with gcc and clang.
 
 ![image](examples/baseline/path_tracer_blaze.png)
 
-(Rendered using the `path_tracer` example adapted from `nanort` and originally contributed by 
+(Rendered using the `path_tracer` example adapted from `nanoRT` and originally contributed by 
 [daseyb](https://github.com/daseyb))
 
 ### Contributing
@@ -71,7 +71,7 @@ linear algebra
 - [ ] back-face culling (will be implemented)
 - [x] unit tests via [doctest](https://github.com/onqtam/doctest)
 - [x] documentation of the test cases in ```test/doc```
-- [x] benchmark (comparing embree, nanort, bvh and blazeRT) via [google benchmark](https://github.com/google/benchmark)
+- [x] benchmark (comparing [embree](https://github.com/embree/embree), [nanoRT](https://github.com/lighttransport/nanort), [madmann91/bvh](https://github.com/madmann91/bvh) and blazeRT) via [google benchmark](https://github.com/google/benchmark)
 - [x] cmake script to aggregate the code into a single-header library (not recommended)
 
 ## Installation
@@ -96,7 +96,7 @@ For the tests and the benchmarks the submodules must be cloned as well:
 git submodule init
 git submodule update 
 ```
-This will pull doctest, nanoRT and madmann91/bvh as submodules.
+This will pull doctest, [nanoRT](https://github.com/lighttransport/nanort) and [madmann91/bvh](https://github.com/madmann91/bvh) as submodules.
 
 ### Build and test
 This is a header-only library. No need to build anything. Just drop it in your source directory and off you go.
@@ -139,7 +139,7 @@ backend
 To get familiar with the usage of blazeRT, look at the provided examples and test cases. To get started quickly,
 checkout the minimal examples below.
 
-- The [scene](blazert/scene.h) API can be considered **stable**, while the low-level API of the [BVH](blazert/BVH) 
+- The [scene](blazert/scene.h) API can be considered **stable**, while the low-level API of the [BVH](blazert/bvh) 
 (```build```, ```traverse```, ...) are not to be considered stable as they might change when requirements 
 change with time.
 
@@ -178,7 +178,7 @@ To give you an impression of the High-Level API
   /// Commit and build the scene
   scene.commit();
   
-  /// Iteratate of the ray directions:
+  /// Iterate of the ray directions:
   for (int y = 0; y < height; y++) {
     for (int x = 0; x < width; x++) {
 
@@ -205,7 +205,7 @@ tracing applications the scene is usually static while ray origin and direction 
 - ```BLAZERTALIGN``` is currently not used but might be used in the future. 
 
 ## Benchmarks
-We have included benchmarks comparing blazeRT to [nanort](https://github.com/lighttransport/nanort),
+We have included benchmarks comparing blazeRT to [nanoRT](https://github.com/lighttransport/nanort),
 [embree](https://github.com/embree/embree) and [madmann91/bvh](https://github.com/madmann91/bvh) for bvh build and 
 traversal. The benchmark scene is a (triangle-) meshed sphere which which can be refined by sub-division. There are 
 two traversal cases: 
@@ -239,7 +239,7 @@ case (not all rays hit) and for a realistic scientific rendering case (all rays 
 ## License
 
 blazeRT is licensed under the new **BSD (3-clause) license**.
-blazeRT is based on and inspired by `nanort.h` which is licensed under MIT-License. For comparability, nanoRTs 
+blazeRT is based on and inspired by `nanoRT.h` which is licensed under MIT-License. For comparability, nanoRTs 
 `path_tracer` and madman91/bvhs `benchmark` have been adapted to blazeRT to generate a baseline for the tests 
 and benchmarks.
 
@@ -250,5 +250,5 @@ and benchmarks.
 The examples are built around third-party libraries (e.g. `tiny_obj_loader` and `stb_image_write`) 
 which adhere to their own respective licenses (found in the included files).
 
-The rendering examples are taken from the `nanort` and `bvh` repos and serve as a baseline. 
+The rendering examples are taken from the `nanoRT` and `bvh` repos and serve as a baseline. 
 The Lucy model included in the demo scene is taken from the Stanford 3D Scanning Repository: http://graphics.stanford.edu/data/3Dscanrep/
