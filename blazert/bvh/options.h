@@ -2,8 +2,8 @@
 #ifndef BLAZERT_BVH_OPTIONS_H_
 #define BLAZERT_BVH_OPTIONS_H_
 
-#include <blazert/defines.h>
 #include <blazert/datatypes.h>
+#include <blazert/defines.h>
 
 namespace blazert {
 
@@ -14,28 +14,19 @@ namespace blazert {
 template<typename T>
 struct BLAZERTALIGN BVHBuildOptions {
 public:
-  unsigned int min_leaf_primitives;
-  unsigned int max_tree_depth;
-  unsigned int bin_size;
+  const unsigned int min_leaf_primitives;
+  const unsigned int max_tree_depth;
+  const unsigned int bin_size;
 
-  BVHBuildOptions()
-      :
-        min_leaf_primitives(4),
-        max_tree_depth(BLAZERT_MAX_TREE_DEPTH),  // Does not impact build time significantly
-        bin_size(64)  // Influences build significantly
-        {}
+  explicit BVHBuildOptions(const unsigned int min_leaf_primitives = 4,
+                           const unsigned int max_tree_depth = BLAZERT_MAX_TREE_DEPTH, const unsigned int bin_size = 64)
+      : min_leaf_primitives(min_leaf_primitives),
+        max_tree_depth(
+            max_tree_depth),/// Does not impact build time significantly, but impacts memory demand and traversal time.
+        bin_size(bin_size)  /// Influences build (-time) significantly. Has little impact on traversal time.
+  {}
 };
 
-/**
- * @brief BVH trace options.
- */
-template<typename T>
-class BLAZERTALIGN BVHTraceOptions {
-public:
-  bool cull_back_face;
-
-  BVHTraceOptions() : cull_back_face(false) {}
-};
 }// namespace blazert
 
 #endif// BLAZERT_BVH_OPTIONS_H_

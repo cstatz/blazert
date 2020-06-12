@@ -6,6 +6,7 @@
 #include <cstring>
 #include <iostream>
 #include <memory>
+#include <utility>
 #include <vector>
 
 #include <blazert/bvh/options.h>
@@ -16,193 +17,144 @@
 namespace blazert {
 
 template<typename T>
+struct Triangle {
+  const Vec3r<T> &a;
+  const Vec3r<T> b;
+  const Vec3r<T> c;
+  unsigned int i;
+  Triangle() = delete;
+  Triangle(const Vec3r<T> &a, const Vec3r<T> &b_, const Vec3r<T> &c_, const unsigned int i)
+      : a(a), b(c_ - a), c(a - b_), i(i) {}
+  Triangle(Triangle &&rhs) noexcept
+      : a(std::move(rhs.a)), b(std::move(rhs.b)), c(std::move(rhs.c)), i(std::exchange(rhs.i, -1)) {}
+  Triangle &operator=(const Triangle &rhs) = delete;
+};
+
+template<typename T, template<typename A> typename Collection,
+         typename = std::enable_if_t<std::is_same<typename Collection<T>::primitive_type, Triangle<T>>::value>>
+inline Triangle<T> primitive_from_collection(const Collection<T> &collection, const unsigned int prim_idx) {
+
+  const Vec3ui &face = collection.faces[prim_idx];
+  const Vec3r<T> &a = collection.vertices[face[0]];
+  const Vec3r<T> &b = collection.vertices[face[1]];
+  const Vec3r<T> &c = collection.vertices[face[2]];
+  return {a, b, c, prim_idx};
+};
+
+template<typename T, template<typename A> typename Collection>
+class TriangleIntersector {
+public:
+  const Collection<T> &collection;
+
+  Vec3r<T> origin;
+  T min_hit_distance;
+  Vec2r<T> uv;
+  T hit_distance;
+  unsigned int prim_id;
+
+  TriangleIntersector() = delete;
+  explicit TriangleIntersector(const Collection<T> &collection) : collection(collection), prim_id(-1) {}
+};
+
+template<typename T>
 class TriangleMesh {
 
 public:
+  typedef TriangleIntersector<T, TriangleMesh> intersector;
+  typedef Triangle<T> primitive_type;
+
   const Vec3rList<T> &vertices;
   const Vec3iList &faces;
+  Vec3rList<T> centers;
+  std::vector<std::pair<Vec3r<T>, Vec3r<T>>> box;
+  Vec3rList<T> face_normals;
+  Vec3rList<T> vertex_normals;
 
 public:
   TriangleMesh() = delete;
+  TriangleMesh(const TriangleMesh<T> &rhs) = delete;
   TriangleMesh(const Vec3rList<T> &vertices, const Vec3iList &faces) : vertices(vertices), faces(faces) {
-    // Compute centers
-    // Compute face normals
-    // Compute vertex normals
-  }
 
-  /**
-   * @brief Returns the number of primitives in the triangle mesh
-   * @return unsigned int
-   */
-  [[nodiscard]] inline unsigned int size() const { return faces.size(); }
+    centers.reserve(faces.size());
+    box.reserve(faces.size());
+    face_normals.reserve(faces.size());
+    vertex_normals.resize(vertices.size());
 
-  inline void BoundingBox(Vec3r<T> &bmin, Vec3r<T> &bmax, unsigned int prim_index) const {
+    for (auto &face : faces) {
 
-    const Vec3ui &face = faces[prim_index];
+      centers.emplace_back(pre_compute_center(face));
+      box.emplace_back(pre_compute_bounding_box(face));
+      face_normals.emplace_back(pre_compute_face_normal(face));
 
-    {
-      const Vec3r<T> &vertex = vertices[face[0]];
-      bmin = bmax = vertex;
-    }
-
-    for (unsigned int i = 1; i < 3; i++) {
-      const Vec3r<T> &vertex = vertices[face[i]];
-      for (int k = 0; k < 3; k++) {
-        bmin[k] = std::min(bmin[k], vertex[k]);
-        bmax[k] = std::max(bmax[k], vertex[k]);
+      for (auto &v : face) {
+        vertex_normals[v] += face_normals.back() / static_cast<T>(3.);
       }
     }
   }
 
-  inline void BoundingBoxAndCenter(Vec3r<T> &bmin, Vec3r<T> &bmax, Vec3r<T> &center, unsigned int prim_index) const {
-    BoundingBox(bmin, bmax, prim_index);
-    const Vec3ui &face = faces[prim_index];
-    center = (vertices[face[0]] + vertices[face[1]] + vertices[face[2]]) / static_cast<T>(3.);
-  }
-};
+  [[nodiscard]] inline unsigned int size() const noexcept { return faces.size(); }
 
-// Predefined SAH predicator for triangle.
-template<typename T>
-class TriangleSAHPred {
+  [[nodiscard]] inline std::pair<Vec3r<T>, Vec3r<T>>
+  get_primitive_bounding_box(const unsigned int prim_index) const noexcept {
+    return box[prim_index];
+  }
+
+  [[nodiscard]] inline Vec3r<T> get_primitive_center(const unsigned int prim_index) const noexcept {
+    return centers[prim_index];
+  }
+
 private:
-  mutable unsigned int axis_;
-  mutable T pos_;
-  const Vec3rList<T> &vertices;
-  const Vec3iList &faces;
+  [[nodiscard]] inline std::pair<Vec3r<T>, Vec3r<T>> pre_compute_bounding_box(const Vec3ui &face) const noexcept {
 
-public:
-  TriangleSAHPred() = default;
-  TriangleSAHPred(const Vec3rList<T> &vertices, const Vec3iList &faces)
-      : axis_(0), pos_(static_cast<T>(0.0)), vertices(vertices), faces(faces) {}
+    Vec3r<T> min = vertices[face[0]];
+    Vec3r<T> max = vertices[face[0]];
 
-  void Set(unsigned int axis, T pos) const {
-    axis_ = axis;
-    pos_ = pos;
+    for (unsigned int i = 1; i < 3; i++) {
+      const Vec3r<T> &vertex = vertices[face[i]];
+      unity(min, max, vertex, vertex);
+    }
+
+    return std::make_pair(std::move(min), std::move(max));
   }
 
-  /// The operator returns true, if the triangle center is within a margin of 3 time the position along a specified axis
-  // TODO: This SAH predictor is terrible if the triangles are small w.r.t. the scene.
-  inline bool operator()(unsigned int prim_id) const {
+  [[nodiscard]] inline Vec3r<T> pre_compute_center(const Vec3ui &face) const noexcept {
+    return (vertices[face[0]] + vertices[face[1]] + vertices[face[2]]) / static_cast<T>(3.);
+  }
 
-    // use precomputed center.
-    // compute circumference from center and point (+margin), use this as a marker for the sah prediction
-    const Vec3ui &face = faces[prim_id];
-    const Vec3r<T> &p0 = vertices[face[0]];
-    const Vec3r<T> &p1 = vertices[face[1]];
-    const Vec3r<T> &p2 = vertices[face[2]];
-
-    const T center = p0[axis_] + p1[axis_] + p2[axis_];
-
-    return (center < pos_ * static_cast<T>(3.0));
+  [[nodiscard]] inline Vec3r<T> pre_compute_face_normal(const Vec3ui &face) const noexcept {
+    const Vec3r<T> e2{vertices[face[2]] - vertices[face[0]]};
+    const Vec3r<T> e1{vertices[face[0]] - vertices[face[1]]};
+    return normalize(cross(e1, e2));
   }
 };
 
-template<typename T>
-class TriangleIntersector {
-public:
-  const Vec3rList<T> &vertices;
-  const Vec3iList &faces;
-
-  mutable Vec3r<T> origin;
-  mutable T min_hit_distance;
-  mutable Vec2r<T> uv;
-  mutable T hit_distance;
-  mutable unsigned int prim_id;
-
-public:
-  inline TriangleIntersector(const Vec3rList<T> &vertices, const Vec3iList &faces)
-      : vertices(vertices), faces(faces), prim_id(-1) {}
-};
-
-/// Update is called when initializing intersection and nearest hit is found.
-
-/**
-   * Post BVH traversal stuff.
-   * Fill `isect` if there is a hit.
-   * TODO: Is Ray<T> really needed here?
-   */
-template<typename T>
-inline void post_traversal(TriangleIntersector<T> &i, RayHit<T> &intersection) {
-    intersection.hit_distance = i.hit_distance;
-    intersection.uv = i.uv;
-    intersection.prim_id = i.prim_id;
-    // TODO: Only do the normal computation if the prim is hit!
-    //intersection.normal = normal_;
+template<typename T, template<typename> typename Collection>
+inline void post_traversal(const TriangleIntersector<T, Collection> &i, RayHit<T> &rayhit) noexcept {
+  rayhit.hit_distance = i.hit_distance;
+  rayhit.uv = i.uv;
+  rayhit.prim_id = i.prim_id;
+  const Vec3ui &f = i.collection.faces[i.prim_id];
+  // Barycentric interpolation: a =  u * p0 + v * p1 + (1-u-v) * p2;
+  rayhit.normal =
+      normalize((static_cast<T>(1.) - i.uv[0] - i.uv[1]) * i.collection.vertex_normals[f[0]]
+                + i.uv[0] * i.collection.vertex_normals[f[1]] + i.uv[1] * i.collection.vertex_normals[f[2]]);
 }
 
-/**
-   * Prepare BVH traversal (e.g. compute inverse ray direction).
-   * This function is called only once in BVH traversal.
-   */
-template<typename T>
-inline void prepare_traversal(TriangleIntersector<T> &i, const Ray<T> &ray) {
-
-  // Copy
-  //i.origin = ray.origin;
+template<typename T, template<typename> typename Collection>
+inline void prepare_traversal(TriangleIntersector<T, Collection> &i, const Ray<T> &ray) noexcept {
   i.min_hit_distance = ray.min_hit_distance;
   i.hit_distance = ray.max_hit_distance;
-  i.uv = 0.; //{0., 0.};  // Here happens an allocate.
-  //i.cull_back_face = ray.cull_back_face;  //trace_options.cull_back_face;
+  i.uv = static_cast<T>(0.);
   i.prim_id = -1;
-  /**
-  const Vec3r<T> &dir = ray.direction;
-
-  // Calculate dimension where the ray direction is maximal.
-  // TODO: Vectorize this.
-  i.k[2] = 0;
-  T abs_dir = std::abs(dir[0]);
-
-  if (abs_dir < std::abs(dir[1])) {
-    i.k[2] = 1;
-    abs_dir = std::abs(dir[1]);
-  }
-
-  if (abs_dir < std::abs(dir[2]))
-    i.k[2] = 2;
-
-  i.k[0] = i.k[2] + 1;
-  if (i.k[0] == 3)
-    i.k[0] = 0;
-
-  i.k[1] = i.k[0] + 1;
-  if (i.k[1] == 3)
-    i.k[1] = 0;
-
-  // Swap kx and ky dimension to preserve winding direction of triangles.
-  if (dir[i.k[2]] < static_cast<T>(0.0)) std::swap(i.k[1], i.k[2]);
-
-  // TODO: Removed static_cast. Was it really necessary here?
-  i.s[0] = -dir[i.k[0]] / dir[i.k[2]];
-  i.s[1] = -dir[i.k[1]] / dir[i.k[2]];
-  i.s[2] = static_cast<T>(1.) / dir[i.k[2]];
-  */
 }
 
-/// Safe function to reinterpret the bits of the given value as another type.
-template <typename To, typename From>
-To as(From from) {
-  static_assert(sizeof(To) == sizeof(From));
-  To to;
-  std::memcpy(&to, &from, sizeof(from));
-  return to;
-}
+template<typename T, template<typename> typename Collection>
+inline bool intersect_primitive(TriangleIntersector<T, Collection> &i, const Triangle<T> &tri,
+                                const Ray<T> &ray) noexcept {
+  static constexpr T tolerance = 4 * std::numeric_limits<T>::epsilon();
 
-/// Equivalent to copysign(x, x * y).
-inline float product_sign(float x, float y) {
-  return as<float>(as<uint32_t>(x) ^ (as<uint32_t>(y) & UINT32_C(0x80000000)));
-}
-
-/// Equivalent to copysign(x, x * y).
-inline double product_sign(double x, double y) {
-  return as<double>(as<uint64_t>(x) ^ (as<uint64_t>(y) & UINT64_C(0x8000000000000000)));
-}
-
-template<typename T>
-inline bool intersect2(TriangleIntersector<T> &i, const Tri<T> &tri, const Ray<T> &ray) {
-  static constexpr T tolerance = 4*std::numeric_limits<T>::epsilon();//T(1e-12);
-
-  const auto &e2 = tri.b; //tri.c - tri.a;
-  const auto &e1 = tri.c; //tri.a - tri.b;
+  const auto &e2 = tri.b;//tri.c - tri.a;
+  const auto &e1 = tri.c;//tri.a - tri.b;
 
   const auto c = tri.a - ray.origin;
   const auto r = cross(ray.direction, c);
@@ -217,8 +169,8 @@ inline bool intersect2(TriangleIntersector<T> &i, const Tri<T> &tri, const Ray<T
     const auto t = product_sign(dot(cross(e1, e2), c), det);
     if (t >= abs_det * i.min_hit_distance && abs_det * i.hit_distance > t) {
       const auto inv_det = static_cast<T>(1.0) / abs_det;
-      i.hit_distance = t*inv_det;
-      i.uv = {u*inv_det, v*inv_det};
+      i.hit_distance = t * inv_det;
+      i.uv = {u * inv_det, v * inv_det};
       i.prim_id = tri.i;
       return true;
     }
@@ -226,115 +178,10 @@ inline bool intersect2(TriangleIntersector<T> &i, const Tri<T> &tri, const Ray<T
   return false;
 }
 
-/**
-   * Do ray intersection stuff for `prim_index` th primitive and return hit
-   * distance `hit_distance`, barycentric coordinate `u` and `v`.
-   * Returns true if there's intersection.
-   */
 template<typename T>
-inline bool intersect(TriangleIntersector<T> &i, const Tri<T> &tri, const Ray<T> &ray) {
-
-  const Vec3ui &k = i.k;
-  const Vec3r<T> &s = i.s;
-  const Vec3r<T> A{tri.a - ray.origin};
-  const Vec3r<T> B{tri.b - ray.origin};
-  const Vec3r<T> C{tri.c - ray.origin};
-
-  const T Ax = A[k[0]] + s[0] * A[k[2]];
-  const T Ay = A[k[1]] + s[1] * A[k[2]];
-  const T Bx = B[k[0]] + s[0] * B[k[2]];
-  const T By = B[k[1]] + s[1] * B[k[2]];
-  const T Cx = C[k[0]] + s[0] * C[k[2]];
-  const T Cy = C[k[1]] + s[1] * C[k[2]];
-
-  T U = Cx * By - Cy * Bx;
-  T V = Ax * Cy - Ay * Cx;
-  T W = Bx * Ay - By * Ax;
-
-  /**
-  // Fall back to test against edges using double precision.
-  if constexpr (std::is_same<T, float>::value) {
-    if (U == static_cast<T>(0.) || V == static_cast<T>(0.) || W == static_cast<T>(0.)) {
-      double CxBy = static_cast<double>(Cx) * static_cast<double>(By);
-      double CyBx = static_cast<double>(Cy) * static_cast<double>(Bx);
-      U = static_cast<T>(CxBy - CyBx);
-
-      double AxCy = static_cast<double>(Ax) * static_cast<double>(Cy);
-      double AyCx = static_cast<double>(Ay) * static_cast<double>(Cx);
-      V = static_cast<T>(AxCy - AyCx);
-
-      double BxAy = static_cast<double>(Bx) * static_cast<double>(Ay);
-      double ByAx = static_cast<double>(By) * static_cast<double>(Ax);
-      W = static_cast<T>(BxAy - ByAx);
-    }
-  }
-   */
-
-  if (((U < static_cast<T>(0.)) | (V < static_cast<T>(0.)) | (W < static_cast<T>(0.))) && (i.cull_back_face | (U > static_cast<T>(0.)) | (V > static_cast<T>(0.)) | (W > static_cast<T>(0.)))) {
-      return false;
-  }
-
-  const T det = U + V + W;
-
-  if (det == static_cast<T>(0.0)) return false;
-
-  const T Az = s[2] * A[k[2]];
-  const T Bz = s[2] * B[k[2]];
-  const T Cz = s[2] * C[k[2]];
-
-  const T D = U * Az + V * Bz + W * Cz;
-
-  const T rcpDet = static_cast<T>(1.0) / det;
-  const T tt = D * rcpDet;
-
-  if ((tt >= i.hit_distance) | (tt < i.min_hit_distance)) return false;
-
-  //t_inout = tt;
-  /**
-     * TODO: Citation needed.
-     * Use Möller-Trumbore style barycentric coordinates
-     * U + V + W = 1.0 and interp(p) = U * p0 + V * p1 + W * p2
-     * We want interp(p) = (1 - u - v) * p0 + u * v1 + v * p2;
-     * => u = V, v = W.
-     */
-  i.uv = {V * rcpDet, W * rcpDet};
-  i.hit_distance = tt;
-  i.prim_id = tri.i;
-
-  return true;
+std::ostream &operator<<(std::ostream &stream, const TriangleMesh<T> &mesh) {
+  stream << "Collection size:" << mesh.size();
+  return stream;
 }
-
 }// namespace blazert
-
-//void Mesh_normalize( Mesh *myself )
-//{
-//  precompute face normals, face centers!
-//  Vert     *vert = myself->vert;
-//  Triangle *face = myself->face;
-//
-//  for( int i=0; i<myself->mNumVerts; i++ ) vert[i].normal = vec3(0.0f);
-//
-//  for( int i=0; i<myself->mNumFaces; i++ )
-//  {
-//    const int ia = face[i].v[0];
-//    const int ib = face[i].v[1];
-//    const int ic = face[i].v[2];
-//
-//    const vec3 e1 = vert[ia].pos - vert[ib].pos;
-//    const vec3 e2 = vert[ic].pos - vert[ib].pos;
-//    const vec3 no = cross( e1, e2 );
-//
-//    vert[ia].normal += no;
-//    vert[ib].normal += no;
-//    vert[ic].normal += no;
-//  }
-//
-//  for( i=0; i<myself->mNumVerts; i++ ) verts[i].normal = normalize( verts[i].normal );
-
-//
-
-//}
-
-// Barycentric interpolation: a =  u * a0 + v * a1 + (1-u-v) * a2;
-
 #endif// BLAZERT_PRIMITIVES_TRIMESH_H_

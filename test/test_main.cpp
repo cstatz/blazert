@@ -5,23 +5,23 @@
 #include "pmmintrin.h"
 #include "xmmintrin.h"
 
-//#define CATCH_CONFIG_RUNNER
-#define DOCTEST_CONFIG_IMPLEMENT
+#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
+//#define DOCTEST_CONFIG_IMPLEMENT
 
-#include <third_party/doctest/doctest/doctest.h>
 #include "test_helpers.h"
+#include <third_party/doctest/doctest/doctest.h>
 
-int
-main(int argc, char* const argv[])
-{
-  // global setup...
-  _MM_SET_FLUSH_ZERO_MODE(_MM_FLUSH_ZERO_ON);
-  _MM_SET_DENORMALS_ZERO_MODE(_MM_DENORMALS_ZERO_ON);
-
-  doctest::Context context;
-  context.applyCommandLine(argc, argv);
-  int res = context.run(); // run
-
-  if(context.shouldExit()) // important - query flags (and --exit) rely on the user doing this
-    return res;          // propagate the result of the tests
-}
+//int
+//main(int argc, char* const argv[])
+//{
+//  // global setup...
+//  _MM_SET_FLUSH_ZERO_MODE(_MM_FLUSH_ZERO_ON);
+//  _MM_SET_DENORMALS_ZERO_MODE(_MM_DENORMALS_ZERO_ON);
+//
+//  doctest::Context context;
+//  context.applyCommandLine(argc, argv);
+//  int res = context.run(); // run
+//
+//  if(context.shouldExit()) // important - query flags (and --exit) rely on the user doing this
+//    return res;          // propagate the result of the tests
+//}

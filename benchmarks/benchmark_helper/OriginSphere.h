@@ -5,30 +5,28 @@
 #ifndef EM_ORIGINSPHERE_H
 #define EM_ORIGINSPHERE_H
 
-#include <blazert/datatypes.h>
 #include "OriginMesh.h"
+#include <blazert/datatypes.h>
 
-
-template<typename T> 
-inline void initialize_icosahedron(OriginMesh<T>& mesh)
-{
+template<typename T>
+inline void initialize_icosahedron(OriginMesh<T> &mesh) {
   const T t = (1.0f + std::sqrt(5.0f)) / 2.0f;
 
   // Vertices
-  mesh.vertices.emplace_back(blazert::Vec3r<T>{ -1.0f, t, 0.0 });
-  mesh.vertices.emplace_back(blazert::Vec3r<T>{ 1.0, t, 0.0 });
-  mesh.vertices.emplace_back(blazert::Vec3r<T>{ -1.0f, -t, 0.0 });
-  mesh.vertices.emplace_back(blazert::Vec3r<T>{ 1.0, -t, 0.0 });
-  mesh.vertices.emplace_back(blazert::Vec3r<T>{ 0.0, -1.0f, t });
-  mesh.vertices.emplace_back(blazert::Vec3r<T>{ 0.0, 1.0, t });
-  mesh.vertices.emplace_back(blazert::Vec3r<T>{ 0.0, -1.0f, -t });
-  mesh.vertices.emplace_back(blazert::Vec3r<T>{ 0.0, 1.0, -t });
-  mesh.vertices.emplace_back(blazert::Vec3r<T>{ t, 0.0, -1.0f });
-  mesh.vertices.emplace_back(blazert::Vec3r<T>{ t, 0.0, 1.0 });
-  mesh.vertices.emplace_back(blazert::Vec3r<T>{ -t, 0.0, -1.0f });
-  mesh.vertices.emplace_back(blazert::Vec3r<T>{ -t, 0.0, 1.0 });
+  mesh.vertices.emplace_back(blazert::Vec3r<T>{-1.0f, t, 0.0});
+  mesh.vertices.emplace_back(blazert::Vec3r<T>{1.0, t, 0.0});
+  mesh.vertices.emplace_back(blazert::Vec3r<T>{-1.0f, -t, 0.0});
+  mesh.vertices.emplace_back(blazert::Vec3r<T>{1.0, -t, 0.0});
+  mesh.vertices.emplace_back(blazert::Vec3r<T>{0.0, -1.0f, t});
+  mesh.vertices.emplace_back(blazert::Vec3r<T>{0.0, 1.0, t});
+  mesh.vertices.emplace_back(blazert::Vec3r<T>{0.0, -1.0f, -t});
+  mesh.vertices.emplace_back(blazert::Vec3r<T>{0.0, 1.0, -t});
+  mesh.vertices.emplace_back(blazert::Vec3r<T>{t, 0.0, -1.0f});
+  mesh.vertices.emplace_back(blazert::Vec3r<T>{t, 0.0, 1.0});
+  mesh.vertices.emplace_back(blazert::Vec3r<T>{-t, 0.0, -1.0f});
+  mesh.vertices.emplace_back(blazert::Vec3r<T>{-t, 0.0, 1.0});
 
-  for (auto& it : mesh.vertices)
+  for (auto &it : mesh.vertices)
     it = normalize(it);
 
   // Faces
@@ -55,8 +53,8 @@ inline void initialize_icosahedron(OriginMesh<T>& mesh)
 }
 
 template<typename T>
-inline uint32_t subdivide_edge(uint32_t f0, uint32_t f1, const blazert::Vec3r<T>& v0, const blazert::Vec3r<T>& v1, OriginMesh<T>& io_mesh)
-{
+inline uint32_t subdivide_edge(uint32_t f0, uint32_t f1, const blazert::Vec3r<T> &v0, const blazert::Vec3r<T> &v1,
+                               OriginMesh<T> &io_mesh) {
   blazert::Vec3r<T> v = (v0 + v1) * 0.5f;
   v = normalize(v);
 
@@ -66,8 +64,7 @@ inline uint32_t subdivide_edge(uint32_t f0, uint32_t f1, const blazert::Vec3r<T>
 }
 
 template<typename T>
-inline void subdivide_mesh(const OriginMesh<T>& in, OriginMesh<T>& out)
-{
+inline void subdivide_mesh(const OriginMesh<T> &in, OriginMesh<T> &out) {
   out.vertices = in.vertices;
 
   for (uint32_t i = 0; i < in.triangle_count(); ++i) {
@@ -91,8 +88,7 @@ inline void subdivide_mesh(const OriginMesh<T>& in, OriginMesh<T>& out)
 }
 
 template<typename T>
-class OriginSphere : public OriginMesh<T>
-{
+class OriginSphere : public OriginMesh<T> {
 public:
   OriginSphere() = delete;
 
@@ -122,4 +118,4 @@ OriginSphere<T>::OriginSphere(uint32_t resolution) {
   OriginMesh<T>::vertices = meshes.back().vertices;
 };
 
-#endif // EM_ORIGINSPHERE_H
+#endif// EM_ORIGINSPHERE_H

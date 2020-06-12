@@ -2,9 +2,9 @@
 // Created by ogarten on 14/05/2020.
 //
 
+#include "../test_helpers.h"
 #include <blazert/embree/primitives/EmbreePlane.h>
 #include <third_party/doctest/doctest/doctest.h>
-#include "../test_helpers.h"
 
 using namespace blazert;
 using namespace doctest;
@@ -58,7 +58,7 @@ TEST_CASE_TEMPLATE("EmbreePlane", T, float) {
       SUBCASE("rotated about r=normalized(1,1,0)") {
         // plane on z=0, later rotated to x = 0
         // matrix which rotates the plane about the y-axis ( x = 0 is now plane eq)
-        const Vec3r<T> axis{static_cast<T>(1 /  std::sqrt(2)), static_cast<T>(1 /  std::sqrt(2)), 0};
+        const Vec3r<T> axis{static_cast<T>(1 / std::sqrt(2)), static_cast<T>(1 / std::sqrt(2)), 0};
         Mat3r<T> rot = arbitraryRotationMatrix(axis, pi<T> / 2);
 
         EmbreePlane plane(D, S, center, d1, d2, rot);
@@ -132,7 +132,7 @@ TEST_CASE_TEMPLATE("EmbreePlane", T, float) {
       SUBCASE("rotated about r=normalized(1,1,0)") {
         // plane on z=0, later rotated to x = 0
         // matrix which rotates the plane about the y-axis ( x = 0 is now plane eq)
-        const Vec3r<T> axis{static_cast<T>(1 /  std::sqrt(2)), static_cast<T>(1 /  std::sqrt(2)), 0};
+        const Vec3r<T> axis{static_cast<T>(1 / std::sqrt(2)), static_cast<T>(1 / std::sqrt(2)), 0};
         Mat3r<T> rot = arbitraryRotationMatrix(axis, pi<T> / 2);
 
         EmbreePlane plane(D, S, center, d1, d2, rot);
@@ -143,10 +143,10 @@ TEST_CASE_TEMPLATE("EmbreePlane", T, float) {
 
         CHECK(bound.lower_x == Approx(0));
         CHECK(bound.lower_y == Approx(0));
-        CHECK(bound.lower_z == Approx(1 -  std::sqrt(2)));
+        CHECK(bound.lower_z == Approx(1 - std::sqrt(2)));
         CHECK(bound.upper_x == Approx(2));
         CHECK(bound.upper_y == Approx(2));
-        CHECK(bound.upper_z == Approx(1 +  std::sqrt(2)));
+        CHECK(bound.upper_z == Approx(1 + std::sqrt(2)));
       }
       SUBCASE("rotated in xy-plane") {
         const Vec3r<T> axis{0, 0, 1};
@@ -170,7 +170,7 @@ TEST_CASE_TEMPLATE("EmbreePlane", T, float) {
   SUBCASE("INTERSECTS") {
     SUBCASE("center at origin") {
       Vec3r<T> center{0.f, 0.f, 0.f};
-      SUBCASE("non-rotated"){
+      SUBCASE("non-rotated") {
         Mat3r<T> rot = blaze::IdentityMatrix<T>(3UL);
 
         EmbreePlane plane(D, S, center, d1, d2, rot);
@@ -182,7 +182,7 @@ TEST_CASE_TEMPLATE("EmbreePlane", T, float) {
         Vec3r<T> org1{0.f, 0.f, 5.f};
         Vec3r<T> dir1{0.f, 0.f, -1.f};
         RTCRay ray1{org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>::max(),
-            0, 0, 0};
+                    0,       0,       0};
         RTCHit hit1;
         hit1.geomID = RTC_INVALID_GEOMETRY_ID;
         hit1.instID[0] = RTC_INVALID_GEOMETRY_ID;
@@ -209,7 +209,7 @@ TEST_CASE_TEMPLATE("EmbreePlane", T, float) {
         Vec3r<T> org1{5.f, 0.f, 0.f};
         Vec3r<T> dir1{-1.f, 0.f, 0.f};
         RTCRay ray1{org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>::max(),
-            0, 0, 0};
+                    0,       0,       0};
         RTCHit hit1;
         hit1.geomID = RTC_INVALID_GEOMETRY_ID;
         hit1.instID[0] = RTC_INVALID_GEOMETRY_ID;
@@ -235,7 +235,7 @@ TEST_CASE_TEMPLATE("EmbreePlane", T, float) {
         Vec3r<T> org1{-5.f, 5.f, 0.5f};
         Vec3r<T> dir1{1.f, -1.f, 0.f};
         RTCRay ray1{org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>::max(),
-            0, 0, 0};
+                    0,       0,       0};
         RTCHit hit1;
         hit1.geomID = RTC_INVALID_GEOMETRY_ID;
         hit1.instID[0] = RTC_INVALID_GEOMETRY_ID;
@@ -263,7 +263,7 @@ TEST_CASE_TEMPLATE("EmbreePlane", T, float) {
           Vec3r<T> org1{4.f, 0.f, 4.f};
           Vec3r<T> dir1{-1.f, 0.f, -1.f};
           RTCRay ray1{org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>::max(),
-              0, 0, 0};
+                      0,       0,       0};
           RTCHit hit1;
           hit1.geomID = RTC_INVALID_GEOMETRY_ID;
           hit1.instID[0] = RTC_INVALID_GEOMETRY_ID;
@@ -281,7 +281,7 @@ TEST_CASE_TEMPLATE("EmbreePlane", T, float) {
           Vec3r<T> org2{-4.f, 0.f, -4.f};
           Vec3r<T> dir2{1.f, 0.f, 1.f};
           RTCRay ray2{org2[0], org2[1], org2[2], 0, dir2[0], dir2[1], dir2[2], 0, std::numeric_limits<float>::max(),
-              0, 0, 0};
+                      0,       0,       0};
           RTCHit hit2;
           hit2.geomID = RTC_INVALID_GEOMETRY_ID;
           hit2.instID[0] = RTC_INVALID_GEOMETRY_ID;
@@ -310,7 +310,7 @@ TEST_CASE_TEMPLATE("EmbreePlane", T, float) {
           Vec3r<T> org1{1.f, 0.f, 4.f};
           Vec3r<T> dir1{0.f, 0.f, -1.f};
           RTCRay ray1{org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>::max(),
-              0, 0, 0};
+                      0,       0,       0};
           RTCHit hit1;
           hit1.geomID = RTC_INVALID_GEOMETRY_ID;
           hit1.instID[0] = RTC_INVALID_GEOMETRY_ID;
@@ -329,7 +329,7 @@ TEST_CASE_TEMPLATE("EmbreePlane", T, float) {
           Vec3r<T> org2{-1.f, 0.f, 4.f};
           Vec3r<T> dir2{0.f, 0.f, -1.f};
           RTCRay ray2{org2[0], org2[1], org2[2], 0, dir2[0], dir2[1], dir2[2], 0, std::numeric_limits<float>::max(),
-              0, 0, 0};
+                      0,       0,       0};
           RTCHit hit2;
           hit2.geomID = RTC_INVALID_GEOMETRY_ID;
           hit2.instID[0] = RTC_INVALID_GEOMETRY_ID;
@@ -349,7 +349,7 @@ TEST_CASE_TEMPLATE("EmbreePlane", T, float) {
           Vec3r<T> org3{0.f, 1.f, 4.f};
           Vec3r<T> dir3{0.f, 0.f, -1.f};
           RTCRay ray3{org3[0], org3[1], org3[2], 0, dir3[0], dir3[1], dir3[2], 0, std::numeric_limits<float>::max(),
-              0, 0, 0};
+                      0,       0,       0};
           RTCHit hit3;
           hit3.geomID = RTC_INVALID_GEOMETRY_ID;
           hit3.instID[0] = RTC_INVALID_GEOMETRY_ID;
@@ -363,11 +363,11 @@ TEST_CASE_TEMPLATE("EmbreePlane", T, float) {
           CHECK(rayhit3.hit.Ng_y == Approx(1.f / std::sqrt(2)));
           CHECK(rayhit3.hit.Ng_z == Approx(1.f / std::sqrt(2)));
         }
-        SUBCASE("edge: y min") {      // edge at y_min
+        SUBCASE("edge: y min") {// edge at y_min
           Vec3r<T> org4{0.f, -1.f, 4.f};
           Vec3r<T> dir4{0.f, 0.f, -1.f};
           RTCRay ray4{org4[0], org4[1], org4[2], 0, dir4[0], dir4[1], dir4[2], 0, std::numeric_limits<float>::max(),
-              0, 0, 0};
+                      0,       0,       0};
           RTCHit hit4;
           hit4.geomID = RTC_INVALID_GEOMETRY_ID;
           hit4.instID[0] = RTC_INVALID_GEOMETRY_ID;
@@ -395,7 +395,7 @@ TEST_CASE_TEMPLATE("EmbreePlane", T, float) {
           Vec3r<T> org1{1.f, 1.f, 4.f};
           Vec3r<T> dir1{0.f, 0.f, -1.f};
           RTCRay ray1{org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>::max(),
-              0, 0, 0};
+                      0,       0,       0};
           RTCHit hit1;
           hit1.geomID = RTC_INVALID_GEOMETRY_ID;
           hit1.instID[0] = RTC_INVALID_GEOMETRY_ID;
@@ -414,7 +414,7 @@ TEST_CASE_TEMPLATE("EmbreePlane", T, float) {
           Vec3r<T> org2{-1.f, 1.f, 4.f};
           Vec3r<T> dir2{0.f, 0.f, -1.f};
           RTCRay ray2{org2[0], org2[1], org2[2], 0, dir2[0], dir2[1], dir2[2], 0, std::numeric_limits<float>::max(),
-              0, 0, 0};
+                      0,       0,       0};
           RTCHit hit2;
           hit2.geomID = RTC_INVALID_GEOMETRY_ID;
           hit2.instID[0] = RTC_INVALID_GEOMETRY_ID;
@@ -434,7 +434,7 @@ TEST_CASE_TEMPLATE("EmbreePlane", T, float) {
           Vec3r<T> org3{1.f, -1.f, 4.f};
           Vec3r<T> dir3{0.f, 0.f, -1.f};
           RTCRay ray3{org3[0], org3[1], org3[2], 0, dir3[0], dir3[1], dir3[2], 0, std::numeric_limits<float>::max(),
-              0, 0, 0};
+                      0,       0,       0};
           RTCHit hit3;
           hit3.geomID = RTC_INVALID_GEOMETRY_ID;
           hit3.instID[0] = RTC_INVALID_GEOMETRY_ID;
@@ -453,7 +453,7 @@ TEST_CASE_TEMPLATE("EmbreePlane", T, float) {
           Vec3r<T> org4{-1.f, -1.f, 4.f};
           Vec3r<T> dir4{0.f, 0.f, -1.f};
           RTCRay ray4{org4[0], org4[1], org4[2], 0, dir4[0], dir4[1], dir4[2], 0, std::numeric_limits<float>::max(),
-              0, 0, 0};
+                      0,       0,       0};
           RTCHit hit4;
           hit4.geomID = RTC_INVALID_GEOMETRY_ID;
           hit4.instID[0] = RTC_INVALID_GEOMETRY_ID;
@@ -471,7 +471,7 @@ TEST_CASE_TEMPLATE("EmbreePlane", T, float) {
     }
     SUBCASE("shifted center") {
       Vec3r<T> center{1.f, 1.f, 1.f};
-      SUBCASE("non-rotated"){
+      SUBCASE("non-rotated") {
         Mat3r<T> rot = blaze::IdentityMatrix<T>(3UL);
 
         EmbreePlane plane(D, S, center, d1, d2, rot);
@@ -483,7 +483,7 @@ TEST_CASE_TEMPLATE("EmbreePlane", T, float) {
         Vec3r<T> org1{1.f, 1.f, 5.f};
         Vec3r<T> dir1{0.f, 0.f, -1.f};
         RTCRay ray1{org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>::max(),
-            0, 0, 0};
+                    0,       0,       0};
         RTCHit hit1;
         hit1.geomID = RTC_INVALID_GEOMETRY_ID;
         hit1.instID[0] = RTC_INVALID_GEOMETRY_ID;
@@ -510,7 +510,7 @@ TEST_CASE_TEMPLATE("EmbreePlane", T, float) {
         Vec3r<T> org1{5.f, 1.f, 1.f};
         Vec3r<T> dir1{-1.f, 0.f, 0.f};
         RTCRay ray1{org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>::max(),
-            0, 0, 0};
+                    0,       0,       0};
         RTCHit hit1;
         hit1.geomID = RTC_INVALID_GEOMETRY_ID;
         hit1.instID[0] = RTC_INVALID_GEOMETRY_ID;
@@ -536,7 +536,7 @@ TEST_CASE_TEMPLATE("EmbreePlane", T, float) {
         Vec3r<T> org1{-4.f, 6.f, 0.5f};
         Vec3r<T> dir1{1.f, -1.f, 0.f};
         RTCRay ray1{org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>::max(),
-            0, 0, 0};
+                    0,       0,       0};
         RTCHit hit1;
         hit1.geomID = RTC_INVALID_GEOMETRY_ID;
         hit1.instID[0] = RTC_INVALID_GEOMETRY_ID;
@@ -564,7 +564,7 @@ TEST_CASE_TEMPLATE("EmbreePlane", T, float) {
           Vec3r<T> org1{5.f, 1.f, 5.f};
           Vec3r<T> dir1{-1.f, 0.f, -1.f};
           RTCRay ray1{org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>::max(),
-              0, 0, 0};
+                      0,       0,       0};
           RTCHit hit1;
           hit1.geomID = RTC_INVALID_GEOMETRY_ID;
           hit1.instID[0] = RTC_INVALID_GEOMETRY_ID;
@@ -582,7 +582,7 @@ TEST_CASE_TEMPLATE("EmbreePlane", T, float) {
           Vec3r<T> org2{-3.f, 1.f, -3.f};
           Vec3r<T> dir2{1.f, 0.f, 1.f};
           RTCRay ray2{org2[0], org2[1], org2[2], 0, dir2[0], dir2[1], dir2[2], 0, std::numeric_limits<float>::max(),
-              0, 0, 0};
+                      0,       0,       0};
           RTCHit hit2;
           hit2.geomID = RTC_INVALID_GEOMETRY_ID;
           hit2.instID[0] = RTC_INVALID_GEOMETRY_ID;
@@ -611,7 +611,7 @@ TEST_CASE_TEMPLATE("EmbreePlane", T, float) {
           Vec3r<T> org1{2.f, 1.f, 4.f};
           Vec3r<T> dir1{0.f, 0.f, -1.f};
           RTCRay ray1{org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>::max(),
-              0, 0, 0};
+                      0,       0,       0};
           RTCHit hit1;
           hit1.geomID = RTC_INVALID_GEOMETRY_ID;
           hit1.instID[0] = RTC_INVALID_GEOMETRY_ID;
@@ -630,7 +630,7 @@ TEST_CASE_TEMPLATE("EmbreePlane", T, float) {
           Vec3r<T> org2{0.f, 1.f, 4.f};
           Vec3r<T> dir2{0.f, 0.f, -1.f};
           RTCRay ray2{org2[0], org2[1], org2[2], 0, dir2[0], dir2[1], dir2[2], 0, std::numeric_limits<float>::max(),
-              0, 0, 0};
+                      0,       0,       0};
           RTCHit hit2;
           hit2.geomID = RTC_INVALID_GEOMETRY_ID;
           hit2.instID[0] = RTC_INVALID_GEOMETRY_ID;
@@ -650,7 +650,7 @@ TEST_CASE_TEMPLATE("EmbreePlane", T, float) {
           Vec3r<T> org3{1.f, 2.f, 4.f};
           Vec3r<T> dir3{0.f, 0.f, -1.f};
           RTCRay ray3{org3[0], org3[1], org3[2], 0, dir3[0], dir3[1], dir3[2], 0, std::numeric_limits<float>::max(),
-              0, 0, 0};
+                      0,       0,       0};
           RTCHit hit3;
           hit3.geomID = RTC_INVALID_GEOMETRY_ID;
           hit3.instID[0] = RTC_INVALID_GEOMETRY_ID;
@@ -664,11 +664,11 @@ TEST_CASE_TEMPLATE("EmbreePlane", T, float) {
           CHECK(rayhit3.hit.Ng_y == Approx(1.f / std::sqrt(2)));
           CHECK(rayhit3.hit.Ng_z == Approx(1.f / std::sqrt(2)));
         }
-        SUBCASE("edge: y min") {      // edge at y_min
+        SUBCASE("edge: y min") {// edge at y_min
           Vec3r<T> org4{1.f, 0.f, 4.f};
           Vec3r<T> dir4{0.f, 0.f, -1.f};
           RTCRay ray4{org4[0], org4[1], org4[2], 0, dir4[0], dir4[1], dir4[2], 0, std::numeric_limits<float>::max(),
-              0, 0, 0};
+                      0,       0,       0};
           RTCHit hit4;
           hit4.geomID = RTC_INVALID_GEOMETRY_ID;
           hit4.instID[0] = RTC_INVALID_GEOMETRY_ID;
@@ -696,7 +696,7 @@ TEST_CASE_TEMPLATE("EmbreePlane", T, float) {
           Vec3r<T> org1{2.f, 2.f, 4.f};
           Vec3r<T> dir1{0.f, 0.f, -1.f};
           RTCRay ray1{org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>::max(),
-              0, 0, 0};
+                      0,       0,       0};
           RTCHit hit1;
           hit1.geomID = RTC_INVALID_GEOMETRY_ID;
           hit1.instID[0] = RTC_INVALID_GEOMETRY_ID;
@@ -715,7 +715,7 @@ TEST_CASE_TEMPLATE("EmbreePlane", T, float) {
           Vec3r<T> org2{0.f, 2.f, 4.f};
           Vec3r<T> dir2{0.f, 0.f, -1.f};
           RTCRay ray2{org2[0], org2[1], org2[2], 0, dir2[0], dir2[1], dir2[2], 0, std::numeric_limits<float>::max(),
-              0, 0, 0};
+                      0,       0,       0};
           RTCHit hit2;
           hit2.geomID = RTC_INVALID_GEOMETRY_ID;
           hit2.instID[0] = RTC_INVALID_GEOMETRY_ID;
@@ -735,7 +735,7 @@ TEST_CASE_TEMPLATE("EmbreePlane", T, float) {
           Vec3r<T> org3{2.f, 0.f, 4.f};
           Vec3r<T> dir3{0.f, 0.f, -1.f};
           RTCRay ray3{org3[0], org3[1], org3[2], 0, dir3[0], dir3[1], dir3[2], 0, std::numeric_limits<float>::max(),
-              0, 0, 0};
+                      0,       0,       0};
           RTCHit hit3;
           hit3.geomID = RTC_INVALID_GEOMETRY_ID;
           hit3.instID[0] = RTC_INVALID_GEOMETRY_ID;
@@ -754,7 +754,7 @@ TEST_CASE_TEMPLATE("EmbreePlane", T, float) {
           Vec3r<T> org4{0.f, 0.f, 4.f};
           Vec3r<T> dir4{0.f, 0.f, -1.f};
           RTCRay ray4{org4[0], org4[1], org4[2], 0, dir4[0], dir4[1], dir4[2], 0, std::numeric_limits<float>::max(),
-              0, 0, 0};
+                      0,       0,       0};
           RTCHit hit4;
           hit4.geomID = RTC_INVALID_GEOMETRY_ID;
           hit4.instID[0] = RTC_INVALID_GEOMETRY_ID;

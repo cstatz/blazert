@@ -1,6 +1,6 @@
 # How to contribute
 We love third-party contributions to blazert. This can be anything from enhanced 
-documentation, bug fixes in general or fixes for your specific platform, or 
+documentation, bug fixes in general or fixes for your specific platform. 
 
 When contributing to this repository, please first discuss the change you wish 
 to make via issue with us of this repository before making a change.
@@ -38,7 +38,7 @@ Run the tests and check that everything is setup correctly:
 ```shell script
 ctest
 ```
-Now make your changes and if necessary add tests to ensure proper functionality. 
+Now **make your changes** and if necessary **add tests** to ensure proper functionality. 
 Run them before pushing to your fork.
 
 If everything work as you desire, push to your fork and [submit a pull request][pr].
