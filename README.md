@@ -246,6 +246,7 @@ The benchmarks were run on the following configuration:
 - L1-Cache: 32 KB 
 - L2-Cache: 256 KB
 - L3-Cache: 6144 KB
+- compiler: g++-10
 
 The following plots show the benchmarks results for the BVH build, the traversal of the BVH for a realistic rendering
 case (not all rays hit) and for a realistic scientific rendering case (all rays hit).
