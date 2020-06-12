@@ -6,9 +6,10 @@
     1. [Contributing](#contributing)
 2. [Features](#features)
 3. [Installation](#installation)
-    1. [Dependencies](#dependencies)
-    2. [Build and Test](#build-and-test)
-    3. [Configuration](#configuration)
+    1. [Clone the repository](#clone-the-repository)
+    2. [Dependencies](#dependencies)
+    3. [Build and Test](#build-and-test)
+    4. [Configuration](#configuration)
 4. [Usage](#usage)
     1. [Examples](#examples)
     2. [Minimal Examples](#minimal-example)
@@ -24,14 +25,18 @@ intents to be a minimal effort (nearly plugin-) replacement.
 
 ![image](examples/baseline/path_tracer_blaze.png) 
 
-You can use your own (vector) dataypes (e.g. as provided by eigen3) and it also works with single-precision 
-floating-type values.
+blazeRT makes use of the the [blaze](https://bitbucket.org/blaze-lib/blaze/src/master/) linear algebra
+library for its vector types. Because we rely on a well-tested and well-optimized linear algebra library
+instead of using our own vector types, blazeRT can focus on the actual ray tracing algorithms. Furthermore
+this is advantageous in subsequent scientific application where vector types are needed again. 
 
 blazeRT works with triangular meshes and simple primitives, but it should be easy to extend blazeRT 
 to work on polygons or more complex primitives.
 
 blazeRT has unit test which will increase as development continues and we try to ensure code 
-quality and a reproducible build experience via continuous integration.
+quality and a reproducible build experience via continuous integration. During the CI process we 
+build the examples and the test cases, which need to run successfully for the CI to pass. Currently, 
+blazeRT is CI-tested on Ubuntu 18.04 and macOS.
 
 ### Contributing
 We appreciate all contributions from issues to pull requests. 
@@ -65,6 +70,18 @@ Before starting the build process please ensure all dependencies are properly in
  * [Embree](https://github.com/embree/embree) (>= 3) if ```EMBREE_TRACING``` fallback is desired 
  * [doctest](https://github.com/onqtam/doctest) (for testing)
  * [google benchmark](https://github.com/google/benchmark) (for running the benchmarks)
+
+### Clone the repository
+
+Clone the repository with the following command:
+```git clone https://github.com/cstatz/blazert.git```
+
+For the tests and the benchmarks the submodules must be cloned as well:
+```
+git submodule init
+git submodule update 
+```
+This will pull doctest, nanoRT and madmann91/bvh as submodules.
 
 ### Build and test
 This is a header-only library. No need to build anything. Just drop it in your source directory and off you go.
@@ -199,11 +216,31 @@ int main(int argc, char **argv) {
 ```
 ### Notes
 - Compared to nanort the BVH accelerator is not built in parallel. For meshes with 5 million triangles, blazeRT
-needs about 5 seconds to build the bvh and about 20 seconds for 20 million meshes. For scientific ray tracing 
+needs about 5 seconds to build the BHV and about 20 seconds for 20 million meshes. For scientific ray tracing 
 applications the scene is usually static and the ray origin and direction are varied.
 - ```BLAZERTALIGN``` is currently not used but might be used in the future. 
 ## Benchmarks
-**added tomorrow**
+We have included benchmarks for blazeRT compared to [nanort](https://github.com/lighttransport/nanort),
+[embree](https://github.com/embree/embree) and [madmann91/bvh](https://github.com/madmann91/bvh) for BVH build and 
+traversal. The benchmark is a meshed sphere which is used as a triangular mesh geometry in all ray tracing kernels. 
+
+**NOTE**: For [madnamnn91/bvh](https://github.com/madmann91/bvh) we encoutered segfaults when running this on macOS for 
+meshes that were bigger than a few hundred triangles. Therefore, take the results with a grain of salt.
+
+The benchmarks were run on the following configuration:
+- Kernel: linux-5.6.15
+- CPU: Intel i5-8250U (8) @ 3.400GHz 
+- RAM 32 GB
+- L1-Cache: 32 KB 
+- L2-Cache: 256 KB
+- L3-Cache: 6144 KB
+
+The following plots show the benchmarks results for the BVH build, the traversal of the BVH for a realistic rendering
+case (not all rays hit) and for a realistic scientific rendering case (all rays hit).
+
+![Benchmark BVH build](benchmarks/results/benchmark_bvh_build.png) 
+![Benchmark BVH traversal rendering](benchmarks/results/benchmark_realistic_rendering.png) 
+![Benchmark BVH traversal scientific](benchmarks/results/benchmark_realistic_scientific.png) 
 
 ## License
 
