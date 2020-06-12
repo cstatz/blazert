@@ -4,6 +4,7 @@
 
 1. [Introduction](#introduction)
     1. [Contributing](#contributing)
+    2. [Versions](#versions)
 2. [Features](#features)
 3. [Installation](#installation)
     1. [Dependencies](#dependencies)
@@ -54,6 +55,9 @@ blazeRT is CI-tested on Ubuntu 18.04 and macOS with gcc and clang.
 We appreciate all contributions from issues to pull requests. 
 
 For contributing, please read the [contribution guide](CONTRIBUTING.md).
+
+### Versions
+The releases are based on the master branch. The release-version is tagged and follows the scheme Year.Quarter.Revision.
 
 ## Features
 - [x] modern C++
