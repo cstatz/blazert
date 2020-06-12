@@ -112,32 +112,27 @@ BENCHMARK_TEMPLATE(BM_nanoRT_BUILD_BHV_Sphere, double)->DenseRange(2, 9, 1)->Uni
 template<typename T>
 static void BM_bvh_BUILD_BHV_Sphere_SweepSAH(benchmark::State &state) {
   using Scalar = T;
-  using Vector3 = bvh::Vector3<Scalar>;
   using Triangle = bvh::Triangle<Scalar>;
   using Bvh = bvh::Bvh<Scalar>;
 
   const auto os = std::make_unique<OriginSphere<T>>(state.range(0));
 
   std::vector<Triangle> triangles;
-  triangles.reserve(os->triangles.size());
+  triangles.reserve(os->triangles.size()/3);
   for (uint32_t i = 0; i < os->triangles.size(); i += 3) {
-    triangles.emplace_back(
-        Vector3{static_cast<Scalar>(os->triangles[i][0]), static_cast<Scalar>(os->triangles[i][1]),
-                static_cast<Scalar>(os->triangles[i][2])},
-        Vector3{static_cast<Scalar>(os->triangles[i + 1][0]), static_cast<Scalar>(os->triangles[i + 1][1]),
-                static_cast<Scalar>(os->triangles[i + 1][2])},
-        Vector3{static_cast<Scalar>(os->triangles[i + 2][0]), static_cast<Scalar>(os->triangles[i + 2][1]),
-                static_cast<Scalar>(os->triangles[i + 2][2])});
+    const Vec3ui &face = os->triangles[i];
+    const Vec3r<T> &p0 = os->vertices[face[0]];
+    const Vec3r<T> &p1 = os->vertices[face[1]];
+    const Vec3r<T> &p2 = os->vertices[face[2]];
+    triangles.emplace_back(Triangle({p0[0], p0[1], p0[2]}, {p1[0], p1[1], p1[2]}, {p2[0], p2[1], p2[2]}));
   }
-
   Bvh bvh;
-
-  // Create an acceleration data structure on those triangles
   bvh::SweepSahBuilder<Bvh> builder(bvh);
   auto [bboxes, centers] = bvh::compute_bounding_boxes_and_centers(triangles.data(), triangles.size());
-  auto global_bbox = bvh::compute_bounding_boxes_union(bboxes.get(), triangles.size());
 
+  // Create an acceleration data structure on those triangles
   for (auto _ : state) {
+    auto global_bbox = bvh::compute_bounding_boxes_union(bboxes.get(), triangles.size());
     builder.build(global_bbox, bboxes.get(), centers.get(), triangles.size());
   }
 }
@@ -147,32 +142,27 @@ BENCHMARK_TEMPLATE(BM_bvh_BUILD_BHV_Sphere_SweepSAH, double)->DenseRange(2, 9, 1
 template<typename T>
 static void BM_bvh_BUILD_BHV_Sphere_BinnedSAH(benchmark::State &state) {
   using Scalar = T;
-  using Vector3 = bvh::Vector3<Scalar>;
   using Triangle = bvh::Triangle<Scalar>;
   using Bvh = bvh::Bvh<Scalar>;
 
   const auto os = std::make_unique<OriginSphere<T>>(state.range(0));
 
   std::vector<Triangle> triangles;
-  triangles.reserve(os->triangles.size());
+  triangles.reserve(os->triangles.size()/3);
   for (uint32_t i = 0; i < os->triangles.size(); i += 3) {
-    triangles.emplace_back(
-        Vector3{static_cast<Scalar>(os->triangles[i][0]), static_cast<Scalar>(os->triangles[i][1]),
-                static_cast<Scalar>(os->triangles[i][2])},
-        Vector3{static_cast<Scalar>(os->triangles[i + 1][0]), static_cast<Scalar>(os->triangles[i + 1][1]),
-                static_cast<Scalar>(os->triangles[i + 1][2])},
-        Vector3{static_cast<Scalar>(os->triangles[i + 2][0]), static_cast<Scalar>(os->triangles[i + 2][1]),
-                static_cast<Scalar>(os->triangles[i + 2][2])});
+    const Vec3ui &face = os->triangles[i];
+    const Vec3r<T> &p0 = os->vertices[face[0]];
+    const Vec3r<T> &p1 = os->vertices[face[1]];
+    const Vec3r<T> &p2 = os->vertices[face[2]];
+    triangles.emplace_back(Triangle({p0[0], p0[1], p0[2]}, {p1[0], p1[1], p1[2]}, {p2[0], p2[1], p2[2]}));
   }
-
   Bvh bvh;
-
-  // Create an acceleration data structure on those triangles
   bvh::BinnedSahBuilder<Bvh, 64> builder(bvh);
   auto [bboxes, centers] = bvh::compute_bounding_boxes_and_centers(triangles.data(), triangles.size());
-  auto global_bbox = bvh::compute_bounding_boxes_union(bboxes.get(), triangles.size());
 
+  // Create an acceleration data structure on those triangles
   for (auto _ : state) {
+    auto global_bbox = bvh::compute_bounding_boxes_union(bboxes.get(), triangles.size());
     builder.build(global_bbox, bboxes.get(), centers.get(), triangles.size());
   }
 }
