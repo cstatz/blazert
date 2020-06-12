@@ -31,8 +31,9 @@ public:
   BlazertScene<T> blazertscene;
   bool has_been_committed;
 
-  EmbreeScene() : device(rtcNewDevice("verbose=0,start_threads=1,threads=4,set_affinity=1")),
-                  rtcscene(rtcNewScene(device)), has_been_committed(false) {
+  EmbreeScene()
+      : device(rtcNewDevice("verbose=0,start_threads=1,threads=4,set_affinity=1")), rtcscene(rtcNewScene(device)),
+        has_been_committed(false) {
     if constexpr (std::is_same<double, T>::value) {
       std::cout << "-> Attention: Using embree bvh and traversal for float tracing. <-" << std::endl;
       std::cout << "This will also impact double precision tracing by blazert." << std::endl;
@@ -43,8 +44,11 @@ public:
 
   unsigned int add_mesh(const Vec3rList<T> &vertices, const Vec3iList &triangles);
   unsigned int add_spheres(const Vec3rList<T> &centers, const std::vector<T> &radii);
-  unsigned int add_planes(const Vec3rList<T> &centers, const std::vector<T> &dxs, const std::vector<T> &dys, const Mat3rList<T> &rotations);
-  unsigned int add_cylinders(const Vec3rList<T> &centers, const std::vector<T> &semi_axes_a, const std::vector<T> &semi_axes_b, const std::vector<T> &heights, const Mat3rList<T> &rotations);
+  unsigned int add_planes(const Vec3rList<T> &centers, const std::vector<T> &dxs, const std::vector<T> &dys,
+                          const Mat3rList<T> &rotations);
+  unsigned int add_cylinders(const Vec3rList<T> &centers, const std::vector<T> &semi_axes_a,
+                             const std::vector<T> &semi_axes_b, const std::vector<T> &heights,
+                             const Mat3rList<T> &rotations);
 
   //template<class X, ...> add_custom_primitive( ... );
 
@@ -73,7 +77,18 @@ inline bool intersect1(const EmbreeScene<T> &scene, const Ray<T> &ray, RayHit<T>
     RTCIntersectContext context;
     rtcInitIntersectContext(&context);
 
-    const RTCRay r{ray.origin[0], ray.origin[1], ray.origin[2], ray.min_hit_distance, ray.direction[0], ray.direction[1], ray.direction[2], 0, ray.max_hit_distance, 0, 0, 0};
+    const RTCRay r{ray.origin[0],
+                   ray.origin[1],
+                   ray.origin[2],
+                   ray.min_hit_distance,
+                   ray.direction[0],
+                   ray.direction[1],
+                   ray.direction[2],
+                   0,
+                   ray.max_hit_distance,
+                   0,
+                   0,
+                   0};
     RTCHit h{};
     RTCRayHit rh{r, h};
     rh.hit.geomID = RTC_INVALID_GEOMETRY_ID;
@@ -105,8 +120,10 @@ unsigned int EmbreeScene<T>::add_mesh(const Vec3rList<T> &vertices, const Vec3iL
     constexpr const int bytestride_float = sizeof(Vec3r<float>) / 8 * sizeof(Vec3r<float>::ElementType);
 
     triangle_mesh = rtcNewGeometry(device, RTC_GEOMETRY_TYPE_TRIANGLE);
-    rtcSetSharedGeometryBuffer(triangle_mesh, RTC_BUFFER_TYPE_INDEX, 0, RTC_FORMAT_UINT3, (void *) (triangles.data()), 0, bytestride_int, triangles.size());
-    rtcSetSharedGeometryBuffer(triangle_mesh, RTC_BUFFER_TYPE_VERTEX, 0, RTC_FORMAT_FLOAT3, (void *) (vertices.data()), 0, bytestride_float, vertices.size());
+    rtcSetSharedGeometryBuffer(triangle_mesh, RTC_BUFFER_TYPE_INDEX, 0, RTC_FORMAT_UINT3, (void *) (triangles.data()),
+                               0, bytestride_int, triangles.size());
+    rtcSetSharedGeometryBuffer(triangle_mesh, RTC_BUFFER_TYPE_VERTEX, 0, RTC_FORMAT_FLOAT3, (void *) (vertices.data()),
+                               0, bytestride_float, vertices.size());
     rtcCommitGeometry(triangle_mesh);
     auto geom_id = rtcAttachGeometry(rtcscene, triangle_mesh);
     id = geom_id;
@@ -139,7 +156,8 @@ unsigned int EmbreeScene<T>::add_spheres(const Vec3rList<T> &centers, const std:
 }
 
 template<typename T>
-unsigned int EmbreeScene<T>::add_planes(const Vec3rList<T> &centers, const std::vector<T> &dxs, const std::vector<T> &dys, const Mat3rList<T> &rotations) {
+unsigned int EmbreeScene<T>::add_planes(const Vec3rList<T> &centers, const std::vector<T> &dxs,
+                                        const std::vector<T> &dys, const Mat3rList<T> &rotations) {
 
   unsigned int id = -1;
 
@@ -163,11 +181,14 @@ unsigned int EmbreeScene<T>::add_planes(const Vec3rList<T> &centers, const std::
 }
 
 template<typename T>
-unsigned int EmbreeScene<T>::add_cylinders(const Vec3rList<T> &centers, const std::vector<T> &semi_axes_a, const std::vector<T> &semi_axes_b, const std::vector<T> &heights, const Mat3rList<T> &rotations) {
+unsigned int EmbreeScene<T>::add_cylinders(const Vec3rList<T> &centers, const std::vector<T> &semi_axes_a,
+                                           const std::vector<T> &semi_axes_b, const std::vector<T> &heights,
+                                           const Mat3rList<T> &rotations) {
   unsigned int id = -1;
 
   if constexpr (std::is_same<float, T>::value) {
-    cylinder = std::make_unique<EmbreeCylinder>(device, rtcscene, centers[0], semi_axes_a[0], semi_axes_b[0], heights[0], rotations[0]);
+    cylinder = std::make_unique<EmbreeCylinder>(device, rtcscene, centers[0], semi_axes_a[0], semi_axes_b[0],
+                                                heights[0], rotations[0]);
     id = cylinder->geomID;
     // TODO: We are looking for something more like this:
     //    for(size_t prim_id = 0; prim_id < centers.size(); ++prim_id) {

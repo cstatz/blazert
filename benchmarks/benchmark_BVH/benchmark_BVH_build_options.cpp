@@ -26,12 +26,14 @@ static void BM_BLAZERT_TRAVERSE_BVH_Sphere7_Tree_Depth(benchmark::State &state) 
   auto statistics = builder.build(triangles_bvh, build_options);
   //std::cout << "success = " << success << "\n";
 
-  constexpr int height = 4*2048;
-  constexpr int width = 4*2048;
+  constexpr int height = 4 * 2048;
+  constexpr int width = 4 * 2048;
   for (auto _ : state) {
     for (int y = 0; y < height; y++) {
       for (int x = 0; x < width; x++) {
-        const blazert::Ray<T> ray{{0.0, 0.0, 10.0}, {static_cast<T>((x / T(width)) - 0.5), static_cast<T>((y / T(height)) - 0.5), T(-1.)}};
+        const blazert::Ray<T> ray{
+            {0.0, 0.0, 10.0},
+            {static_cast<T>((x / T(width)) - 0.5), static_cast<T>((y / T(height)) - 0.5), T(-1.)}};
         RayHit<T> temp_rayhit;
         traverse(triangles_bvh, ray, temp_rayhit);
       }
@@ -55,12 +57,14 @@ static void BM_BLAZERT_TRAVERSE_BVH_Sphere7_Bin_Size(benchmark::State &state) {
   auto statistics = triangles_bvh.build(triangles, build_options);
   //std::cout << "success = " << success << "\n";
 
-  constexpr int height = 4*2048;
-  constexpr int width = 4*2048;
+  constexpr int height = 4 * 2048;
+  constexpr int width = 4 * 2048;
   for (auto _ : state) {
     for (int y = 0; y < height; y++) {
       for (int x = 0; x < width; x++) {
-        const blazert::Ray<T> ray{{0.0, 0.0, 10.0}, {static_cast<T>((x / T(width)) - 0.5), static_cast<T>((y / T(height)) - 0.5), T(-1.)}};
+        const blazert::Ray<T> ray{
+            {0.0, 0.0, 10.0},
+            {static_cast<T>((x / T(width)) - 0.5), static_cast<T>((y / T(height)) - 0.5), T(-1.)}};
         RayHit<T> temp_rayhit;
         traverse(triangles_bvh, ray, temp_rayhit);
       }

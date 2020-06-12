@@ -2,12 +2,12 @@
 #ifndef BLAZERT_BVH_ACCEL_H_
 #define BLAZERT_BVH_ACCEL_H_
 
-#include <iostream>
-#include <utility>
-#include <string>
 #include <atomic>
+#include <iostream>
 #include <limits>
 #include <queue>
+#include <string>
+#include <utility>
 
 #include <blazert/bvh/intersect.h>
 #include <blazert/bvh/node.h>
@@ -33,7 +33,7 @@ class BVH {
 
 public:
   std::vector<BVHNode<T, Collection>> nodes;
-  const Collection<T> &collection;  // TODO: maybe shared_ptr or something else. Otherwise usage in scene is not trivial.
+  const Collection<T> &collection;// TODO: maybe shared_ptr or something else. Otherwise usage in scene is not trivial.
 
 public:
   BVH() = delete;
@@ -45,7 +45,6 @@ public:
   explicit operator BVHNode<T, Collection>() const { return nodes[0]; }
   explicit operator BVHNode<T, Collection> &() const { return *(nodes[0]); }
   explicit operator BVHNode<T, Collection> *() const { return &(nodes[0]); }
-
 };
 
 template<typename T, template<typename> typename Collection>
@@ -73,7 +72,7 @@ inline bool traverse(const BVH<T, Collection> &bvh, const Ray<T> &ray, RayHit<T>
     node_stack.pop_back();
 
     if (intersect_node(min_hit_distance, max_hit_distance, node, ray)) {
-      if (!node.leaf) { // Branch node
+      if (!node.leaf) {// Branch node
         const int order_near = ray.direction_sign[node.axis];
         node_stack.push_back(node.children[1 - order_near]);
         node_stack.push_back(node.children[order_near]);
@@ -81,35 +80,43 @@ inline bool traverse(const BVH<T, Collection> &bvh, const Ray<T> &ray, RayHit<T>
       /// Expect to return true, if any prim in leaf is hit and
       /// the prims hit_distance is smaller than the intersectors hit_distance.
       /// The intersector stores the closest hit_distance for all subsequent intersect_leaf queries.
-      else if(intersect_leaf(node, intersector, ray)) {
+      else if (intersect_leaf(node, intersector, ray)) {
         /// If a prim is hit, use this distance as max distance for all subsequent ray box intersections.
         hit_distance = intersector.hit_distance;
-        if (ray.any_hit) break;
+        if (ray.any_hit)
+          break;
       }
     }
   }
 
   const bool hit = (intersector.hit_distance < ray.max_hit_distance);
-  if (hit) post_traversal(intersector, rayhit);
+  if (hit)
+    post_traversal(intersector, rayhit);
 
   return hit;
 }
 
 template<typename T, template<typename> typename Primitive>
-std::ostream& operator<<(std::ostream& stream, const BVH<T, Primitive>& b) {
+std::ostream &operator<<(std::ostream &stream, const BVH<T, Primitive> &b) {
   /// Conveniently output bvh as JSON.
-  stream << "{" << "\n";
-  stream << R"("nodes": [ )" << "\n";
+  stream << "{"
+         << "\n";
+  stream << R"("nodes": [ )"
+         << "\n";
 
-  for (auto &it: b.nodes) {
+  for (auto &it : b.nodes) {
     stream << it;
 
-    if (&it-&*(b.nodes.begin()) < b.nodes.size()-1) { stream << ", ";}
-    else {stream << "]";}
+    if (&it - &*(b.nodes.begin()) < b.nodes.size() - 1) {
+      stream << ", ";
+    } else {
+      stream << "]";
+    }
     stream << "\n";
   }
 
-  stream << "}" << "\n"; //JSON
+  stream << "}"
+         << "\n";//JSON
   return stream;
 }
 

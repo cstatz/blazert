@@ -2,12 +2,11 @@
 // Created by ogarten on 1/23/19.
 //
 
-#include <third_party/doctest/doctest/doctest.h>
 #include <blazert/embree/primitives/EmbreeSphere.h>
+#include <third_party/doctest/doctest/doctest.h>
 
 using namespace blazert;
 using namespace doctest;
-
 
 TEST_CASE_TEMPLATE("EmbreeSphere", T, float) {
   auto device = rtcNewDevice("verbose=0,start_threads=1,threads=4,set_affinity=1");
@@ -82,8 +81,7 @@ TEST_CASE_TEMPLATE("EmbreeSphere", T, float) {
       RTCIntersectContext context;
       rtcInitIntersectContext(&context);
 
-      RTCRay ray1{org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<T>().max(),
-                  0, 0, 0};
+      RTCRay ray1{org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<T>().max(), 0, 0, 0};
       RTCHit hit1;
       hit1.geomID = RTC_INVALID_GEOMETRY_ID;
       hit1.instID[0] = RTC_INVALID_GEOMETRY_ID;
@@ -92,8 +90,7 @@ TEST_CASE_TEMPLATE("EmbreeSphere", T, float) {
       // should be in distance of 1
       CHECK(rayhit1.ray.tfar == Approx(1.f));
 
-      RTCRay ray2{org2[0], org2[1], org2[2], 0, dir2[0], dir2[1], dir2[2], 0, std::numeric_limits<T>().max(),
-                  0, 0, 0};
+      RTCRay ray2{org2[0], org2[1], org2[2], 0, dir2[0], dir2[1], dir2[2], 0, std::numeric_limits<T>().max(), 0, 0, 0};
       RTCHit hit2;
       hit2.geomID = RTC_INVALID_GEOMETRY_ID;
       hit2.instID[0] = RTC_INVALID_GEOMETRY_ID;
@@ -102,8 +99,7 @@ TEST_CASE_TEMPLATE("EmbreeSphere", T, float) {
       // should not hit, therefore tfar is the same as before
       CHECK(rayhit2.ray.tfar == Approx(std::numeric_limits<T>::max()));
 
-      RTCRay ray3{org3[0], org3[1], org3[2], 0, dir3[0], dir3[1], dir3[2], 0, std::numeric_limits<T>().max(),
-                  0, 0, 0};
+      RTCRay ray3{org3[0], org3[1], org3[2], 0, dir3[0], dir3[1], dir3[2], 0, std::numeric_limits<T>().max(), 0, 0, 0};
       RTCHit hit3;
       hit3.geomID = RTC_INVALID_GEOMETRY_ID;
       hit3.instID[0] = RTC_INVALID_GEOMETRY_ID;
@@ -129,8 +125,7 @@ TEST_CASE_TEMPLATE("EmbreeSphere", T, float) {
       RTCIntersectContext context;
       rtcInitIntersectContext(&context);
 
-      RTCRay ray1{org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<T>().max(),
-                  0, 0, 0};
+      RTCRay ray1{org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<T>().max(), 0, 0, 0};
       RTCHit hit1;
       hit1.geomID = RTC_INVALID_GEOMETRY_ID;
       hit1.instID[0] = RTC_INVALID_GEOMETRY_ID;
@@ -139,8 +134,7 @@ TEST_CASE_TEMPLATE("EmbreeSphere", T, float) {
       // should be in distance of 1
       CHECK(rayhit1.ray.tfar == Approx(1.f));
 
-      RTCRay ray2{org2[0], org2[1], org2[2], 0, dir2[0], dir2[1], dir2[2], 0, std::numeric_limits<T>().max(),
-                  0, 0, 0};
+      RTCRay ray2{org2[0], org2[1], org2[2], 0, dir2[0], dir2[1], dir2[2], 0, std::numeric_limits<T>().max(), 0, 0, 0};
       RTCHit hit2;
       hit2.geomID = RTC_INVALID_GEOMETRY_ID;
       hit2.instID[0] = RTC_INVALID_GEOMETRY_ID;
@@ -167,8 +161,7 @@ TEST_CASE_TEMPLATE("EmbreeSphere", T, float) {
       RTCIntersectContext context;
       rtcInitIntersectContext(&context);
 
-      RTCRay ray1{org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<T>().max(),
-                  0, 0, 0};
+      RTCRay ray1{org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<T>().max(), 0, 0, 0};
       RTCHit hit1;
       hit1.geomID = RTC_INVALID_GEOMETRY_ID;
       hit1.instID[0] = RTC_INVALID_GEOMETRY_ID;
@@ -177,8 +170,7 @@ TEST_CASE_TEMPLATE("EmbreeSphere", T, float) {
       // should hit in distance of 2
       CHECK(rayhit1.ray.tfar == Approx(2.f));
 
-      RTCRay ray2{org2[0], org2[1], org2[2], 0, dir2[0], dir2[1], dir2[2], 0, std::numeric_limits<T>().max(),
-                  0, 0, 0};
+      RTCRay ray2{org2[0], org2[1], org2[2], 0, dir2[0], dir2[1], dir2[2], 0, std::numeric_limits<T>().max(), 0, 0, 0};
       RTCHit hit2;
       hit2.geomID = RTC_INVALID_GEOMETRY_ID;
       hit2.instID[0] = RTC_INVALID_GEOMETRY_ID;
@@ -200,8 +192,7 @@ TEST_CASE_TEMPLATE("EmbreeSphere", T, float) {
       RTCIntersectContext context;
       rtcInitIntersectContext(&context);
 
-      RTCRay ray1{org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<T>().max(),
-                  0, 0, 0};
+      RTCRay ray1{org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<T>().max(), 0, 0, 0};
       RTCHit hit1;
       hit1.geomID = RTC_INVALID_GEOMETRY_ID;
       hit1.instID[0] = RTC_INVALID_GEOMETRY_ID;

@@ -2,8 +2,8 @@
 #ifndef BLAZERT_BVH_BBOX_H_
 #define BLAZERT_BVH_BBOX_H_
 
-#include <utility>
 #include <limits>
+#include <utility>
 
 #include <blazert/datatypes.h>
 #include <blazert/defines.h>
@@ -11,7 +11,7 @@
 namespace blazert {
 
 template<typename T, typename Iterator, class Collection>
-inline std::pair<Vec3r<T>, Vec3r<T>> compute_bounding_box(const Collection& p, Iterator first, Iterator last) {
+inline std::pair<Vec3r<T>, Vec3r<T>> compute_bounding_box(const Collection &p, Iterator first, Iterator last) {
 
   Vec3r<T> min(std::numeric_limits<T>::max());
   Vec3r<T> max(-std::numeric_limits<T>::max());

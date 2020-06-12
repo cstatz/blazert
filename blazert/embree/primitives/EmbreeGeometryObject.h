@@ -11,14 +11,12 @@
 
 namespace blazert {
 
-class EmbreeGeometryObject
-{
+class EmbreeGeometryObject {
 protected:
-  const RTCScene& scene;
+  const RTCScene &scene;
 
 public:
-  EmbreeGeometryObject(const RTCScene& scene)
-    : scene(scene){};
+  EmbreeGeometryObject(const RTCScene &scene) : scene(scene){};
 
   RTCGeometry geometry;
   unsigned int geomID = -1;
@@ -37,15 +35,8 @@ public:
  * @param tfar      length of the ray from source to intersection
  */
 
-void inline setRayHit(RTCRayHit* rh,
-                      const Vec3r<float>& Ng,
-                      const float u,
-                      const float v,
-                      const unsigned int primID,
-                      const unsigned int geomID,
-                      const unsigned int instID,
-                      const float tfar)
-{
+void inline setRayHit(RTCRayHit *rh, const Vec3r<float> &Ng, const float u, const float v, const unsigned int primID,
+                      const unsigned int geomID, const unsigned int instID, const float tfar) {
   rh->hit.Ng_x = Ng[0];
   rh->hit.Ng_y = Ng[1];
   rh->hit.Ng_z = Ng[2];
@@ -54,8 +45,8 @@ void inline setRayHit(RTCRayHit* rh,
   rh->hit.primID = primID;
   rh->hit.geomID = geomID;
   rh->hit.instID[0] = instID;
-  rh->ray.tfar = tfar; //(t0 * dir).norm();
+  rh->ray.tfar = tfar;//(t0 * dir).norm();
 }
 
-} // namespace blazrt
-#endif // EM_EMBREEGEOMETRYOBJECT_H
+}// namespace blazert
+#endif// EM_EMBREEGEOMETRYOBJECT_H

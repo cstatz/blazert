@@ -15,7 +15,6 @@
 using namespace blazert;
 using namespace doctest;
 
-
 TEST_CASE_TEMPLATE("Scene with Sphere", T, float, double) {
   SUBCASE("Intersection") {
     auto centers = std::make_unique<Vec3rList<T>>();

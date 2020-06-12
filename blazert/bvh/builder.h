@@ -32,7 +32,8 @@ public:
 
   SAHBinnedBuilder() = default;
 
-  template<typename T, template<typename> typename Collection, template<typename, template<typename> typename> typename BVH>
+  template<typename T, template<typename> typename Collection,
+           template<typename, template<typename> typename> typename BVH>
   BVHBuildStatistics<T> build(BVH<T, Collection> &bvh, const BVHBuildOptions<T> &options = BVHBuildOptions<T>()) {
 
     BVHBuildStatistics<T> statistics;
@@ -55,8 +56,8 @@ public:
 
 template<typename T, typename Iterator, template<typename> typename Collection>
 unsigned int build_recursive(std::vector<BVHNode<T, Collection>> &nodes, const Collection<T> &collection,
-                             Iterator begin, Iterator end, const unsigned int depth,
-                             BVHBuildStatistics<T> &statistics, const BVHBuildOptions<T> &options) {
+                             Iterator begin, Iterator end, const unsigned int depth, BVHBuildStatistics<T> &statistics,
+                             const BVHBuildOptions<T> &options) {
 
   const auto offset = static_cast<unsigned int>(nodes.size());
 
@@ -86,8 +87,7 @@ unsigned int build_recursive(std::vector<BVHNode<T, Collection>> &nodes, const C
 }
 
 template<typename T, typename Iterator, template<typename> typename Collection>
-inline BVHNode<T, Collection> create_leaf(const Collection<T> &collection,
-                                          Iterator begin, Iterator end,
+inline BVHNode<T, Collection> create_leaf(const Collection<T> &collection, Iterator begin, Iterator end,
                                           const Vec3r<T> &bmin, const Vec3r<T> &bmax) {
   BVHNode<T, Collection> node;
   node.min = bmin;
@@ -104,10 +104,9 @@ inline BVHNode<T, Collection> create_leaf(const Collection<T> &collection,
 };
 
 template<typename T, typename Iterator, template<typename> typename Collection>
-inline std::pair<BVHNode<T, Collection>, Iterator> create_branch(const Collection<T> &collection,
-                                                                 Iterator begin, Iterator end,
-                                                                 const Vec3r<T> &bmin, const Vec3r<T> &bmax, BVHBuildStatistics<T> &statistics,
-                                                                 const BVHBuildOptions<T> &options) {
+inline std::pair<BVHNode<T, Collection>, Iterator>
+create_branch(const Collection<T> &collection, Iterator begin, Iterator end, const Vec3r<T> &bmin, const Vec3r<T> &bmax,
+              BVHBuildStatistics<T> &statistics, const BVHBuildOptions<T> &options) {
 
   const auto pair = split(collection, begin, end, bmin, bmax, statistics, options);
   const auto &axis = pair.first;
@@ -124,7 +123,8 @@ inline std::pair<BVHNode<T, Collection>, Iterator> create_branch(const Collectio
 
 template<typename T, typename Iterator, template<typename> typename Collection>
 inline std::pair<unsigned int, Iterator> split(const Collection<T> &collection, Iterator begin, Iterator end,
-                                               const Vec3r<T> &bmin, const Vec3r<T> &bmax, BVHBuildStatistics<T> &statistics, const BVHBuildOptions<T> &options) {
+                                               const Vec3r<T> &bmin, const Vec3r<T> &bmax,
+                                               BVHBuildStatistics<T> &statistics, const BVHBuildOptions<T> &options) {
 
   auto pair = find_best_split_binned(collection, begin, end, bmin, bmax, options);
   auto cut_axis = pair.first;
@@ -133,10 +133,11 @@ inline std::pair<unsigned int, Iterator> split(const Collection<T> &collection, 
 
   for (unsigned int axis_try = 0; axis_try < 3; axis_try++) {
 
-    mid = std::partition(begin, end,
-                         [&collection, cut_axis, &cut_pos](const auto it) { return collection.get_primitive_center(it)[cut_axis] < cut_pos[cut_axis]; });
+    mid = std::partition(begin, end, [&collection, cut_axis, &cut_pos](const auto it) {
+      return collection.get_primitive_center(it)[cut_axis] < cut_pos[cut_axis];
+    });
 
-    if ((std::distance(begin,mid) == 0) || (std::distance(mid,end) == 0)) {
+    if ((std::distance(begin, mid) == 0) || (std::distance(mid, end) == 0)) {
       statistics.bad_splits++;
       mid = begin + (std::distance(begin, end) >> 1);
       cut_axis++;

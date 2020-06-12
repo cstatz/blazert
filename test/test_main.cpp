@@ -8,8 +8,8 @@
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 //#define DOCTEST_CONFIG_IMPLEMENT
 
-#include <third_party/doctest/doctest/doctest.h>
 #include "test_helpers.h"
+#include <third_party/doctest/doctest/doctest.h>
 
 //int
 //main(int argc, char* const argv[])

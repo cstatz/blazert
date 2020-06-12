@@ -746,11 +746,11 @@ TEST_CASE_TEMPLATE("Plane", T, float, double) {
           const unsigned int true_prim_id = 0;
           const T true_distance = 3;
           const Vec3r<T> true_normal{-1 / static_cast<T>(std::sqrt(3)), 1 / static_cast<T>(std::sqrt(3)),
-              1 / static_cast<T>(std::sqrt(3))};
-              SUBCASE("intersect primitive") {
+                                     1 / static_cast<T>(std::sqrt(3))};
+          SUBCASE("intersect primitive") {
             assert_intersect_primitive_hit(planes, ray, true_hit, true_prim_id, true_distance, true_normal);
           }
-              SUBCASE("traverse bvh") {
+          SUBCASE("traverse bvh") {
             assert_traverse_bvh_hit(planes, ray, true_hit, true_prim_id, true_distance, true_normal);
           }
         }
@@ -763,11 +763,11 @@ TEST_CASE_TEMPLATE("Plane", T, float, double) {
           const unsigned int true_prim_id = 0;
           const T true_distance = 3;
           const Vec3r<T> true_normal{1 / static_cast<T>(std::sqrt(3)), -1 / static_cast<T>(std::sqrt(3)),
-              1 / static_cast<T>(std::sqrt(3))};
-              SUBCASE("intersect primitive") {
+                                     1 / static_cast<T>(std::sqrt(3))};
+          SUBCASE("intersect primitive") {
             assert_intersect_primitive_hit(planes, ray, true_hit, true_prim_id, true_distance, true_normal);
           }
-              SUBCASE("traverse bvh") {
+          SUBCASE("traverse bvh") {
             assert_traverse_bvh_hit(planes, ray, true_hit, true_prim_id, true_distance, true_normal);
           }
         }
@@ -781,11 +781,11 @@ TEST_CASE_TEMPLATE("Plane", T, float, double) {
           const unsigned int true_prim_id = 0;
           const T true_distance = 3;
           const Vec3r<T> true_normal{-1 / static_cast<T>(std::sqrt(3)), -1 / static_cast<T>(std::sqrt(3)),
-              1 / static_cast<T>(std::sqrt(3))};
-              SUBCASE("intersect primitive") {
+                                     1 / static_cast<T>(std::sqrt(3))};
+          SUBCASE("intersect primitive") {
             assert_intersect_primitive_hit(planes, ray, true_hit, true_prim_id, true_distance, true_normal);
           }
-              SUBCASE("traverse bvh") {
+          SUBCASE("traverse bvh") {
             assert_traverse_bvh_hit(planes, ray, true_hit, true_prim_id, true_distance, true_normal);
           }
         }

@@ -11,8 +11,10 @@
 
 int main(int argc, char **argv) {
 
-  using embreeVec3 = blaze::StaticVector<float, 3UL, blaze::columnVector, blaze::AlignmentFlag::aligned, blaze::PaddingFlag::padded>;
-  using embreeVec3ui = blaze::StaticVector<unsigned int, 3UL, blaze::columnVector, blaze::AlignmentFlag::aligned, blaze::PaddingFlag::padded>;
+  using embreeVec3 =
+      blaze::StaticVector<float, 3UL, blaze::columnVector, blaze::AlignmentFlag::aligned, blaze::PaddingFlag::padded>;
+  using embreeVec3ui = blaze::StaticVector<unsigned int, 3UL, blaze::columnVector, blaze::AlignmentFlag::aligned,
+                                           blaze::PaddingFlag::padded>;
 
   std::cout << "sizeof(embreeVec3)    = " << sizeof(embreeVec3) << "\n"
             << "sizeof(embreVec3ui)   = " << sizeof(embreeVec3ui) << "\n"

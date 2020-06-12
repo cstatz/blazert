@@ -81,5 +81,4 @@ inline void assert_traverse_bvh_hit(const Collection<T> &collection, const Ray<T
   CHECK(rayhit.normal[2] == Approx(static_cast<T>(normal[2])));
 }
 
-
 #endif//BLAZERT_ASSERT_HELPER_H

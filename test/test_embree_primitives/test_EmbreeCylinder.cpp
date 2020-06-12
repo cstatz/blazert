@@ -2,10 +2,9 @@
 // Created by ogarten on 18/05/2020.
 //
 
-
-#include <third_party/doctest/doctest/doctest.h>
 #include <blazert/embree/primitives/EmbreeCylinder.h>
 #include <blazert/embree/scene.h>
+#include <third_party/doctest/doctest/doctest.h>
 
 #include "../test_helpers.h"
 
@@ -111,8 +110,8 @@ TEST_CASE_TEMPLATE("EmbreeCylinder", T, float) {
             RTCIntersectContext context;
             rtcInitIntersectContext(&context);
 
-            RTCRay ray{
-                org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>::max(), 0, 0, 0};
+            RTCRay ray{org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>::max(),
+                       0,       0,       0};
             RTCHit hit;
             hit.geomID = RTC_INVALID_GEOMETRY_ID;
             hit.instID[0] = RTC_INVALID_GEOMETRY_ID;
@@ -134,8 +133,8 @@ TEST_CASE_TEMPLATE("EmbreeCylinder", T, float) {
 
             Vec3r<T> org1{5.f, 0.f, 6.f};
             Vec3r<T> dir1{-1.f, 0.f, -1.f};
-            RTCRay ray{
-                org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>::max(), 0, 0, 0};
+            RTCRay ray{org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>::max(),
+                       0,       0,       0};
             RTCHit hit;
             hit.geomID = RTC_INVALID_GEOMETRY_ID;
             hit.instID[0] = RTC_INVALID_GEOMETRY_ID;
@@ -157,8 +156,8 @@ TEST_CASE_TEMPLATE("EmbreeCylinder", T, float) {
 
             Vec3r<T> org1{5, 0, 4};
             Vec3r<T> dir1{-1, 0, -1};
-            RTCRay ray{
-                org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>::max(), 0, 0, 0};
+            RTCRay ray{org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>::max(),
+                       0,       0,       0};
             RTCHit hit;
             hit.geomID = RTC_INVALID_GEOMETRY_ID;
             hit.instID[0] = RTC_INVALID_GEOMETRY_ID;
@@ -180,8 +179,8 @@ TEST_CASE_TEMPLATE("EmbreeCylinder", T, float) {
             RTCIntersectContext context;
             rtcInitIntersectContext(&context);
 
-            RTCRay ray{
-                org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>::max(), 0, 0, 0};
+            RTCRay ray{org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>::max(),
+                       0,       0,       0};
             RTCHit hit;
             hit.geomID = RTC_INVALID_GEOMETRY_ID;
             hit.instID[0] = RTC_INVALID_GEOMETRY_ID;
@@ -203,8 +202,8 @@ TEST_CASE_TEMPLATE("EmbreeCylinder", T, float) {
             RTCIntersectContext context;
             rtcInitIntersectContext(&context);
 
-            RTCRay ray{
-                org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>::max(), 0, 0, 0};
+            RTCRay ray{org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>::max(),
+                       0,       0,       0};
             RTCHit hit;
             hit.geomID = RTC_INVALID_GEOMETRY_ID;
             hit.instID[0] = RTC_INVALID_GEOMETRY_ID;
@@ -227,8 +226,8 @@ TEST_CASE_TEMPLATE("EmbreeCylinder", T, float) {
             RTCIntersectContext context;
             rtcInitIntersectContext(&context);
 
-            RTCRay ray{
-                org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>::max(), 0, 0, 0};
+            RTCRay ray{org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>::max(),
+                       0,       0,       0};
             RTCHit hit;
             hit.geomID = RTC_INVALID_GEOMETRY_ID;
             hit.instID[0] = RTC_INVALID_GEOMETRY_ID;
@@ -253,8 +252,8 @@ TEST_CASE_TEMPLATE("EmbreeCylinder", T, float) {
             RTCIntersectContext context;
             rtcInitIntersectContext(&context);
 
-            RTCRay ray{
-                org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>::max(), 0, 0, 0};
+            RTCRay ray{org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>::max(),
+                       0,       0,       0};
             RTCHit hit;
             hit.geomID = RTC_INVALID_GEOMETRY_ID;
             hit.instID[0] = RTC_INVALID_GEOMETRY_ID;
@@ -277,8 +276,8 @@ TEST_CASE_TEMPLATE("EmbreeCylinder", T, float) {
             RTCIntersectContext context;
             rtcInitIntersectContext(&context);
 
-            RTCRay ray{
-                org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>::max(), 0, 0, 0};
+            RTCRay ray{org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>::max(),
+                       0,       0,       0};
             RTCHit hit;
             hit.geomID = RTC_INVALID_GEOMETRY_ID;
             hit.instID[0] = RTC_INVALID_GEOMETRY_ID;
@@ -300,8 +299,8 @@ TEST_CASE_TEMPLATE("EmbreeCylinder", T, float) {
             RTCIntersectContext context;
             rtcInitIntersectContext(&context);
 
-            RTCRay ray{
-                org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>::max(), 0, 0, 0};
+            RTCRay ray{org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>::max(),
+                       0,       0,       0};
             RTCHit hit;
             hit.geomID = RTC_INVALID_GEOMETRY_ID;
             hit.instID[0] = RTC_INVALID_GEOMETRY_ID;
@@ -323,8 +322,8 @@ TEST_CASE_TEMPLATE("EmbreeCylinder", T, float) {
             RTCIntersectContext context;
             rtcInitIntersectContext(&context);
 
-            RTCRay ray{
-                org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>::max(), 0, 0, 0};
+            RTCRay ray{org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>::max(),
+                       0,       0,       0};
             RTCHit hit;
             hit.geomID = RTC_INVALID_GEOMETRY_ID;
             hit.instID[0] = RTC_INVALID_GEOMETRY_ID;
@@ -346,8 +345,8 @@ TEST_CASE_TEMPLATE("EmbreeCylinder", T, float) {
             RTCIntersectContext context;
             rtcInitIntersectContext(&context);
 
-            RTCRay ray{
-                org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>::max(), 0, 0, 0};
+            RTCRay ray{org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>::max(),
+                       0,       0,       0};
             RTCHit hit;
             hit.geomID = RTC_INVALID_GEOMETRY_ID;
             hit.instID[0] = RTC_INVALID_GEOMETRY_ID;
@@ -369,8 +368,8 @@ TEST_CASE_TEMPLATE("EmbreeCylinder", T, float) {
             RTCIntersectContext context;
             rtcInitIntersectContext(&context);
 
-            RTCRay ray{
-                org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>::max(), 0, 0, 0};
+            RTCRay ray{org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>::max(),
+                       0,       0,       0};
             RTCHit hit;
             hit.geomID = RTC_INVALID_GEOMETRY_ID;
             hit.instID[0] = RTC_INVALID_GEOMETRY_ID;
@@ -395,8 +394,8 @@ TEST_CASE_TEMPLATE("EmbreeCylinder", T, float) {
               RTCIntersectContext context;
               rtcInitIntersectContext(&context);
 
-              RTCRay ray{
-                  org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>::max(), 0, 0, 0};
+              RTCRay ray{org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>::max(),
+                         0,       0,       0};
               RTCHit hit;
               hit.geomID = RTC_INVALID_GEOMETRY_ID;
               hit.instID[0] = RTC_INVALID_GEOMETRY_ID;
@@ -418,8 +417,8 @@ TEST_CASE_TEMPLATE("EmbreeCylinder", T, float) {
               RTCIntersectContext context;
               rtcInitIntersectContext(&context);
 
-              RTCRay ray{
-                  org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>::max(), 0, 0, 0};
+              RTCRay ray{org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>::max(),
+                         0,       0,       0};
               RTCHit hit;
               hit.geomID = RTC_INVALID_GEOMETRY_ID;
               hit.instID[0] = RTC_INVALID_GEOMETRY_ID;
@@ -441,8 +440,8 @@ TEST_CASE_TEMPLATE("EmbreeCylinder", T, float) {
               RTCIntersectContext context;
               rtcInitIntersectContext(&context);
 
-              RTCRay ray{
-                  org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>::max(), 0, 0, 0};
+              RTCRay ray{org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>::max(),
+                         0,       0,       0};
               RTCHit hit;
               hit.geomID = RTC_INVALID_GEOMETRY_ID;
               hit.instID[0] = RTC_INVALID_GEOMETRY_ID;
@@ -464,8 +463,8 @@ TEST_CASE_TEMPLATE("EmbreeCylinder", T, float) {
               RTCIntersectContext context;
               rtcInitIntersectContext(&context);
 
-              RTCRay ray{
-                  org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>::max(), 0, 0, 0};
+              RTCRay ray{org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>::max(),
+                         0,       0,       0};
               RTCHit hit;
               hit.geomID = RTC_INVALID_GEOMETRY_ID;
               hit.instID[0] = RTC_INVALID_GEOMETRY_ID;
@@ -490,8 +489,8 @@ TEST_CASE_TEMPLATE("EmbreeCylinder", T, float) {
             RTCIntersectContext context;
             rtcInitIntersectContext(&context);
 
-            RTCRay ray{
-                org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>::max(), 0, 0, 0};
+            RTCRay ray{org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>::max(),
+                       0,       0,       0};
             RTCHit hit;
             hit.geomID = RTC_INVALID_GEOMETRY_ID;
             hit.instID[0] = RTC_INVALID_GEOMETRY_ID;
@@ -513,8 +512,8 @@ TEST_CASE_TEMPLATE("EmbreeCylinder", T, float) {
             RTCIntersectContext context;
             rtcInitIntersectContext(&context);
 
-            RTCRay ray{
-                org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>::max(), 0, 0, 0};
+            RTCRay ray{org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>::max(),
+                       0,       0,       0};
             RTCHit hit;
             hit.geomID = RTC_INVALID_GEOMETRY_ID;
             hit.instID[0] = RTC_INVALID_GEOMETRY_ID;
@@ -536,8 +535,8 @@ TEST_CASE_TEMPLATE("EmbreeCylinder", T, float) {
             RTCIntersectContext context;
             rtcInitIntersectContext(&context);
 
-            RTCRay ray{
-                org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>::max(), 0, 0, 0};
+            RTCRay ray{org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>::max(),
+                       0,       0,       0};
             RTCHit hit;
             hit.geomID = RTC_INVALID_GEOMETRY_ID;
             hit.instID[0] = RTC_INVALID_GEOMETRY_ID;
@@ -559,8 +558,8 @@ TEST_CASE_TEMPLATE("EmbreeCylinder", T, float) {
             RTCIntersectContext context;
             rtcInitIntersectContext(&context);
 
-            RTCRay ray{
-                org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>::max(), 0, 0, 0};
+            RTCRay ray{org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>::max(),
+                       0,       0,       0};
             RTCHit hit;
             hit.geomID = RTC_INVALID_GEOMETRY_ID;
             hit.instID[0] = RTC_INVALID_GEOMETRY_ID;
@@ -582,8 +581,8 @@ TEST_CASE_TEMPLATE("EmbreeCylinder", T, float) {
             RTCIntersectContext context;
             rtcInitIntersectContext(&context);
 
-            RTCRay ray{
-                org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>::max(), 0, 0, 0};
+            RTCRay ray{org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>::max(),
+                       0,       0,       0};
             RTCHit hit;
             hit.geomID = RTC_INVALID_GEOMETRY_ID;
             hit.instID[0] = RTC_INVALID_GEOMETRY_ID;
@@ -605,8 +604,8 @@ TEST_CASE_TEMPLATE("EmbreeCylinder", T, float) {
             RTCIntersectContext context;
             rtcInitIntersectContext(&context);
 
-            RTCRay ray{
-                org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>::max(), 0, 0, 0};
+            RTCRay ray{org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>::max(),
+                       0,       0,       0};
             RTCHit hit;
             hit.geomID = RTC_INVALID_GEOMETRY_ID;
             hit.instID[0] = RTC_INVALID_GEOMETRY_ID;
@@ -640,8 +639,8 @@ TEST_CASE_TEMPLATE("EmbreeCylinder", T, float) {
             RTCIntersectContext context;
             rtcInitIntersectContext(&context);
 
-            RTCRay ray{
-                org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>::max(), 0, 0, 0};
+            RTCRay ray{org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>::max(),
+                       0,       0,       0};
             RTCHit hit;
             hit.geomID = RTC_INVALID_GEOMETRY_ID;
             hit.instID[0] = RTC_INVALID_GEOMETRY_ID;
@@ -664,8 +663,8 @@ TEST_CASE_TEMPLATE("EmbreeCylinder", T, float) {
             RTCIntersectContext context;
             rtcInitIntersectContext(&context);
 
-            RTCRay ray{
-                org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>::max(), 0, 0, 0};
+            RTCRay ray{org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>::max(),
+                       0,       0,       0};
             RTCHit hit;
             hit.geomID = RTC_INVALID_GEOMETRY_ID;
             hit.instID[0] = RTC_INVALID_GEOMETRY_ID;
@@ -687,8 +686,8 @@ TEST_CASE_TEMPLATE("EmbreeCylinder", T, float) {
             RTCIntersectContext context;
             rtcInitIntersectContext(&context);
 
-            RTCRay ray{
-                org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>::max(), 0, 0, 0};
+            RTCRay ray{org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>::max(),
+                       0,       0,       0};
             RTCHit hit;
             hit.geomID = RTC_INVALID_GEOMETRY_ID;
             hit.instID[0] = RTC_INVALID_GEOMETRY_ID;
@@ -710,8 +709,8 @@ TEST_CASE_TEMPLATE("EmbreeCylinder", T, float) {
             RTCIntersectContext context;
             rtcInitIntersectContext(&context);
 
-            RTCRay ray{
-                org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>::max(), 0, 0, 0};
+            RTCRay ray{org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>::max(),
+                       0,       0,       0};
             RTCHit hit;
             hit.geomID = RTC_INVALID_GEOMETRY_ID;
             hit.instID[0] = RTC_INVALID_GEOMETRY_ID;
@@ -733,8 +732,8 @@ TEST_CASE_TEMPLATE("EmbreeCylinder", T, float) {
             RTCIntersectContext context;
             rtcInitIntersectContext(&context);
 
-            RTCRay ray{
-                org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>::max(), 0, 0, 0};
+            RTCRay ray{org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>::max(),
+                       0,       0,       0};
             RTCHit hit;
             hit.geomID = RTC_INVALID_GEOMETRY_ID;
             hit.instID[0] = RTC_INVALID_GEOMETRY_ID;
@@ -756,8 +755,8 @@ TEST_CASE_TEMPLATE("EmbreeCylinder", T, float) {
             RTCIntersectContext context;
             rtcInitIntersectContext(&context);
 
-            RTCRay ray{
-                org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>::max(), 0, 0, 0};
+            RTCRay ray{org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>::max(),
+                       0,       0,       0};
             RTCHit hit;
             hit.geomID = RTC_INVALID_GEOMETRY_ID;
             hit.instID[0] = RTC_INVALID_GEOMETRY_ID;
@@ -782,8 +781,8 @@ TEST_CASE_TEMPLATE("EmbreeCylinder", T, float) {
             RTCIntersectContext context;
             rtcInitIntersectContext(&context);
 
-            RTCRay ray{
-                org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>::max(), 0, 0, 0};
+            RTCRay ray{org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>::max(),
+                       0,       0,       0};
             RTCHit hit;
             hit.geomID = RTC_INVALID_GEOMETRY_ID;
             hit.instID[0] = RTC_INVALID_GEOMETRY_ID;
@@ -806,8 +805,8 @@ TEST_CASE_TEMPLATE("EmbreeCylinder", T, float) {
             RTCIntersectContext context;
             rtcInitIntersectContext(&context);
 
-            RTCRay ray{
-                org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>::max(), 0, 0, 0};
+            RTCRay ray{org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>::max(),
+                       0,       0,       0};
             RTCHit hit;
             hit.geomID = RTC_INVALID_GEOMETRY_ID;
             hit.instID[0] = RTC_INVALID_GEOMETRY_ID;
@@ -829,8 +828,8 @@ TEST_CASE_TEMPLATE("EmbreeCylinder", T, float) {
             RTCIntersectContext context;
             rtcInitIntersectContext(&context);
 
-            RTCRay ray{
-                org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>::max(), 0, 0, 0};
+            RTCRay ray{org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>::max(),
+                       0,       0,       0};
             RTCHit hit;
             hit.geomID = RTC_INVALID_GEOMETRY_ID;
             hit.instID[0] = RTC_INVALID_GEOMETRY_ID;
@@ -852,8 +851,8 @@ TEST_CASE_TEMPLATE("EmbreeCylinder", T, float) {
             RTCIntersectContext context;
             rtcInitIntersectContext(&context);
 
-            RTCRay ray{
-                org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>::max(), 0, 0, 0};
+            RTCRay ray{org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>::max(),
+                       0,       0,       0};
             RTCHit hit;
             hit.geomID = RTC_INVALID_GEOMETRY_ID;
             hit.instID[0] = RTC_INVALID_GEOMETRY_ID;
@@ -875,8 +874,8 @@ TEST_CASE_TEMPLATE("EmbreeCylinder", T, float) {
             RTCIntersectContext context;
             rtcInitIntersectContext(&context);
 
-            RTCRay ray{
-                org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>::max(), 0, 0, 0};
+            RTCRay ray{org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>::max(),
+                       0,       0,       0};
             RTCHit hit;
             hit.geomID = RTC_INVALID_GEOMETRY_ID;
             hit.instID[0] = RTC_INVALID_GEOMETRY_ID;
@@ -898,8 +897,8 @@ TEST_CASE_TEMPLATE("EmbreeCylinder", T, float) {
             RTCIntersectContext context;
             rtcInitIntersectContext(&context);
 
-            RTCRay ray{
-                org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>::max(), 0, 0, 0};
+            RTCRay ray{org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>::max(),
+                       0,       0,       0};
             RTCHit hit;
             hit.geomID = RTC_INVALID_GEOMETRY_ID;
             hit.instID[0] = RTC_INVALID_GEOMETRY_ID;
@@ -924,8 +923,8 @@ TEST_CASE_TEMPLATE("EmbreeCylinder", T, float) {
               RTCIntersectContext context;
               rtcInitIntersectContext(&context);
 
-              RTCRay ray{
-                  org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>::max(), 0, 0, 0};
+              RTCRay ray{org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>::max(),
+                         0,       0,       0};
               RTCHit hit;
               hit.geomID = RTC_INVALID_GEOMETRY_ID;
               hit.instID[0] = RTC_INVALID_GEOMETRY_ID;
@@ -947,8 +946,8 @@ TEST_CASE_TEMPLATE("EmbreeCylinder", T, float) {
               RTCIntersectContext context;
               rtcInitIntersectContext(&context);
 
-              RTCRay ray{
-                  org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>::max(), 0, 0, 0};
+              RTCRay ray{org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>::max(),
+                         0,       0,       0};
               RTCHit hit;
               hit.geomID = RTC_INVALID_GEOMETRY_ID;
               hit.instID[0] = RTC_INVALID_GEOMETRY_ID;
@@ -970,8 +969,8 @@ TEST_CASE_TEMPLATE("EmbreeCylinder", T, float) {
               RTCIntersectContext context;
               rtcInitIntersectContext(&context);
 
-              RTCRay ray{
-                  org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>::max(), 0, 0, 0};
+              RTCRay ray{org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>::max(),
+                         0,       0,       0};
               RTCHit hit;
               hit.geomID = RTC_INVALID_GEOMETRY_ID;
               hit.instID[0] = RTC_INVALID_GEOMETRY_ID;
@@ -993,8 +992,8 @@ TEST_CASE_TEMPLATE("EmbreeCylinder", T, float) {
               RTCIntersectContext context;
               rtcInitIntersectContext(&context);
 
-              RTCRay ray{
-                  org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>::max(), 0, 0, 0};
+              RTCRay ray{org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>::max(),
+                         0,       0,       0};
               RTCHit hit;
               hit.geomID = RTC_INVALID_GEOMETRY_ID;
               hit.instID[0] = RTC_INVALID_GEOMETRY_ID;
@@ -1019,8 +1018,8 @@ TEST_CASE_TEMPLATE("EmbreeCylinder", T, float) {
             RTCIntersectContext context;
             rtcInitIntersectContext(&context);
 
-            RTCRay ray{
-                org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>::max(), 0, 0, 0};
+            RTCRay ray{org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>::max(),
+                       0,       0,       0};
             RTCHit hit;
             hit.geomID = RTC_INVALID_GEOMETRY_ID;
             hit.instID[0] = RTC_INVALID_GEOMETRY_ID;
@@ -1042,8 +1041,8 @@ TEST_CASE_TEMPLATE("EmbreeCylinder", T, float) {
             RTCIntersectContext context;
             rtcInitIntersectContext(&context);
 
-            RTCRay ray{
-                org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>::max(), 0, 0, 0};
+            RTCRay ray{org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>::max(),
+                       0,       0,       0};
             RTCHit hit;
             hit.geomID = RTC_INVALID_GEOMETRY_ID;
             hit.instID[0] = RTC_INVALID_GEOMETRY_ID;
@@ -1065,8 +1064,8 @@ TEST_CASE_TEMPLATE("EmbreeCylinder", T, float) {
             RTCIntersectContext context;
             rtcInitIntersectContext(&context);
 
-            RTCRay ray{
-                org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>::max(), 0, 0, 0};
+            RTCRay ray{org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>::max(),
+                       0,       0,       0};
             RTCHit hit;
             hit.geomID = RTC_INVALID_GEOMETRY_ID;
             hit.instID[0] = RTC_INVALID_GEOMETRY_ID;
@@ -1088,8 +1087,8 @@ TEST_CASE_TEMPLATE("EmbreeCylinder", T, float) {
             RTCIntersectContext context;
             rtcInitIntersectContext(&context);
 
-            RTCRay ray{
-                org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>::max(), 0, 0, 0};
+            RTCRay ray{org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>::max(),
+                       0,       0,       0};
             RTCHit hit;
             hit.geomID = RTC_INVALID_GEOMETRY_ID;
             hit.instID[0] = RTC_INVALID_GEOMETRY_ID;
@@ -1111,8 +1110,8 @@ TEST_CASE_TEMPLATE("EmbreeCylinder", T, float) {
             RTCIntersectContext context;
             rtcInitIntersectContext(&context);
 
-            RTCRay ray{
-                org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>::max(), 0, 0, 0};
+            RTCRay ray{org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>::max(),
+                       0,       0,       0};
             RTCHit hit;
             hit.geomID = RTC_INVALID_GEOMETRY_ID;
             hit.instID[0] = RTC_INVALID_GEOMETRY_ID;
@@ -1134,8 +1133,8 @@ TEST_CASE_TEMPLATE("EmbreeCylinder", T, float) {
             RTCIntersectContext context;
             rtcInitIntersectContext(&context);
 
-            RTCRay ray{
-                org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>::max(), 0, 0, 0};
+            RTCRay ray{org1[0], org1[1], org1[2], 0, dir1[0], dir1[1], dir1[2], 0, std::numeric_limits<float>::max(),
+                       0,       0,       0};
             RTCHit hit;
             hit.geomID = RTC_INVALID_GEOMETRY_ID;
             hit.instID[0] = RTC_INVALID_GEOMETRY_ID;

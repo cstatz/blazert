@@ -3,12 +3,12 @@
 #define BLAZERT_DATATYPES_H_
 
 #include <cmath>
-#include <cstring> //for memcpy
+#include <cstring>//for memcpy
 //#define FP_FAST_FMA
 
-#include <iostream>
 #include <blaze/Math.h>
 #include <blaze/util/AlignedAllocator.h>
+#include <iostream>
 
 #ifdef EMBREE_TRACING
 // Embree will not work if the data is not at least padded.
@@ -29,30 +29,35 @@
 namespace blazert {
 
 // Vectors
-template<class T> using Vec3r = blaze::StaticVector<T, 3UL, blaze::columnVector, A_, P_>;
-template<class T> using Vec2r = blaze::StaticVector<T, 2UL, blaze::columnVector, A_, P_>;
+template<class T>
+using Vec3r = blaze::StaticVector<T, 3UL, blaze::columnVector, A_, P_>;
+template<class T>
+using Vec2r = blaze::StaticVector<T, 2UL, blaze::columnVector, A_, P_>;
 using Vec3ui = blaze::StaticVector<unsigned int, 3UL, blaze::columnVector, A_, P_>;
 using vec2ui = blaze::StaticVector<unsigned int, 2UL, blaze::columnVector, A_, P_>;
 
 // Matrices
-template<class T> using Mat3r = blaze::StaticMatrix<T, 3UL, 3UL, blaze::rowMajor, A_, P_>;
+template<class T>
+using Mat3r = blaze::StaticMatrix<T, 3UL, 3UL, blaze::rowMajor, A_, P_>;
 
 // Container
-template<class T> using Vec3rList = std::vector<Vec3r<T>, blaze::AlignedAllocator<Vec3r<T>>>;
-using Vec3iList = std::vector<Vec3ui,  blaze::AlignedAllocator<Vec3ui>>;
-template<typename T> using Mat3rList = std::vector<Mat3r<T>, blaze::AlignedAllocator<Mat3r<T>>>;
+template<class T>
+using Vec3rList = std::vector<Vec3r<T>, blaze::AlignedAllocator<Vec3r<T>>>;
+using Vec3iList = std::vector<Vec3ui, blaze::AlignedAllocator<Vec3ui>>;
+template<typename T>
+using Mat3rList = std::vector<Mat3r<T>, blaze::AlignedAllocator<Mat3r<T>>>;
 
-template<typename T, unsigned int capacity=0>
+template<typename T, unsigned int capacity = 0>
 struct Stack {
   T stack[capacity];
   unsigned int ss = 0;
-  inline void push_back(T node) {stack[ss++] = node;}
-  inline void pop_back() {stack[ss--] = 0;}
-  [[nodiscard]] inline T back() const {return stack[ss-1];}
-  [[nodiscard]] inline unsigned int size() const {return ss;}
+  inline void push_back(T node) { stack[ss++] = node; }
+  inline void pop_back() { stack[ss--] = 0; }
+  [[nodiscard]] inline T back() const { return stack[ss - 1]; }
+  [[nodiscard]] inline unsigned int size() const { return ss; }
 };
 
-template <typename T, typename F>
+template<typename T, typename F>
 T as(F from) {
   static_assert(sizeof(T) == sizeof(F));
   T to;
@@ -68,7 +73,6 @@ inline double product_sign(double x, double y) {
   return as<double>(as<uint64_t>(x) ^ (as<uint64_t>(y) & UINT64_C(0x8000000000000000)));
 }
 
-
 template<typename T>
 inline void unity(Vec3r<T> &min_, Vec3r<T> &max_, const Vec3r<T> &min, const Vec3r<T> &max) {
   for (unsigned int k = 0; k < 3; k++) {
@@ -79,13 +83,13 @@ inline void unity(Vec3r<T> &min_, Vec3r<T> &max_, const Vec3r<T> &min, const Vec
 
 template<typename T>
 inline void intersection(Vec3r<T> &min_, Vec3r<T> &max_, const Vec3r<T> &min, const Vec3r<T> &max) {
-    min_ = blaze::min(min, min_);
-    max_ = blaze::max(max, max_);
-//  for (unsigned int k = 0; k < 3; k++) {
-//    min_[k] = std::max(min[k], min_[k]);
-//    max_[k] = std::min(max[k], max_[k]);
-//  }
+  min_ = blaze::min(min, min_);
+  max_ = blaze::max(max, max_);
+  //  for (unsigned int k = 0; k < 3; k++) {
+  //    min_[k] = std::max(min[k], min_[k]);
+  //    max_[k] = std::min(max[k], max_[k]);
+  //  }
 }
 
-}
-#endif  // BLAZERT_DATATYPES_H_
+}// namespace blazert
+#endif// BLAZERT_DATATYPES_H_

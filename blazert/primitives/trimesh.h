@@ -23,7 +23,8 @@ struct Triangle {
   const Vec3r<T> c;
   unsigned int i;
   Triangle() = delete;
-  Triangle(const Vec3r<T> &a, const Vec3r<T> &b_, const Vec3r<T> &c_, const unsigned int i) : a(a), b(c_ - a), c(a - b_), i(i) {}
+  Triangle(const Vec3r<T> &a, const Vec3r<T> &b_, const Vec3r<T> &c_, const unsigned int i)
+      : a(a), b(c_ - a), c(a - b_), i(i) {}
   Triangle(Triangle &&rhs) noexcept
       : a(std::move(rhs.a)), b(std::move(rhs.b)), c(std::move(rhs.c)), i(std::exchange(rhs.i, -1)) {}
   Triangle &operator=(const Triangle &rhs) = delete;
@@ -93,11 +94,14 @@ public:
 
   [[nodiscard]] inline unsigned int size() const noexcept { return faces.size(); }
 
-  [[nodiscard]] inline std::pair<Vec3r<T>, Vec3r<T>> get_primitive_bounding_box(const unsigned int prim_index) const noexcept {
+  [[nodiscard]] inline std::pair<Vec3r<T>, Vec3r<T>>
+  get_primitive_bounding_box(const unsigned int prim_index) const noexcept {
     return box[prim_index];
   }
 
-  [[nodiscard]] inline Vec3r<T> get_primitive_center(const unsigned int prim_index) const noexcept { return centers[prim_index]; }
+  [[nodiscard]] inline Vec3r<T> get_primitive_center(const unsigned int prim_index) const noexcept {
+    return centers[prim_index];
+  }
 
 private:
   [[nodiscard]] inline std::pair<Vec3r<T>, Vec3r<T>> pre_compute_bounding_box(const Vec3ui &face) const noexcept {

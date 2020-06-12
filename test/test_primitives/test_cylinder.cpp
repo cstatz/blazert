@@ -39,7 +39,6 @@
  *  The same cases as in 3.1 are implemented for shifted center
  */
 
-
 #include <blazert/bvh/accel.h>
 #include <blazert/bvh/builder.h>
 #include <blazert/datatypes.h>

@@ -46,11 +46,11 @@ inline void r1(T &s, T &t, const T &a, const T &b, const T &c, const T &d, const
   if (numer <= T(0.)) {
     s = T(0.);
   } else {
-    const T denom = a - T(2.)*b + c;
+    const T denom = a - T(2.) * b + c;
     if (numer >= denom) {
       s = T(1.);
     } else {
-      s = numer/denom;
+      s = numer / denom;
     }
   }
   t = T(1.) - s;
@@ -62,7 +62,7 @@ inline void r2(T &s, T &t, const T &a, const T &b, const T &c, const T &d, const
   const T tmp1 = c + e;
   if (tmp1 > tmp0) {
     const T numer = tmp1 - tmp0;
-    const T denom = a - T(2.)*b + c;
+    const T denom = a - T(2.) * b + c;
     if (numer >= denom) {
       s = T(1.);
     } else {
@@ -77,7 +77,7 @@ inline void r2(T &s, T &t, const T &a, const T &b, const T &c, const T &d, const
       if (e >= T(0.))
         t = T(0.);
       else
-        t = -e/c;
+        t = -e / c;
     }
   }
 };
@@ -93,7 +93,7 @@ inline void r3(T &s, T &t, const T &c, const T &e) {
     if (-e >= c) {
       t = T(1.);
     } else {
-      t = -e/c;
+      t = -e / c;
     }
   }
 };
@@ -105,7 +105,7 @@ inline void r4(T &s, T &t, const T &a, const T &c, const T &d, const T &e) {
     if (-d >= a) {
       s = T(1.);
     } else {
-      s = -d/a;
+      s = -d / a;
     }
 
   } else {
@@ -116,7 +116,7 @@ inline void r4(T &s, T &t, const T &a, const T &c, const T &d, const T &e) {
       if (-e >= c)
         t = T(1.);
       else
-        t = -e/c;
+        t = -e / c;
     }
   }
 };
@@ -132,7 +132,7 @@ inline void r5(T &s, T &t, const T &a, const T &d, const T &f) {
     if (-d >= a) {
       s = T(1.);
     } else {
-      s = -d/a;
+      s = -d / a;
     }
   }
 };
@@ -143,7 +143,7 @@ inline void r6(T &s, T &t, const T &a, const T &b, const T &c, const T &d, const
   const T tmp1 = a + d;
   if (tmp1 > tmp0) {
     const T numer = tmp1 - tmp0;
-    const T denom = a - T(2.)*b + c;
+    const T denom = a - T(2.) * b + c;
     if (numer >= denom) {
       t = T(1.);
     } else {
@@ -158,7 +158,7 @@ inline void r6(T &s, T &t, const T &a, const T &b, const T &c, const T &d, const
       if (d >= T(0.))
         s = T(0.);
       else
-        s = -d/a;
+        s = -d / a;
     }
   }
 };
@@ -174,37 +174,46 @@ inline void r6(T &s, T &t, const T &a, const T &b, const T &c, const T &d, const
  * @return 3-Vector of type T representing the closest point on the triangle.
  */
 template<typename T>
-inline Vec3r<T> closest_point_on_triangle(const Vec3r<T> &tri_v0, const Vec3r<T> &tri_v1, const Vec3r<T> &tri_v2, const Vec3r<T> &test_p) {
+inline Vec3r<T> closest_point_on_triangle(const Vec3r<T> &tri_v0, const Vec3r<T> &tri_v1, const Vec3r<T> &tri_v2,
+                                          const Vec3r<T> &test_p) {
 
   const Vec3r<T> E0 = tri_v1 - tri_v0;
   const Vec3r<T> E1 = tri_v2 - tri_v0;
   const Vec3r<T> D = tri_v0 - test_p;
 
   const T a = dot(E0, E0);
-  const T b = dot(E0, E1);      // Ideally close to 0 (edges 0 and 1 are orthogonal)
+  const T b = dot(E0, E1);// Ideally close to 0 (edges 0 and 1 are orthogonal)
   const T c = dot(E1, E1);
   const T d = dot(E0, D);
   const T e = dot(E1, D);
   const T f = dot(D, D);
-  const T det = a*c - b*b;  // only gives good results for well-formed triangles.
-  T s = b*e - c*d;
-  T t = b*d - a*e;
+  const T det = a * c - b * b;// only gives good results for well-formed triangles.
+  T s = b * e - c * d;
+  T t = b * d - a * e;
 
   if (s + t <= det) {
     if (s < T(0)) {
-      if (t < T(0)) {     r4(s, t, a, c, d, e);     }
-      else {              r3(s, t, c, e);           }
+      if (t < T(0)) {
+        r4(s, t, a, c, d, e);
+      } else {
+        r3(s, t, c, e);
+      }
+    } else if (t < T(0)) {
+      r5(s, t, a, d, f);
+    } else {
+      r0(s, t, det);
     }
-    else if (t < T(0)) {  r5(s, t, a, d, f);        }
-    else {                r0(s, t, det);            }
-  }
-  else {
-    if (s < T(0)) {       r2(s, t, a, b, c, d, e);  }
-    else if (t < T(0)) {  r6(s, t, a, b, c, d, e);  }
-    else {                r1(s, t, a, b, c, d, e);  }
+  } else {
+    if (s < T(0)) {
+      r2(s, t, a, b, c, d, e);
+    } else if (t < T(0)) {
+      r6(s, t, a, b, c, d, e);
+    } else {
+      r1(s, t, a, b, c, d, e);
+    }
   }
 
-  return tri_v0 + s*E0 + t*E1;
+  return tri_v0 + s * E0 + t * E1;
 };
 
 }// namespace blazert

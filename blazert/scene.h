@@ -46,7 +46,7 @@ public:
   size_t planes_geom_id = -1;
   bool has_planes = false;
 
-  std::unique_ptr<CylinderCollection<T>> cylinder_collection; // these are needed for lifetime management...
+  std::unique_ptr<CylinderCollection<T>> cylinder_collection;// these are needed for lifetime management...
   std::unique_ptr<BVH<T, CylinderCollection>> cylinders_bvh;
   size_t cylinders_geom_id = -1;
   bool has_cylinders = false;
@@ -80,7 +80,8 @@ public:
    * @param rotations local rotation matrices
    * @return geometry id of the planes
    */
-  unsigned int add_planes(const Vec3rList<T> &centers, const std::vector<T> &dxs, const std::vector<T> &dys, const Mat3rList<T> &rotations);
+  unsigned int add_planes(const Vec3rList<T> &centers, const std::vector<T> &dxs, const std::vector<T> &dys,
+                          const Mat3rList<T> &rotations);
 
   /***
    * @brief Adds cylinders with the bottom ellipsoid centered at centers, described by two semi_axes and heights.
@@ -91,8 +92,9 @@ public:
    * @param rotations
    * @return geometry id of the cylinders
    */
-  unsigned int add_cylinders(const Vec3rList<T> &centers, const std::vector<T> &semi_axes_a, const std::vector<T> &semi_axes_b,
-                             const std::vector<T> &heights, const Mat3rList<T> &rotations);
+  unsigned int add_cylinders(const Vec3rList<T> &centers, const std::vector<T> &semi_axes_a,
+                             const std::vector<T> &semi_axes_b, const std::vector<T> &heights,
+                             const Mat3rList<T> &rotations);
 
   bool commit() {
 
@@ -206,7 +208,8 @@ unsigned int BlazertScene<T>::add_spheres(const Vec3rList<T> &centers, const std
 }
 
 template<typename T>
-unsigned int BlazertScene<T>::add_planes(const Vec3rList<T> &centers, const std::vector<T> &dxs, const std::vector<T> &dys, const Mat3rList<T> &rotations) {
+unsigned int BlazertScene<T>::add_planes(const Vec3rList<T> &centers, const std::vector<T> &dxs,
+                                         const std::vector<T> &dys, const Mat3rList<T> &rotations) {
 
   if ((!has_planes) && (!has_been_committed)) {
     plane_collection = std::make_unique<PlaneCollection<T>>(centers, dxs, dys, rotations);
@@ -220,10 +223,12 @@ unsigned int BlazertScene<T>::add_planes(const Vec3rList<T> &centers, const std:
   }
 }
 template<typename T>
-unsigned int BlazertScene<T>::add_cylinders(const Vec3rList<T> &centers, const std::vector<T> &semi_axes_a, const std::vector<T> &semi_axes_b,
-                                            const std::vector<T> &heights, const Mat3rList<T> &rotations) {
+unsigned int BlazertScene<T>::add_cylinders(const Vec3rList<T> &centers, const std::vector<T> &semi_axes_a,
+                                            const std::vector<T> &semi_axes_b, const std::vector<T> &heights,
+                                            const Mat3rList<T> &rotations) {
   if ((!has_cylinders) && (!has_been_committed)) {
-    cylinder_collection = std::make_unique<CylinderCollection<T>>(centers, semi_axes_a, semi_axes_b, heights, rotations);
+    cylinder_collection =
+        std::make_unique<CylinderCollection<T>>(centers, semi_axes_a, semi_axes_b, heights, rotations);
     cylinders_bvh = std::make_unique<BVH<T, CylinderCollection>>(*cylinder_collection);
     has_cylinders = true;
 
