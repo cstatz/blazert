@@ -11,11 +11,11 @@ class BLAZERTALIGN BVHNode {
 public:
   typedef typename Collection<T>::primitive_type Primitives;
 
-  BVHNode() : leaf(-1), axis(-1), children{static_cast<unsigned int>(-1), static_cast<unsigned int>(-1)} {}
+  BVHNode() : leaf(static_cast<unsigned int>(-1)), axis(static_cast<unsigned int>(-1)), children{static_cast<unsigned int>(-1), static_cast<unsigned int>(-1)} {}
   BVHNode(BVHNode&& rhs) noexcept: min(std::move(rhs.min)), max(std::move(rhs.max)),
-                                   leaf(std::exchange(rhs.leaf, -1)),
-                                   axis(std::exchange(rhs.axis, -1)),
-                                   children{std::exchange(rhs.children[0], -1), std::exchange(rhs.children[1], -1)},
+                                   leaf(std::exchange(rhs.leaf, static_cast<unsigned int>(-1))),
+                                   axis(std::exchange(rhs.axis, static_cast<unsigned int>(-1))),
+                                   children{std::exchange(rhs.children[0], static_cast<unsigned int>(-1)), std::exchange(rhs.children[1], static_cast<unsigned int>(-1))},
                                    primitives(std::move(rhs.primitives)){}
 
   BVHNode(const BVHNode& rhs) =delete;

@@ -25,7 +25,7 @@ public:
       : max_tree_depth(0),
         leaf_nodes(0),
         max_num_prims_per_leaf(0),
-        min_num_prims_per_leaf(-1),
+        min_num_prims_per_leaf(static_cast<unsigned int>(-1)),
         branch_nodes(0),
         bad_splits(0),
         build_time(T(0.0)) {}
