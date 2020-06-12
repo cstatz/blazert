@@ -79,7 +79,7 @@ script:
   - pushd cmake_build_release
   - cmake -DCMAKE_BUILD_TYPE=Release ../ -DBUILD_TEST:BOOL=true -DBUILD_EXAMPLES:BOOL=true -DBLAZE_INCLUDE_OVERRIDE:STRING=${BLAZE_INCLUDE} -DENABLE_OMP:BOOL=false
   - cmake --build .
-  - ctest -R main --progress -VV
+  - ctest --progress -VV
   - popd
   - rm -rf cmake_build_release
 
