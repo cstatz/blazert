@@ -17,145 +17,111 @@
 namespace blazert {
 
 template<typename T>
-class GEOM_NAME {
+class GEOM {
 
 public:
-  /**
-   * TODO: Add properties of the object, e.g. centers, radius, rotation matrices, ...
-   *
-   * examples for sphere (needs center and a radius):
-   * const Vec3rList<T> *centers;
-   * const std::vector<T> *radii;
-   *
-   * for blaze types, use Vec3rList<T> to make use of alligned allocator
-   * otherwise use std::vector<T>
-   * T will be double or float
-   */
+  // TODO: Consitutive parameters of geometry
 
 public:
-  GEOM_NAME() = default;
-  GEOM_NAME(/*TODO: const Vec3rList<T> &centers, const std::vector<T>& radii*/) : centers(&centers), radii(&radii){};
-
-  /**
-   * @brief Returns the number of primitives in the GEOM_NAME -> only one GEOM_NAME
-   * @return unsigned int
-   */
-   // TODO: set the correct size here
-  inline unsigned int size() const {  return centers->size(); }
-
-  inline void BoundingBox(Vec3r<T> &bmin, Vec3r<T> &bmax, unsigned int prim_index) const {
-    /**
-     * TODO: calculate bounding box
-     */
-  }
-
-  inline void BoundingBoxAndCenter(Vec3r<T> &bmin, Vec3r<T> &bmax, Vec3r<T> &center, unsigned int prim_index) const {
-    /** 
-     * TODO: call BoundigBox and calculate center 
-     */
-  }
+  GEOM() = delete;
+  GEOM(/* TODO: Consitutive parameters of geometry */ const unsigned int prim_id)
+      : /* TODO: Consitutive parameters of geometry */ prim_id(prim_id){};
+  GEOM(GEOM &&rhs) noexcept : /* TODO: Consitutive parameters of geometry */ prim_id(std::exchange(rhs.prim_id, -1)) {}
+  GEOM &operator=(const GEOM &rhs) = delete;
 };
 
-// Predefined SAH predicator for GEOM_NAME.
+template<typename T, template<typename A> typename Collection,
+         typename = std::enable_if_t<std::is_same<typename Collection<T>::primitive_type, GEOM<T>>::value>>
+inline GEOM<T> primitive_from_collection(const Collection<T> &collection, const unsigned int prim_idx) {
+
+  /* TODO: grab consitutive parameters of geometry from collection */
+  return {/* TODO: Consitutive parameters of geometry */ prim_idx};
+};
+
+template<typename T, template<typename A> typename Collection>
+class GEOMIntersector {
+public:
+  const Collection<T> &collection;
+
+  // ray_org and ray_dir needed for calculation of normal vector
+  Vec3r<T> ray_org;
+  Vec3r<T> ray_dir;
+  T min_hit_distance;
+  Vec2r<T> uv;
+  T hit_distance;
+  unsigned int prim_id;
+
+  GEOMIntersector() = delete;
+  explicit GEOMIntersector(const Collection<T> &collection) : collection(collection), prim_id(-1) {}
+};
+
 template<typename T>
-class GEOM_NAMESAHPred {
+class GEOMCollection {
+public:
+  typedef GEOMIntersector<T, GEOMCollection> intersector;
+  typedef GEOM<T> primitive_type;
+
+  /* TODO: containers for constitutive parameters of geometry */
+
+  std::vector<std::pair<Vec3r<T>, Vec3r<T>>> box;
+
+  GEOMCollection() = delete;
+  GEOMCollection(const GEOMCollection<T> &rhs) = delete;
+  GEOMCollection(/* TODO: containers for constitutive parameters of geometry */) /* TODO: initializer list */ {
+
+    box.reserve(centers.size());
+
+    for (unsigned int prim_id = 0; prim_id < centers.size(); prim_id++) {
+      box.emplace_back(pre_compute_bounding_box(prim_id));
+    }
+  }
+
+  [[nodiscard]] inline unsigned int size() const noexcept { return centers.size(); }
+
+  [[nodiscard]] inline std::pair<Vec3r<T>, Vec3r<T>>
+  get_primitive_bounding_box(const unsigned int prim_id) const noexcept {
+    return box[prim_id];
+  }
+
+  [[nodiscard]] inline Vec3r<T> get_primitive_center(const unsigned int prim_id) const noexcept {
+    // TODO: calculate center and return, for some primitives, center is constitutive parameter
+    return centers[prim_id];
+  }
+
 private:
-  mutable unsigned int axis_;
-  mutable T pos_;
-  /**
-   * TODO: Add properties of the object, e.g. centers, radius, rotation matrices, ... see GEOM_NAME
-   */
+  [[nodiscard]] inline std::pair<Vec3r<T>, Vec3r<T>>
+  pre_compute_bounding_box(const unsigned int prim_id) const noexcept {
 
-public:
-  GEOM_NAMESAHPred() = default;
-  GEOM_NAMESAHPred(/*TODO: const Vec3rList<T> &centers, const std::vector<T> &radii*/)
-      : axis_(0), pos_(static_cast<T>(0.0)), centers(&centers), radii(&radii) {}
-
-  // TODO: fix constructor according to data members
-  GEOM_NAMESAHPred(const GEOM_NAMESAHPred<T> &rhs)
-      : axis_(rhs.axis_),
-        pos_(rhs.pos_),
-        centers(rhs.centers),
-        radii(rhs.radii) {}
-  // TODO: fix constructor according to data members
-  GEOM_NAMESAHPred<T> &operator=(const GEOM_NAMESAHPred<T> &rhs) {
-    axis_ = rhs.axis_;
-    pos_ = rhs.pos_;
-    centers = rhs.centers;
-    radii = rhs.radii;
-    return (*this);
-  }
-
-  void Set(unsigned int axis, T pos) const {
-    axis_ = axis;
-    pos_ = pos;
-  }
-
-  inline bool operator()(unsigned int prim_id) const {
-    /*
-     * TODO: calculate SAHPredictor, for simple primitives, center will be good enough
-     */
-    T center = (*centers)[prim_id][axis_];
-    return (center < pos_);
+    // TODO: Calculate bounding box
+    return std::make_pair(std::move(min), std::move(max));
   }
 };
-
-template<typename T>
-class GEOM_NAMEIntersector {
-public:
-  /**
-   * TODO: Add properties of the object, e.g. centers, radius, rotation matrices, ... see GEOM_NAME
-   */
-
-  mutable Vec3r<T> ray_org_;
-  mutable Vec3r<T> ray_dir_;
-  mutable T t_min_;
-  mutable Vec2r<T> uv_;
-  mutable T hit_distance;
-  mutable unsigned int prim_id_;
-  mutable bool cull_back_face;
-
-public:
-  inline GEOM_NAMEIntersector(/*TODO: const Vec3rList<T> &centers, const std::vector<T> &radii*/) : centers(&centers), radii(&radii), prim_id_(-1), cull_back_face(false) {}
-};
-
-/// Update is called when initializing intersection and nearest hit is found.
-template<typename T>
-inline void update_intersector(GEOM_NAMEIntersector<T> &i, const T t, const unsigned int prim_id) {
-  i.hit_distance = t;
-  i.prim_id_ = prim_id;
-}
 
 /**
- * Post BVH traversal stuff.
- * Fill `isect` if there is a hit.
- * TODO: Is Ray<T> really needed here?
- */
-template<typename T>
-inline void post_traversal(GEOM_NAMEIntersector<T> &i, const Ray<T> &ray, const bool hit, RayHit<T> &intersection) {
-  if (hit) {
-    intersection.hit_distance = i.hit_distance;
-    intersection.uv = i.uv_;
-    intersection.prim_id = i.prim_id_;
-    // TODO: Calculate normal vector of geometry
-    // e.g. sphere: intersection.normal = normalize(i.ray_org_ + i.hit_distance * i.ray_dir_ - (*i.centers)[i.prim_id_]);
-  }
+   * Post BVH traversal stuff.
+   * Fill `isect` if there is a hit.
+   */
+template<typename T, template<typename> typename Collection>
+inline void post_traversal(GEOMIntersector<T, Collection> &i, RayHit<T> &rayhit) {
+  rayhit.hit_distance = i.hit_distance;
+  rayhit.uv = i.uv;
+  rayhit.prim_id = i.prim_id;
+  const Vec3r<T> &center = i.collection.get_primitive_center(i.prim_id);
+  rayhit.normal = normalize(i.ray_org + i.hit_distance * i.ray_dir - center);
 }
 
 /**
    * Prepare BVH traversal (e.g. compute inverse ray direction).
    * This function is called only once in BVH traversal.
    */
-template<typename T>
-inline void prepare_traversal(GEOM_NAMEIntersector<T> &i, const Ray<T> &ray, const BVHTraceOptions<T> &trace_options) {
-
-  i.ray_org_ = ray.origin;// copy here we'll have an allocate?
-  i.ray_dir_ = ray.direction;
-
-  i.t_min_ = ray.min_hit_distance;
-
-  i.uv_ = {0., 0.};// Here happens an allocate.
-  i.cull_back_face = trace_options.cull_back_face;
+template<typename T, template<typename> typename Collection>
+inline void prepare_traversal(GEOMIntersector<T, Collection> &i, const Ray<T> &ray) {
+  i.ray_org = ray.origin;
+  i.ray_dir = ray.direction;
+  i.min_hit_distance = ray.min_hit_distance;
+  i.hit_distance = ray.max_hit_distance;
+  i.uv = static_cast<T>(0.);
+  i.prim_id = -1;
 }
 
 /**
@@ -163,27 +129,9 @@ inline void prepare_traversal(GEOM_NAMEIntersector<T> &i, const Ray<T> &ray, con
    * distance `hit_distance`, barycentric coordinate `u` and `v`.
    * Returns true if there's intersection.
    */
-template<typename T>
-inline bool intersect(GEOM_NAMEIntersector<T> &i, T &t_inout, const unsigned int prim_index) {
-
-  const Vec3r<T> &org = i.ray_org_;
-  const Vec3r<T> &dir = i.ray_dir_;
-
-  /** TODO: Load all necessary information from intersector and calculate intersections
-   * -> save the ray distance in t_inout
-   * -> return true if hit, false otherwise
-   */
-
-  return false;
-}
-
-template<typename T>
-double distance_to_surface(GEOM_NAME<T> &GEOM_NAME, const Vec3r<T> &point, const unsigned int prim_index) {
-  /**
-   * TODO: calculate the distance to the surface of the object from point
-   */
-  const Vec3r<T> &distance = (*GEOM_NAME.centers)[prim_index] - point;
-  return abs(norm(distance) - (*GEOM_NAME.radii)[prim_index]);
+template<typename T, template<typename> typename Collection>
+inline bool intersect_primitive(GEOMIntersector<T, Collection> &i, const GEOM<T> &GEOM, const Ray<T> ray) {
+  /* TODO: Calculate intersections */
 }
 
 }// namespace blazert
