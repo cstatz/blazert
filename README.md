@@ -19,17 +19,21 @@
 
 
 ## Introduction
-blazeRT is a **double precision ray tracer** for scientific or engineering applications derived from [nanort](https://github.com/lighttransport/nanort) 
-using blaze datatypes and written in modern c++ (17). blazeRTs scene interface is similar to [embree](https://github.com/embree/embree) and 
-intents to be a minimal effort (nearly plugin-) replacement. blazeRT should work on any system and architecture for which a recents (c++17 compatible) compiler is available.
+blazeRT is a **double precision ray tracer** for scientific or engineering applications derived from 
+[nanort](https://github.com/lighttransport/nanort) using blaze datatypes and written in modern C++17. 
+blazeRTs scene interface is similar to [embree](https://github.com/embree/embree) and intents to be a minimal 
+effort (nearly plugin-) replacement. blazeRT should work on any system and architecture for which a recent 
+(C++17 compatible) compiler is available.
 
 We aim at providing a **simple and unambiguous high-level API** for the ray-traversal.
-We do not aim at providing backwards-compatibility (especially to older c++ standards).
+We do not aim at providing backwards-compatibility (especially to older C++ standards).
 
 blazeRT makes use of the the [blaze](https://bitbucket.org/blaze-lib/blaze/src/master/) linear algebra
 library for its vector types. Because we rely on a well-tested and well-optimized linear algebra library
 (instead of using our own vector types), blazeRT can focus on the actual ray tracing algorithms. Furthermore,
-using types from a linear algebra library is advantageous for the subsequent development of scientific application where the vector types are needed again. blazeRT should work with any library providing these vector types as long as certain criteria are met (a minimal set of operation on these vector types).
+using types from a linear algebra library is advantageous for the subsequent development of scientific application 
+where the vector types are needed again. blazeRT should work with any library providing these vector types as 
+long as certain criteria are met (a minimal set of operation on these vector types).
 
 blazeRT works with triangular meshes and simple primitives, but it is easy to extend blazeRT 
 to work on polygons or more complex primitives. A template for user-defined geometries can be found 
@@ -39,11 +43,12 @@ a pull request from you to include it in blazeRT.
 blazeRT is tested using unit tests (whose number will increase as development progresses). We try to ensure high code 
 quality and a reproducible build experience via continuous integration. During the CI process we 
 build the examples and the test cases, which need to run successfully in order for the CI to pass. Currently, 
-blazeRT is CI-tested on Ubuntu 18.04 and macOS.
+blazeRT is CI-tested on Ubuntu 18.04 and macOS with gcc and clang.
 
 ![image](examples/baseline/path_tracer_blaze.png)
 
-(Rendered using the `path_tracer` example adapted from `nanort` and originally contributed by [daseyb](https://github.com/daseyb))
+(Rendered using the `path_tracer` example adapted from `nanort` and originally contributed by 
+[daseyb](https://github.com/daseyb))
 
 ### Contributing
 We appreciate all contributions from issues to pull requests. 
@@ -74,7 +79,7 @@ Installation and build are tested on linux (e.g. ubuntu bionic, arch linux) and 
 Before starting the build process please ensure all dependencies are properly installed and available to the project.
 
 ### Dependencies
- * c++17 capable compiler
+ * C++17 capable compiler
  * cmake (>= 3.11.0)
  * [blaze](https://bitbucket.org/blaze-lib/blaze/src/master/) (>= 3.7)
  * [Embree](https://github.com/embree/embree) (>= 3) if ```EMBREE_TRACING``` fallback is desired 
@@ -109,7 +114,8 @@ ctest  # Runs the tests
 ```
 
 **For maximum performance**, we recommend building with **gcc** which results in a 15% to 20% better performance
-compared to clang (on linux and macos). The provided benchmarks might be used to tune the compilation flags for your specific system and architecture.
+compared to clang (on linux and macOS). The provided benchmarks might be used to tune the compilation flags for your 
+specific system and architecture.
 
 **A word of caution:** blazeRT will compile and work with compiler optimizations enabled (up to **-O3**), but needs 
 infinite-math. If your application needs fast-math, ensure that the blazeRT code path is compiled with 
@@ -117,7 +123,7 @@ infinite-math. If your application needs fast-math, ensure that the blazeRT code
 difference between compilation with *-O2* and *-O3*. 
 
 ### Configuration
-The easiest way to set the configration variables is by using ```ccmake``` or pass the variables
+The easiest way to set the configuration variables is by using ```ccmake``` or pass the variables
 via ```cmake ../ -D<VARIABLE>:<TYPE>=value```.
 
 - ```ENABLE_OMP```: Enable OpenMP in examples (for traversal)
@@ -134,7 +140,7 @@ To get familiar with the usage of blazeRT, look at the provided examples and tes
 checkout the minimal examples below.
 
 - The [scene](blazert/scene.h) API can be considered **stable**, while the low-level API of the [BVH](blazert/BVH) 
-(```build```, ```traverse```, ...) are not to be considered stable as they might change when requierements 
+(```build```, ```traverse```, ...) are not to be considered stable as they might change when requirements 
 change with time.
 
 - To control the maximum tree depth set the ```BLAZERT_MAX_TREE_DEPTH``` to a sensible value
@@ -193,20 +199,25 @@ To give you an impression of the High-Level API
 
 ### Notes
 - Different from nanoRT, the bvh-build is not (yet) parallelized. For meshes with 5 million triangles, blazeRT
-needs about 5 seconds to build the BHV and about 20 seconds for 20 million meshes. For scientific or engineering ray tracing 
-applications the scene is usually static while ray origin and direction are varied. The computational effort is hence defined by the traversal and not the build.
+needs about 5 seconds to build the BHV and about 20 seconds for 20 million triangles. For scientific or engineering ray 
+tracing applications the scene is usually static while ray origin and direction are varied. The computational effort is
+ hence defined by the traversal and not the build.
 - ```BLAZERTALIGN``` is currently not used but might be used in the future. 
 
 ## Benchmarks
 We have included benchmarks comparing blazeRT to [nanort](https://github.com/lighttransport/nanort),
 [embree](https://github.com/embree/embree) and [madmann91/bvh](https://github.com/madmann91/bvh) for bvh build and 
-traversal. The benchmark scene is a (triangle-) meshed sphere which which can be refined by sub-division. There are two traversal cases: 
-- A rendering case where the scene size (number of triangles) is increased (while maintaining the same dimensions) and 8192 * 8192 rays are shot at the scene in a rectangular pattern.
-- A scientific case where the scene size as well as the number of rays are increased (a ray is shot at each vertex of the sphere mesh). This can be considered as some kind of worst cast, because every ray hits and for each ray multiple overlapping bounding boxes (and subsequent primitives) need to be tested.
+traversal. The benchmark scene is a (triangle-) meshed sphere which which can be refined by sub-division. There are 
+two traversal cases: 
+- A rendering case where the scene size (number of triangles) is increased (while maintaining the same dimensions) and 
+8192 * 8192 rays are shot at the scene in a rectangular pattern.
+- A scientific case where the scene size as well as the number of rays are increased (a ray is shot at each vertex of 
+the sphere mesh). This can be considered as some kind of worst cast, because every ray hits and for each ray multiple 
+overlapping bounding boxes (and subsequent primitives) need to be tested.
 
-The benchmarks are run for the most recent (git-) revisions of the compared raytracing libraries.
+The benchmarks are run for the most recent (git-) revisions of the compared ray tracing libraries.
 
-**NOTE**: For [madnamnn91/bvh](https://github.com/madmann91/bvh) we encoutered segfaults when running this on macOS for 
+**NOTE**: For [madmann91/bvh](https://github.com/madmann91/bvh) we encountered segfaults when running this on macOS for 
 meshes that were bigger than a few hundred triangles. Please take these results with a grain of salt (a bug report has been filed).
 
 The benchmarks were run on the following configuration:
@@ -228,9 +239,13 @@ case (not all rays hit) and for a realistic scientific rendering case (all rays 
 ## License
 
 blazeRT is licensed under the new **BSD (3-clause) license**.
-blazeRT is based on and inspired by `nanort.h` which is licensed under MIT-License. For comparability, nanoRTs `path_tracer` and madman91/bvhs `benchmark` have been adapted to blazeRT to generate a baseline for the tests and benchmarks.
+blazeRT is based on and inspired by `nanort.h` which is licensed under MIT-License. For comparability, nanoRTs 
+`path_tracer` and madman91/bvhs `benchmark` have been adapted to blazeRT to generate a baseline for the tests 
+and benchmarks.
 
-*We decided to not extend nanort due to intrusive nature of the changes that came with the introduction of the blaze datatypes. Another reason was the possibility for an enhanced maintainability if the code is not kept (and developed) in a single-header library.*
+*We decided to not extend nanoRT due to the intrusive nature of the changes that came with the introduction of the blaze
+ datatypes. Another reason was the possibility for an enhanced maintainability if the code is not kept (and developed) 
+ in a single-header library.*
 
 The examples are built around third-party libraries (e.g. `tiny_obj_loader` and `stb_image_write`) 
 which adhere to their own respective licenses (found in the included files).
