@@ -22,6 +22,12 @@ private:
 
 public:
   RTCScene rtcscene;
+
+  RTCGeometry triangle_mesh;
+  std::unique_ptr<EmbreeSphere> sphere;
+  std::unique_ptr<EmbreeCylinder> cylinder;
+  std::unique_ptr<EmbreePlane> plane;
+
   BlazertScene<T> blazertscene;
   bool has_been_committed;
 
@@ -95,14 +101,14 @@ unsigned int EmbreeScene<T>::add_mesh(const Vec3rList<T> &vertices, const Vec3iL
   unsigned int id = -1;
 
   if constexpr (std::is_same<float, T>::value) {
-    constexpr const int bytestride_int = sizeof(Vec3ui) / 4 * sizeof(Vec3ui::ElementType);
-    constexpr const int bytestride_float = sizeof(Vec3r<float>) / 4 * sizeof(Vec3r<float>::ElementType);
+    constexpr const int bytestride_int = sizeof(Vec3ui) / 8 * sizeof(Vec3ui::ElementType);
+    constexpr const int bytestride_float = sizeof(Vec3r<float>) / 8 * sizeof(Vec3r<float>::ElementType);
 
-    auto geometry = rtcNewGeometry(device, RTC_GEOMETRY_TYPE_TRIANGLE);
-    rtcSetSharedGeometryBuffer(geometry, RTC_BUFFER_TYPE_INDEX, 0, RTC_FORMAT_UINT3, (void *) (triangles.data()), 0, bytestride_int, triangles.size());
-    rtcSetSharedGeometryBuffer(geometry, RTC_BUFFER_TYPE_VERTEX, 0, RTC_FORMAT_FLOAT3, (void *) (vertices.data()), 0, bytestride_float, vertices.size());
-    rtcCommitGeometry(geometry);
-    auto geom_id = rtcAttachGeometry(rtcscene, geometry);
+    triangle_mesh = rtcNewGeometry(device, RTC_GEOMETRY_TYPE_TRIANGLE);
+    rtcSetSharedGeometryBuffer(triangle_mesh, RTC_BUFFER_TYPE_INDEX, 0, RTC_FORMAT_UINT3, (void *) (triangles.data()), 0, bytestride_int, triangles.size());
+    rtcSetSharedGeometryBuffer(triangle_mesh, RTC_BUFFER_TYPE_VERTEX, 0, RTC_FORMAT_FLOAT3, (void *) (vertices.data()), 0, bytestride_float, vertices.size());
+    rtcCommitGeometry(triangle_mesh);
+    auto geom_id = rtcAttachGeometry(rtcscene, triangle_mesh);
     id = geom_id;
   } else {
     id = blazertscene.add_mesh(vertices, triangles);
@@ -117,7 +123,7 @@ unsigned int EmbreeScene<T>::add_spheres(const Vec3rList<T> &centers, const std:
 
   if constexpr (std::is_same<float, T>::value) {
     // TODO: We are looking for something more like this:
-    auto sphere = std::make_unique<EmbreeSphere>(device, rtcscene, centers[0], radii[0]);
+    sphere = std::make_unique<EmbreeSphere>(device, rtcscene, centers[0], radii[0]);
     id = sphere->geomID;
     //    for(size_t prim_id = 0; prim_id < centers.size(); ++prim_id) {
     //      const Vec3r<T> &c = centers[prim_id];
@@ -138,7 +144,7 @@ unsigned int EmbreeScene<T>::add_planes(const Vec3rList<T> &centers, const std::
   unsigned int id = -1;
 
   if constexpr (std::is_same<float, T>::value) {
-    auto plane = std::make_unique<EmbreePlane>(device, rtcscene, centers[0], dxs[0], dys[0], rotations[0]);
+    plane = std::make_unique<EmbreePlane>(device, rtcscene, centers[0], dxs[0], dys[0], rotations[0]);
     id = plane->geomID;
     // TODO: We are looking for something more like this:
     //    for(size_t prim_id = 0; prim_id < centers.size(); ++prim_id) {
@@ -161,8 +167,8 @@ unsigned int EmbreeScene<T>::add_cylinders(const Vec3rList<T> &centers, const st
   unsigned int id = -1;
 
   if constexpr (std::is_same<float, T>::value) {
-    auto plane = std::make_unique<EmbreeCylinder>(device, rtcscene, centers[0], semi_axes_a[0], semi_axes_b[0], heights[0], rotations[0]);
-    id = plane->geomID;
+    cylinder = std::make_unique<EmbreeCylinder>(device, rtcscene, centers[0], semi_axes_a[0], semi_axes_b[0], heights[0], rotations[0]);
+    id = cylinder->geomID;
     // TODO: We are looking for something more like this:
     //    for(size_t prim_id = 0; prim_id < centers.size(); ++prim_id) {
     //      const Vec3r<T> &c = centers[prim_id];

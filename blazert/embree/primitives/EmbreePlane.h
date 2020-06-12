@@ -29,49 +29,51 @@ public:
   const float thickness = std::numeric_limits<float>::min();
 
 public:
-  /***
- * This constructs an EmbreePlane object. By default the plane is parallel to
- * the xy-plane. It dimension in x-direction is d1 while the dimension in
- * y-direction is d2. The unit vector in x, y and z direction serve as the base
- * vectors and the normal vector of the plane respectivly. The position is
- * specified by the vector planeCenter which points to the center of the plane
- * and by the rotation matrix rot which rotates the plane. Rotation is applied
- * before the translation to the center
- *
- * Although this puts the burden on the user of the class, this ensures easy
- * intersection testing which leads to higher performance.
- *
- * @param device        EmbreeDevice on which the geometry lives
- * @param scene         EmbreeScene which the geometry will be attached to
- * @param planeCenter   center of the plane
- * @param d1            dimension in x-direction
- * @param d2            dimension in y-direction
- * @param rot           rotation matrix
- */
   EmbreePlane(const RTCDevice &device, const RTCScene &scene, const Vec3r<float> &planeCenter, const float d1,
-              const float d2, const Mat3r<float> &rot) noexcept
-      : EmbreeGeometryObject(scene), planeCenter(planeCenter), d1(d1), d2(d2), rot(rot) {
-    // create geomentry of user defined type
-    geometry = rtcNewGeometry(device, RTC_GEOMETRY_TYPE_USER);
-
-    rtcSetGeometryUserPrimitiveCount(geometry, 1);// one primitive
-    rtcSetGeometryUserData(geometry, this);
-
-    // set bounds, intersect and occluded functions for user geometry
-    rtcSetGeometryBoundsFunction(geometry, planeBoundsFunc, this);
-    rtcSetGeometryIntersectFunction(geometry, planeIntersectFunc);
-    rtcSetGeometryOccludedFunction(geometry, planeOccludedFunc);
-
-    // commit changes on geometry
-    rtcCommitGeometry(geometry);
-    // attach geometry to scene and get geomID
-    geomID = rtcAttachGeometry(scene, geometry);
-  }
-
+              const float d2, const Mat3r<float> &rot) noexcept;
   ~EmbreePlane() = default;
 
   inline double distance_to_surface(const Vec3r<float> &point) const { return 0.0; }
 };
+
+/***
+* This constructs an EmbreePlane object. By default the plane is parallel to
+* the xy-plane. It dimension in x-direction is d1 while the dimension in
+* y-direction is d2. The unit vector in x, y and z direction serve as the base
+* vectors and the normal vector of the plane respectivly. The position is
+* specified by the vector planeCenter which points to the center of the plane
+* and by the rotation matrix rot which rotates the plane. Rotation is applied
+* before the translation to the center
+*
+* Although this puts the burden on the user of the class, this ensures easy
+* intersection testing which leads to higher performance.
+*
+* @param device        EmbreeDevice on which the geometry lives
+* @param scene         EmbreeScene which the geometry will be attached to
+* @param planeCenter   center of the plane
+* @param d1            dimension in x-direction
+* @param d2            dimension in y-direction
+* @param rot           rotation matrix
+*/
+inline EmbreePlane::EmbreePlane(const RTCDevice &device, const RTCScene &scene, const Vec3r<float> &planeCenter,
+                                const float d1, const float d2, const Mat3r<float> &rot) noexcept
+    : EmbreeGeometryObject(scene), planeCenter(planeCenter), d1(d1), d2(d2), rot(rot) {
+  // create geometry of user defined type
+  geometry = rtcNewGeometry(device, RTC_GEOMETRY_TYPE_USER);
+
+  rtcSetGeometryUserPrimitiveCount(geometry, 1);// one primitive
+  rtcSetGeometryUserData(geometry, this);
+
+  // set bounds, intersect and occluded functions for user geometry
+  rtcSetGeometryBoundsFunction(geometry, planeBoundsFunc, this);
+  rtcSetGeometryIntersectFunction(geometry, planeIntersectFunc);
+  rtcSetGeometryOccludedFunction(geometry, planeOccludedFunc);
+
+  // commit changes on geometry
+  rtcCommitGeometry(geometry);
+  // attach geometry to scene and get geomID
+  geomID = rtcAttachGeometry(scene, geometry);
+}
 
 /***
  * Calculate boundary box around the plane. This is needed for building the

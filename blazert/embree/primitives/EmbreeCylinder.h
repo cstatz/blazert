@@ -22,24 +22,7 @@ inline void cylinderOccludedFunc(const RTCOccludedFunctionNArguments *args);
 class EmbreeCylinder : public EmbreeGeometryObject {
 public:
   EmbreeCylinder(const RTCDevice &device, const RTCScene &scene, const Vec3r<float> &center, const float a,
-                 const float b, const float height, const Mat3r<float> &rotMatrix) noexcept
-      : EmbreeGeometryObject(scene), center(center), a(a), b(b), height(height), rotMatrix(rotMatrix) {
-    // create geomentry of user defined type
-    geometry = rtcNewGeometry(device, RTC_GEOMETRY_TYPE_USER);
-
-    rtcSetGeometryUserPrimitiveCount(geometry, 1);// one primitive
-    rtcSetGeometryUserData(geometry, this);
-
-    // set bounds, intersect and occluded functions for user geometry
-    rtcSetGeometryBoundsFunction(geometry, cylinderBoundsFunc, this);
-    rtcSetGeometryIntersectFunction(geometry, cylinderIntersectFunc);
-    rtcSetGeometryOccludedFunction(geometry, cylinderOccludedFunc);
-
-    // commit changes on geometry
-    rtcCommitGeometry(geometry);
-    // attach geomentry to scene and get geomID
-    geomID = rtcAttachGeometry(scene, geometry);
-  }
+                 const float b, const float height, const Mat3r<float> &rotMatrix) noexcept;
   ~EmbreeCylinder() = default;
 
   const Vec3r<float> &center;
@@ -48,6 +31,27 @@ public:
   const float height;
   const Mat3r<float> &rotMatrix;
 };
+
+inline EmbreeCylinder::EmbreeCylinder(const RTCDevice &device, const RTCScene &scene, const Vec3r<float> &center,
+                                      const float a, const float b, const float height,
+                                      const Mat3r<float> &rotMatrix) noexcept
+    : EmbreeGeometryObject(scene), center(center), a(a), b(b), height(height), rotMatrix(rotMatrix) {
+  // create geometry of user defined type
+  geometry = rtcNewGeometry(device, RTC_GEOMETRY_TYPE_USER);
+
+  rtcSetGeometryUserPrimitiveCount(geometry, 1);// one primitive
+  rtcSetGeometryUserData(geometry, this);
+
+  // set bounds, intersect and occluded functions for user geometry
+  rtcSetGeometryBoundsFunction(geometry, cylinderBoundsFunc, this);
+  rtcSetGeometryIntersectFunction(geometry, cylinderIntersectFunc);
+  rtcSetGeometryOccludedFunction(geometry, cylinderOccludedFunc);
+
+  // commit changes on geometry
+  rtcCommitGeometry(geometry);
+  // attach geometry to scene and get geomID
+  geomID = rtcAttachGeometry(scene, geometry);
+}
 
 inline void cylinderBoundsFunc(const RTCBoundsFunctionArguments *args) {
   const EmbreeCylinder &cylinder = ((EmbreeCylinder *) (args->geometryUserPtr))[args->primID];

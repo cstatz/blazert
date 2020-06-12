@@ -24,25 +24,7 @@ public:
   const float radius;
 
 public:
-  EmbreeSphere(const RTCDevice &device, const RTCScene &scene, const Vec3r<float> &center, float radius) noexcept
-      : EmbreeGeometryObject(scene), center(center), radius(radius) {
-    // create geomentry of user defined type
-    geometry = rtcNewGeometry(device, RTC_GEOMETRY_TYPE_USER);
-
-    rtcSetGeometryUserPrimitiveCount(geometry, 1);// one primitive
-    rtcSetGeometryUserData(geometry, this);
-
-    // set bounds, intersect and occluded functions for user geometry
-    rtcSetGeometryBoundsFunction(geometry, sphereBoundsFunc, this);
-    rtcSetGeometryIntersectFunction(geometry, sphereIntersectFunc);
-    rtcSetGeometryOccludedFunction(geometry, sphereOccludedFunc);
-
-    // commit changes on geometry
-    rtcCommitGeometry(geometry);
-    // attach geomentry to scene and get geomID
-    geomID = rtcAttachGeometry(scene, geometry);
-  }
-
+  EmbreeSphere(const RTCDevice &device, const RTCScene &scene, const Vec3r<float> &center, float radius) noexcept;
   ~EmbreeSphere() = default;
 
   inline double distance_to_surface(const Vec3r<float> &point) const {
@@ -50,6 +32,26 @@ public:
     return abs(norm(distance) - radius);
   }
 };
+
+inline EmbreeSphere::EmbreeSphere(const RTCDevice &device, const RTCScene &scene, const Vec3r<float> &center,
+                                  float radius) noexcept
+    : EmbreeGeometryObject(scene), center(center), radius(radius) {
+  // create geometry of user defined type
+  geometry = rtcNewGeometry(device, RTC_GEOMETRY_TYPE_USER);
+
+  rtcSetGeometryUserPrimitiveCount(geometry, 1);// one primitive
+  rtcSetGeometryUserData(geometry, this);
+
+  // set bounds, intersect and occluded functions for user geometry
+  rtcSetGeometryBoundsFunction(geometry, sphereBoundsFunc, this);
+  rtcSetGeometryIntersectFunction(geometry, sphereIntersectFunc);
+  rtcSetGeometryOccludedFunction(geometry, sphereOccludedFunc);
+
+  // commit changes on geometry
+  rtcCommitGeometry(geometry);
+  // attach geometry to scene and get geomID
+  geomID = rtcAttachGeometry(scene, geometry);
+}
 
 /***
  * Calculate boundary box around the sphere. This is needed for building the
