@@ -62,9 +62,9 @@ IF (EMBREE_BACKEND)
 ENDIF ()
 
 FIND_PACKAGE(Threads)
-FIND_PACKAGE(OpenMP)
 
 IF (ENABLE_OMP)
+    FIND_PACKAGE(OpenMP)
     IF (OpenMP_CXX_FOUND)
         SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
         link_libraries(OpenMP::OpenMP_CXX)
