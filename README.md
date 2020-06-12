@@ -146,9 +146,9 @@ implemented depends on the prim-collection.
 ### Examples
 - [x] [path tracer with randomly distributed rays](examples/path_tracer) for meshed geometries with rendered output
 - [x] [deterministic path tracer for reproducibility](examples/renderer) for meshed geometries
-- [x] [path tracer based on the scene facility](examples/scene_mesh) of blazeRT without rendered output
+- [x] [path tracer based on the scene facility](examples/scene_mesh) of blazeRT without rendered output 
+(define ```EMBREE_TRACING``` for usage of embree fallback)
 - [x] [cylinder and sphere primitives](examples/scene_primitives) within a blazeRT scene and color-coded output
-- [ ] Embree fallback
 
 ### Minimal Example
 Example for using blazeRT can be found the the `examples` subdirectory.
