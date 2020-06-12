@@ -148,7 +148,6 @@ private:
 /**
  * Post BVH traversal stuff.
  * Fill `isect` if there is a hit.
- * TODO: Is Ray<T> really needed here?
  */
 template<typename T, template<typename> typename Collection>
 inline void post_traversal(CylinderIntersector<T, Collection> &i, RayHit<T> &rayhit) {
