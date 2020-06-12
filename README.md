@@ -220,10 +220,12 @@ needs about 5 seconds to build the BHV and about 20 seconds for 20 million meshe
 applications the scene is usually static and the ray origin and direction are varied.
 - ```BLAZERTALIGN``` is currently not used but might be used in the future. 
 ## Benchmarks
-We have included benchmarks for blazeRT compared to [nanort](https://github.com/lighttransport/nanort) (revision: 135a452),
-[embree](https://github.com/embree/embree) (version 3.10.0) and [madmann91/bvh](https://github.com/madmann91/bvh) 
-(revision: 92ff220) for BVH build and traversal. The benchmark is a meshed sphere which is used as a 
-triangular mesh geometry in all ray tracing kernels. 
+We have included benchmarks for blazeRT compared to [nanort](https://github.com/lighttransport/nanort),
+[embree](https://github.com/embree/embree) and [madmann91/bvh](https://github.com/madmann91/bvh) for BVH build and 
+traversal. The benchmark is a meshed sphere which is used as a triangular mesh geometry in all 
+ray tracing kernels. 
+
+The benchmarks are run for the most recent (git-) revisions of the compared raytracing libraries.
 
 
 **NOTE**: For [madnamnn91/bvh](https://github.com/madmann91/bvh) we encoutered segfaults when running this on macOS for 
