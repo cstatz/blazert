@@ -45,7 +45,6 @@ public:
     bvh.nodes.reserve(2 * bvh.collection.size());
     build_recursive(bvh.nodes, bvh.collection, indices.begin(), indices.end(), 0, statistics, options);
 
-    bvh.nodes.shrink_to_fit();
     indices.clear();
     indices.shrink_to_fit();
 
@@ -80,8 +79,8 @@ unsigned int build_recursive(std::vector<BVHNode<T, Collection>> &nodes, const C
   nodes.push_back(std::move(branch));
   statistics.branch_nodes++;
 
-  nodes[offset].children[0] = build_recursive(nodes, collection, begin, mid, depth + 1, statistics, options);
-  nodes[offset].children[1] = build_recursive(nodes, collection, mid, end, depth + 1, statistics, options);
+  nodes[offset].children[0] = &nodes[build_recursive(nodes, collection, begin, mid, depth + 1, statistics, options)];
+  nodes[offset].children[1] = &nodes[build_recursive(nodes, collection, mid, end, depth + 1, statistics, options)];
 
   return offset;
 }

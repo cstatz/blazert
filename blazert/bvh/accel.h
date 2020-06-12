@@ -57,8 +57,8 @@ template<typename T, template<typename> typename Collection>
 inline bool traverse(const BVH<T, Collection> &bvh, const Ray<T> &ray, RayHit<T> &rayhit,
                      typename Collection<T>::intersector &intersector) noexcept {
 
-  Stack<unsigned int, BLAZERT_MAX_TREE_DEPTH> node_stack;
-  node_stack.push_back(0);
+  Stack<const BVHNode<T, Collection>*, BLAZERT_MAX_TREE_DEPTH> node_stack;
+  node_stack.push_back(&(*bvh.nodes.begin()));
 
   T hit_distance = ray.max_hit_distance;
   prepare_traversal(intersector, ray);
@@ -68,7 +68,7 @@ inline bool traverse(const BVH<T, Collection> &bvh, const Ray<T> &ray, RayHit<T>
     T max_hit_distance = hit_distance;
     T min_hit_distance = ray.min_hit_distance;
 
-    const BVHNode<T, Collection> &node = bvh.nodes[node_stack.back()];
+    const BVHNode<T, Collection> &node = *node_stack.back();
     node_stack.pop_back();
 
     if (intersect_node(min_hit_distance, max_hit_distance, node, ray)) {

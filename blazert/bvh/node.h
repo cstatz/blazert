@@ -13,12 +13,11 @@ public:
 
   BVHNode()
       : leaf(static_cast<unsigned int>(-1)),
-        axis(static_cast<unsigned int>(-1)), children{static_cast<unsigned int>(-1), static_cast<unsigned int>(-1)} {}
+        axis(static_cast<unsigned int>(-1)), children{nullptr, nullptr} {}
   BVHNode(BVHNode &&rhs) noexcept
       : min(std::move(rhs.min)), max(std::move(rhs.max)), leaf(std::exchange(rhs.leaf, static_cast<unsigned int>(-1))),
         axis(std::exchange(rhs.axis, static_cast<unsigned int>(-1))),
-        children{std::exchange(rhs.children[0], static_cast<unsigned int>(-1)),
-                 std::exchange(rhs.children[1], static_cast<unsigned int>(-1))},
+        children{std::exchange(rhs.children[0], nullptr), std::exchange(rhs.children[1], nullptr)},
         primitives(std::move(rhs.primitives)) {}
 
   BVHNode(const BVHNode &rhs) = delete;
@@ -30,7 +29,7 @@ public:
 
   unsigned int leaf;// 1 = leaf node, 0 = branch node
   unsigned int axis;
-  unsigned int children[2];
+  BVHNode *children[2];
   std::vector<Primitives> primitives;
 };
 
