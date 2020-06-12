@@ -1,7 +1,5 @@
 #include <cstdio>
 #include <vector>
-#include <cstdlib>
-#include <chrono>
 #include <iostream>
 #include <fstream>
 #include <cstdint>
@@ -32,26 +30,12 @@ bool LoadObj(Mesh<T> &mesh, std::vector<tinyobj::material_t> &materials, const c
     return false;
   }
 
-  std::cout << "[LoadOBJ] # of shapes in .obj : " << shapes.size() << std::endl;
-  std::cout << "[LoadOBJ] # of materials in .obj : " << materials.size()
-            << std::endl;
-
   size_t num_vertices = 0;
   size_t num_faces = 0;
   for (size_t i = 0; i < shapes.size(); i++) {
-    std::cout << "  shape[" << i << "].name = " << shapes[i].name.c_str() << "\n";
-    std::cout << "  shape[" << i << "].indices: " << shapes[i].mesh.indices.size() << "\n";
-    assert((shapes[i].mesh.indices.size() % 3) == 0);
-    std::cout << "  shape[" << i << "].vertices: " << shapes[i].mesh.positions.size() << "\n";
-    assert((shapes[i].mesh.positions.size() % 3) == 0);
-    std::cout << "  shape[" << i << "].normals: " << shapes[i].mesh.normals.size() << "\n";
-    assert((shapes[i].mesh.normals.size() % 3) == 0);
-
     num_vertices += shapes[i].mesh.positions.size() / 3;
     num_faces += shapes[i].mesh.indices.size() / 3;
   }
-  std::cout << "[LoadOBJ] # of faces: " << num_faces << std::endl;
-  std::cout << "[LoadOBJ] # of vertices: " << num_vertices << std::endl;
 
   size_t vertexIdxOffset = 0;
 

@@ -1,8 +1,5 @@
 #include <algorithm>
-#include <cassert>
-#include <climits>
 #include <cmath>
-#include <ctime>
 #include <iostream>
 #include <vector>
 
@@ -20,7 +17,6 @@ using ft = double;
 constexpr ft pi = 3.141592653589793238462643383279502884;
 constexpr size_t uMaxBounces = 10;
 constexpr int SPP = 100;
-//const int SPP = 100;
 
 using namespace blazert;
 
@@ -29,8 +25,7 @@ inline T uniform(T min, T max) {
   return min + T(std::rand()) / T(RAND_MAX) * (max - min);
 }
 
-// Building an Orthonormal Basis, Revisited
-// http://jcgt.org/published/0006/01/01/
+// Building an Orthonormal Basis, Revisited: http://jcgt.org/published/0006/01/01/
 template<typename T>
 inline void revised_onb(const Vec3r<T> &n, Vec3r<T> &b1, Vec3r<T> &b2) {
   if (n[2] < static_cast<T>(0.0)) {
@@ -58,10 +53,6 @@ inline Vec3r<T> direction_cos_theta(const Vec3r<T> &normal) {
   const T x{r * std::cos(phi)};
   const T y{r * std::sin(phi)};
   const T z{std::sqrt(static_cast<T>(1.0) - u1)};
-
-  //  Vec3r<T> xDir = std::fabs(normal[0]) < std::fabs(normal[1]) ? Vec3r<T>{1., 0., 0.} : Vec3r<T>{0., 1., 0.};
-  //  const Vec3r<T> yDir = normalize(cross(normal, xDir));
-  //  xDir = cross(yDir, normal);
 
   Vec3r<T> xDir;
   Vec3r<T> yDir;
@@ -183,26 +174,12 @@ bool LoadObj(Mesh<T> &mesh, std::vector<tinyobj::material_t> &materials, const c
     return false;
   }
 
-  std::cout << "[LoadOBJ] # of shapes in .obj : " << shapes.size() << std::endl;
-  std::cout << "[LoadOBJ] # of materials in .obj : " << materials.size()
-            << std::endl;
-
   size_t num_vertices = 0;
   size_t num_faces = 0;
   for (size_t i = 0; i < shapes.size(); i++) {
-    std::cout << "  shape[" << i << "].name = " << shapes[i].name.c_str() << "\n";
-    std::cout << "  shape[" << i << "].indices: " << shapes[i].mesh.indices.size() << "\n";
-    assert((shapes[i].mesh.indices.size() % 3) == 0);
-    std::cout << "  shape[" << i << "].vertices: " << shapes[i].mesh.positions.size() << "\n";
-    assert((shapes[i].mesh.positions.size() % 3) == 0);
-    std::cout << "  shape[" << i << "].normals: " << shapes[i].mesh.normals.size() << "\n";
-    assert((shapes[i].mesh.normals.size() % 3) == 0);
-
     num_vertices += shapes[i].mesh.positions.size() / 3;
     num_faces += shapes[i].mesh.indices.size() / 3;
   }
-  std::cout << "[LoadOBJ] # of faces: " << num_faces << std::endl;
-  std::cout << "[LoadOBJ] # of vertices: " << num_vertices << std::endl;
 
   size_t vertexIdxOffset = 0;
 
@@ -274,8 +251,6 @@ void progressBar(int tick, int total, int width = 100) {
   std::string bar(width, ' ');
   std::fill(bar.begin(), bar.begin() + count, '+');
   std::cout << "[ " << ratio << "%% ] [ " << bar << " ]" << (tick == total ? '\n' : '\r');
-  //printf("[ %6.2f %% ] [ %s ]%c", ratio, bar.c_str(),
-  //       tick == total ? '\n' : '\r');
   std::fflush(stdout);
 }
 
@@ -304,10 +279,6 @@ int main(int argc, char **argv) {
   std::string objFilename = "models/cornellbox_suzanne_lucy.obj";
   std::string mtlPath = "models/";
 
-  // arguments can be supplied via command line:
-  // 1. objectfile
-  // 2. scale
-  // 3. path to material files
   if (argc > 1) {
     objFilename = std::string(argv[1]);
   }
@@ -321,7 +292,7 @@ int main(int argc, char **argv) {
   }
 
 #ifdef _OPENMP
-  std::cout << "using OpenMP: yes!\n";
+  std::cout << "-> Using OpenMP!\n";
 #endif
 
   auto *mesh = new Mesh<ft>;
@@ -337,15 +308,8 @@ int main(int argc, char **argv) {
 
   blazert::BVHBuildOptions<ft> build_options;// Use default option
 
-  std::cout << "  BVH build option:\n"
-            << "    # of leaf primitives: " << build_options.min_leaf_primitives << "\n"
-            << "    SAH binsize         : " << build_options.bin_size << "\n";
-
   blazert::TriangleMesh triangle_mesh(mesh->vertices, mesh->faces);
   blazert::BVH accel(triangle_mesh);
-
-  std::cout << "num_triangles = " << mesh->faces.size() << "\n";
-
   blazert::SAHBinnedBuilder builder;
   [[maybe_unused]] auto build_statistics = builder.build(accel, build_options);
 
@@ -363,14 +327,12 @@ int main(int argc, char **argv) {
       for (int i = 0; i < SPP; ++i) {
         ft px = ft(x) + uniform(ft(-0.5), ft(0.5));
         ft py = ft(y) + uniform(ft(-0.5), ft(0.5));
-        // Simple camera. change eye pos and direction fit to .obj model.
 
         Vec3r<ft> rayOrg{0.0, 5.0, 20.0};
 
         Vec3r<ft> rayDir{(px / static_cast<ft>(width)) - static_cast<ft>(0.5),
                          (py / static_cast<ft>(height)) - static_cast<ft>(0.5),
                          static_cast<ft>(-1.0)};
-        //rayDir = normalize(rayDir);
 
         Vec3r<ft> color{0., 0., 0.};
         Vec3r<ft> weight{1., 1., 1.};
@@ -444,7 +406,6 @@ int main(int argc, char **argv) {
           rhoS /= totalrho;
           rhoD /= totalrho;
           rhoR /= totalrho;
-          rhoE /= totalrho;
 
           // Choose an interaction based on the calculated probabilities
           ft rand = uniform(0., 1.);
@@ -485,14 +446,12 @@ int main(int argc, char **argv) {
           }
           // EMIT
           else {
-            // Weight light by cosine factor (surface emits most light in normal
-            // direction)
             if (do_emission) {
               color += std::max(dot(originalNorm, -ray.direction), static_cast<ft>(0.0)) * (emissiveColor * weight);
             }
             break;
           }
-          // Calculate new ray start position and set outgoing direction.
+          // Calculate new ray origin and set outgoing direction.
           rayDir = outDir;
         }
 
@@ -501,7 +460,7 @@ int main(int argc, char **argv) {
 
       finalColor *= 1.0 / SPP;
 
-      // Gamme Correct
+      // Correct gamma
       finalColor[0] = pow(finalColor[0], 1.0 / 2.2);
       finalColor[1] = pow(finalColor[1], 1.0 / 2.2);
       finalColor[2] = pow(finalColor[2], 1.0 / 2.2);
