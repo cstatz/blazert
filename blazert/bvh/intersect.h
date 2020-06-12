@@ -10,6 +10,11 @@
 
 namespace blazert {
 
+
+// min_distance and max_distance need to be initialized by the CALLER in a sensible way, because they are
+// used to compare against,e.g.:
+//    T min_distance = 0;
+//    T max_distance = std::numeric_limit<T>::max()
 template<typename T, typename Node>
 inline bool intersect_node(T &min_distance /* inout */, T &max_distance /* inout*/, const Node &node, const Ray<T> &ray) noexcept {
 
