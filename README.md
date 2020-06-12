@@ -60,6 +60,7 @@ linear algebra
     - [x] (finite) planes
     - [x] cylinders
 - [x] BVH accelerated ray racing
+- [ ] back-face culling (will be implemented)
 - [x] unit tests via [doctest](https://github.com/onqtam/doctest)
 - [x] documentation of the test cases in ```test/doc```
 - [x] benchmark (comparing embree, nanort, bvh and blazeRT) via [google benchmark](https://github.com/google/benchmark)
