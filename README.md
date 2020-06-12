@@ -23,6 +23,8 @@ A **double precision ray tracer** for physics applications based on a [nanort](h
 fork using blaze datatypes. blazeRTs scene interface is similar to [embree](https://github.com/embree/embree) and 
 intents to be a minimal effort (nearly plugin-) replacement. 
 
+We aim at providing a **simple and unambiguous high-level API** for the ray-traversal.
+
 ![image](examples/baseline/path_tracer_blaze.png) 
 
 blazeRT makes use of the the [blaze](https://bitbucket.org/blaze-lib/blaze/src/master/) linear algebra
@@ -31,7 +33,9 @@ instead of using our own vector types, blazeRT can focus on the actual ray traci
 this is advantageous in subsequent scientific application where vector types are needed again. 
 
 blazeRT works with triangular meshes and simple primitives, but it should be easy to extend blazeRT 
-to work on polygons or more complex primitives.
+to work on polygons or more complex primitives. A template for more user-defined geometries can be found 
+[here](examples/geometry_template/GEOM_TEMPLATE.h). If you implement new geometries, we are more than happy to receive
+a pull request from you to include it in blazeRT.
 
 blazeRT has unit test which will increase as development continues and we try to ensure code 
 quality and a reproducible build experience via continuous integration. During the CI process we 
@@ -45,10 +49,11 @@ For contributing, please read the [contribution guide](CONTRIBUTING.md).
 
 ## Features
 - [x] modern C++
+- [x] single and double precision ray tracing 
+- [x] simple and unambiguous high-level scene-based API
+- [x] [Embree](https://github.com/embree/embree) fall back for single precision floats
 - [x] using vector and matrix type from [blaze](https://bitbucket.org/blaze-lib/blaze/src/master/) for efficient 
 linear algebra
-- [x] single and double precision ray tracing 
-- [x] [Embree](https://github.com/embree/embree) fall back for single precision floats
 - [x] currently supported geometry
     - [x] triangular meshes
     - [x] spheres
@@ -229,7 +234,6 @@ traversal. The benchmark is a meshed sphere which is used as a triangular mesh g
 ray tracing kernels. 
 
 The benchmarks are run for the most recent (git-) revisions of the compared raytracing libraries.
-
 
 **NOTE**: For [madnamnn91/bvh](https://github.com/madmann91/bvh) we encoutered segfaults when running this on macOS for 
 meshes that were bigger than a few hundred triangles. Therefore, take the results with a grain of salt.
