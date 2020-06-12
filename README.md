@@ -68,7 +68,7 @@ Before starting the build process please ensure all dependencies are properly in
  * cmake (>= 3.11.0)
  * [blaze](https://bitbucket.org/blaze-lib/blaze/src/master/) (>= 3.7)
  * [Embree](https://github.com/embree/embree) (>= 3) if ```EMBREE_TRACING``` fallback is desired 
- * [doctest](https://github.com/onqtam/doctest) (for testing)
+ * [doctest](https://github.com/onqtam/doctest) (for testing, pulled in as submodule)
  * [google benchmark](https://github.com/google/benchmark) (for running the benchmarks)
 
 ### Clone the repository
