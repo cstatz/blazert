@@ -221,9 +221,6 @@ overlapping bounding boxes (and subsequent primitives) need to be tested.
 
 The benchmarks are run for the most recent (git-) revisions of the compared ray tracing libraries.
 
-**NOTE**: For [madmann91/bvh](https://github.com/madmann91/bvh) we encountered segfaults when running this on macOS for 
-meshes that were bigger than a few hundred triangles. Please take these results with a grain of salt (a bug report has been filed).
-
 The benchmarks were run on the following configuration:
 - Kernel: linux-5.6.15
 - CPU: Intel i5-8250U (8) @ 3.400GHz 
