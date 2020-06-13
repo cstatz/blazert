@@ -221,14 +221,19 @@ overlapping bounding boxes (and subsequent primitives) need to be tested.
 
 The benchmarks are run for the most recent (git-) revisions of the compared ray tracing libraries.
 
-The benchmarks were run on the following configuration:
+*Please take the results with a grain of salt. The measured timings heavily depend on the chosen compiler, compiler version, level of optimization, operating system, system architecture, and the way the system is used otherwise (e.g. do multiple users have concurrent access to the system). We cannot guarantee that the optimal configuration (or even api) is chosen for all benchmarked libraries. Regarding embree: we're comparing traversal or intersection routines that are similar in behaviour. That means, for embree the benchmarks are performes with single ray traversal (rtcIntersect1). This is not optimal and embree is way more powerful (leveraging all the vectorization goodness) using the streaming api (or calls to rtcIntersectN).*
+
+The provided results were obtained using the following configuration:
+- OS: linux
 - Kernel: linux-5.6.15
-- CPU: Intel i5-8250U (8) @ 3.400GHz 
+- CPU: Intel i5-8250U (8) @ 3.400GHz
 - RAM 32 GB
 - L1-Cache: 32 KB 
 - L2-Cache: 256 KB
 - L3-Cache: 6144 KB
 - compiler: g++-10
+- optimization flags as documented in the projects root CMakeLists.txt
+- OpenMP disabled for build and traversal
 
 The following plots show the benchmark results for the bvh build and the traversal for a realistic rendering
 case (not all rays hit) and for a realistic scientific rendering case (all rays hit).
