@@ -190,13 +190,11 @@ static void BM_bvh_TRAVERSE_REALISTIC_Sphere_SweepSAH(benchmark::State &state) {
   std::vector<Triangle> triangles;
   triangles.reserve(os->triangles.size());
   for (uint32_t i = 0; i < os->triangles.size(); i += 3) {
-    triangles.emplace_back(
-        Vector3{static_cast<Scalar>(os->triangles[i][0]), static_cast<Scalar>(os->triangles[i][1]),
-                static_cast<Scalar>(os->triangles[i][2])},
-        Vector3{static_cast<Scalar>(os->triangles[i + 1][0]), static_cast<Scalar>(os->triangles[i + 1][1]),
-                static_cast<Scalar>(os->triangles[i + 1][2])},
-        Vector3{static_cast<Scalar>(os->triangles[i + 2][0]), static_cast<Scalar>(os->triangles[i + 2][1]),
-                static_cast<Scalar>(os->triangles[i + 2][2])});
+    const Vec3ui &face = os->triangles[i];
+    const Vec3r<T> &p0 = os->vertices[face[0]];
+    const Vec3r<T> &p1 = os->vertices[face[1]];
+    const Vec3r<T> &p2 = os->vertices[face[2]];
+    triangles.emplace_back(Triangle({p0[0], p0[1], p0[2]}, {p1[0], p1[1], p1[2]}, {p2[0], p2[1], p2[2]}));
   }
 
   Bvh bvh;
@@ -247,13 +245,11 @@ static void BM_bvh_TRAVERSE_REALISTIC_Sphere_BinnedSAH(benchmark::State &state) 
   std::vector<Triangle> triangles;
   triangles.reserve(os->triangles.size());
   for (uint32_t i = 0; i < os->triangles.size(); i += 3) {
-    triangles.emplace_back(
-        Vector3{static_cast<Scalar>(os->triangles[i][0]), static_cast<Scalar>(os->triangles[i][1]),
-                static_cast<Scalar>(os->triangles[i][2])},
-        Vector3{static_cast<Scalar>(os->triangles[i + 1][0]), static_cast<Scalar>(os->triangles[i + 1][1]),
-                static_cast<Scalar>(os->triangles[i + 1][2])},
-        Vector3{static_cast<Scalar>(os->triangles[i + 2][0]), static_cast<Scalar>(os->triangles[i + 2][1]),
-                static_cast<Scalar>(os->triangles[i + 2][2])});
+    const Vec3ui &face = os->triangles[i];
+    const Vec3r<T> &p0 = os->vertices[face[0]];
+    const Vec3r<T> &p1 = os->vertices[face[1]];
+    const Vec3r<T> &p2 = os->vertices[face[2]];
+    triangles.emplace_back(Triangle({p0[0], p0[1], p0[2]}, {p1[0], p1[1], p1[2]}, {p2[0], p2[1], p2[2]}));
   }
 
   Bvh bvh;

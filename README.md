@@ -26,7 +26,7 @@ blazeRTs scene interface is similar to [embree](https://github.com/embree/embree
 effort (nearly plugin-) replacement. blazeRT should work on any system and architecture for which a recent 
 (C++17 compatible) compiler is available.
 
-We aim at providing a **simple and unambiguous high-level API** for the ray-traversal.
+We aim at providing a **simple and unambiguous high-level API** for the ray-traversal. 
 We do not aim at providing backwards-compatibility (especially to older C++ standards).
 
 blazeRT makes use of the the [blaze](https://bitbucket.org/blaze-lib/blaze/src/master/) linear algebra
@@ -41,9 +41,9 @@ to work on polygons or more complex primitives. A template for user-defined geom
 [here](examples/geometry_template/GEOM_TEMPLATE.h). If you implement new geometries, we are more than happy to receive
 a pull request from you to include it in blazeRT.
 
-blazeRT is tested using unit tests (whose number will increase as development progresses). We try to ensure high code 
+blazeRT is tested using unit tests (whose number will increase as development progresses) as well as by comparison of rendering results to reference images. Currently the unit tests cover roughly 90% of files and 69% of lines, but in the tests we try to catch as many (fringe-) cases as possible.  We try to ensure high code 
 quality and a reproducible build experience via continuous integration. During the CI process we 
-build the examples and the test cases, which need to run successfully in order for the CI to pass. Currently, 
+build the examples and the tests, which need to run successfully in order for the CI to pass. Currently, 
 blazeRT is CI-tested on Ubuntu 18.04 and macOS with gcc and clang.
 
 ![image](examples/baseline/path_tracer_blaze.png)
@@ -182,7 +182,7 @@ To give you an impression of the High-Level API
   /// Commit and build the scene
   scene.commit();
   
-  /// Iterate of the ray directions:
+  /// Iterate over the ray directions:
   for (int y = 0; y < height; y++) {
     for (int x = 0; x < width; x++) {
 
@@ -203,10 +203,8 @@ To give you an impression of the High-Level API
 
 ### Notes
 - Different from nanoRT, the bvh-build is not (yet) parallelized. For meshes with 5 million triangles, blazeRT
-needs about 5 seconds to build the BHV and about 20 seconds for 20 million triangles. For scientific or engineering ray 
-tracing applications the scene is usually static while ray origin and direction are varied. The computational effort is
- hence defined by the traversal and not the build.
-- ```BLAZERTALIGN``` is currently not used but might be used in the future. 
+needs about 5 seconds (on our tested systems) to build the BHV and about 20 seconds for 20 million triangles. For scientific or engineering ray tracing applications the scene is usually static while ray origin and direction are varied. The computational effort is hence defined mainly by the traversal and not the build. Ray traversal can be parallelized on application level (e.g. omp for loop when iterating over the ray (-directions), please have a look at the provided examples).
+- ```BLAZERTALIGN``` is currently unused but might be used in the future. 
 
 ## Benchmarks
 We have included benchmarks comparing blazeRT to [nanoRT](https://github.com/lighttransport/nanort),
@@ -214,24 +212,26 @@ We have included benchmarks comparing blazeRT to [nanoRT](https://github.com/lig
 traversal. The benchmark scene is a (triangle-) meshed sphere which which can be refined by sub-division. There are 
 two traversal cases: 
 - A rendering case where the scene size (number of triangles) is increased (while maintaining the same dimensions) and 
-8192 * 8192 rays are shot at the scene in a rectangular pattern.
+8192 * 8192 rays are shot at the scene in a rectangular pattern. Here we expect log scaling with the number of triangles.
 - A scientific case where the scene size as well as the number of rays are increased (a ray is shot at each vertex of 
 the sphere mesh). This can be considered as some kind of worst cast, because every ray hits and for each ray multiple 
-overlapping bounding boxes (and subsequent primitives) need to be tested.
+overlapping bounding boxes (and subsequent primitives) need to be tested. Here we expect linear scaling with the number of triangles.
 
 The benchmarks are run for the most recent (git-) revisions of the compared ray tracing libraries.
 
-**NOTE**: For [madmann91/bvh](https://github.com/madmann91/bvh) we encountered segfaults when running this on macOS for 
-meshes that were bigger than a few hundred triangles. Please take these results with a grain of salt (a bug report has been filed).
+*Please take the results with a grain of salt. The measured timings heavily depend on the chosen compiler, compiler version, level of optimization, operating system, system architecture, and the way the system is used otherwise (e.g. do multiple users have concurrent access to the system). We cannot guarantee that the optimal configuration (or even api) is chosen for all benchmarked libraries. Regarding embree: we're comparing traversal or intersection routines that are similar in behaviour. That means, for embree the benchmarks are performes with single ray traversal (rtcIntersect1). This is not optimal and embree is way more powerful (leveraging all the vectorization goodness) using the streaming api (or calls to rtcIntersectN).*
 
-The benchmarks were run on the following configuration:
+The provided results were obtained using the following configuration:
+- OS: linux
 - Kernel: linux-5.6.15
-- CPU: Intel i5-8250U (8) @ 3.400GHz 
+- CPU: Intel i5-8250U (8) @ 3.400GHz
 - RAM 32 GB
 - L1-Cache: 32 KB 
 - L2-Cache: 256 KB
 - L3-Cache: 6144 KB
 - compiler: g++-10
+- optimization flags as documented in the projects root CMakeLists.txt
+- OpenMP disabled for build and traversal
 
 The following plots show the benchmark results for the bvh build and the traversal for a realistic rendering
 case (not all rays hit) and for a realistic scientific rendering case (all rays hit).
