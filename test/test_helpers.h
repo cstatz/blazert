@@ -27,6 +27,7 @@ inline bool is_almost_equal(const T &in_a, const T &in_b, const double eps) {
   return (std::abs(in_a - in_b) <= eps);
 }
 
+// CCW = counter clockwise
 template<typename T>
 inline void cube_mesh_ccw(const Vec3r<T> &center, Vec3rList<T> &vertices, Vec3iList &indices) {
   // BBox (-1, -1, -1) ( 1,  1,  1)
@@ -54,6 +55,7 @@ inline void cube_mesh_ccw(const Vec3r<T> &center, Vec3rList<T> &vertices, Vec3iL
   indices.emplace_back(Vec3ui{0, 3, 1});
 };
 
+// CW = clockwise
 template<typename T>
 inline void cube_mesh_cw(const Vec3r<T> &center, Vec3rList<T> &vertices, Vec3iList &indices) {
   // BBox (-1, -1, -1) ( 1,  1,  1)
