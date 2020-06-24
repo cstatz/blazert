@@ -103,6 +103,9 @@ git submodule update
 This will pull doctest, [nanoRT](https://github.com/lighttransport/nanort) and [madmann91/bvh](https://github.com/madmann91/bvh) as submodules.
 
 ### Build and test
+
+For windows read this: [building on windows](BUILDING_ON_WINDOWS.md)
+
 This is a header-only library. No need to build anything. Just drop it in your source directory and off you go.
 The build step is solely for the examples, tests and the benchmark.
 
