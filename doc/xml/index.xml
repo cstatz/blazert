@@ -1,0 +1,42 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygenindex xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="index.xsd" version="1.8.18">
+  <compound refid="classblazert_1_1BlazertScene" kind="class"><name>blazert::BlazertScene</name>
+    <member refid="classblazert_1_1BlazertScene_1a9f7a48788de8539429e5e12a844af0f0" kind="variable"><name>build_options</name></member>
+    <member refid="classblazert_1_1BlazertScene_1a78f6215effb6deaaec887f3f9c3429bd" kind="variable"><name>has_been_committed</name></member>
+    <member refid="classblazert_1_1BlazertScene_1a034cbb7a3b02b51f8f65eff568f56424" kind="variable"><name>geometries</name></member>
+    <member refid="classblazert_1_1BlazertScene_1ae25cec40966d913ad4235a2d48d8547c" kind="variable"><name>triangle_collection</name></member>
+    <member refid="classblazert_1_1BlazertScene_1ac28a566d07cab03ba29746a704e38739" kind="variable"><name>triangles_bvh</name></member>
+    <member refid="classblazert_1_1BlazertScene_1adfa0cabca79c93c0fb056ea4146b375d" kind="variable"><name>triangles_geom_id</name></member>
+    <member refid="classblazert_1_1BlazertScene_1ab2841772e1062683ee2ff78cc0b35d0f" kind="variable"><name>has_triangles</name></member>
+    <member refid="classblazert_1_1BlazertScene_1a07668a138493a64ff5916ea5e7c631f6" kind="variable"><name>sphere_collection</name></member>
+    <member refid="classblazert_1_1BlazertScene_1ab6eb647122f6b1278f842d50943a11ab" kind="variable"><name>spheres_bvh</name></member>
+    <member refid="classblazert_1_1BlazertScene_1a87e8045fd4139f532814143fa9c37ad9" kind="variable"><name>spheres_geom_id</name></member>
+    <member refid="classblazert_1_1BlazertScene_1a571e6b77559032ddc3f40287b5292a07" kind="variable"><name>has_spheres</name></member>
+    <member refid="classblazert_1_1BlazertScene_1a335fda47f2a2c798e8b89f2b3fbc3bfb" kind="variable"><name>plane_collection</name></member>
+    <member refid="classblazert_1_1BlazertScene_1af1a1950eadb665439175b2cd5f554952" kind="variable"><name>planes_bvh</name></member>
+    <member refid="classblazert_1_1BlazertScene_1a794c064893ca2d99f3dfc86b3f83e207" kind="variable"><name>planes_geom_id</name></member>
+    <member refid="classblazert_1_1BlazertScene_1ab1c532c6f0f1aafc9c9f14cf7194d276" kind="variable"><name>has_planes</name></member>
+    <member refid="classblazert_1_1BlazertScene_1a3b79dec4afd55a7a0f3d8ebffb85e10c" kind="variable"><name>cylinder_collection</name></member>
+    <member refid="classblazert_1_1BlazertScene_1a76c755654f4b4abf1ea5a60a5587948d" kind="variable"><name>cylinders_bvh</name></member>
+    <member refid="classblazert_1_1BlazertScene_1a188346096a00dcb08f86afe3a43ea46c" kind="variable"><name>cylinders_geom_id</name></member>
+    <member refid="classblazert_1_1BlazertScene_1aeb2b8d4f17f40cfee395ed4b701e22b6" kind="variable"><name>has_cylinders</name></member>
+    <member refid="classblazert_1_1BlazertScene_1a01107c1a3ba3782f8dc39c0ddc569699" kind="function"><name>BlazertScene</name></member>
+    <member refid="classblazert_1_1BlazertScene_1a719c313b34727a4414dd7bf74ec92df9" kind="function"><name>add_mesh</name></member>
+    <member refid="classblazert_1_1BlazertScene_1ab242056fa98e69136e05bd8a19cdf487" kind="function"><name>add_spheres</name></member>
+    <member refid="classblazert_1_1BlazertScene_1ae32d78dacde00d13520366d07902c8d3" kind="function"><name>add_planes</name></member>
+    <member refid="classblazert_1_1BlazertScene_1a78c7777dff38468f4323e6e05f5f181c" kind="function"><name>add_cylinders</name></member>
+    <member refid="classblazert_1_1BlazertScene_1a0b32a881e3299c018870df1f3849398d" kind="function"><name>commit</name></member>
+  </compound>
+  <compound refid="namespaceblazert" kind="namespace"><name>blazert</name>
+    <member refid="scene_8h_1a8d238469298dac1d5268f85be346f3d1" kind="function"><name>intersect1</name></member>
+  </compound>
+  <compound refid="scene_8h" kind="file"><name>scene.h</name>
+    <member refid="scene_8h_1aa3ac618a9d1417f7618b4afa427a6af1" kind="define"><name>BLAZERT_BLAZERT_SCENE_H</name></member>
+  </compound>
+  <compound refid="README_8md" kind="file"><name>README.md</name>
+  </compound>
+  <compound refid="dir_fa2540dfdc41c03c14f4d1ba7eafe9f2" kind="dir"><name>blazert</name>
+  </compound>
+  <compound refid="indexpage" kind="page"><name>index</name>
+  </compound>
+</doxygenindex>

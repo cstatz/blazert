@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.18">
+  <compounddef id="dir_fa2540dfdc41c03c14f4d1ba7eafe9f2" kind="dir">
+    <compoundname>blazert</compoundname>
+    <innerfile refid="scene_8h">scene.h</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="blazert/"/>
+  </compounddef>
+</doxygen>

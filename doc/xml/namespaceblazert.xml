@@ -1,0 +1,81 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.18">
+  <compounddef id="namespaceblazert" kind="namespace" language="C++">
+    <compoundname>blazert</compoundname>
+    <innerclass refid="classblazert_1_1BlazertScene" prot="public">blazert::BlazertScene</innerclass>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="scene_8h_1a8d238469298dac1d5268f85be346f3d1" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>bool</type>
+        <definition>bool blazert::intersect1</definition>
+        <argsstring>(const BlazertScene&lt; T &gt; &amp;scene, const Ray&lt; T &gt; &amp;ray, RayHit&lt; T &gt; &amp;rayhit)</argsstring>
+        <name>intersect1</name>
+        <param>
+          <type>const <ref refid="classblazert_1_1BlazertScene" kindref="compound">BlazertScene</ref>&lt; T &gt; &amp;</type>
+          <declname>scene</declname>
+        </param>
+        <param>
+          <type>const Ray&lt; T &gt; &amp;</type>
+          <declname>ray</declname>
+        </param>
+        <param>
+          <type>RayHit&lt; T &gt; &amp;</type>
+          <declname>rayhit</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>T</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>floating point type, which is usually float or double, but in the future, quadruple precision might be useful </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>scene</parametername>
+</parameternamelist>
+<parameterdescription>
+<para></para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>ray</parametername>
+</parameternamelist>
+<parameterdescription>
+<para></para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>rayhit</parametername>
+</parameternamelist>
+<parameterdescription>
+<para></para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para></para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="blazert/scene.h" line="169" column="13" bodyfile="blazert/scene.h" bodystart="169" bodyend="218"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="blazert/scene.h" line="24" column="1"/>
+  </compounddef>
+</doxygen>

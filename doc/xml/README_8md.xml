@@ -1,0 +1,274 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.18">
+  <compounddef id="README_8md" kind="file" language="Markdown">
+    <compoundname>README.md</compoundname>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline><highlight class="normal">[![Build<sp/>Status](https://travis-ci.com/cstatz/blazert.svg?token=MzD1bv55cBzChUswxdrj&amp;branch=develop)](https://travis-ci.com/cstatz/blazert)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">#<sp/>blazeRT</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">1.<sp/>[Introduction](#introduction)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>1.<sp/>[Contributing](#contributing)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>2.<sp/>[Versions](#versions)</highlight></codeline>
+<codeline><highlight class="normal">2.<sp/>[Features](#features)</highlight></codeline>
+<codeline><highlight class="normal">3.<sp/>[Installation](#installation)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>1.<sp/>[Dependencies](#dependencies)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>2.<sp/>[Clone<sp/>the<sp/>repository](#clone-the-repository)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>3.<sp/>[Build<sp/>and<sp/>Test](#build-and-test)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>4.<sp/>[Configuration](#configuration)</highlight></codeline>
+<codeline><highlight class="normal">4.<sp/>[Usage](#usage)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>1.<sp/>[Examples](#examples)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>2.<sp/>[Minimal<sp/>Examples](#minimal-example)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>3.<sp/>[Notes](#notes)</highlight></codeline>
+<codeline><highlight class="normal">5.<sp/>[Benchmarks](#benchmarks)</highlight></codeline>
+<codeline><highlight class="normal">6.<sp/>[License](#license)</highlight></codeline>
+<codeline></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>Introduction</highlight></codeline>
+<codeline><highlight class="normal">blazeRT<sp/>is<sp/>a<sp/>**double<sp/>precision<sp/>ray<sp/>tracer**<sp/>for<sp/>scientific<sp/>or<sp/>engineering<sp/>applications<sp/>derived<sp/>from<sp/></highlight></codeline>
+<codeline><highlight class="normal">[nanoRT](https://github.com/lighttransport/nanort)<sp/>using<sp/>blaze<sp/>datatypes<sp/>and<sp/>written<sp/>in<sp/>modern<sp/>C++17.<sp/></highlight></codeline>
+<codeline><highlight class="normal">blazeRTs<sp/>scene<sp/>interface<sp/>is<sp/>similar<sp/>to<sp/>[embree](https://github.com/embree/embree)<sp/>and<sp/>intents<sp/>to<sp/>be<sp/>a<sp/>minimal<sp/></highlight></codeline>
+<codeline><highlight class="normal">effort<sp/>(nearly<sp/>plugin-)<sp/>replacement.<sp/>blazeRT<sp/>should<sp/>work<sp/>on<sp/>any<sp/>system<sp/>and<sp/>architecture<sp/>for<sp/>which<sp/>a<sp/>recent<sp/></highlight></codeline>
+<codeline><highlight class="normal">(C++17<sp/>compatible)<sp/>compiler<sp/>is<sp/>available.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">We<sp/>aim<sp/>at<sp/>providing<sp/>a<sp/>**simple<sp/>and<sp/>unambiguous<sp/>high-level<sp/>API**<sp/>for<sp/>the<sp/>ray-traversal.<sp/></highlight></codeline>
+<codeline><highlight class="normal">We<sp/>do<sp/>not<sp/>aim<sp/>at<sp/>providing<sp/>backwards-compatibility<sp/>(especially<sp/>to<sp/>older<sp/>C++<sp/>standards).</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">blazeRT<sp/>makes<sp/>use<sp/>of<sp/>the<sp/>the<sp/>[blaze](https://bitbucket.org/blaze-lib/blaze/src/master/)<sp/>linear<sp/>algebra</highlight></codeline>
+<codeline><highlight class="normal">library<sp/>for<sp/>its<sp/>vector<sp/>types.<sp/>Because<sp/>we<sp/>rely<sp/>on<sp/>a<sp/>well-tested<sp/>and<sp/>well-optimized<sp/>linear<sp/>algebra<sp/>library</highlight></codeline>
+<codeline><highlight class="normal">(instead<sp/>of<sp/>using<sp/>our<sp/>own<sp/>vector<sp/>types),<sp/>blazeRT<sp/>can<sp/>focus<sp/>on<sp/>the<sp/>actual<sp/>ray<sp/>tracing<sp/>algorithms.<sp/>Furthermore,</highlight></codeline>
+<codeline><highlight class="normal">using<sp/>types<sp/>from<sp/>a<sp/>linear<sp/>algebra<sp/>library<sp/>is<sp/>advantageous<sp/>for<sp/>the<sp/>subsequent<sp/>development<sp/>of<sp/>scientific<sp/>application<sp/></highlight></codeline>
+<codeline><highlight class="normal">where<sp/>the<sp/>vector<sp/>types<sp/>are<sp/>needed<sp/>again.<sp/>blazeRT<sp/>should<sp/>work<sp/>with<sp/>any<sp/>library<sp/>providing<sp/>these<sp/>vector<sp/>types<sp/>as<sp/></highlight></codeline>
+<codeline><highlight class="normal">long<sp/>as<sp/>certain<sp/>criteria<sp/>are<sp/>met<sp/>(a<sp/>minimal<sp/>set<sp/>of<sp/>operation<sp/>on<sp/>these<sp/>vector<sp/>types).</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">blazeRT<sp/>works<sp/>with<sp/>triangular<sp/>meshes<sp/>and<sp/>simple<sp/>primitives,<sp/>but<sp/>it<sp/>is<sp/>easy<sp/>to<sp/>extend<sp/>blazeRT<sp/></highlight></codeline>
+<codeline><highlight class="normal">to<sp/>work<sp/>on<sp/>polygons<sp/>or<sp/>more<sp/>complex<sp/>primitives.<sp/>A<sp/>template<sp/>for<sp/>user-defined<sp/>geometries<sp/>can<sp/>be<sp/>found<sp/></highlight></codeline>
+<codeline><highlight class="normal">[here](examples/geometry_template/GEOM_TEMPLATE.h).<sp/>If<sp/>you<sp/>implement<sp/>new<sp/>geometries,<sp/>we<sp/>are<sp/>more<sp/>than<sp/>happy<sp/>to<sp/>receive</highlight></codeline>
+<codeline><highlight class="normal">a<sp/>pull<sp/>request<sp/>from<sp/>you<sp/>to<sp/>include<sp/>it<sp/>in<sp/>blazeRT.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">blazeRT<sp/>is<sp/>tested<sp/>using<sp/>unit<sp/>tests<sp/>(whose<sp/>number<sp/>will<sp/>increase<sp/>as<sp/>development<sp/>progresses)<sp/>as<sp/>well<sp/>as<sp/>by<sp/>comparison<sp/>of<sp/>rendering<sp/>results<sp/>to<sp/>reference<sp/>images.<sp/>Currently<sp/>the<sp/>unit<sp/>tests<sp/>cover<sp/>roughly<sp/>90%<sp/>of<sp/>files<sp/>and<sp/>69%<sp/>of<sp/>lines,<sp/>but<sp/>in<sp/>the<sp/>tests<sp/>we<sp/>try<sp/>to<sp/>catch<sp/>as<sp/>many<sp/>(fringe-)<sp/>cases<sp/>as<sp/>possible.<sp/><sp/>We<sp/>try<sp/>to<sp/>ensure<sp/>high<sp/>code<sp/></highlight></codeline>
+<codeline><highlight class="normal">quality<sp/>and<sp/>a<sp/>reproducible<sp/>build<sp/>experience<sp/>via<sp/>continuous<sp/>integration.<sp/>During<sp/>the<sp/>CI<sp/>process<sp/>we<sp/></highlight></codeline>
+<codeline><highlight class="normal">build<sp/>the<sp/>examples<sp/>and<sp/>the<sp/>tests,<sp/>which<sp/>need<sp/>to<sp/>run<sp/>successfully<sp/>in<sp/>order<sp/>for<sp/>the<sp/>CI<sp/>to<sp/>pass.<sp/>Currently,<sp/></highlight></codeline>
+<codeline><highlight class="normal">blazeRT<sp/>is<sp/>CI-tested<sp/>on<sp/>Ubuntu<sp/>18.04<sp/>and<sp/>macOS<sp/>with<sp/>gcc<sp/>and<sp/>clang.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">![image](examples/baseline/path_tracer_blaze.png)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">(Rendered<sp/>using<sp/>the<sp/>`path_tracer`<sp/>example<sp/>adapted<sp/>from<sp/>`nanoRT`<sp/>and<sp/>originally<sp/>contributed<sp/>by<sp/></highlight></codeline>
+<codeline><highlight class="normal">[daseyb](https://github.com/daseyb))</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Contributing</highlight></codeline>
+<codeline><highlight class="normal">We<sp/>appreciate<sp/>all<sp/>contributions<sp/>from<sp/>issues<sp/>to<sp/>pull<sp/>requests.<sp/></highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">For<sp/>contributing,<sp/>please<sp/>read<sp/>the<sp/>[contribution<sp/>guide](CONTRIBUTING.md).</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Versions</highlight></codeline>
+<codeline><highlight class="normal">The<sp/>releases<sp/>are<sp/>based<sp/>on<sp/>the<sp/>master<sp/>branch.<sp/>The<sp/>release-version<sp/>is<sp/>tagged<sp/>and<sp/>follows<sp/>the<sp/>scheme<sp/>Year.Quarter.Revision.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>Features</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>[x]<sp/>modern<sp/>C++</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>[x]<sp/>single<sp/>and<sp/>double<sp/>precision<sp/>ray<sp/>tracing<sp/></highlight></codeline>
+<codeline><highlight class="normal">-<sp/>[x]<sp/>simple<sp/>and<sp/>unambiguous<sp/>high-level<sp/>scene-based<sp/>API</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>[x]<sp/>[Embree](https://github.com/embree/embree)<sp/>fall<sp/>back<sp/>for<sp/>single<sp/>precision<sp/>floats</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>[x]<sp/>using<sp/>vector<sp/>and<sp/>matrix<sp/>type<sp/>from<sp/>[blaze](https://bitbucket.org/blaze-lib/blaze/src/master/)<sp/>for<sp/>efficient<sp/></highlight></codeline>
+<codeline><highlight class="normal">linear<sp/>algebra</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>[x]<sp/>currently<sp/>supported<sp/>geometry</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>-<sp/>[x]<sp/>triangular<sp/>meshes</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>-<sp/>[x]<sp/>spheres</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>-<sp/>[x]<sp/>(finite)<sp/>planes</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>-<sp/>[x]<sp/>cylinders</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>[x]<sp/>BVH<sp/>accelerated<sp/>ray<sp/>racing</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>[<sp/>]<sp/>back-face<sp/>culling<sp/>(will<sp/>be<sp/>implemented)</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>[x]<sp/>unit<sp/>tests<sp/>via<sp/>[doctest](https://github.com/onqtam/doctest)</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>[x]<sp/>documentation<sp/>of<sp/>the<sp/>test<sp/>cases<sp/>in<sp/>```test/doc```</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>[x]<sp/>benchmark<sp/>(comparing<sp/>[embree](https://github.com/embree/embree),<sp/>[nanoRT](https://github.com/lighttransport/nanort),<sp/>[madmann91/bvh](https://github.com/madmann91/bvh)<sp/>and<sp/>blazeRT)<sp/>via<sp/>[google<sp/>benchmark](https://github.com/google/benchmark)</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>[x]<sp/>cmake<sp/>script<sp/>to<sp/>aggregate<sp/>the<sp/>code<sp/>into<sp/>a<sp/>single-header<sp/>library<sp/>(not<sp/>recommended)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>Installation</highlight></codeline>
+<codeline><highlight class="normal">Installation<sp/>and<sp/>build<sp/>are<sp/>tested<sp/>on<sp/>linux<sp/>(e.g.<sp/>ubuntu<sp/>bionic,<sp/>arch<sp/>linux)<sp/>and<sp/>macOS.</highlight></codeline>
+<codeline><highlight class="normal">Before<sp/>starting<sp/>the<sp/>build<sp/>process<sp/>please<sp/>ensure<sp/>all<sp/>dependencies<sp/>are<sp/>properly<sp/>installed<sp/>and<sp/>available<sp/>to<sp/>the<sp/>project.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Dependencies</highlight></codeline>
+<codeline><highlight class="normal"><sp/>*<sp/>C++17<sp/>capable<sp/>compiler</highlight></codeline>
+<codeline><highlight class="normal"><sp/>*<sp/>cmake<sp/>(&gt;=<sp/>3.11.0)</highlight></codeline>
+<codeline><highlight class="normal"><sp/>*<sp/>[blaze](https://bitbucket.org/blaze-lib/blaze/src/master/)<sp/>(&gt;=<sp/>3.7)</highlight></codeline>
+<codeline><highlight class="normal"><sp/>*<sp/>[Embree](https://github.com/embree/embree)<sp/>(&gt;=<sp/>3)<sp/>if<sp/>```EMBREE_TRACING```<sp/>fallback<sp/>is<sp/>desired<sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/>*<sp/>[doctest](https://github.com/onqtam/doctest)<sp/>(for<sp/>testing,<sp/>pulled<sp/>in<sp/>as<sp/>submodule)</highlight></codeline>
+<codeline><highlight class="normal"><sp/>*<sp/>[google<sp/>benchmark](https://github.com/google/benchmark)<sp/>(for<sp/>running<sp/>the<sp/>benchmarks)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Clone<sp/>the<sp/>repository</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">Clone<sp/>the<sp/>repository<sp/>with<sp/>the<sp/>following<sp/>command:</highlight></codeline>
+<codeline><highlight class="normal">```git<sp/>clone<sp/>https://github.com/cstatz/blazert.git```</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">For<sp/>the<sp/>tests<sp/>and<sp/>the<sp/>benchmarks<sp/>the<sp/>submodules<sp/>must<sp/>be<sp/>cloned<sp/>as<sp/>well:</highlight></codeline>
+<codeline><highlight class="normal">```</highlight></codeline>
+<codeline><highlight class="normal">git<sp/>submodule<sp/>init</highlight></codeline>
+<codeline><highlight class="normal">git<sp/>submodule<sp/>update<sp/></highlight></codeline>
+<codeline><highlight class="normal">```</highlight></codeline>
+<codeline><highlight class="normal">This<sp/>will<sp/>pull<sp/>doctest,<sp/>[nanoRT](https://github.com/lighttransport/nanort)<sp/>and<sp/>[madmann91/bvh](https://github.com/madmann91/bvh)<sp/>as<sp/>submodules.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Build<sp/>and<sp/>test</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">For<sp/>windows<sp/>read<sp/>this:<sp/>[building<sp/>on<sp/>windows](BUILDING_ON_WINDOWS.md)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">This<sp/>is<sp/>a<sp/>header-only<sp/>library.<sp/>No<sp/>need<sp/>to<sp/>build<sp/>anything.<sp/>Just<sp/>drop<sp/>it<sp/>in<sp/>your<sp/>source<sp/>directory<sp/>and<sp/>off<sp/>you<sp/>go.</highlight></codeline>
+<codeline><highlight class="normal">The<sp/>build<sp/>step<sp/>is<sp/>solely<sp/>for<sp/>the<sp/>examples,<sp/>tests<sp/>and<sp/>the<sp/>benchmark.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">We<sp/>strictly<sp/>recommend<sp/>an<sp/>out-of-source<sp/>build<sp/>in<sp/>a<sp/>separate<sp/>directory<sp/>(here<sp/>for<sp/>simplicity<sp/>```build```)<sp/></highlight></codeline>
+<codeline><highlight class="normal">Starting<sp/>in<sp/>the<sp/>source<sp/>directory<sp/>to<sp/>project<sp/>is<sp/>build<sp/>from<sp/>the<sp/>commandline<sp/>as<sp/>follows:</highlight></codeline>
+<codeline><highlight class="normal">```shell<sp/>script</highlight></codeline>
+<codeline><highlight class="normal">mkdir<sp/>build</highlight></codeline>
+<codeline><highlight class="normal">cd<sp/>build<sp/></highlight></codeline>
+<codeline><highlight class="normal">ccmake<sp/>../<sp/><sp/>#<sp/>create<sp/>cache<sp/>and<sp/>configuration</highlight></codeline>
+<codeline><highlight class="normal">cmake<sp/>--build<sp/>.</highlight></codeline>
+<codeline><highlight class="normal">cmake<sp/>--build<sp/>.<sp/>--<sp/>install<sp/><sp/>#<sp/>If<sp/>package<sp/>needs<sp/>to<sp/>be<sp/>installed<sp/></highlight></codeline>
+<codeline><highlight class="normal">ctest<sp/><sp/>#<sp/>Runs<sp/>the<sp/>tests</highlight></codeline>
+<codeline><highlight class="normal">```</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">**For<sp/>maximum<sp/>performance**,<sp/>we<sp/>recommend<sp/>building<sp/>with<sp/>**gcc**<sp/>which<sp/>results<sp/>in<sp/>a<sp/>15%<sp/>to<sp/>20%<sp/>better<sp/>performance</highlight></codeline>
+<codeline><highlight class="normal">compared<sp/>to<sp/>clang<sp/>(on<sp/>linux<sp/>and<sp/>macOS).<sp/>The<sp/>provided<sp/>benchmarks<sp/>might<sp/>be<sp/>used<sp/>to<sp/>tune<sp/>the<sp/>compilation<sp/>flags<sp/>for<sp/>your<sp/></highlight></codeline>
+<codeline><highlight class="normal">specific<sp/>system<sp/>and<sp/>architecture.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">**A<sp/>word<sp/>of<sp/>caution:**<sp/>blazeRT<sp/>will<sp/>compile<sp/>and<sp/>work<sp/>with<sp/>compiler<sp/>optimizations<sp/>enabled<sp/>(up<sp/>to<sp/>**-O3**),<sp/>but<sp/>needs<sp/></highlight></codeline>
+<codeline><highlight class="normal">infinite-math.<sp/>If<sp/>your<sp/>application<sp/>needs<sp/>fast-math,<sp/>ensure<sp/>that<sp/>the<sp/>blazeRT<sp/>code<sp/>path<sp/>is<sp/>compiled<sp/>with<sp/></highlight></codeline>
+<codeline><highlight class="normal">`-fno-finite-math-only`<sp/>(in<sp/>case<sp/>of<sp/>clang).<sp/>In<sp/>terms<sp/>of<sp/>performance,<sp/>in<sp/>its<sp/>current<sp/>form<sp/>there<sp/>is<sp/>no<sp/>major<sp/>runtime<sp/></highlight></codeline>
+<codeline><highlight class="normal">difference<sp/>between<sp/>compilation<sp/>with<sp/>*-O2*<sp/>and<sp/>*-O3*.<sp/></highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Configuration</highlight></codeline>
+<codeline><highlight class="normal">The<sp/>easiest<sp/>way<sp/>to<sp/>set<sp/>the<sp/>configuration<sp/>variables<sp/>is<sp/>by<sp/>using<sp/>```ccmake```<sp/>or<sp/>pass<sp/>the<sp/>variables</highlight></codeline>
+<codeline><highlight class="normal">via<sp/>```cmake<sp/>../<sp/>-D&lt;VARIABLE&gt;:&lt;TYPE&gt;=value```.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>```ENABLE_OMP```:<sp/>Enable<sp/>OpenMP<sp/>in<sp/>examples<sp/>(for<sp/>traversal)</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>```BUILD_TEST```:<sp/>Build<sp/>tests</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>```BUILD_BENCHMARK```:<sp/>Build<sp/>the<sp/>benchmarks</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>```BUILD_EXAMPLES```:<sp/>Build<sp/>examples</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>```EMBREE_BACKEND```:<sp/>Use<sp/>[Embree](https://github.com/embree/embree)<sp/>as<sp/>single-precision<sp/>floating<sp/>point<sp/>tracing<sp/></highlight></codeline>
+<codeline><highlight class="normal">backend</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>```BLAZE_INCLUDE_OVERRIDE```:<sp/>Where<sp/>to<sp/>find<sp/>the<sp/>blaze<sp/>includes.<sp/>Must<sp/>set<sp/>on<sp/>windows<sp/>for<sp/></highlight></codeline>
+<codeline><highlight class="normal">[blaze](https://bitbucket.org/blaze-lib/blaze/src/master/)<sp/>&lt;=<sp/>3.7</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>Usage</highlight></codeline>
+<codeline><highlight class="normal">To<sp/>get<sp/>familiar<sp/>with<sp/>the<sp/>usage<sp/>of<sp/>blazeRT,<sp/>look<sp/>at<sp/>the<sp/>provided<sp/>examples<sp/>and<sp/>test<sp/>cases.<sp/>To<sp/>get<sp/>started<sp/>quickly,</highlight></codeline>
+<codeline><highlight class="normal">checkout<sp/>the<sp/>minimal<sp/>examples<sp/>below.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>The<sp/>[scene](blazert/scene.h)<sp/>API<sp/>can<sp/>be<sp/>considered<sp/>**stable**,<sp/>while<sp/>the<sp/>low-level<sp/>API<sp/>of<sp/>the<sp/>[BVH](blazert/bvh)<sp/></highlight></codeline>
+<codeline><highlight class="normal">(```build```,<sp/>```traverse```,<sp/>...)<sp/>are<sp/>not<sp/>to<sp/>be<sp/>considered<sp/>stable<sp/>as<sp/>they<sp/>might<sp/>change<sp/>when<sp/>requirements<sp/></highlight></codeline>
+<codeline><highlight class="normal">change<sp/>with<sp/>time.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>To<sp/>control<sp/>the<sp/>maximum<sp/>tree<sp/>depth<sp/>set<sp/>the<sp/>```BLAZERT_MAX_TREE_DEPTH```<sp/>to<sp/>a<sp/>sensible<sp/>value</highlight></codeline>
+<codeline><highlight class="normal">before<sp/>including<sp/>```blazert/blazert.h```.<sp/>Default<sp/>value<sp/>is<sp/>28<sp/>which<sp/>corresponds<sp/>to<sp/>max.<sp/>134<sp/>million</highlight></codeline>
+<codeline><highlight class="normal">leafs<sp/>in<sp/>the<sp/>BVH<sp/>(for<sp/>a<sp/>well-balanced<sp/>tree).</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">-<sp/>If<sp/>single-precision<sp/>floating-point<sp/>ray<sp/>tracing<sp/>with<sp/>[Embree](https://github.com/embree/embree)<sp/>is<sp/>desired</highlight></codeline>
+<codeline><highlight class="normal">define<sp/>```EMBREE_TRACING```<sp/>before<sp/>including<sp/>```blazert/blazert.h```.<sp/>When<sp/>tracing<sp/>using<sp/>the<sp/>embree<sp/>backend,<sp/>vector<sp/>types<sp/></highlight></codeline>
+<codeline><highlight class="normal">with<sp/>an<sp/>alignment<sp/>of<sp/>16<sp/>bytes<sp/>are<sp/>needed<sp/>(you<sp/>have<sp/>to<sp/>ensure<sp/>this<sp/>yourself).</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">Either<sp/>prim-references,<sp/>-indices<sp/>or<sp/>primitives<sp/>are<sp/>stored<sp/>in<sp/>the<sp/>bvh-nodes.<sp/>Which<sp/>case<sp/>is<sp/></highlight></codeline>
+<codeline><highlight class="normal">implemented<sp/>depends<sp/>on<sp/>the<sp/>prim-collection.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Examples</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>[x]<sp/>[path<sp/>tracer<sp/>with<sp/>randomly<sp/>distributed<sp/>rays](examples/path_tracer)<sp/>for<sp/>meshed<sp/>geometries<sp/>with<sp/>rendered<sp/>output</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>[x]<sp/>[deterministic<sp/>path<sp/>tracer<sp/>for<sp/>reproducibility](examples/renderer)<sp/>for<sp/>meshed<sp/>geometries</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>[x]<sp/>[path<sp/>tracer<sp/>based<sp/>on<sp/>the<sp/>scene<sp/>facility](examples/scene_mesh)<sp/>of<sp/>blazeRT<sp/>without<sp/>rendered<sp/>output<sp/></highlight></codeline>
+<codeline><highlight class="normal">(define<sp/>```EMBREE_TRACING```<sp/>for<sp/>usage<sp/>of<sp/>embree<sp/>fallback)</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>[x]<sp/>[cylinder<sp/>and<sp/>sphere<sp/>primitives](examples/scene_primitives)<sp/>within<sp/>a<sp/>blazeRT<sp/>scene<sp/>and<sp/>color-coded<sp/>output</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Minimal<sp/>Example</highlight></codeline>
+<codeline><highlight class="normal">Example<sp/>for<sp/>using<sp/>blazeRT<sp/>can<sp/>be<sp/>found<sp/>the<sp/>the<sp/>`examples`<sp/>subdirectory.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">To<sp/>give<sp/>you<sp/>an<sp/>impression<sp/>of<sp/>the<sp/>High-Level<sp/>API</highlight></codeline>
+<codeline><highlight class="normal">(adapted<sp/>from<sp/>```examples/scene_primitives```):</highlight></codeline>
+<codeline><highlight class="normal">```</highlight></codeline>
+<codeline><highlight class="normal">//<sp/>snip<sp/>8&lt;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>///<sp/>Create<sp/>the<sp/>scene<sp/>and<sp/>add<sp/>some<sp/>primitive<sp/>collections:</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>blazert::Scene&lt;ft&gt;<sp/>scene;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>scene.add_cylinders(*centers,<sp/>*semi_axes_a,<sp/>*semi_axes_b,<sp/>*heights,<sp/>*rotations);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>///scene.add_spheres(<sp/>...<sp/>);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>///scene.add_triangles(<sp/>...<sp/>);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>///<sp/>Commit<sp/>and<sp/>build<sp/>the<sp/>scene</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>scene.commit();</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>///<sp/>Iterate<sp/>over<sp/>the<sp/>ray<sp/>directions:</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>for<sp/>(int<sp/>y<sp/>=<sp/>0;<sp/>y<sp/>&lt;<sp/>height;<sp/>y++)<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>for<sp/>(int<sp/>x<sp/>=<sp/>0;<sp/>x<sp/>&lt;<sp/>width;<sp/>x++)<sp/>{</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>const<sp/>blazert::Ray&lt;ft&gt;<sp/>ray{{0.0,<sp/>5.0,<sp/>20.0},<sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{static_cast&lt;ft&gt;((x<sp/>/<sp/>ft(width))<sp/>-<sp/>0.5),</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>static_cast&lt;ft&gt;((y<sp/>/<sp/>ft(height))<sp/>-<sp/>0.5),<sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>static_cast&lt;ft&gt;(-1.)}};</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>blazert::RayHit&lt;ft&gt;<sp/>rayhit;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>if<sp/>(intersect1(scene,<sp/>ray,<sp/>rayhit))<sp/>{<sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>///<sp/>Do<sp/>something<sp/>useful<sp/>...</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">//<sp/>&gt;8<sp/>snip</highlight></codeline>
+<codeline><highlight class="normal">```</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">###<sp/>Notes</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Different<sp/>from<sp/>nanoRT,<sp/>the<sp/>bvh-build<sp/>is<sp/>not<sp/>(yet)<sp/>parallelized.<sp/>For<sp/>meshes<sp/>with<sp/>5<sp/>million<sp/>triangles,<sp/>blazeRT</highlight></codeline>
+<codeline><highlight class="normal">needs<sp/>about<sp/>5<sp/>seconds<sp/>(on<sp/>our<sp/>tested<sp/>systems)<sp/>to<sp/>build<sp/>the<sp/>BHV<sp/>and<sp/>about<sp/>20<sp/>seconds<sp/>for<sp/>20<sp/>million<sp/>triangles.<sp/>For<sp/>scientific<sp/>or<sp/>engineering<sp/>ray<sp/>tracing<sp/>applications<sp/>the<sp/>scene<sp/>is<sp/>usually<sp/>static<sp/>while<sp/>ray<sp/>origin<sp/>and<sp/>direction<sp/>are<sp/>varied.<sp/>The<sp/>computational<sp/>effort<sp/>is<sp/>hence<sp/>defined<sp/>mainly<sp/>by<sp/>the<sp/>traversal<sp/>and<sp/>not<sp/>the<sp/>build.<sp/>Ray<sp/>traversal<sp/>can<sp/>be<sp/>parallelized<sp/>on<sp/>application<sp/>level<sp/>(e.g.<sp/>omp<sp/>for<sp/>loop<sp/>when<sp/>iterating<sp/>over<sp/>the<sp/>ray<sp/>(-directions),<sp/>please<sp/>have<sp/>a<sp/>look<sp/>at<sp/>the<sp/>provided<sp/>examples).</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>```BLAZERTALIGN```<sp/>is<sp/>currently<sp/>unused<sp/>but<sp/>might<sp/>be<sp/>used<sp/>in<sp/>the<sp/>future.<sp/></highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>Benchmarks</highlight></codeline>
+<codeline><highlight class="normal">We<sp/>have<sp/>included<sp/>benchmarks<sp/>comparing<sp/>blazeRT<sp/>to<sp/>[nanoRT](https://github.com/lighttransport/nanort),</highlight></codeline>
+<codeline><highlight class="normal">[embree](https://github.com/embree/embree)<sp/>and<sp/>[madmann91/bvh](https://github.com/madmann91/bvh)<sp/>for<sp/>bvh<sp/>build<sp/>and<sp/></highlight></codeline>
+<codeline><highlight class="normal">traversal.<sp/>The<sp/>benchmark<sp/>scene<sp/>is<sp/>a<sp/>(triangle-)<sp/>meshed<sp/>sphere<sp/>which<sp/>which<sp/>can<sp/>be<sp/>refined<sp/>by<sp/>sub-division.<sp/>There<sp/>are<sp/></highlight></codeline>
+<codeline><highlight class="normal">two<sp/>traversal<sp/>cases:<sp/></highlight></codeline>
+<codeline><highlight class="normal">-<sp/>A<sp/>rendering<sp/>case<sp/>where<sp/>the<sp/>scene<sp/>size<sp/>(number<sp/>of<sp/>triangles)<sp/>is<sp/>increased<sp/>(while<sp/>maintaining<sp/>the<sp/>same<sp/>dimensions)<sp/>and<sp/></highlight></codeline>
+<codeline><highlight class="normal">8192<sp/>*<sp/>8192<sp/>rays<sp/>are<sp/>shot<sp/>at<sp/>the<sp/>scene<sp/>in<sp/>a<sp/>rectangular<sp/>pattern.<sp/>Here<sp/>we<sp/>expect<sp/>log<sp/>scaling<sp/>with<sp/>the<sp/>number<sp/>of<sp/>triangles.</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>A<sp/>scientific<sp/>case<sp/>where<sp/>the<sp/>scene<sp/>size<sp/>as<sp/>well<sp/>as<sp/>the<sp/>number<sp/>of<sp/>rays<sp/>are<sp/>increased<sp/>(a<sp/>ray<sp/>is<sp/>shot<sp/>at<sp/>each<sp/>vertex<sp/>of<sp/></highlight></codeline>
+<codeline><highlight class="normal">the<sp/>sphere<sp/>mesh).<sp/>This<sp/>can<sp/>be<sp/>considered<sp/>as<sp/>some<sp/>kind<sp/>of<sp/>worst<sp/>cast,<sp/>because<sp/>every<sp/>ray<sp/>hits<sp/>and<sp/>for<sp/>each<sp/>ray<sp/>multiple<sp/></highlight></codeline>
+<codeline><highlight class="normal">overlapping<sp/>bounding<sp/>boxes<sp/>(and<sp/>subsequent<sp/>primitives)<sp/>need<sp/>to<sp/>be<sp/>tested.<sp/>Here<sp/>we<sp/>expect<sp/>linear<sp/>scaling<sp/>with<sp/>the<sp/>number<sp/>of<sp/>triangles.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">The<sp/>benchmarks<sp/>are<sp/>run<sp/>for<sp/>the<sp/>most<sp/>recent<sp/>(git-)<sp/>revisions<sp/>of<sp/>the<sp/>compared<sp/>ray<sp/>tracing<sp/>libraries.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">*Please<sp/>take<sp/>the<sp/>results<sp/>with<sp/>a<sp/>grain<sp/>of<sp/>salt.<sp/>The<sp/>measured<sp/>timings<sp/>heavily<sp/>depend<sp/>on<sp/>the<sp/>chosen<sp/>compiler,<sp/>compiler<sp/>version,<sp/>level<sp/>of<sp/>optimization,<sp/>operating<sp/>system,<sp/>system<sp/>architecture,<sp/>and<sp/>the<sp/>way<sp/>the<sp/>system<sp/>is<sp/>used<sp/>otherwise<sp/>(e.g.<sp/>do<sp/>multiple<sp/>users<sp/>have<sp/>concurrent<sp/>access<sp/>to<sp/>the<sp/>system).<sp/>We<sp/>cannot<sp/>guarantee<sp/>that<sp/>the<sp/>optimal<sp/>configuration<sp/>(or<sp/>even<sp/>api)<sp/>is<sp/>chosen<sp/>for<sp/>all<sp/>benchmarked<sp/>libraries.<sp/>Regarding<sp/>embree:<sp/>we&apos;re<sp/>comparing<sp/>traversal<sp/>or<sp/>intersection<sp/>routines<sp/>that<sp/>are<sp/>similar<sp/>in<sp/>behaviour.<sp/>That<sp/>means,<sp/>for<sp/>embree<sp/>the<sp/>benchmarks<sp/>are<sp/>performes<sp/>with<sp/>single<sp/>ray<sp/>traversal<sp/>(rtcIntersect1).<sp/>This<sp/>is<sp/>not<sp/>optimal<sp/>and<sp/>embree<sp/>is<sp/>way<sp/>more<sp/>powerful<sp/>(leveraging<sp/>all<sp/>the<sp/>vectorization<sp/>goodness)<sp/>using<sp/>the<sp/>streaming<sp/>api<sp/>(or<sp/>calls<sp/>to<sp/>rtcIntersectN).*</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">The<sp/>provided<sp/>results<sp/>were<sp/>obtained<sp/>using<sp/>the<sp/>following<sp/>configuration:</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>OS:<sp/>linux</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>Kernel:<sp/>linux-5.6.15</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>CPU:<sp/>Intel<sp/>i5-8250U<sp/>(8)<sp/>@<sp/>3.400GHz</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>RAM<sp/>32<sp/>GB</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>L1-Cache:<sp/>32<sp/>KB<sp/></highlight></codeline>
+<codeline><highlight class="normal">-<sp/>L2-Cache:<sp/>256<sp/>KB</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>L3-Cache:<sp/>6144<sp/>KB</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>compiler:<sp/>g++-10</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>optimization<sp/>flags<sp/>as<sp/>documented<sp/>in<sp/>the<sp/>projects<sp/>root<sp/>CMakeLists.txt</highlight></codeline>
+<codeline><highlight class="normal">-<sp/>OpenMP<sp/>disabled<sp/>for<sp/>build<sp/>and<sp/>traversal</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">The<sp/>following<sp/>plots<sp/>show<sp/>the<sp/>benchmark<sp/>results<sp/>for<sp/>the<sp/>bvh<sp/>build<sp/>and<sp/>the<sp/>traversal<sp/>for<sp/>a<sp/>realistic<sp/>rendering</highlight></codeline>
+<codeline><highlight class="normal">case<sp/>(not<sp/>all<sp/>rays<sp/>hit)<sp/>and<sp/>for<sp/>a<sp/>realistic<sp/>scientific<sp/>rendering<sp/>case<sp/>(all<sp/>rays<sp/>hit).</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">![Benchmark<sp/>BVH<sp/>build](benchmarks/results/benchmark_bvh_build.png)<sp/></highlight></codeline>
+<codeline><highlight class="normal">![Benchmark<sp/>BVH<sp/>traversal<sp/>rendering](benchmarks/results/benchmark_realistic_rendering.png)<sp/></highlight></codeline>
+<codeline><highlight class="normal">![Benchmark<sp/>BVH<sp/>traversal<sp/>scientific](benchmarks/results/benchmark_realistic_scientific.png)<sp/></highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">##<sp/>License</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">blazeRT<sp/>is<sp/>licensed<sp/>under<sp/>the<sp/>new<sp/>**BSD<sp/>(3-clause)<sp/>license**.</highlight></codeline>
+<codeline><highlight class="normal">blazeRT<sp/>is<sp/>based<sp/>on<sp/>and<sp/>inspired<sp/>by<sp/>`nanoRT.h`<sp/>which<sp/>is<sp/>licensed<sp/>under<sp/>MIT-License.<sp/>For<sp/>comparability,<sp/>nanoRTs<sp/></highlight></codeline>
+<codeline><highlight class="normal">`path_tracer`<sp/>and<sp/>madman91/bvhs<sp/>`benchmark`<sp/>have<sp/>been<sp/>adapted<sp/>to<sp/>blazeRT<sp/>to<sp/>generate<sp/>a<sp/>baseline<sp/>for<sp/>the<sp/>tests<sp/></highlight></codeline>
+<codeline><highlight class="normal">and<sp/>benchmarks.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">*We<sp/>decided<sp/>to<sp/>not<sp/>extend<sp/>nanoRT<sp/>due<sp/>to<sp/>the<sp/>intrusive<sp/>nature<sp/>of<sp/>the<sp/>changes<sp/>that<sp/>came<sp/>with<sp/>the<sp/>introduction<sp/>of<sp/>the<sp/>blaze</highlight></codeline>
+<codeline><highlight class="normal"><sp/>datatypes.<sp/>Another<sp/>reason<sp/>was<sp/>the<sp/>possibility<sp/>for<sp/>an<sp/>enhanced<sp/>maintainability<sp/>if<sp/>the<sp/>code<sp/>is<sp/>not<sp/>kept<sp/>(and<sp/>developed)<sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/>in<sp/>a<sp/>single-header<sp/>library.*</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">The<sp/>examples<sp/>are<sp/>built<sp/>around<sp/>third-party<sp/>libraries<sp/>(e.g.<sp/>`tiny_obj_loader`<sp/>and<sp/>`stb_image_write`)<sp/></highlight></codeline>
+<codeline><highlight class="normal">which<sp/>adhere<sp/>to<sp/>their<sp/>own<sp/>respective<sp/>licenses<sp/>(found<sp/>in<sp/>the<sp/>included<sp/>files).</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">The<sp/>rendering<sp/>examples<sp/>are<sp/>taken<sp/>from<sp/>the<sp/>`nanoRT`<sp/>and<sp/>`bvh`<sp/>repos<sp/>and<sp/>serve<sp/>as<sp/>a<sp/>baseline.<sp/></highlight></codeline>
+<codeline><highlight class="normal">The<sp/>Lucy<sp/>model<sp/>included<sp/>in<sp/>the<sp/>demo<sp/>scene<sp/>is<sp/>taken<sp/>from<sp/>the<sp/>Stanford<sp/>3D<sp/>Scanning<sp/>Repository:<sp/>http://graphics.stanford.edu/data/3Dscanrep/</highlight></codeline>
+    </programlisting>
+    <location file="README.md"/>
+  </compounddef>
+</doxygen>
