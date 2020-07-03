@@ -1,0 +1,375 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>&lt;no title&gt; &mdash; blazert 20.2.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> blazert
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"></div>
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blazert</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>&lt;no title&gt;</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/api.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="toctree-wrapper compound">
+</div>
+<dl class="cpp class">
+<dt>
+template&lt;typename <code class="sig-name descname">T</code>&gt;<br /><em class="property">class </em><code class="sig-prename descclassname"><a class="reference internal" href="#_CPPv47blazert" title="blazert">blazert</a><code class="sig-prename descclassname">::</code></code><code class="sig-name descname">BlazertScene</code><br /></dt>
+<dd><div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric">Public Functions</p>
+<dl class="cpp function">
+<dt>
+<code class="sig-name descname">BlazertScene</code><span class="sig-paren">(</span><span class="sig-paren">)</span> = default<br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt>
+unsigned int <code class="sig-name descname">add_mesh</code><span class="sig-paren">(</span><em class="property">const</em> Vec3rList&lt;<a class="reference internal" href="#_CPPv4I0EN7blazert12BlazertSceneE" title="blazert::BlazertScene::T">T</a>&gt; &amp;<em>vertices</em>, <em class="property">const</em> Vec3iList &amp;<em>triangles</em><span class="sig-paren">)</span><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt>
+unsigned int <code class="sig-name descname">add_spheres</code><span class="sig-paren">(</span><em class="property">const</em> Vec3rList&lt;<a class="reference internal" href="#_CPPv4I0EN7blazert12BlazertSceneE" title="blazert::BlazertScene::T">T</a>&gt; &amp;<em>centers</em>, <em class="property">const</em> std::vector&lt;<a class="reference internal" href="#_CPPv4I0EN7blazert12BlazertSceneE" title="blazert::BlazertScene::T">T</a>&gt; &amp;<em>radii</em><span class="sig-paren">)</span><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt>
+unsigned int <code class="sig-name descname">add_planes</code><span class="sig-paren">(</span><em class="property">const</em> Vec3rList&lt;<a class="reference internal" href="#_CPPv4I0EN7blazert12BlazertSceneE" title="blazert::BlazertScene::T">T</a>&gt; &amp;<em>centers</em>, <em class="property">const</em> std::vector&lt;<a class="reference internal" href="#_CPPv4I0EN7blazert12BlazertSceneE" title="blazert::BlazertScene::T">T</a>&gt; &amp;<em>dxs</em>, <em class="property">const</em> std::vector&lt;<a class="reference internal" href="#_CPPv4I0EN7blazert12BlazertSceneE" title="blazert::BlazertScene::T">T</a>&gt; &amp;<em>dys</em>, <em class="property">const</em> Mat3rList&lt;<a class="reference internal" href="#_CPPv4I0EN7blazert12BlazertSceneE" title="blazert::BlazertScene::T">T</a>&gt; &amp;<em>rotations</em><span class="sig-paren">)</span><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt>
+unsigned int <code class="sig-name descname">add_cylinders</code><span class="sig-paren">(</span><em class="property">const</em> Vec3rList&lt;<a class="reference internal" href="#_CPPv4I0EN7blazert12BlazertSceneE" title="blazert::BlazertScene::T">T</a>&gt; &amp;<em>centers</em>, <em class="property">const</em> std::vector&lt;<a class="reference internal" href="#_CPPv4I0EN7blazert12BlazertSceneE" title="blazert::BlazertScene::T">T</a>&gt; &amp;<em>semi_axes_a</em>, <em class="property">const</em> std::vector&lt;<a class="reference internal" href="#_CPPv4I0EN7blazert12BlazertSceneE" title="blazert::BlazertScene::T">T</a>&gt; &amp;<em>semi_axes_b</em>, <em class="property">const</em> std::vector&lt;<a class="reference internal" href="#_CPPv4I0EN7blazert12BlazertSceneE" title="blazert::BlazertScene::T">T</a>&gt; &amp;<em>heights</em>, <em class="property">const</em> Mat3rList&lt;<a class="reference internal" href="#_CPPv4I0EN7blazert12BlazertSceneE" title="blazert::BlazertScene::T">T</a>&gt; &amp;<em>rotations</em><span class="sig-paren">)</span><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt>
+bool <code class="sig-name descname">commit</code><span class="sig-paren">(</span><span class="sig-paren">)</span><br /></dt>
+<dd></dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric">Public Members</p>
+<dl class="cpp var">
+<dt>
+BVHBuildOptions&lt;<a class="reference internal" href="#_CPPv4I0EN7blazert12BlazertSceneE" title="blazert::BlazertScene::T">T</a>&gt; <code class="sig-name descname">build_options</code><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt>
+bool <code class="sig-name descname">has_been_committed</code> = false<br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt>
+unsigned int <code class="sig-name descname">geometries</code> = 0<br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt>
+std::unique_ptr&lt;TriangleMesh&lt;<a class="reference internal" href="#_CPPv4I0EN7blazert12BlazertSceneE" title="blazert::BlazertScene::T">T</a>&gt;&gt; <code class="sig-name descname">triangle_collection</code><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt>
+std::unique_ptr&lt;BVH&lt;<a class="reference internal" href="#_CPPv4I0EN7blazert12BlazertSceneE" title="blazert::BlazertScene::T">T</a>, TriangleMesh&gt;&gt; <code class="sig-name descname">triangles_bvh</code><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt>
+size_t <code class="sig-name descname">triangles_geom_id</code> = -1<br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt>
+bool <code class="sig-name descname">has_triangles</code> = false<br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt>
+std::unique_ptr&lt;SphereCollection&lt;<a class="reference internal" href="#_CPPv4I0EN7blazert12BlazertSceneE" title="blazert::BlazertScene::T">T</a>&gt;&gt; <code class="sig-name descname">sphere_collection</code><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt>
+std::unique_ptr&lt;BVH&lt;<a class="reference internal" href="#_CPPv4I0EN7blazert12BlazertSceneE" title="blazert::BlazertScene::T">T</a>, SphereCollection&gt;&gt; <code class="sig-name descname">spheres_bvh</code><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt>
+size_t <code class="sig-name descname">spheres_geom_id</code> = -1<br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt>
+bool <code class="sig-name descname">has_spheres</code> = false<br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt>
+std::unique_ptr&lt;PlaneCollection&lt;<a class="reference internal" href="#_CPPv4I0EN7blazert12BlazertSceneE" title="blazert::BlazertScene::T">T</a>&gt;&gt; <code class="sig-name descname">plane_collection</code><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt>
+std::unique_ptr&lt;BVH&lt;<a class="reference internal" href="#_CPPv4I0EN7blazert12BlazertSceneE" title="blazert::BlazertScene::T">T</a>, PlaneCollection&gt;&gt; <code class="sig-name descname">planes_bvh</code><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt>
+size_t <code class="sig-name descname">planes_geom_id</code> = -1<br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt>
+bool <code class="sig-name descname">has_planes</code> = false<br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt>
+std::unique_ptr&lt;CylinderCollection&lt;<a class="reference internal" href="#_CPPv4I0EN7blazert12BlazertSceneE" title="blazert::BlazertScene::T">T</a>&gt;&gt; <code class="sig-name descname">cylinder_collection</code><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt>
+std::unique_ptr&lt;BVH&lt;<a class="reference internal" href="#_CPPv4I0EN7blazert12BlazertSceneE" title="blazert::BlazertScene::T">T</a>, CylinderCollection&gt;&gt; <code class="sig-name descname">cylinders_bvh</code><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt>
+size_t <code class="sig-name descname">cylinders_geom_id</code> = -1<br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt>
+bool <code class="sig-name descname">has_cylinders</code> = false<br /></dt>
+<dd></dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp type">
+<dt>
+<em class="property">namespace </em><code class="sig-name descname">blazert</code><br /></dt>
+<dd><div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric">Functions</p>
+<dl class="cpp function">
+<dt>
+template&lt;typename <code class="sig-name descname">T</code>&gt;<br />bool <code class="sig-name descname">intersect1</code><span class="sig-paren">(</span><em class="property">const</em> <a class="reference internal" href="#_CPPv4I0EN7blazert12BlazertSceneE" title="blazert::BlazertScene">BlazertScene</a>&lt;<a class="reference internal" href="#_CPPv4I0EN7blazert10intersect1EbRK12BlazertSceneI1TERK3RayI1TER6RayHitI1TE" title="blazert::intersect1::T">T</a>&gt; &amp;<em>scene</em>, <em class="property">const</em> Ray&lt;<a class="reference internal" href="#_CPPv4I0EN7blazert10intersect1EbRK12BlazertSceneI1TERK3RayI1TER6RayHitI1TE" title="blazert::intersect1::T">T</a>&gt; &amp;<em>ray</em>, RayHit&lt;<a class="reference internal" href="#_CPPv4I0EN7blazert10intersect1EbRK12BlazertSceneI1TERK3RayI1TER6RayHitI1TE" title="blazert::intersect1::T">T</a>&gt; &amp;<em>rayhit</em><span class="sig-paren">)</span><br /></dt>
+<dd></dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="file">
+<dt>
+<em>file</em> <code class="sig-name descname">scene.h</code></dt>
+<dd><div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric">Defines</p>
+<dl class="cpp macro">
+<dt>
+<code class="sig-name descname">BLAZERT_BLAZERT_SCENE_H</code><br /></dt>
+<dd></dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="file">
+<dt>
+<em>file</em> <code class="sig-name descname">README.md</code></dt>
+<dd></dd></dl>
+
+<dl class="dir">
+<dt>
+<em>dir</em> <code class="sig-name descname">blazert</code></dt>
+<dd></dd></dl>
+
+<dl class="page">
+<dt>
+<em>page</em> <code class="sig-name descname">index</code></dt>
+<dd></dd></dl>
+
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Christoph Statz, Orell Garten
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
