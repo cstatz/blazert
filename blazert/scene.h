@@ -1,3 +1,9 @@
+/**
+ * @file scene.h
+ * @brief High level scene interface for ray tracing
+ * @authors Christoph Statz, Orell Garten
+ */
+
 #pragma once
 #ifndef BLAZERT_BLAZERT_SCENE_H
 #define BLAZERT_BLAZERT_SCENE_H
@@ -24,11 +30,11 @@ public:
   BVHBuildOptions<T> build_options;
 
   bool has_been_committed = false;
-  /***
+  /**
    * geometries counts the amount of different geometry types
    * -> each geometry has its own BVH
    * -> for each geometry, we have various primitives; the hit prim_id will be saved in the RayHit structure
-   ***/
+   **/
   unsigned int geometries = 0;
 
   std::unique_ptr<TriangleMesh<T>> triangle_collection;
@@ -56,23 +62,41 @@ public:
 
   /**
    * @brief Adds a triangular mesh to the scene
+   * @details
+   *  A triangular mesh can be used to describe any geometry. The mesh is described by vertices and a list of triangles
+   *  which describe which vertices form a triangle.
+   *  The prim_id is set in the rayhit structure by the intersection functions.
+   *
    * @param vertices Vertices need to be allocated on the heap!
    * @param triangles Triangles need to be allocated on the heap!
-   * @return Returns the (geometry) id for the mesh.
-   * The prim_id is set in the rayhit structure by the intersection functions.
+   * @return geometry id for the mesh.
+   *
+   * @note vertices and triangles need to be allocated on the heap.
+   *
    */
   unsigned int add_mesh(const Vec3rList<T> &vertices, const Vec3iList &triangles);
 
-  /***
-   * Adds centers.size() spheres to the scene -> results in centers.size() primitive ideas
+  /**
    * @brief Adds spheres at centers with radii
+   *
+   * @details
+   *  The spheres are described by centers and radii. For \f$N\f$ spheres, each of these vectors
+   *  needs to have \f$N\f$ entries describing the corresponding sphere's center and radius.
+   *
+   *  The prim_id is set in the rayhit structure by the intersection functions.
+   *
    * @param centers specifies centers of the spheres (needs to be allocated on heap)
    * @param radii specifies radii of the spheres (needs to be allocated on heap)
    * @return geometry id of the spheres
+   *
+
+   *
+   * @note centers and radii need to be allocated on the heap.
+   * @note centers and spheres should be of the same length.
    */
   unsigned int add_spheres(const Vec3rList<T> &centers, const std::vector<T> &radii);
 
-  /***
+  /**
    * @brief Adds planes at centers with dimensions dxs and dys rotated around rotations
    * @param centers center of planes
    * @param dxs dimensions in x direction
@@ -83,7 +107,7 @@ public:
   unsigned int add_planes(const Vec3rList<T> &centers, const std::vector<T> &dxs, const std::vector<T> &dys,
                           const Mat3rList<T> &rotations);
 
-  /***
+  /**
    * @brief Adds cylinders with the bottom ellipsoid centered at centers, described by two semi_axes and heights.
    * @param centers
    * @param semi_axes_a
@@ -95,7 +119,17 @@ public:
   unsigned int add_cylinders(const Vec3rList<T> &centers, const std::vector<T> &semi_axes_a,
                              const std::vector<T> &semi_axes_b, const std::vector<T> &heights,
                              const Mat3rList<T> &rotations);
-
+  /**
+   * This function commits the scene
+   *
+   * @brief Commits the scene and builds BVH for each geometry type
+   *
+   * @details
+   * It is necessary to run this function before running the intersect functions. The bounding volume hierarchy
+   * is built for each geometry type present in the scene.
+   *
+   * @return returns true if scene has been committed
+   */
   bool commit() {
 
     if (has_triangles) {
@@ -123,7 +157,14 @@ public:
   };
 };
 
-// TODO: Performance critical code should not be a member function (hidden pointer *this), since the compiler will not know how to optimize.
+/**
+ *
+ * @tparam T floating point type, which is usually float or double, but in the future, quadruple precision might be useful
+ * @param scene
+ * @param ray
+ * @param rayhit
+ * @return
+ */
 template<typename T>
 inline bool intersect1(const BlazertScene<T> &scene, const Ray<T> &ray, RayHit<T> &rayhit) {
 
