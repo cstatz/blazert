@@ -46,6 +46,8 @@ quality and a reproducible build experience via continuous integration. During t
 build the examples and the tests, which need to run successfully in order for the CI to pass. Currently, 
 blazeRT is CI-tested on Ubuntu 18.04 and macOS with gcc and clang.
 
+The documentation of the entire script can be found [here](https://blazert.readthedocs.io/en/latest/).
+
 ![image](examples/baseline/path_tracer_blaze.png)
 
 (Rendered using the `path_tracer` example adapted from `nanoRT` and originally contributed by 
@@ -144,7 +146,7 @@ backend
 
 ## Usage
 To get familiar with the usage of blazeRT, look at the provided examples and test cases. To get started quickly,
-checkout the minimal examples below.
+checkout the minimal examples below. The full documentation includeing the API reference is available [here](https://blazert.readthedocs.io/en/latest/).
 
 - The [scene](blazert/scene.h) API can be considered **stable**, while the low-level API of the [BVH](blazert/bvh) 
 (```build```, ```traverse```, ...) are not to be considered stable as they might change when requirements 
