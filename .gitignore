@@ -43,4 +43,3 @@ cmake-*
 docs/source/_static
 docs/source/_templates
 docs/build
-docs/xml
