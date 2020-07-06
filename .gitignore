@@ -38,3 +38,9 @@ cmake-*
 
 # MACOS
 .DS_Store
+
+# documentation
+docs/source/_static
+docs/source/_templates
+docs/build
+docs/xml
