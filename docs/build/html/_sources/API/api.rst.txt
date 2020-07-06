@@ -1,6 +1,9 @@
 API Reference
 ===================================
 
+.. toctree::
+   :maxdepth: 1
+
 .. doxygenclass:: blazert::BlazertScene
    :project: blazert
    :members:
