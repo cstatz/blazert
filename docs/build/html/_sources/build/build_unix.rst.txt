@@ -1,0 +1,6 @@
+Build on Linux
+===================================
+
+.. doxygenclass:: blazert::BlazertScene
+   :project: blazert
+   :members:

@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>API Reference &mdash; blazert 20.2.1 documentation</title>
+  <title>&lt;no title&gt; &mdash; blazert 20.2.1 documentation</title>
   
 
   
@@ -37,7 +37,8 @@
     
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="prev" title="Build on Windows" href="../build_blazert/build_windows.html" /> 
+    <link rel="next" title="API Reference" href="../API/api.html" />
+    <link rel="prev" title="Build on Linux" href="build_unix.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -82,9 +83,10 @@
               
             
             
-              <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../build_blazert/index.html">Build</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">API Reference</a></li>
+              <p class="caption"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="build_unix.html">Build on Linux</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../API/api.html">API Reference</a></li>
 </ul>
 
             
@@ -131,13 +133,13 @@
     
       <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
         
-      <li>API Reference</li>
+      <li>&lt;no title&gt;</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
-            <a href="../_sources/API/api.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../_sources/build/build_windows.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -150,16 +152,15 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="api-reference">
-<h1>API Reference<a class="headerlink" href="#api-reference" title="Permalink to this headline">¶</a></h1>
+  <p>## Build on Windows</p>
 <dl class="cpp class">
 <dt id="_CPPv4I0EN7blazert12BlazertSceneE">
-<span id="_CPPv3I0EN7blazert12BlazertSceneE"></span><span id="_CPPv2I0EN7blazert12BlazertSceneE"></span>template&lt;typename <code class="sig-name descname">T</code>&gt;<br /><span class="target" id="classblazert_1_1BlazertScene"></span><em class="property">class </em><code class="sig-prename descclassname">blazert<code class="sig-prename descclassname">::</code></code><code class="sig-name descname">BlazertScene</code><a class="headerlink" href="#_CPPv4I0EN7blazert12BlazertSceneE" title="Permalink to this definition">¶</a><br /></dt>
+<span id="_CPPv3I0EN7blazert12BlazertSceneE"></span><span id="_CPPv2I0EN7blazert12BlazertSceneE"></span>template&lt;typename <code class="sig-name descname">T</code>&gt;<br /><span class="target" id="classblazert_1_1BlazertScene"></span><em class="property">class </em><code class="sig-prename descclassname">blazert<code class="sig-prename descclassname">::</code></code><code class="sig-name descname">BlazertScene</code><br /></dt>
 <dd><div class="breathe-sectiondef docutils container">
 <p class="breathe-sectiondef-title rubric">Public Functions</p>
 <dl class="cpp function">
 <dt id="_CPPv4N7blazert12BlazertScene8add_meshERK9Vec3rListI1TERK9Vec3iList">
-<span id="_CPPv3N7blazert12BlazertScene8add_meshERK9Vec3rListI1TERK9Vec3iList"></span><span id="_CPPv2N7blazert12BlazertScene8add_meshERK9Vec3rListI1TERK9Vec3iList"></span><span id="blazert::BlazertScene::add_mesh__Vec3rList:T:CR.Vec3iListCR"></span><span class="target" id="classblazert_1_1BlazertScene_1a719c313b34727a4414dd7bf74ec92df9"></span>unsigned int <code class="sig-name descname">add_mesh</code><span class="sig-paren">(</span><em class="property">const</em> Vec3rList&lt;<a class="reference internal" href="#_CPPv4I0EN7blazert12BlazertSceneE" title="blazert::BlazertScene::T">T</a>&gt; &amp;<em>vertices</em>, <em class="property">const</em> Vec3iList &amp;<em>triangles</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7blazert12BlazertScene8add_meshERK9Vec3rListI1TERK9Vec3iList" title="Permalink to this definition">¶</a><br /></dt>
+<span id="_CPPv3N7blazert12BlazertScene8add_meshERK9Vec3rListI1TERK9Vec3iList"></span><span id="_CPPv2N7blazert12BlazertScene8add_meshERK9Vec3rListI1TERK9Vec3iList"></span><span id="blazert::BlazertScene::add_mesh__Vec3rList:T:CR.Vec3iListCR"></span><span class="target" id="classblazert_1_1BlazertScene_1a719c313b34727a4414dd7bf74ec92df9"></span>unsigned int <code class="sig-name descname">add_mesh</code><span class="sig-paren">(</span><em class="property">const</em> Vec3rList&lt;<a class="reference internal" href="../API/api.html#_CPPv4I0EN7blazert12BlazertSceneE" title="blazert::BlazertScene::T">T</a>&gt; &amp;<em>vertices</em>, <em class="property">const</em> Vec3iList &amp;<em>triangles</em><span class="sig-paren">)</span><br /></dt>
 <dd><p>Adds a triangular mesh to the scene. </p>
 <p>A triangular mesh can be used to describe any geometry. The mesh is described by vertices and a list of triangles which describe which vertices form a triangle. The prim_id is set in the rayhit structure by the intersection functions.</p>
 <p><dl class="simple">
@@ -178,7 +179,7 @@
 
 <dl class="cpp function">
 <dt id="_CPPv4N7blazert12BlazertScene11add_spheresERK9Vec3rListI1TERKNSt6vectorI1TEE">
-<span id="_CPPv3N7blazert12BlazertScene11add_spheresERK9Vec3rListI1TERKNSt6vectorI1TEE"></span><span id="_CPPv2N7blazert12BlazertScene11add_spheresERK9Vec3rListI1TERKNSt6vectorI1TEE"></span><span id="blazert::BlazertScene::add_spheres__Vec3rList:T:CR.std::vector:T:CR"></span><span class="target" id="classblazert_1_1BlazertScene_1ab242056fa98e69136e05bd8a19cdf487"></span>unsigned int <code class="sig-name descname">add_spheres</code><span class="sig-paren">(</span><em class="property">const</em> Vec3rList&lt;<a class="reference internal" href="#_CPPv4I0EN7blazert12BlazertSceneE" title="blazert::BlazertScene::T">T</a>&gt; &amp;<em>centers</em>, <em class="property">const</em> std::vector&lt;<a class="reference internal" href="#_CPPv4I0EN7blazert12BlazertSceneE" title="blazert::BlazertScene::T">T</a>&gt; &amp;<em>radii</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7blazert12BlazertScene11add_spheresERK9Vec3rListI1TERKNSt6vectorI1TEE" title="Permalink to this definition">¶</a><br /></dt>
+<span id="_CPPv3N7blazert12BlazertScene11add_spheresERK9Vec3rListI1TERKNSt6vectorI1TEE"></span><span id="_CPPv2N7blazert12BlazertScene11add_spheresERK9Vec3rListI1TERKNSt6vectorI1TEE"></span><span id="blazert::BlazertScene::add_spheres__Vec3rList:T:CR.std::vector:T:CR"></span><span class="target" id="classblazert_1_1BlazertScene_1ab242056fa98e69136e05bd8a19cdf487"></span>unsigned int <code class="sig-name descname">add_spheres</code><span class="sig-paren">(</span><em class="property">const</em> Vec3rList&lt;<a class="reference internal" href="../API/api.html#_CPPv4I0EN7blazert12BlazertSceneE" title="blazert::BlazertScene::T">T</a>&gt; &amp;<em>centers</em>, <em class="property">const</em> std::vector&lt;<a class="reference internal" href="../API/api.html#_CPPv4I0EN7blazert12BlazertSceneE" title="blazert::BlazertScene::T">T</a>&gt; &amp;<em>radii</em><span class="sig-paren">)</span><br /></dt>
 <dd><p>Adds spheres at centers with radii. </p>
 <p>The spheres are described by centers and radii. For <span class="math notranslate nohighlight">\(N\)</span> spheres, each of these vectors needs to have <span class="math notranslate nohighlight">\(N\)</span> entries describing the corresponding sphere’s center and radius.</p>
 <p>The prim_id is set in the rayhit structure by the intersection functions.</p>
@@ -200,7 +201,7 @@
 
 <dl class="cpp function">
 <dt id="_CPPv4N7blazert12BlazertScene10add_planesERK9Vec3rListI1TERKNSt6vectorI1TEERKNSt6vectorI1TEERK9Mat3rListI1TE">
-<span id="_CPPv3N7blazert12BlazertScene10add_planesERK9Vec3rListI1TERKNSt6vectorI1TEERKNSt6vectorI1TEERK9Mat3rListI1TE"></span><span id="_CPPv2N7blazert12BlazertScene10add_planesERK9Vec3rListI1TERKNSt6vectorI1TEERKNSt6vectorI1TEERK9Mat3rListI1TE"></span><span id="blazert::BlazertScene::add_planes__Vec3rList:T:CR.std::vector:T:CR.std::vector:T:CR.Mat3rList:T:CR"></span><span class="target" id="classblazert_1_1BlazertScene_1ae32d78dacde00d13520366d07902c8d3"></span>unsigned int <code class="sig-name descname">add_planes</code><span class="sig-paren">(</span><em class="property">const</em> Vec3rList&lt;<a class="reference internal" href="#_CPPv4I0EN7blazert12BlazertSceneE" title="blazert::BlazertScene::T">T</a>&gt; &amp;<em>centers</em>, <em class="property">const</em> std::vector&lt;<a class="reference internal" href="#_CPPv4I0EN7blazert12BlazertSceneE" title="blazert::BlazertScene::T">T</a>&gt; &amp;<em>dxs</em>, <em class="property">const</em> std::vector&lt;<a class="reference internal" href="#_CPPv4I0EN7blazert12BlazertSceneE" title="blazert::BlazertScene::T">T</a>&gt; &amp;<em>dys</em>, <em class="property">const</em> Mat3rList&lt;<a class="reference internal" href="#_CPPv4I0EN7blazert12BlazertSceneE" title="blazert::BlazertScene::T">T</a>&gt; &amp;<em>rotations</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7blazert12BlazertScene10add_planesERK9Vec3rListI1TERKNSt6vectorI1TEERKNSt6vectorI1TEERK9Mat3rListI1TE" title="Permalink to this definition">¶</a><br /></dt>
+<span id="_CPPv3N7blazert12BlazertScene10add_planesERK9Vec3rListI1TERKNSt6vectorI1TEERKNSt6vectorI1TEERK9Mat3rListI1TE"></span><span id="_CPPv2N7blazert12BlazertScene10add_planesERK9Vec3rListI1TERKNSt6vectorI1TEERKNSt6vectorI1TEERK9Mat3rListI1TE"></span><span id="blazert::BlazertScene::add_planes__Vec3rList:T:CR.std::vector:T:CR.std::vector:T:CR.Mat3rList:T:CR"></span><span class="target" id="classblazert_1_1BlazertScene_1ae32d78dacde00d13520366d07902c8d3"></span>unsigned int <code class="sig-name descname">add_planes</code><span class="sig-paren">(</span><em class="property">const</em> Vec3rList&lt;<a class="reference internal" href="../API/api.html#_CPPv4I0EN7blazert12BlazertSceneE" title="blazert::BlazertScene::T">T</a>&gt; &amp;<em>centers</em>, <em class="property">const</em> std::vector&lt;<a class="reference internal" href="../API/api.html#_CPPv4I0EN7blazert12BlazertSceneE" title="blazert::BlazertScene::T">T</a>&gt; &amp;<em>dxs</em>, <em class="property">const</em> std::vector&lt;<a class="reference internal" href="../API/api.html#_CPPv4I0EN7blazert12BlazertSceneE" title="blazert::BlazertScene::T">T</a>&gt; &amp;<em>dys</em>, <em class="property">const</em> Mat3rList&lt;<a class="reference internal" href="../API/api.html#_CPPv4I0EN7blazert12BlazertSceneE" title="blazert::BlazertScene::T">T</a>&gt; &amp;<em>rotations</em><span class="sig-paren">)</span><br /></dt>
 <dd><p>Adds planes at centers with dimensions dxs and dys rotated around rotations. </p>
 <p><dl class="simple">
 <dt><strong>Return</strong></dt><dd><p>geometry id of the planes </p>
@@ -218,7 +219,7 @@
 
 <dl class="cpp function">
 <dt id="_CPPv4N7blazert12BlazertScene13add_cylindersERK9Vec3rListI1TERKNSt6vectorI1TEERKNSt6vectorI1TEERKNSt6vectorI1TEERK9Mat3rListI1TE">
-<span id="_CPPv3N7blazert12BlazertScene13add_cylindersERK9Vec3rListI1TERKNSt6vectorI1TEERKNSt6vectorI1TEERKNSt6vectorI1TEERK9Mat3rListI1TE"></span><span id="_CPPv2N7blazert12BlazertScene13add_cylindersERK9Vec3rListI1TERKNSt6vectorI1TEERKNSt6vectorI1TEERKNSt6vectorI1TEERK9Mat3rListI1TE"></span><span id="blazert::BlazertScene::add_cylinders__Vec3rList:T:CR.std::vector:T:CR.std::vector:T:CR.std::vector:T:CR.Mat3rList:T:CR"></span><span class="target" id="classblazert_1_1BlazertScene_1a78c7777dff38468f4323e6e05f5f181c"></span>unsigned int <code class="sig-name descname">add_cylinders</code><span class="sig-paren">(</span><em class="property">const</em> Vec3rList&lt;<a class="reference internal" href="#_CPPv4I0EN7blazert12BlazertSceneE" title="blazert::BlazertScene::T">T</a>&gt; &amp;<em>centers</em>, <em class="property">const</em> std::vector&lt;<a class="reference internal" href="#_CPPv4I0EN7blazert12BlazertSceneE" title="blazert::BlazertScene::T">T</a>&gt; &amp;<em>semi_axes_a</em>, <em class="property">const</em> std::vector&lt;<a class="reference internal" href="#_CPPv4I0EN7blazert12BlazertSceneE" title="blazert::BlazertScene::T">T</a>&gt; &amp;<em>semi_axes_b</em>, <em class="property">const</em> std::vector&lt;<a class="reference internal" href="#_CPPv4I0EN7blazert12BlazertSceneE" title="blazert::BlazertScene::T">T</a>&gt; &amp;<em>heights</em>, <em class="property">const</em> Mat3rList&lt;<a class="reference internal" href="#_CPPv4I0EN7blazert12BlazertSceneE" title="blazert::BlazertScene::T">T</a>&gt; &amp;<em>rotations</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7blazert12BlazertScene13add_cylindersERK9Vec3rListI1TERKNSt6vectorI1TEERKNSt6vectorI1TEERKNSt6vectorI1TEERK9Mat3rListI1TE" title="Permalink to this definition">¶</a><br /></dt>
+<span id="_CPPv3N7blazert12BlazertScene13add_cylindersERK9Vec3rListI1TERKNSt6vectorI1TEERKNSt6vectorI1TEERKNSt6vectorI1TEERK9Mat3rListI1TE"></span><span id="_CPPv2N7blazert12BlazertScene13add_cylindersERK9Vec3rListI1TERKNSt6vectorI1TEERKNSt6vectorI1TEERKNSt6vectorI1TEERK9Mat3rListI1TE"></span><span id="blazert::BlazertScene::add_cylinders__Vec3rList:T:CR.std::vector:T:CR.std::vector:T:CR.std::vector:T:CR.Mat3rList:T:CR"></span><span class="target" id="classblazert_1_1BlazertScene_1a78c7777dff38468f4323e6e05f5f181c"></span>unsigned int <code class="sig-name descname">add_cylinders</code><span class="sig-paren">(</span><em class="property">const</em> Vec3rList&lt;<a class="reference internal" href="../API/api.html#_CPPv4I0EN7blazert12BlazertSceneE" title="blazert::BlazertScene::T">T</a>&gt; &amp;<em>centers</em>, <em class="property">const</em> std::vector&lt;<a class="reference internal" href="../API/api.html#_CPPv4I0EN7blazert12BlazertSceneE" title="blazert::BlazertScene::T">T</a>&gt; &amp;<em>semi_axes_a</em>, <em class="property">const</em> std::vector&lt;<a class="reference internal" href="../API/api.html#_CPPv4I0EN7blazert12BlazertSceneE" title="blazert::BlazertScene::T">T</a>&gt; &amp;<em>semi_axes_b</em>, <em class="property">const</em> std::vector&lt;<a class="reference internal" href="../API/api.html#_CPPv4I0EN7blazert12BlazertSceneE" title="blazert::BlazertScene::T">T</a>&gt; &amp;<em>heights</em>, <em class="property">const</em> Mat3rList&lt;<a class="reference internal" href="../API/api.html#_CPPv4I0EN7blazert12BlazertSceneE" title="blazert::BlazertScene::T">T</a>&gt; &amp;<em>rotations</em><span class="sig-paren">)</span><br /></dt>
 <dd><p>Adds cylinders with the bottom ellipsoid centered at centers, described by two semi_axes and heights. </p>
 <p><dl class="simple">
 <dt><strong>Return</strong></dt><dd><p>geometry id of the cylinders </p>
@@ -237,7 +238,7 @@
 
 <dl class="cpp function">
 <dt id="_CPPv4N7blazert12BlazertScene6commitEv">
-<span id="_CPPv3N7blazert12BlazertScene6commitEv"></span><span id="_CPPv2N7blazert12BlazertScene6commitEv"></span><span id="blazert::BlazertScene::commit"></span><span class="target" id="classblazert_1_1BlazertScene_1a0b32a881e3299c018870df1f3849398d"></span>bool <code class="sig-name descname">commit</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7blazert12BlazertScene6commitEv" title="Permalink to this definition">¶</a><br /></dt>
+<span id="_CPPv3N7blazert12BlazertScene6commitEv"></span><span id="_CPPv2N7blazert12BlazertScene6commitEv"></span><span id="blazert::BlazertScene::commit"></span><span class="target" id="classblazert_1_1BlazertScene_1a0b32a881e3299c018870df1f3849398d"></span>bool <code class="sig-name descname">commit</code><span class="sig-paren">(</span><span class="sig-paren">)</span><br /></dt>
 <dd><p>Commits the scene and builds BVH for each geometry type. </p>
 <p>This function commits the scene</p>
 <p>It is necessary to run this function before running the intersect functions. The bounding volume hierarchy is built for each geometry type present in the scene.</p>
@@ -253,14 +254,13 @@
 <p class="breathe-sectiondef-title rubric">Public Members</p>
 <dl class="cpp var">
 <dt id="_CPPv4N7blazert12BlazertScene10geometriesE">
-<span id="_CPPv3N7blazert12BlazertScene10geometriesE"></span><span id="_CPPv2N7blazert12BlazertScene10geometriesE"></span><span id="blazert::BlazertScene::geometries__unsigned-i"></span><span class="target" id="classblazert_1_1BlazertScene_1a034cbb7a3b02b51f8f65eff568f56424"></span>unsigned int <code class="sig-name descname">geometries</code> = 0<a class="headerlink" href="#_CPPv4N7blazert12BlazertScene10geometriesE" title="Permalink to this definition">¶</a><br /></dt>
+<span id="_CPPv3N7blazert12BlazertScene10geometriesE"></span><span id="_CPPv2N7blazert12BlazertScene10geometriesE"></span><span id="blazert::BlazertScene::geometries__unsigned-i"></span><span class="target" id="classblazert_1_1BlazertScene_1a034cbb7a3b02b51f8f65eff568f56424"></span>unsigned int <code class="sig-name descname">geometries</code> = 0<br /></dt>
 <dd><p>geometries counts the amount of different geometry types -&gt; each geometry has its own BVH -&gt; for each geometry, we have various primitives; the hit prim_id will be saved in the RayHit structure </p>
 </dd></dl>
 
 </div>
 </dd></dl>
 
-</div>
 
 
            </div>
@@ -270,8 +270,10 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
+        <a href="../API/api.html" class="btn btn-neutral float-right" title="API Reference" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
-        <a href="../build_blazert/build_windows.html" class="btn btn-neutral float-left" title="Build on Windows" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+        <a href="build_unix.html" class="btn btn-neutral float-left" title="Build on Linux" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
