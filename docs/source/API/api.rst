@@ -1,6 +1,14 @@
 API Reference
 =================
 
+BlazertScene
+------------
+
 .. doxygenclass:: blazert::BlazertScene
-   :project: blazert
-   :members:
+    :members:
+
+.. doxygenfunction:: blazert::intersect1
+
+
+EmbreeScene
+-----------

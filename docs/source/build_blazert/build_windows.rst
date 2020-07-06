@@ -29,7 +29,7 @@ The last step is not necessary if you don't use the VS IDE.
 Install the dependencies
 ------------------------
 
-Install the necessary libs for blazert:
+Install the necessary dependencies for blazert:
 
 .. code-block:: shell
 
