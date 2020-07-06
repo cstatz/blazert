@@ -1,5 +1,0 @@
-## Build on Windows
-
-.. doxygenclass:: blazert::BlazertScene
-   :project: blazert
-   :members:
