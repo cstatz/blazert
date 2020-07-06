@@ -6,16 +6,20 @@
 Welcome to blazert's documentation!
 ===================================
 
-.. toctree::
-    :maxdepth: 2
+This is the official documentation for `blazert <https::/github/cstatz/blazert/>`_ and will be continuously updated.
 
-    build_blazert/index
-    API/api
+.. toctree::
+   :maxdepth: 2
+
+   build_blazert/index
+   usage/index
+   API/api
+
+
 
 
 Indices and tables
 -------------------
 * :ref:`genindex`
-* :ref:`modindex`
 * :ref:`search`
 
