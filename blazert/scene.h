@@ -23,6 +23,18 @@
 
 namespace blazert {
 
+/**
+ * @brief BlazertScene provides the high-level interface for ray tracing with blazert
+ *
+ * @details
+ *  BlazertScene is responsible for the entire ray tracing process. It provides measures to add different geometry types.
+ *  Furthermore, it encapsulates the BVH for each geometry type. Parametrization is available for the floating point
+ *  precision type. This is useful for scientific applications.
+ *
+ * @note This API is considered to be stable.
+ *
+ * @tparam T floating point type
+ */
 template<typename T>
 class BlazertScene {
 
@@ -61,67 +73,25 @@ public:
   BlazertScene() = default;
 
   /**
-   * @brief Adds a triangular mesh to the scene
-   * @details
-   *  A triangular mesh can be used to describe any geometry. The mesh is described by vertices and a list of triangles
-   *  which describe which vertices form a triangle.
-   *  The prim_id is set in the rayhit structure by the intersection functions.
-   *
-   * @param vertices Vertices need to be allocated on the heap!
-   * @param triangles Triangles need to be allocated on the heap!
-   * @return geometry id for the mesh.
-   *
-   * @note vertices and triangles need to be allocated on the heap.
-   *
-   */
+    * @brief Adds a triangular mesh to the scene
+    */
   unsigned int add_mesh(const Vec3rList<T> &vertices, const Vec3iList &triangles);
-
   /**
-   * @brief Adds spheres at centers with radii
-   *
-   * @details
-   *  The spheres are described by centers and radii. For \f$N\f$ spheres, each of these vectors
-   *  needs to have \f$N\f$ entries describing the corresponding sphere's center and radius.
-   *
-   *  The prim_id is set in the rayhit structure by the intersection functions.
-   *
-   * @param centers specifies centers of the spheres (needs to be allocated on heap)
-   * @param radii specifies radii of the spheres (needs to be allocated on heap)
-   * @return geometry id of the spheres
-   *
-
-   *
-   * @note centers and radii need to be allocated on the heap.
-   * @note centers and spheres should be of the same length.
-   */
+  * @brief Adds spheres at centers with radii.
+  */
   unsigned int add_spheres(const Vec3rList<T> &centers, const std::vector<T> &radii);
-
   /**
-   * @brief Adds planes at centers with dimensions dxs and dys rotated around rotations
-   * @param centers center of planes
-   * @param dxs dimensions in x direction
-   * @param dys dimensions in y direction
-   * @param rotations local rotation matrices
-   * @return geometry id of the planes
-   */
+  * @brief Adds planes at centers with dimensions dxs and dys rotated around rotations.
+  */
   unsigned int add_planes(const Vec3rList<T> &centers, const std::vector<T> &dxs, const std::vector<T> &dys,
                           const Mat3rList<T> &rotations);
-
   /**
-   * @brief Adds cylinders with the bottom ellipsoid centered at centers, described by two semi_axes and heights.
-   * @param centers
-   * @param semi_axes_a
-   * @param semi_axes_b
-   * @param heights
-   * @param rotations
-   * @return geometry id of the cylinders
-   */
+  * @brief Adds cylinders at centers, described by two semi_axes and heights.
+  */
   unsigned int add_cylinders(const Vec3rList<T> &centers, const std::vector<T> &semi_axes_a,
                              const std::vector<T> &semi_axes_b, const std::vector<T> &heights,
                              const Mat3rList<T> &rotations);
   /**
-   * This function commits the scene
-   *
    * @brief Commits the scene and builds BVH for each geometry type
    *
    * @details
@@ -158,12 +128,15 @@ public:
 };
 
 /**
+ * @brief rfsdfsd
+ *
+ * @details fsdf sdfölksajdlksfdakjdfbakjsdfsdf
  *
  * @tparam T floating point type, which is usually float or double, but in the future, quadruple precision might be useful
  * @param scene
  * @param ray
  * @param rayhit
- * @return
+ * @return True if a hit is found, otherwise false
  */
 template<typename T>
 inline bool intersect1(const BlazertScene<T> &scene, const Ray<T> &ray, RayHit<T> &rayhit) {
@@ -217,7 +190,20 @@ inline bool intersect1(const BlazertScene<T> &scene, const Ray<T> &ray, RayHit<T
   return hit;
 }
 
-// Implementation of the add_ functions goes below ..
+/**
+ * @brief Adds a triangular mesh to the scene
+ * @details
+ *  A triangular mesh can be used to describe any geometry. The mesh is described by vertices and a list of triangles
+ *  which describe which vertices form a triangle.
+ *  The prim_id is set in the rayhit structure by the intersection functions.
+ *
+ * @param vertices Vertices need to be allocated on the heap!
+ * @param triangles Triangles need to be allocated on the heap!
+ * @return geometry id for the mesh.
+ *
+ * @note vertices and triangles need to be allocated on the heap.
+ *
+ */
 template<typename T>
 unsigned int BlazertScene<T>::add_mesh(const Vec3rList<T> &vertices, const Vec3iList &triangles) {
 
@@ -233,6 +219,23 @@ unsigned int BlazertScene<T>::add_mesh(const Vec3rList<T> &vertices, const Vec3i
   }
 }
 
+
+/**
+ * @brief Adds spheres at centers with radii.
+ *
+ * @details
+ *  The spheres are described by centers and radii. For \f$N\f$ spheres, each of these vectors
+ *  needs to have \f$N\f$ entries describing the corresponding sphere's center and radius.
+ *
+ *  The prim_id is set in the rayhit structure by the intersection functions.
+ *
+ * @param centers specifies centers of the spheres (needs to be allocated on heap)
+ * @param radii specifies radii of the spheres (needs to be allocated on heap)
+ * @return geometry id of the spheres
+ *
+ * @note centers and radii need to be allocated on the heap.
+ * @note centers and spheres should be of the same length.
+ */
 template<typename T>
 unsigned int BlazertScene<T>::add_spheres(const Vec3rList<T> &centers, const std::vector<T> &radii) {
 
@@ -248,6 +251,27 @@ unsigned int BlazertScene<T>::add_spheres(const Vec3rList<T> &centers, const std
   }
 }
 
+
+/**
+ * @brief Adds planes at centers with dimensions dxs and dys rotated around rotations.
+ *
+ * @details
+ *  The planes are described by centers, dimensions in x and y direction as well as rotation matrices.
+ *  For \f$N\f$ planes, each of these vectors needs to have \f$N\f$ entries describing the corresponding planes'
+ *  centers, dimensions in x and y direction and rotation matrices.
+ *
+ *  The prim_id is set in the rayhit structure by the intersection functions.
+ *
+ * @param centers center of planes
+ * @param dxs dimensions in x direction
+ * @param dys dimensions in y direction
+ * @param rotations local rotation matrices
+ *
+ * @return geometry id of the planes
+ *
+ * @note centers, dxy, dys, and rotations need to be allocated on the heap.
+ * @note centers, dxy, dys, and rotations should be of the same length.
+ */
 template<typename T>
 unsigned int BlazertScene<T>::add_planes(const Vec3rList<T> &centers, const std::vector<T> &dxs,
                                          const std::vector<T> &dys, const Mat3rList<T> &rotations) {
@@ -263,6 +287,29 @@ unsigned int BlazertScene<T>::add_planes(const Vec3rList<T> &centers, const std:
     return -1;
   }
 }
+
+/**
+ * @brief Adds cylinders at centers, described by two semi_axes and heights.
+ *
+ * @details
+ *  The cylinders are described by their centers, two semi-axes describing the ellipoidal shape of the top and bottom
+ *  their height and rotations. For \f$N\f$ planes, each of these vectors needs to have \f$N\f$ entries describing the
+ *  corresponding cylinderes' centers, dimensions in x and y direction and rotation matrices.
+ *
+ *  The prim_id is set in the rayhit structure by the intersection functions.
+ *
+ * @param centers centers of the cylinders
+ * @param semi_axes_a semi-axes in x-direction
+ * @param semi_axes_b semi-axes in y-direction
+ * @param heights heights of the cylinders
+ * @param rotations rotation matrices
+ *
+ * @return geometry id of the cylinders
+ *
+ * @note centers, dxy, dys, and rotations need to be allocated on the heap.
+ * @note centers, dxy, dys, and rotations should be of the same length.
+ *
+ */
 template<typename T>
 unsigned int BlazertScene<T>::add_cylinders(const Vec3rList<T> &centers, const std::vector<T> &semi_axes_a,
                                             const std::vector<T> &semi_axes_b, const std::vector<T> &heights,
