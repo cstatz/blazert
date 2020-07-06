@@ -15,7 +15,7 @@ Getting and bootstrapping vcpkg
 ---
 
 Get vcpkg and bootstrap it:
-```bat
+```shell script
 git clone https://github.com/microsoft/vcpkg.git
 cd vcpkg.git
 bootstrap-vcpkg.bat
@@ -27,7 +27,7 @@ Install the dependencies
 ---
 
 Install the necessary libs for blazert:
-```bat
+```shell script
 vcpkg install blaze:x64-windows
 vcpkg install embree:x64-windows
 vcpkg install benchmark:x64-windows
@@ -38,7 +38,7 @@ Get and build blazeRT
 
 Create a project (and/or build):
 
-```bat
+```shell script
 git clone https://github.com/cstatz/blazert.git
 cd blazert
 
