@@ -57,7 +57,7 @@ html_theme = 'sphinx_rtd_theme'
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
 
-breathe_projects = { "blazert": "/home/ogarten/Programmierung/Simulation_Framework/blazert/docs/xml"}
+breathe_projects = { "blazert": "../xml"}
 breathe_default_project = "blazert"
 
 
