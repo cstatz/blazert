@@ -13,6 +13,8 @@ This is the official documentation for `blazert <https::/github/cstatz/blazert/>
 
    build_blazert/index
    usage/index
+   roadmap
+   changelog
    API/api
 
 blazeRT is a **double precision ray tracer** for scientific or engineering applications derived from
