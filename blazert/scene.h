@@ -42,11 +42,11 @@ public:
   BVHBuildOptions<T> build_options;
 
   bool has_been_committed = false;
-  /**
+  /*
    * geometries counts the amount of different geometry types
    * -> each geometry has its own BVH
    * -> for each geometry, we have various primitives; the hit prim_id will be saved in the RayHit structure
-   **/
+   */
   unsigned int geometries = 0;
 
   std::unique_ptr<TriangleMesh<T>> triangle_collection;
@@ -72,22 +72,10 @@ public:
 public:
   BlazertScene() = default;
 
-  /**
-    * @brief Adds a triangular mesh to the scene
-    */
   unsigned int add_mesh(const Vec3rList<T> &vertices, const Vec3iList &triangles);
-  /**
-  * @brief Adds spheres at centers with radii.
-  */
   unsigned int add_spheres(const Vec3rList<T> &centers, const std::vector<T> &radii);
-  /**
-  * @brief Adds planes at centers with dimensions dxs and dys rotated around rotations.
-  */
   unsigned int add_planes(const Vec3rList<T> &centers, const std::vector<T> &dxs, const std::vector<T> &dys,
                           const Mat3rList<T> &rotations);
-  /**
-  * @brief Adds cylinders at centers, described by two semi_axes and heights.
-  */
   unsigned int add_cylinders(const Vec3rList<T> &centers, const std::vector<T> &semi_axes_a,
                              const std::vector<T> &semi_axes_b, const std::vector<T> &heights,
                              const Mat3rList<T> &rotations);
@@ -128,14 +116,16 @@ public:
 };
 
 /**
- * @brief rfsdfsd
+ * @brief Runs intersection tests for a given scene and ray.
  *
- * @details fsdf sdfölksajdlksfdakjdfbakjsdfsdf
+ * @details
+ *  intersect1 runs intersection test for 1 ray with the given scene. Thus, the BVH for each individual geometry is
+ *  traversed until a hit is found.
  *
  * @tparam T floating point type, which is usually float or double, but in the future, quadruple precision might be useful
- * @param scene
- * @param ray
- * @param rayhit
+ * @param scene Scene against which the ray is tested.
+ * @param ray The ray is used for the intersection testing.
+ * @param rayhit [out] rayhit structure to save the intersection data in.
  * @return True if a hit is found, otherwise false
  */
 template<typename T>
