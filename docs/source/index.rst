@@ -6,15 +6,26 @@
 Welcome to blazert's documentation!
 ===================================
 
-This is the official documentation for `blazert <https::/github/cstatz/blazert/>`_ and will be continuously updated.
+This is the official documentation for `blazeRT <https://github.com/cstatz/blazert/>`_ and will be continuously updated.
 
 .. toctree::
+   :caption: General
    :maxdepth: 2
 
    build_blazert/index
    usage/index
+
+.. toctree::
+   :maxdepth: 1
+
+   contributing
    roadmap
    changelog
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Reference
+
    API/api
 
 blazeRT is a **double precision ray tracer** for scientific or engineering applications derived from
