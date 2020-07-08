@@ -116,16 +116,16 @@ public:
 };
 
 /**
- * @brief Runs intersection tests for a given scene and ray.
+ * @brief Runs intersection tests for a given BlazertScene and Ray.
  *
  * @details
  *  intersect1 runs intersection test for 1 ray with the given scene. Thus, the BVH for each individual geometry is
  *  traversed until a hit is found.
  *
  * @tparam T floating point type, which is usually float or double, but in the future, quadruple precision might be useful
- * @param scene Scene against which the ray is tested.
- * @param ray The ray is used for the intersection testing.
- * @param rayhit [out] rayhit structure to save the intersection data in.
+ * @param scene BlazertScene against which the ray is tested.
+ * @param ray The Ray is used for the intersection testing.
+ * @param rayhit RayHit structure to save the intersection data in.
  * @return True if a hit is found, otherwise false
  */
 template<typename T>

@@ -10,12 +10,6 @@ This is the official documentation for `blazeRT <https://github.com/cstatz/blaze
 
 .. toctree::
    :caption: General
-   :maxdepth: 2
-
-   build_blazert/index
-   usage/index
-
-.. toctree::
    :maxdepth: 1
 
    contributing
@@ -23,7 +17,16 @@ This is the official documentation for `blazeRT <https://github.com/cstatz/blaze
    changelog
 
 .. toctree::
-   :maxdepth: 2
+   :caption: Usage
+   :maxdepth: 1
+
+   build_blazert/index
+   usage/scene
+   usage/low_level_api
+
+
+.. toctree::
+   :maxdepth: 1
    :caption: Reference
 
    API/api

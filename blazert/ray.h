@@ -9,6 +9,14 @@
 
 namespace blazert {
 
+/**
+ * @brief
+ *  Ray<T> defines a ray for the ray tracing.
+ *
+ * @details
+ *
+ * @tparam T floating point type
+ */
 template<typename T>
 class BLAZERTALIGN Ray {
 public:
@@ -23,6 +31,24 @@ public:
 
 public:
   Ray() = delete;
+  /**
+   * @brief Constructor for a Ray<T> to be used in ray tracing.
+   *
+   * @details
+   *    A lot of additional information is calculated in the constructor which is of interest in the build or traversal
+   *    of the BVH.
+   *
+   * @param origin Starting point from where the ray is launched.
+   * @param direction Dircetion in which the ray is launched.
+   * @param min_hit_distance  Minimum length the ray needs to have (default = 0).
+   * @param max_hit_distance Maximum length the ray can have (default = std::numeric_limits<T>::max()).
+   * @param cull_back_face If true, culling backfaces will be used (default = false).
+   * @param any_hit If true, the first hit found in the traversal will register as the hit, which might not be the hit (default = false) closest to the ray origin.
+   *
+   * @todo backface culling is no implemented yet.
+   *
+   *
+   */
   Ray(const Vec3r<T> &origin, const Vec3r<T> &direction, T min_hit_distance = T(0.),
       T max_hit_distance = std::numeric_limits<T>::max(), bool cull_back_face = false, bool any_hit = false)
       : origin{origin}, direction{normalize(direction)},
@@ -34,12 +60,22 @@ public:
         any_hit(any_hit) {}
 };
 
+/**
+ * @brief RayHit structure holds information about an intersection between a ray and an object
+ * @tparam T floating point type
+ */
 template<typename T>
 struct BLAZERTALIGN RayHit {
+
+  /// normal vector on surface at the intersection point
   Vec3r<T> normal;
+  /// uv coordinates
   Vec2r<T> uv;
+  /// distance between ray origin and the intersection point
   T hit_distance = std::numeric_limits<T>::max();
+  /// primitive id of the hit object (= which exact primitive was it)
   unsigned int prim_id = -1;
+  /// geometry id of the hit object (= which kind of geometry was it, e.g. sphere, triangle)
   unsigned int geom_id = -1;
 };
 
