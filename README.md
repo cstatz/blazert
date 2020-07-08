@@ -1,4 +1,5 @@
-[![Build Status](https://travis-ci.com/cstatz/blazert.svg?token=MzD1bv55cBzChUswxdrj&branch=develop)](https://travis-ci.com/cstatz/blazert)
+[![Build Status](https://travis-ci.com/cstatz/blazert.svg?token=MzD1bv55cBzChUswxdrj&branch=develop)](https://travis-ci.com/cstatz/blazert) [![Documentation Status](https://readthedocs.org/projects/blazert/badge/?version=latest)](https://blazert.readthedocs.io/en/latest/?badge=latest)
+
 
 # blazeRT
 
