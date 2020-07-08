@@ -13,8 +13,6 @@
 # import os
 # import sys
 # sys.path.insert(0, os.path.abspath('.'))
-import recommonmark
-from recommonmark.transform import AutoStructify
 
 
 source_suffix = ['.rst', '.md']
@@ -68,46 +66,13 @@ breathe_projects = { "blazert": "../xml"}
 # }
 breathe_default_project = "blazert"
 
+import subprocess, os
 
-#import subprocess
-#subprocess.call('cd .. ; doxygen', shell=True)
+read_the_docs_build = os.environ.get('READTHEDOCS', None) == 'True'
 
-import subprocess, sys, os
+if read_the_docs_build:
 
-def run_doxygen(folder):
-    """Run the doxygen make command in the designated folder"""
-
-    try:
-        retcode = subprocess.call("cd %s; make" % folder, shell=True)
-        if retcode < 0:
-            sys.stderr.write("doxygen terminated by signal %s" % (-retcode))
-    except OSError as e:
-        sys.stderr.write("doxygen execution failed: %s" % e)
-
-
-def generate_doxygen_xml(app):
-    """Run the doxygen make commands if we're on the ReadTheDocs server"""
-
-    read_the_docs_build = os.environ.get('READTHEDOCS', None) == 'True'
-
-    if read_the_docs_build:
-        run_doxygen("../..")
-
-
-# app setup hook
-def setup(app):
-    app.add_config_value('recommonmark_config', {
-        #'url_resolver': lambda url: github_doc_root + url,
-        'auto_toc_tree_section': 'Contents',
-        'enable_math': False,
-        'enable_inline_math': False,
-        'enable_eval_rst': True,
-    }, True)
-    app.add_transform(AutoStructify)
-
-    # Add hook for building doxygen xml when needed
-    app.connect("builder-inited", generate_doxygen_xml)
-
+    subprocess.call('cd ../../doxygen; doxygen', shell=True)
 
 
 
