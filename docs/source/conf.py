@@ -69,10 +69,10 @@ breathe_projects = { "blazert": "../xml"}
 breathe_default_project = "blazert"
 
 
-import subprocess
-subprocess.call('cd .. ; doxygen', shell=True)
+#import subprocess
+#subprocess.call('cd .. ; doxygen', shell=True)
 
-#import subprocess, sys, os
+import subprocess, sys, os
 
 def run_doxygen(folder):
     """Run the doxygen make command in the designated folder"""
@@ -91,7 +91,7 @@ def generate_doxygen_xml(app):
     read_the_docs_build = os.environ.get('READTHEDOCS', None) == 'True'
 
     if read_the_docs_build:
-        run_doxygen("../")
+        run_doxygen("../..")
 
 
 # app setup hook
@@ -106,7 +106,7 @@ def setup(app):
     app.add_transform(AutoStructify)
 
     # Add hook for building doxygen xml when needed
-    #app.connect("builder-inited", generate_doxygen_xml)
+    app.connect("builder-inited", generate_doxygen_xml)
 
 
 
