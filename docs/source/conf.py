@@ -22,8 +22,8 @@ source_suffix = ['.rst', '.md']
 # -- Project information -----------------------------------------------------
 
 project = 'blazert'
-copyright = '2020, Christoph Statz, Orell Garten'
-author = 'Christoph Statz, Orell Garten'
+copyright = '2020, Orell Garten, Christoph Statz'
+author = 'Orell Garten, Christoph Statz'
 
 # The full version, including alpha/beta/rc tags
 release = '20.2.1'
@@ -69,6 +69,28 @@ breathe_projects = { "blazert": "../xml"}
 breathe_default_project = "blazert"
 
 
+import subprocess, sys, os
+
+def run_doxygen(folder):
+    """Run the doxygen make command in the designated folder"""
+
+    try:
+        retcode = subprocess.call("cd %s; make" % folder, shell=True)
+        if retcode < 0:
+            sys.stderr.write("doxygen terminated by signal %s" % (-retcode))
+    except OSError as e:
+        sys.stderr.write("doxygen execution failed: %s" % e)
+
+
+def generate_doxygen_xml(app):
+    """Run the doxygen make commands if we're on the ReadTheDocs server"""
+
+    read_the_docs_build = os.environ.get('READTHEDOCS', None) == 'True'
+
+    if read_the_docs_build:
+        run_doxygen("../")
+
+
 # app setup hook
 def setup(app):
     app.add_config_value('recommonmark_config', {
@@ -79,3 +101,10 @@ def setup(app):
         'enable_eval_rst': True,
     }, True)
     app.add_transform(AutoStructify)
+
+    # Add hook for building doxygen xml when needed
+    app.connect("builder-inited", generate_doxygen_xml)
+
+
+
+
