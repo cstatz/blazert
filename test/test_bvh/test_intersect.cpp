@@ -15,7 +15,6 @@ using namespace doctest;
 TEST_CASE_TEMPLATE("Intersect_node", T, float, double) {
   // highest numbers
   T pos_inf = std::numeric_limits<T>::max();
-  T neg_inf = -1 * std::numeric_limits<T>::max();
 
   SUBCASE("basic case") {
     // return variables
