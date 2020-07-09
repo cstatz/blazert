@@ -267,6 +267,20 @@ inline bool intersect_primitive(PlaneIntersector<T, Collection> &i, const Plane<
   return false;
 }
 
+template<typename T>
+[[nodiscard]] inline T distance_to_surface(const Plane<T> &plane, const Vec3r<T> point) noexcept {
+  const Vec3r<T> &local_point = trans(plane.rotation) * (point - plane.center);
+  const T dx = plane.dx/2;
+  const T dy = plane.dy/2;
+  const T center_x = plane.center[0];
+  const T center_y = plane.center[1];
+// if the point is not directly above or below the plane, it has no distance to the plane
+  if ((local_point[0] >= center_x-dx) && (local_point[0] <= center_x+dx) && (local_point[1] >= center_y-dy) && (local_point[1] <= center_y+dy))
+    return std::abs(local_point[2]);
+
+  return std::numeric_limits<T>::max();
+}
+
 }// namespace blazert
 
 #endif//BLAZERT_PLANE_H

@@ -11,16 +11,20 @@
  * 2.1 center at origin ( rotated, non-rotated cylinder)
  * 2.2 center not at origin ( rotated, non-rotated cylinder)
  *
- * 3. intersection tests
- * 3.1 center at origin
- *  3.1.1 non-rotated plane
- *  3.1.2 rotated, hit on plane
- *  3.1.3 rotated, edge hit
- *  3.1.4 non-rotated, ray origin outside sphere bounds
- *  3.1.5 non-rotated, all edge hits
- *  3.1.6 non-rotated, all corner hits
+ * 3. testing distance to surface function
+ * 3.1 center at origin ( rotated, non-rotated cylinder)
+ * 3.2 center not at origin ( rotated, non-rotated cylinder)
  *
- * 3.2 center not at origin
+ * 4. intersection tests
+ * 4.1 center at origin
+ *  4.1.1 non-rotated plane
+ *  4.1.2 rotated, hit on plane
+ *  4.1.3 rotated, edge hit
+ *  4.1.4 non-rotated, ray origin outside sphere bounds
+ *  4.1.5 non-rotated, all edge hits
+ *  4.1.6 non-rotated, all corner hits
+ *
+ * 4.2 center not at origin
  *  3.1.1 - 3.1.6 are implemented here as well
  */
 
@@ -230,6 +234,95 @@ TEST_CASE_TEMPLATE("Plane", T, float, double) {
 
         PlaneCollection<T> planes(*centers, *dxx, *dyy, *rotations);
         assert_primitive_center(planes, 0, center);
+      }
+    }
+  }
+
+  SUBCASE("distance to surface") {
+    SUBCASE("centered") {
+      const Vec3r<T> center{0.f, 0.f, 0.f};
+      centers->emplace_back(center);
+      SUBCASE("non-rotated") {
+        const Mat3r<T> rot = blaze::IdentityMatrix<T>(3UL);
+        rotations->push_back(rot);
+
+        PlaneCollection<T> planes(*centers, *dxx, *dyy, *rotations);
+        const unsigned int prim_id = 0;
+        assert_distance_to_surface(planes, prim_id, Vec3r<T>{0.f, 0.f, 1.f}, static_cast<T>(1.));
+        assert_distance_to_surface(planes, prim_id, Vec3r<T>{0.f, 0.f, -1.f}, static_cast<T>(1.));
+
+        assert_distance_to_surface(planes, prim_id, Vec3r<T>{1.f, 1.f, 1.f}, static_cast<T>(1.));
+        assert_distance_to_surface(planes, prim_id, Vec3r<T>{-1.f, 1.f, 1.f}, static_cast<T>(1.));
+        assert_distance_to_surface(planes, prim_id, Vec3r<T>{1.f, -1.f, 1.f}, static_cast<T>(1.));
+        assert_distance_to_surface(planes, prim_id, Vec3r<T>{-1.f, -1.f, 1.f}, static_cast<T>(1.));
+
+        assert_distance_to_surface(planes, prim_id, Vec3r<T>{1.f, 1.f, -1.f}, static_cast<T>(1.));
+        assert_distance_to_surface(planes, prim_id, Vec3r<T>{-1.f, 1.f, -1.f}, static_cast<T>(1.));
+        assert_distance_to_surface(planes, prim_id, Vec3r<T>{1.f, -1.f, -1.f}, static_cast<T>(1.));
+        assert_distance_to_surface(planes, prim_id, Vec3r<T>{-1.f, -1.f, -1.f}, static_cast<T>(1.));
+      }
+      SUBCASE("rotated") {
+        // x = 0 is now plane equation
+        Mat3r<T> rot{{0, 0, 1}, {0, 1, 0}, {-1, 0, 0}};
+        rotations->push_back(rot);
+
+        PlaneCollection<T> planes(*centers, *dxx, *dyy, *rotations);
+        const unsigned int prim_id = 0;
+        assert_distance_to_surface(planes, prim_id, Vec3r<T>{1.f, 0.f, 0.f}, static_cast<T>(1.));
+        assert_distance_to_surface(planes, prim_id, Vec3r<T>{-1.f, 0.f, 0.f}, static_cast<T>(1.));
+
+        assert_distance_to_surface(planes, prim_id, Vec3r<T>{1.f, 1.f, 1.f}, static_cast<T>(1.));
+        assert_distance_to_surface(planes, prim_id, Vec3r<T>{1.f, 1.f, -1.f}, static_cast<T>(1.));
+        assert_distance_to_surface(planes, prim_id, Vec3r<T>{1.f, -1.f, 1.f}, static_cast<T>(1.));
+        assert_distance_to_surface(planes, prim_id, Vec3r<T>{1.f, -1.f, -1.f}, static_cast<T>(1.));
+
+        assert_distance_to_surface(planes, prim_id, Vec3r<T>{-1.f, 1.f, 1.f}, static_cast<T>(1.));
+        assert_distance_to_surface(planes, prim_id, Vec3r<T>{-1.f, 1.f, -1.f}, static_cast<T>(1.));
+        assert_distance_to_surface(planes, prim_id, Vec3r<T>{-1.f, -1.f, 1.f}, static_cast<T>(1.));
+        assert_distance_to_surface(planes, prim_id, Vec3r<T>{-1.f, -1.f, -1.f}, static_cast<T>(1.));
+      }
+    }
+    SUBCASE("shifted") {
+      const Vec3r<T> center{0.f, 0.f, 1.f};
+      centers->emplace_back(center);
+      SUBCASE("non-rotated") {
+        const Mat3r<T> rot = blaze::IdentityMatrix<T>(3UL);
+        rotations->push_back(rot);
+
+        PlaneCollection<T> planes(*centers, *dxx, *dyy, *rotations);
+        const unsigned int prim_id = 0;
+        assert_distance_to_surface(planes, prim_id, Vec3r<T>{0.f, 0.f, 2.f}, static_cast<T>(1.));
+        assert_distance_to_surface(planes, prim_id, Vec3r<T>{0.f, 0.f, 0.f}, static_cast<T>(1.));
+
+        assert_distance_to_surface(planes, prim_id, Vec3r<T>{1.f, 1.f, 2.f}, static_cast<T>(1.));
+        assert_distance_to_surface(planes, prim_id, Vec3r<T>{-1.f, 1.f, 2.f}, static_cast<T>(1.));
+        assert_distance_to_surface(planes, prim_id, Vec3r<T>{1.f, -1.f, 2.f}, static_cast<T>(1.));
+        assert_distance_to_surface(planes, prim_id, Vec3r<T>{-1.f, -1.f, 2.f}, static_cast<T>(1.));
+
+        assert_distance_to_surface(planes, prim_id, Vec3r<T>{1.f, 1.f, 0.f}, static_cast<T>(1.));
+        assert_distance_to_surface(planes, prim_id, Vec3r<T>{-1.f, 1.f, 0.f}, static_cast<T>(1.));
+        assert_distance_to_surface(planes, prim_id, Vec3r<T>{1.f, -1.f, 0.f}, static_cast<T>(1.));
+        assert_distance_to_surface(planes, prim_id, Vec3r<T>{-1.f, -1.f, 0.f}, static_cast<T>(1.));
+      }
+      SUBCASE("rotated") {
+        // x = 0 is now plane equation
+        Mat3r<T> rot{{0, 0, 1}, {0, 1, 0}, {-1, 0, 0}};
+        rotations->push_back(rot);
+
+        PlaneCollection<T> planes(*centers, *dxx, *dyy, *rotations);
+        const unsigned int prim_id = 0;
+        assert_distance_to_surface(planes, prim_id, Vec3r<T>{1.f, 0.f, 0.f}, static_cast<T>(1.));
+        assert_distance_to_surface(planes, prim_id, Vec3r<T>{-1.f, 0.f, 0.f}, static_cast<T>(1.));
+
+        assert_distance_to_surface(planes, prim_id, Vec3r<T>{1.f, 1.f, 2.f}, static_cast<T>(1.));
+        assert_distance_to_surface(planes, prim_id, Vec3r<T>{1.f, 1.f, 0.f}, static_cast<T>(1.));
+        assert_distance_to_surface(planes, prim_id, Vec3r<T>{1.f, -1.f, 2.f}, static_cast<T>(1.));
+        assert_distance_to_surface(planes, prim_id, Vec3r<T>{1.f, -1.f, 0.f}, static_cast<T>(1.));
+
+        assert_distance_to_surface(planes, prim_id, Vec3r<T>{-1.f, 1.f, 2.f}, static_cast<T>(1.));
+        assert_distance_to_surface(planes, prim_id, Vec3r<T>{-1.f, 1.f, 0.f}, static_cast<T>(1.));
+        assert_distance_to_surface(planes, prim_id, Vec3r<T>{-1.f, -1.f, 2.f}, static_cast<T>(1.));
+        assert_distance_to_surface(planes, prim_id, Vec3r<T>{-1.f, -1.f, 0.f}, static_cast<T>(1.));
       }
     }
   }
