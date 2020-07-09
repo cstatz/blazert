@@ -88,11 +88,6 @@ public:
     return centers[prim_id];
   }
 
-  [[nodiscard]] inline T distance_to_surface(const Vec3r<T> &point, const unsigned int prim_index) const noexcept {
-    const Vec3r<T> &distance = centers[prim_index] - point;
-    return abs(norm(distance) - radii[prim_index]);
-  }
-
 private:
   [[nodiscard]] inline std::pair<Vec3r<T>, Vec3r<T>>
   pre_compute_bounding_box(const unsigned int prim_id) const noexcept {
@@ -177,6 +172,11 @@ inline bool intersect_primitive(SphereIntersector<T, Collection> &i, const Spher
     return true;
   }
   return false;
+}
+
+template<typename T>
+[[nodiscard]] inline T distance_to_surface(const Sphere<T> &sphere, const Vec3r<T> point) noexcept {
+  return std::abs(norm(sphere.center - point) - sphere.radius);
 }
 
 }// namespace blazert
