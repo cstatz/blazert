@@ -1,4 +1,5 @@
-[![Build Status](https://travis-ci.com/cstatz/blazert.svg?token=MzD1bv55cBzChUswxdrj&branch=develop)](https://travis-ci.com/cstatz/blazert)
+[![Build Status](https://travis-ci.com/cstatz/blazert.svg?token=MzD1bv55cBzChUswxdrj&branch=develop)](https://travis-ci.com/cstatz/blazert) [![Documentation Status](https://readthedocs.org/projects/blazert/badge/?version=latest)](https://blazert.readthedocs.io/en/latest/?badge=latest)
+
 
 # blazeRT
 
@@ -45,6 +46,8 @@ blazeRT is tested using unit tests (whose number will increase as development pr
 quality and a reproducible build experience via continuous integration. During the CI process we 
 build the examples and the tests, which need to run successfully in order for the CI to pass. Currently, 
 blazeRT is CI-tested on Ubuntu 18.04 and macOS with gcc and clang.
+
+The documentation of the entire script can be found [here](https://blazert.readthedocs.io/en/latest/).
 
 ![image](examples/baseline/path_tracer_blaze.png)
 
@@ -104,7 +107,7 @@ This will pull doctest, [nanoRT](https://github.com/lighttransport/nanort) and [
 
 ### Build and test
 
-For windows read this: [building on windows](BUILDING_ON_WINDOWS.md)
+For windows read this: [building on windows](https://blazert.readthedocs.io/en/latest/build_blazert/build_windows.html)
 
 This is a header-only library. No need to build anything. Just drop it in your source directory and off you go.
 The build step is solely for the examples, tests and the benchmark.
@@ -144,7 +147,7 @@ backend
 
 ## Usage
 To get familiar with the usage of blazeRT, look at the provided examples and test cases. To get started quickly,
-checkout the minimal examples below.
+checkout the minimal examples below. The full documentation includeing the API reference is available [here](https://blazert.readthedocs.io/en/latest/).
 
 - The [scene](blazert/scene.h) API can be considered **stable**, while the low-level API of the [BVH](blazert/bvh) 
 (```build```, ```traverse```, ...) are not to be considered stable as they might change when requirements 

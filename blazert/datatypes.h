@@ -29,21 +29,29 @@
 namespace blazert {
 
 // Vectors
+/// 3D vector of type `T`
 template<class T>
 using Vec3r = blaze::StaticVector<T, 3UL, blaze::columnVector, A_, P_>;
+/// 2D vector of type `T`.
 template<class T>
 using Vec2r = blaze::StaticVector<T, 2UL, blaze::columnVector, A_, P_>;
+/// 3D vector of type `unsigned int`.
 using Vec3ui = blaze::StaticVector<unsigned int, 3UL, blaze::columnVector, A_, P_>;
-using vec2ui = blaze::StaticVector<unsigned int, 2UL, blaze::columnVector, A_, P_>;
+/// 2D vector of type `unsigned int`.
+using Vec2ui = blaze::StaticVector<unsigned int, 2UL, blaze::columnVector, A_, P_>;
 
 // Matrices
+/// 3x3 matrix of type `T`.
 template<class T>
 using Mat3r = blaze::StaticMatrix<T, 3UL, 3UL, blaze::rowMajor, A_, P_>;
 
 // Container
+/// `std::vector` with `Vec3r<T>` and blaze allocator for aligned allocation.
 template<class T>
 using Vec3rList = std::vector<Vec3r<T>, blaze::AlignedAllocator<Vec3r<T>>>;
+/// `std::vector` with `Vec3ui` and blaze allocator for aligned allocation.
 using Vec3iList = std::vector<Vec3ui, blaze::AlignedAllocator<Vec3ui>>;
+/// `std::vector` with `Mat3r<T>` and blaze allocator for aligned allocation.
 template<typename T>
 using Mat3rList = std::vector<Mat3r<T>, blaze::AlignedAllocator<Mat3r<T>>>;
 
@@ -85,10 +93,6 @@ template<typename T>
 inline void intersection(Vec3r<T> &min_, Vec3r<T> &max_, const Vec3r<T> &min, const Vec3r<T> &max) {
   min_ = blaze::min(min, min_);
   max_ = blaze::max(max, max_);
-  //  for (unsigned int k = 0; k < 3; k++) {
-  //    min_[k] = std::max(min[k], min_[k]);
-  //    max_[k] = std::min(max[k], max_[k]);
-  //  }
 }
 
 }// namespace blazert
