@@ -57,7 +57,7 @@ using Mat3rList = std::vector<Mat3r<T>, blaze::AlignedAllocator<Mat3r<T>>>;
 
 template<typename T, unsigned int capacity = 0>
 struct Stack {
-  T stack[capacity];
+  std::array<T, capacity> stack;
   unsigned int ss = 0;
   inline void push_back(T node) { stack[ss++] = node; }
   inline void pop_back() { stack[ss--] = 0; }
