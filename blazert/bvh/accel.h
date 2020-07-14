@@ -57,25 +57,27 @@ template<typename T, template<typename> typename Collection>
 inline bool traverse(const BVH<T, Collection> &bvh, const Ray<T> &ray, RayHit<T> &rayhit,
                      typename Collection<T>::intersector &intersector) noexcept {
 
-  Stack<unsigned int, BLAZERT_MAX_TREE_DEPTH> node_stack;
-  node_stack.push_back(0);
+  //Stack<unsigned int, BLAZERT_MAX_TREE_DEPTH> node_stack;
+  size_t top_node_index = 0;
+  std::array<unsigned int, BLAZERT_MAX_TREE_DEPTH> node_stack;
+  node_stack[top_node_index++] = 0;
 
   T hit_distance = ray.max_hit_distance;
   prepare_traversal(intersector, ray);
 
-  while (node_stack.size() > 0) {
+  while (top_node_index > 0) {
 
     T max_hit_distance = hit_distance;
     T min_hit_distance = ray.min_hit_distance;
 
-    const BVHNode<T, Collection> &node = bvh.nodes[node_stack.back()];
-    node_stack.pop_back();
+    const BVHNode<T, Collection> &node = bvh.nodes[node_stack[top_node_index - 1]];
+    node_stack[top_node_index--] = 0;
 
     if (intersect_node(min_hit_distance, max_hit_distance, node, ray)) {
       if (!node.leaf) {// Branch node
         const int order_near = ray.direction_sign[node.axis];
-        node_stack.push_back(node.children[1 - order_near]);
-        node_stack.push_back(node.children[order_near]);
+        node_stack[top_node_index++] = node.children[1 - order_near];
+        node_stack[top_node_index++] = node.children[order_near];
       }
       /// Expect to return true, if any prim in leaf is hit and
       /// the prims hit_distance is smaller than the intersectors hit_distance.
