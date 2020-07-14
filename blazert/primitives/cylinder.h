@@ -491,6 +491,22 @@ inline bool intersect_primitive(CylinderIntersector<T, Collection> &i, const Cyl
   return false;
 }
 
+template<typename T>
+[[nodiscard]] inline T distance_to_surface(const Cylinder<T> &cylinder, const Vec3r<T> point) noexcept {
+  const Vec3r<T> &local_point = trans(cylinder.rotation) * (point - cylinder.center);
+
+  // 1. calculate distance to shell
+  const T dist_shell = 0;
+
+  // 2. calculate distance to top
+  const T dist_top= 0;
+
+  // 3. calculate distance to bottom
+  const T dist_bottom = 0;
+
+  return std::min(dist_shell, dist_top, dist_bottom);
+}
+
 }// namespace blazert
 
 #endif//BLAZERT_CYLINDER_H
