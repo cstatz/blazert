@@ -3,7 +3,9 @@ Getting Started
 The following examples shows all aspects of the high-level scene API. The code we show here is very similar to
 ``examples/scene_primitives/main.cc``; however, we excluded writing to a PNG file here.
 
-.. note:: The scene API is considered to be stable.
+.. note:: The scene API is considered to be (mostly) stable.
+
+.. warning:: ``Scene<T>`` will very likely become ``Scene<T, BVH, Builder>`` at some point in time to choose between different BVH and Builder representations.
 
 Setup
 -------------
