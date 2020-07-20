@@ -57,7 +57,7 @@ int main(int argc, char **argv) {
   auto mesh = new Mesh<ft>();
   LoadObj(*mesh, objFilename.c_str());
 
-  blazert::Scene<ft> scene;
+  blazert::Scene<ft, blazert::BVH, blazert::SAHBinnedBuilder> scene;
   [[maybe_unused]] unsigned int prim_id = scene.add_mesh(mesh->vertices, mesh->triangles);
   scene.commit();
 

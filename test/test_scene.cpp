@@ -4,6 +4,7 @@
 
 #include <blazert/blazert.h>
 #include <blazert/bvh/accel.h>
+#include <blazert/bvh/builder.h>
 #include <blazert/datatypes.h>
 #include <blazert/primitives/sphere.h>
 #include <blazert/ray.h>
@@ -26,7 +27,7 @@ TEST_CASE_TEMPLATE("Scene with Sphere", T, float, double) {
     Vec3r<T> org{2.f, 0.f, 0.f};
     Vec3r<T> dir{-1.f, 0.f, 0.f};
 
-    Scene<T> scene;
+    Scene<T, BVH, SAHBinnedBuilder> scene;
     unsigned int geom_id = scene.add_spheres(*centers, *radiuss);
     scene.commit();
 
@@ -60,7 +61,7 @@ TEST_CASE_TEMPLATE("Scene with Plane", T, float, double) {
     Vec3r<T> org{0.f, 0.f, 5.f};
     Vec3r<T> dir{0.f, 0.f, -1.f};
 
-    Scene<T> scene;
+    Scene<T, BVH, SAHBinnedBuilder> scene;
     unsigned int geom_id = scene.add_planes(*centers, *dxs, *dys, *rotations);
     scene.commit();
 
@@ -96,7 +97,7 @@ TEST_CASE_TEMPLATE("Scene with Cylinder", T, float, double) {
     Vec3r<T> org{0.f, 0.f, 4.f};
     Vec3r<T> dir{0.f, 0.f, -1.f};
 
-    Scene<T> scene;
+    Scene<T, BVH, SAHBinnedBuilder> scene;
     unsigned int geom_id = scene.add_cylinders(*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations);
     scene.commit();
 
@@ -143,7 +144,7 @@ TEST_CASE_TEMPLATE("Scene with 2 different primitives", T, float, double) {
     const Ray<T> ray{org, dir};
 
     // scene + add primitives -> cylinder with sphere above it, only sphere should be hit!
-    Scene<T> scene;
+    Scene<T, BVH, SAHBinnedBuilder> scene;
     unsigned int c_geom_id = scene.add_cylinders(*c_centers, *c_semi_axes_a, *c_semi_axes_b, *c_heights, *c_rotations);
     unsigned int s_geom_id = scene.add_spheres(*s_centers, *s_radii);
     scene.commit();

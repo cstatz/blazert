@@ -75,7 +75,7 @@ int main(int argc, char **argv) {
   // Create the scene, add the cylinders and commit the scene
   // committing the scene builds the BVHs
   // After committing you cannot add anymore geometries
-  blazert::Scene<ft> scene;
+  blazert::Scene<ft, blazert::BVH, blazert::SAHBinnedBuilder> scene;
   scene.add_cylinders(*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations);
   scene.add_spheres(*sph_centers, *radii);
   scene.commit();
