@@ -43,7 +43,7 @@ public:
   std::unique_ptr<EmbreeCylinder> cylinder;
   std::unique_ptr<EmbreePlane> plane;
 
-  BlazertScene<T> blazertscene;
+  BlazertScene<T, BVH, SAHBinnedBuilder> blazertscene;
   bool has_been_committed;
 
   EmbreeScene()

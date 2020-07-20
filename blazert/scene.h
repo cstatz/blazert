@@ -34,8 +34,10 @@ namespace blazert {
  * @note This API is considered to be stable.
  *
  * @tparam T floating point type
+ * @tparam BVH_T BVH type which is used to represent the BVH
+ * @tparam Builder Type of the builder to use for building the BVH
  */
-template<typename T>
+template<typename T, template<typename, template<typename> typename> typename BVH_T, typename Builder>
 class BlazertScene {
 
 public:
@@ -50,22 +52,22 @@ public:
   unsigned int geometries = 0;
 
   std::unique_ptr<TriangleMesh<T>> triangle_collection;
-  std::unique_ptr<BVH<T, TriangleMesh>> triangles_bvh;
+  std::unique_ptr<BVH_T<T, TriangleMesh>> triangles_bvh;
   size_t triangles_geom_id = -1;
   bool has_triangles = false;
 
   std::unique_ptr<SphereCollection<T>> sphere_collection;
-  std::unique_ptr<BVH<T, SphereCollection>> spheres_bvh;
+  std::unique_ptr<BVH_T<T, SphereCollection>> spheres_bvh;
   size_t spheres_geom_id = -1;
   bool has_spheres = false;
 
   std::unique_ptr<PlaneCollection<T>> plane_collection;
-  std::unique_ptr<BVH<T, PlaneCollection>> planes_bvh;
+  std::unique_ptr<BVH_T<T, PlaneCollection>> planes_bvh;
   size_t planes_geom_id = -1;
   bool has_planes = false;
 
   std::unique_ptr<CylinderCollection<T>> cylinder_collection;// these are needed for lifetime management...
-  std::unique_ptr<BVH<T, CylinderCollection>> cylinders_bvh;
+  std::unique_ptr<BVH_T<T, CylinderCollection>> cylinders_bvh;
   size_t cylinders_geom_id = -1;
   bool has_cylinders = false;
 
@@ -91,22 +93,22 @@ public:
   bool commit() {
 
     if (has_triangles) {
-      SAHBinnedBuilder builder;
+      Builder builder;
       builder.build(*triangles_bvh, build_options);
     }
 
     if (has_spheres) {
-      SAHBinnedBuilder builder;
+      Builder builder;
       builder.build(*spheres_bvh, build_options);
     }
 
     if (has_planes) {
-      SAHBinnedBuilder builder;
+      Builder builder;
       builder.build(*planes_bvh, build_options);
     }
 
     if (has_cylinders) {
-      SAHBinnedBuilder builder;
+      Builder builder;
       builder.build(*cylinders_bvh, build_options);
     }
 
@@ -128,8 +130,8 @@ public:
  * @param rayhit RayHit structure to save the intersection data in.
  * @return True if a hit is found, otherwise false
  */
-template<typename T>
-inline bool intersect1(const BlazertScene<T> &scene, const Ray<T> &ray, RayHit<T> &rayhit) {
+template<typename T, template<typename, template<typename> typename> typename BVH_T, typename Builder>
+inline bool intersect1(const BlazertScene<T, BVH_T, Builder> &scene, const Ray<T> &ray, RayHit<T> &rayhit) {
 
   // This may not be optimal, but the interface is simple and everything can (and will) be in-lined.
   RayHit<T> temp_rayhit;
@@ -194,12 +196,12 @@ inline bool intersect1(const BlazertScene<T> &scene, const Ray<T> &ray, RayHit<T
  * @note vertices and triangles need to be allocated on the heap.
  *
  */
-template<typename T>
-unsigned int BlazertScene<T>::add_mesh(const Vec3rList<T> &vertices, const Vec3iList &triangles) {
+template<typename T, template<typename, template<typename> typename> typename BVH_T, typename Builder>
+unsigned int BlazertScene<T, BVH_T, Builder>::add_mesh(const Vec3rList<T> &vertices, const Vec3iList &triangles) {
 
   if ((!has_triangles) && (!has_been_committed)) {
     triangle_collection = std::make_unique<TriangleMesh<T>>(vertices, triangles);
-    triangles_bvh = std::make_unique<BVH<T, TriangleMesh>>(*triangle_collection);
+    triangles_bvh = std::make_unique<BVH_T<T, TriangleMesh>>(*triangle_collection);
 
     has_triangles = true;
     triangles_geom_id = geometries++;
@@ -226,12 +228,12 @@ unsigned int BlazertScene<T>::add_mesh(const Vec3rList<T> &vertices, const Vec3i
  * @note centers and radii need to be allocated on the heap.
  * @note centers and spheres should be of the same length.
  */
-template<typename T>
-unsigned int BlazertScene<T>::add_spheres(const Vec3rList<T> &centers, const std::vector<T> &radii) {
+template<typename T, template<typename, template<typename> typename> typename BVH_T, typename Builder>
+unsigned int BlazertScene<T, BVH_T, Builder>::add_spheres(const Vec3rList<T> &centers, const std::vector<T> &radii) {
 
   if ((!has_spheres) && (!has_been_committed)) {
     sphere_collection = std::make_unique<SphereCollection<T>>(centers, radii);
-    spheres_bvh = std::make_unique<BVH<T, SphereCollection>>(*sphere_collection);
+    spheres_bvh = std::make_unique<BVH_T<T, SphereCollection>>(*sphere_collection);
 
     has_spheres = true;
     spheres_geom_id = geometries++;
@@ -262,13 +264,13 @@ unsigned int BlazertScene<T>::add_spheres(const Vec3rList<T> &centers, const std
  * @note centers, dxy, dys, and rotations need to be allocated on the heap.
  * @note centers, dxy, dys, and rotations should be of the same length.
  */
-template<typename T>
-unsigned int BlazertScene<T>::add_planes(const Vec3rList<T> &centers, const std::vector<T> &dxs,
+template<typename T, template<typename, template<typename> typename> typename BVH_T, typename Builder>
+unsigned int BlazertScene<T, BVH_T, Builder>::add_planes(const Vec3rList<T> &centers, const std::vector<T> &dxs,
                                          const std::vector<T> &dys, const Mat3rList<T> &rotations) {
 
   if ((!has_planes) && (!has_been_committed)) {
     plane_collection = std::make_unique<PlaneCollection<T>>(centers, dxs, dys, rotations);
-    planes_bvh = std::make_unique<BVH<T, PlaneCollection>>(*plane_collection);
+    planes_bvh = std::make_unique<BVH_T<T, PlaneCollection>>(*plane_collection);
 
     has_planes = true;
     planes_geom_id = geometries++;
@@ -300,14 +302,14 @@ unsigned int BlazertScene<T>::add_planes(const Vec3rList<T> &centers, const std:
  * @note centers, dxy, dys, and rotations should be of the same length.
  *
  */
-template<typename T>
-unsigned int BlazertScene<T>::add_cylinders(const Vec3rList<T> &centers, const std::vector<T> &semi_axes_a,
+template<typename T, template<typename, template<typename> typename> typename BVH_T, typename Builder>
+unsigned int BlazertScene<T, BVH_T, Builder>::add_cylinders(const Vec3rList<T> &centers, const std::vector<T> &semi_axes_a,
                                             const std::vector<T> &semi_axes_b, const std::vector<T> &heights,
                                             const Mat3rList<T> &rotations) {
   if ((!has_cylinders) && (!has_been_committed)) {
     cylinder_collection =
         std::make_unique<CylinderCollection<T>>(centers, semi_axes_a, semi_axes_b, heights, rotations);
-    cylinders_bvh = std::make_unique<BVH<T, CylinderCollection>>(*cylinder_collection);
+    cylinders_bvh = std::make_unique<BVH_T<T, CylinderCollection>>(*cylinder_collection);
     has_cylinders = true;
 
     cylinders_geom_id = geometries++;
