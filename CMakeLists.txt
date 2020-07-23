@@ -1,30 +1,14 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.7.0)
-PROJECT(blazert)
+PROJECT(blazert CXX)
 
-SET(ENABLE_OMP true CACHE BOOL "Enable OpenMP in examples.")
-SET(BUILD_TEST false CACHE BOOL "Build tests.")
-SET(BUILD_BENCHMARK false CACHE BOOL "Build benchmark.")
-SET(BUILD_EXAMPLES false CACHE BOOL "Build examples.")
-SET(EMBREE_BACKEND false CACHE BOOL "Use embree as tracing backend.")
-SET(TEST_COVERAGE false CACHE BOOL "Test code coverage (using gcov, needs compilation with gcc).")
-SET(BLAZE_INCLUDE_OVERRIDE "" CACHE STRING "Where to find the blaze includes. Must set on windows for blaze <= 3.7")
+# include build option flags
+include(cmake/build_options.cmake)
 
-message("========================================")
-message("= Configuring blazeRT:                 =")
-message(" * Build test:      ${BUILD_TEST}")
-message(" * Build benchmark: ${BUILD_BENCHMARK}")
-message(" * Build examples:  ${BUILD_EXAMPLES}")
-message(" * Embree backend:  ${EMBREE_BACKEND}")
-message(" * Test coverage:   ${TEST_COVERAGE}")
-IF (NOT ("${BLAZE_INCLUDE_OVERRIDE}" STREQUAL ""))
-    message(" * Blaze include dir: ${BLAZE_INCLUDE_OVERRIDE}")
-ENDIF ()
-message("========================================")
-
+# turn on test coverage
 IF(TEST_COVERAGE)
-SET(COVERAGE_FLAGS "--coverage")
+    SET(COVERAGE_FLAGS "--coverage")
 ELSE()
-SET(COVERAGE_FLAGS "")
+    SET(COVERAGE_FLAGS "")
 ENDIF()
 
 # Compiler Flags
@@ -72,45 +56,9 @@ IF (ENABLE_OMP)
     ENDIF ()
 ENDIF ()
 
-IF (BUILD_EXAMPLES)
-    ADD_SUBDIRECTORY(examples)
-ENDIF ()
-
-SET(BLAZERT_VERSION_NUMBER 20.2.1)
-SET(BLAZERT_VERSION_STRING ${BLAZERT_VERSION_NUMBER})
-SET(BLAZERT_DEFINITIONS "")
-SET(BLAZERT_INCLUDE_DIR "${CMAKE_INSTALL_PREFIX}/include")
-SET(BLAZERT_ROOT_DIR ${CMAKE_INSTALL_PREFIX})
-
-INCLUDE(CMakePackageConfigHelpers)
-
-CONFIGURE_PACKAGE_CONFIG_FILE(
-        ${CMAKE_CURRENT_SOURCE_DIR}/cmake/blazert.cmake.in
-        ${CMAKE_CURRENT_BINARY_DIR}/blazertConfig.cmake
-        PATH_VARS BLAZERT_INCLUDE_DIR BLAZERT_ROOT_DIR
-        INSTALL_DESTINATION ${CMAKE_INSTALL_DATADIR}/blazert/cmake
-        NO_CHECK_REQUIRED_COMPONENTS_MACRO)
-
-WRITE_BASIC_PACKAGE_VERSION_FILE(blazertConfigVersion.cmake VERSION ${BLAZERT_VERSION_NUMBER} COMPATIBILITY SameMajorVersion)
-INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/blazertConfig.cmake ${CMAKE_CURRENT_BINARY_DIR}/blazertConfigVersion.cmake DESTINATION ${CMAKE_INSTALL_DATADIR}/blazert/cmake)
-INSTALL(DIRECTORY blazert DESTINATION include)
-
 IF (BUILD_TEST)
     ENABLE_TESTING()
-    FILE(GLOB_RECURSE TEST_SRC ${CMAKE_SOURCE_DIR}/test/*.cpp)
-    IF (EMBREE_BACKEND)
-        FILE(GLOB_RECURSE EMBREE_PRIMITIVES_SRC ${CMAKE_SOURCE_DIR}/test/test_embree_primitives/*.cpp)
-    ELSE()
-        LIST(REMOVE_ITEM TEST_SRC ${CMAKE_SOURCE_DIR}/test/test_embree_primitives/test_EmbreeCylinder.cpp)
-        LIST(REMOVE_ITEM TEST_SRC ${CMAKE_SOURCE_DIR}/test/test_embree_primitives/test_EmbreePlane.cpp)
-        LIST(REMOVE_ITEM TEST_SRC ${CMAKE_SOURCE_DIR}/test/test_embree_primitives/test_EmbreeScene.cpp)
-        LIST(REMOVE_ITEM TEST_SRC ${CMAKE_SOURCE_DIR}/test/test_embree_primitives/test_EmbreeSphere.cpp)
-    ENDIF ()
-    ADD_EXECUTABLE(test_blazert ${TEST_SRC} ${EMBREE_PRIMITIVES_SRC})
-    TARGET_INCLUDE_DIRECTORIES(test_blazert PUBLIC ${CMAKE_SOURCE_DIR} ${EMBREE_INCLUDE_DIRS} ${BLAZE_INCLUDE_DIRS} "/usr/local/include")
-    TARGET_LINK_LIBRARIES(test_blazert ${EMBREE_LIBRARY})
-    SET_TARGET_PROPERTIES(test_blazert PROPERTIES LINKER_LANGUAGE CXX)
-    ADD_TEST(main test_blazert)
+    add_subdirectory(test)
 
     find_package(ImageMagick COMPONENTS compare QUIET)
     if (NOT ImageMagick_compare_FOUND)
@@ -142,10 +90,33 @@ IF (BUILD_TEST)
 
 ENDIF ()
 
-IF (BUILD_BENCHMARK)
-    FIND_PACKAGE(benchmark)
-    file(GLOB_RECURSE BENCHMARK_SRC ${CMAKE_SOURCE_DIR}/benchmarks/*)
-    add_executable(benchmark_blazeRT ${BENCHMARK_SRC})
-    TARGET_INCLUDE_DIRECTORIES(benchmark_blazeRT PUBLIC ${CMAKE_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/third_party/bvh/include ${CMAKE_SOURCE_DIR}/third_party/nanort ${BLAZE_INCLUDE_DIRS} ${EMBREE_INCLUDE_DIRS})
-    target_link_libraries(benchmark_blazeRT PUBLIC benchmark::benchmark ${BLAZE_LIBRARY} ${LAPACK_LIBRARIES} ${EMBREE_LIBRARY})
+IF (BUILD_EXAMPLES)
+    ADD_SUBDIRECTORY(examples)
 ENDIF ()
+
+IF (BUILD_BENCHMARK)
+    add_subdirectory(benchmarks)
+ENDIF ()
+
+SET(BLAZERT_VERSION_NUMBER 20.2.1)
+SET(BLAZERT_VERSION_STRING ${BLAZERT_VERSION_NUMBER})
+SET(BLAZERT_DEFINITIONS "")
+SET(BLAZERT_INCLUDE_DIR "${CMAKE_INSTALL_PREFIX}/include")
+SET(BLAZERT_ROOT_DIR ${CMAKE_INSTALL_PREFIX})
+
+INCLUDE(CMakePackageConfigHelpers)
+
+CONFIGURE_PACKAGE_CONFIG_FILE(
+        ${CMAKE_CURRENT_SOURCE_DIR}/cmake/blazert.cmake.in
+        ${CMAKE_CURRENT_BINARY_DIR}/blazertConfig.cmake
+        PATH_VARS BLAZERT_INCLUDE_DIR BLAZERT_ROOT_DIR
+        INSTALL_DESTINATION ${CMAKE_INSTALL_DATADIR}/blazert/cmake
+        NO_CHECK_REQUIRED_COMPONENTS_MACRO)
+
+WRITE_BASIC_PACKAGE_VERSION_FILE(blazertConfigVersion.cmake VERSION ${BLAZERT_VERSION_NUMBER} COMPATIBILITY SameMajorVersion)
+INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/blazertConfig.cmake ${CMAKE_CURRENT_BINARY_DIR}/blazertConfigVersion.cmake DESTINATION ${CMAKE_INSTALL_DATADIR}/blazert/cmake)
+INSTALL(DIRECTORY blazert DESTINATION include)
+
+
+
+
