@@ -53,7 +53,8 @@ public:
   unsigned int prim_id;
 
   SphereIntersector() = delete;
-  explicit SphereIntersector(const Collection<T> &collection) : collection(collection), prim_id(static_cast<unsigned int>(-1)) {}
+  explicit SphereIntersector(const Collection<T> &collection)
+      : collection(collection), prim_id(static_cast<unsigned int>(-1)) {}
 };
 
 template<typename T>
@@ -137,7 +138,8 @@ inline void prepare_traversal(SphereIntersector<T, Collection> &i, const Ray<T> 
    * Returns true if there's intersection.
    */
 template<typename T, template<typename> typename Collection>
-inline bool intersect_primitive(SphereIntersector<T, Collection> &i, const Sphere<T> &sphere, [[maybe_unused]] const Ray<T> ray) {
+inline bool intersect_primitive(SphereIntersector<T, Collection> &i, const Sphere<T> &sphere,
+                                [[maybe_unused]] const Ray<T> ray) {
 
   const Vec3r<T> &org = i.ray_org;
   const Vec3r<T> &dir = i.ray_dir;

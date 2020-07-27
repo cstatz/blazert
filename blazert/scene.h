@@ -56,12 +56,12 @@ public:
 
   std::unique_ptr<SphereCollection<T>> sphere_collection;
   std::unique_ptr<BVH<T, SphereCollection>> spheres_bvh;
-  unsigned int  spheres_geom_id = static_cast<unsigned int>(-1);
+  unsigned int spheres_geom_id = static_cast<unsigned int>(-1);
   bool has_spheres = false;
 
   std::unique_ptr<PlaneCollection<T>> plane_collection;
   std::unique_ptr<BVH<T, PlaneCollection>> planes_bvh;
-  unsigned int  planes_geom_id = static_cast<unsigned int>(-1);
+  unsigned int planes_geom_id = static_cast<unsigned int>(-1);
   bool has_planes = false;
 
   std::unique_ptr<CylinderCollection<T>> cylinder_collection;// these are needed for lifetime management...
@@ -209,7 +209,6 @@ unsigned int BlazertScene<T>::add_mesh(const Vec3rList<T> &vertices, const Vec3i
   }
 }
 
-
 /**
  * @brief Adds spheres at centers with radii.
  *
@@ -240,7 +239,6 @@ unsigned int BlazertScene<T>::add_spheres(const Vec3rList<T> &centers, const std
     return static_cast<unsigned int>(-1);
   }
 }
-
 
 /**
  * @brief Adds planes at centers with dimensions dxs and dys rotated around rotations.

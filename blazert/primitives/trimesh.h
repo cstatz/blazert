@@ -32,7 +32,8 @@ struct Triangle {
 
 template<typename T, template<typename A> typename Collection,
          typename = std::enable_if_t<std::is_same<typename Collection<T>::primitive_type, Triangle<T>>::value>>
-[[nodiscard]] inline Triangle<T> primitive_from_collection(const Collection<T> &collection, const unsigned int prim_idx) {
+[[nodiscard]] inline Triangle<T> primitive_from_collection(const Collection<T> &collection,
+                                                           const unsigned int prim_idx) {
 
   const Vec3ui &face = collection.faces[prim_idx];
   const Vec3r<T> &a = collection.vertices[face[0]];
@@ -53,7 +54,8 @@ public:
   unsigned int prim_id;
 
   TriangleIntersector() = delete;
-  explicit TriangleIntersector(const Collection<T> &collection) : collection(collection), prim_id(static_cast<unsigned int>(-1)) {}
+  explicit TriangleIntersector(const Collection<T> &collection)
+      : collection(collection), prim_id(static_cast<unsigned int>(-1)) {}
 };
 
 template<typename T>

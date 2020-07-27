@@ -51,8 +51,7 @@ TEST_CASE_TEMPLATE("Sphere", T, float, double) {
       assert_distance_to_surface(spheres, prim_id, Vec3r<T>{0, 0, 0}, static_cast<T>(1.));
       assert_distance_to_surface(spheres, prim_id, Vec3r<T>{-1, 0, 0}, static_cast<T>(0));
       assert_distance_to_surface(spheres, prim_id, Vec3r<T>{-2, 0, 0}, static_cast<T>(1));
-      assert_distance_to_surface(spheres, prim_id, Vec3r<T>{-2, -2, -2},
-                                 static_cast<T>(std::sqrt(3 * 4) - 1));
+      assert_distance_to_surface(spheres, prim_id, Vec3r<T>{-2, -2, -2}, static_cast<T>(std::sqrt(3 * 4) - 1));
     }
     SUBCASE("R = 3") {
       float radius = 3;
@@ -63,8 +62,7 @@ TEST_CASE_TEMPLATE("Sphere", T, float, double) {
       assert_distance_to_surface(spheres, prim_id, Vec3r<T>{0, 0, 0}, static_cast<T>(3));
       assert_distance_to_surface(spheres, prim_id, Vec3r<T>{-1, 0, 0}, static_cast<T>(2));
       assert_distance_to_surface(spheres, prim_id, Vec3r<T>{-2, 0, 0}, static_cast<T>(1));
-      assert_distance_to_surface(spheres, prim_id, Vec3r<T>{-2, -2, -2},
-                                 static_cast<T>(std::sqrt(3 * 4) - 3));
+      assert_distance_to_surface(spheres, prim_id, Vec3r<T>{-2, -2, -2}, static_cast<T>(std::sqrt(3 * 4) - 3));
     }
   }
   SUBCASE("intersections") {

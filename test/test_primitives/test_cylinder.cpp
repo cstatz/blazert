@@ -270,7 +270,7 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
 
               const bool true_hit = true;
               const unsigned int true_prim_id = 0;
-              const T true_distance =static_cast<T>(std::sqrt(18));
+              const T true_distance = static_cast<T>(std::sqrt(18));
               const Vec3r<T> true_normal{0, -1, 0};
               SUBCASE("intersect primitive") {
                 assert_intersect_primitive_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);

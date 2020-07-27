@@ -20,7 +20,9 @@ using namespace blazert;
 template<typename T>
 constexpr T pi = static_cast<T>(3.141592653589793238462643383279502884197);
 
-static inline bool is_aligned(const void *ptr, size_t byte_count) { return reinterpret_cast<uintptr_t>(ptr) % byte_count == 0; }
+static inline bool is_aligned(const void *ptr, size_t byte_count) {
+  return reinterpret_cast<uintptr_t>(ptr) % byte_count == 0;
+}
 
 template<typename T>
 inline bool is_almost_equal(const T &in_a, const T &in_b, const double eps) {

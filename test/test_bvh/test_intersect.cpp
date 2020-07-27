@@ -67,7 +67,8 @@ TEST_CASE_TEMPLATE("Intersect_node", T, float, double) {
       const Vec3r<T> bmin{-1.0, 1.0, 1.0};
       const Vec3r<T> bmax{-1.0, 1.0, 1.0};
       const Vec3r<T> ray_org{0.0, 0.0, 0.0};
-      const Vec3r<T> ray_dir{static_cast<T>(-0.5773502691896258), static_cast<T>(0.5773502691896258), static_cast<T>(0.5773502691896258)};
+      const Vec3r<T> ray_dir{static_cast<T>(-0.5773502691896258), static_cast<T>(0.5773502691896258),
+                             static_cast<T>(0.5773502691896258)};
 
       // initialize node
       BVHNode<T, PlaneCollection> node;// could be any collection
@@ -100,7 +101,8 @@ TEST_CASE_TEMPLATE("Intersect_node", T, float, double) {
       const Vec3r<T> bmin{-1.0, pos_inf, 1.0};
       const Vec3r<T> bmax{-1.0, pos_inf, 1.0};
       const Vec3r<T> ray_org{0.0, 0.0, 0.0};
-      const Vec3r<T> ray_dir{static_cast<T>(-0.0009999990000015), static_cast<T>(0.9999990000015), static_cast<T>(0.0009999990000015)};
+      const Vec3r<T> ray_dir{static_cast<T>(-0.0009999990000015), static_cast<T>(0.9999990000015),
+                             static_cast<T>(0.0009999990000015)};
 
       // initialize node
       BVHNode<T, PlaneCollection> node;// could be any collection
@@ -135,7 +137,8 @@ TEST_CASE_TEMPLATE("Intersect_node", T, float, double) {
       const Vec3r<T> bmin{-1.0, 1.0, 1.0};
       const Vec3r<T> bmax{-1.0, 5.0, 1.0};
       const Vec3r<T> ray_org{0.0, 0.0, 0.0};
-      const Vec3r<T> ray_dir{static_cast<T>(-0.4082482904638631), static_cast<T>(0.8164965809277261), static_cast<T>(0.4082482904638631)};
+      const Vec3r<T> ray_dir{static_cast<T>(-0.4082482904638631), static_cast<T>(0.8164965809277261),
+                             static_cast<T>(0.4082482904638631)};
 
       // initialize node
       BVHNode<T, PlaneCollection> node;// could be any collection
@@ -168,7 +171,8 @@ TEST_CASE_TEMPLATE("Intersect_node", T, float, double) {
       const Vec3r<T> bmin{-1.0, 1.0, 1.0};
       const Vec3r<T> bmax{-1.0, pos_inf, 1.0};
       const Vec3r<T> ray_org{0.0, 0.0, 0.0};
-      const Vec3r<T> ray_dir{static_cast<T>(-0.4082482904638631), static_cast<T>(0.8164965809277261), static_cast<T>(0.4082482904638631)};
+      const Vec3r<T> ray_dir{static_cast<T>(-0.4082482904638631), static_cast<T>(0.8164965809277261),
+                             static_cast<T>(0.4082482904638631)};
 
       // initialize node
       BVHNode<T, PlaneCollection> node;// could be any collection
@@ -203,7 +207,8 @@ TEST_CASE_TEMPLATE("Intersect_node", T, float, double) {
       const Vec3r<T> bmin{-1.0, 1.0, 1.0};
       const Vec3r<T> bmax{-1.0, 5.0, 5.0};
       const Vec3r<T> ray_org{0.0, 0.0, 0.0};
-      const Vec3r<T> ray_dir{static_cast<T>(-0.2672612419124244), static_cast<T>(0.5345224838248488), static_cast<T>(0.8017837257372732)};
+      const Vec3r<T> ray_dir{static_cast<T>(-0.2672612419124244), static_cast<T>(0.5345224838248488),
+                             static_cast<T>(0.8017837257372732)};
 
       // initialize node
       BVHNode<T, PlaneCollection> node;// could be any collection
@@ -235,7 +240,8 @@ TEST_CASE_TEMPLATE("Intersect_node", T, float, double) {
       const Vec3r<T> bmin{-1.0, 1.0, 1.0};
       const Vec3r<T> bmax{-1.0, pos_inf, 2.0};
       const Vec3r<T> ray_org{0.0, 0.0, 0.0};
-      const Vec3r<T> ray_dir{static_cast<T>(-0.3713906763541037), static_cast<T>(0.7427813527082074), static_cast<T>(0.5570860145311556)};
+      const Vec3r<T> ray_dir{static_cast<T>(-0.3713906763541037), static_cast<T>(0.7427813527082074),
+                             static_cast<T>(0.5570860145311556)};
 
       // initialize node
       BVHNode<T, PlaneCollection> node;// could be any collection
@@ -267,7 +273,8 @@ TEST_CASE_TEMPLATE("Intersect_node", T, float, double) {
       const Vec3r<T> bmin{-1.0, 1.0, 1.0};
       const Vec3r<T> bmax{-1.0, pos_inf, pos_inf};
       const Vec3r<T> ray_org{0.0, 0.0, 0.0};
-      const Vec3r<T> ray_dir{static_cast<T>(-0.3713906763541037), static_cast<T>(0.7427813527082074), static_cast<T>(0.5570860145311556)};
+      const Vec3r<T> ray_dir{static_cast<T>(-0.3713906763541037), static_cast<T>(0.7427813527082074),
+                             static_cast<T>(0.5570860145311556)};
 
       // initialize node
       BVHNode<T, PlaneCollection> node;// could be any collection

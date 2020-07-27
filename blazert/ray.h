@@ -33,8 +33,6 @@ public:
   CullBackFace cull_back_face;
   AnyHit any_hit;
 
-
-
 public:
   Ray() = delete;
   /**
@@ -57,7 +55,8 @@ public:
    *
    */
   Ray(const Vec3r<T> &origin, const Vec3r<T> &direction, T min_hit_distance = T(0.),
-      T max_hit_distance = std::numeric_limits<T>::max(), CullBackFace cull_back_face = CullBackFace::no, AnyHit any_hit = AnyHit::no)
+      T max_hit_distance = std::numeric_limits<T>::max(), CullBackFace cull_back_face = CullBackFace::no,
+      AnyHit any_hit = AnyHit::no)
       : origin{origin}, direction{normalize(direction)},
         direction_inv{(static_cast<T>(1.) / direction)},// TODO: maybe normalize on creation?
         direction_sign{static_cast<unsigned int>(direction[0] < static_cast<T>(0.0) ? 1 : 0),

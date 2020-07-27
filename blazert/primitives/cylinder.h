@@ -41,7 +41,8 @@ public:
 
 template<typename T, template<typename A> typename Collection,
          typename = std::enable_if_t<std::is_same<typename Collection<T>::primitive_type, Cylinder<T>>::value>>
-[[nodiscard]] inline Cylinder<T> primitive_from_collection(const Collection<T> &collection, const unsigned int prim_idx) {
+[[nodiscard]] inline Cylinder<T> primitive_from_collection(const Collection<T> &collection,
+                                                           const unsigned int prim_idx) {
 
   const Vec3r<T> &center = collection.centers[prim_idx];
   const T &semi_axis_a = collection.semi_axes_a[prim_idx];
@@ -66,7 +67,8 @@ public:
   unsigned int prim_id;
 
   CylinderIntersector() = delete;
-  explicit CylinderIntersector(const Collection<T> &collection) : collection(collection), prim_id(static_cast<unsigned int>(-1)) {}
+  explicit CylinderIntersector(const Collection<T> &collection)
+      : collection(collection), prim_id(static_cast<unsigned int>(-1)) {}
 };
 
 template<typename T>
@@ -177,7 +179,8 @@ inline void prepare_traversal(CylinderIntersector<T, Collection> &i, const Ray<T
    * Returns true if there's intersection.
    */
 template<typename T, template<typename> typename Collection>
-inline bool intersect_primitive(CylinderIntersector<T, Collection> &i, const Cylinder<T> &cylinder, [[maybe_unused]] const Ray<T> ray) {
+inline bool intersect_primitive(CylinderIntersector<T, Collection> &i, const Cylinder<T> &cylinder,
+                                [[maybe_unused]] const Ray<T> ray) {
 
   const Vec3r<T> &center = cylinder.center;
   const T semi_axis_a = cylinder.semi_axis_a;

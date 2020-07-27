@@ -15,7 +15,7 @@ TEST_CASE_TEMPLATE("Math", T, float, double) {
   CHECK_FALSE(static_cast<T>(1.) == static_cast<T>(0.));
 
   CHECK_FALSE(static_cast<T>(0.) == std::numeric_limits<T>::lowest());
-  CHECK_FALSE(std::numeric_limits<T>::lowest() ==static_cast<T>(0.));
+  CHECK_FALSE(std::numeric_limits<T>::lowest() == static_cast<T>(0.));
 
   CHECK_FALSE(static_cast<T>(0.) == std::numeric_limits<T>::max());
   CHECK_FALSE(static_cast<T>(0.) == std::numeric_limits<T>::min());
