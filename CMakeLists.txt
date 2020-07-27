@@ -14,12 +14,12 @@ ENDIF()
 # Compiler Flags
 set(CMAKE_CXX_STANDARD 17)
 IF (CMAKE_COMPILER_IS_GNUCXX)
-    set(CMAKE_CXX_FLAGS "-std=c++17 -O3 -Wall -fPIC -funroll-loops -march=native ${COVERAGE_FLAGS}")
+    set(CMAKE_CXX_FLAGS "-std=c++17 -O3 -Wall -Wpedantic -Wsign-conversion -fPIC -funroll-loops -march=native ${COVERAGE_FLAGS}")
 ELSEIF (MSVC)
     # this currently works, but is not really the way to go..
     set(CMAKE_CXX_FLAGS "/std:c++17 /Wall /arch:AVX")
 ELSE ()
-    set(CMAKE_CXX_FLAGS "-std=c++17 -O3 -Wall -fPIC -funroll-loops -march=native -fno-finite-math-only -fno-signed-zeros -freciprocal-math -ffp-contract=fast")
+    set(CMAKE_CXX_FLAGS "-std=c++17 -O3 -Wall -Wpedantic -Wsign-conversion -fPIC -funroll-loops -march=native -fno-finite-math-only -fno-signed-zeros -freciprocal-math -ffp-contract=fast")
 ENDIF (CMAKE_COMPILER_IS_GNUCXX)
 
 IF (FORCE_COLOR_OUTPUT)
