@@ -26,8 +26,3 @@
 //  if(context.shouldExit()) // important - query flags (and --exit) rely on the user doing this
 //    return res;          // propagate the result of the tests
 //}
-
-TEST_CASE_TEMPLATE("test", T, float, double) {
-  T a = 1.;
-  REQUIRE(a == doctest::Approx(1.));
-}
