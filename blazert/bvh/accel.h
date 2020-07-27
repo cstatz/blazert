@@ -83,7 +83,7 @@ inline bool traverse(const BVH<T, Collection> &bvh, const Ray<T> &ray, RayHit<T>
       else if (intersect_leaf(node, intersector, ray)) {
         /// If a prim is hit, use this distance as max distance for all subsequent ray box intersections.
         hit_distance = intersector.hit_distance;
-        if (ray.any_hit)
+        if (ray.any_hit == Ray<T>::AnyHit::yes)
           break;
       }
     }

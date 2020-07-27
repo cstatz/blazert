@@ -42,7 +42,7 @@ inline bool intersect_leaf(const Node &node, Intersector &intersector, const Ray
 
   for (auto &primitive : node.primitives) {
     hit += intersect_primitive(intersector, primitive, ray);
-    if (hit && ray.any_hit) {
+    if (hit && (ray.any_hit == Ray::AnyHit::yes)) {
       break;
     }
   }

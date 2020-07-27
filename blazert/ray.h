@@ -20,14 +20,20 @@ namespace blazert {
 template<typename T>
 class BLAZERTALIGN Ray {
 public:
+  enum class CullBackFace { yes, no };
+  enum class AnyHit { yes, no };
+
+public:
   const Vec3r<T> origin;
   const Vec3r<T> direction;
   const Vec3r<T> direction_inv;
   const Vec3ui direction_sign;
   T min_hit_distance;
   T max_hit_distance;
-  bool cull_back_face;
-  bool any_hit;
+  CullBackFace cull_back_face;
+  AnyHit any_hit;
+
+
 
 public:
   Ray() = delete;
@@ -51,7 +57,7 @@ public:
    *
    */
   Ray(const Vec3r<T> &origin, const Vec3r<T> &direction, T min_hit_distance = T(0.),
-      T max_hit_distance = std::numeric_limits<T>::max(), bool cull_back_face = false, bool any_hit = false)
+      T max_hit_distance = std::numeric_limits<T>::max(), CullBackFace cull_back_face = CullBackFace::no, AnyHit any_hit = AnyHit::no)
       : origin{origin}, direction{normalize(direction)},
         direction_inv{(static_cast<T>(1.) / direction)},// TODO: maybe normalize on creation?
         direction_sign{static_cast<unsigned int>(direction[0] < static_cast<T>(0.0) ? 1 : 0),
