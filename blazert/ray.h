@@ -46,6 +46,7 @@ public:
    * @param any_hit If true, the first hit found in the traversal will register as the hit, which might not be the hit (default = false) closest to the ray origin.
    *
    * @todo backface culling is no implemented yet.
+   * @todo replace boolean variables by enum classes for choices
    *
    *
    */
@@ -74,9 +75,9 @@ struct BLAZERTALIGN RayHit {
   /// distance between ray origin and the intersection point
   T hit_distance = std::numeric_limits<T>::max();
   /// primitive id of the hit object (= which exact primitive was it)
-  unsigned int prim_id = -1;
+  unsigned int prim_id = static_cast<unsigned int>(-1);
   /// geometry id of the hit object (= which kind of geometry was it, e.g. sphere, triangle)
-  unsigned int geom_id = -1;
+  unsigned int geom_id = static_cast<unsigned int>(-1);
 };
 
 }// namespace blazert

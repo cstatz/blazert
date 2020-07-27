@@ -38,7 +38,7 @@ inline void r0(T &s, T &t, const T &det) {
   const T inv_det = T(1.) / det;
   s *= inv_det;
   t *= inv_det;
-};
+}
 
 template<typename T>
 inline void r1(T &s, T &t, const T &a, const T &b, const T &c, const T &d, const T &e) {
@@ -54,7 +54,7 @@ inline void r1(T &s, T &t, const T &a, const T &b, const T &c, const T &d, const
     }
   }
   t = T(1.) - s;
-};
+}
 
 template<typename T>
 inline void r2(T &s, T &t, const T &a, const T &b, const T &c, const T &d, const T &e) {
@@ -80,7 +80,7 @@ inline void r2(T &s, T &t, const T &a, const T &b, const T &c, const T &d, const
         t = -e / c;
     }
   }
-};
+}
 
 template<typename T>
 inline void r3(T &s, T &t, const T &c, const T &e) {
@@ -96,7 +96,7 @@ inline void r3(T &s, T &t, const T &c, const T &e) {
       t = -e / c;
     }
   }
-};
+}
 
 template<typename T>
 inline void r4(T &s, T &t, const T &a, const T &c, const T &d, const T &e) {
@@ -119,7 +119,7 @@ inline void r4(T &s, T &t, const T &a, const T &c, const T &d, const T &e) {
         t = -e / c;
     }
   }
-};
+}
 
 template<typename T>
 inline void r5(T &s, T &t, const T &a, const T &d, const T &f) {
@@ -135,7 +135,7 @@ inline void r5(T &s, T &t, const T &a, const T &d, const T &f) {
       s = -d / a;
     }
   }
-};
+}
 
 template<typename T>
 inline void r6(T &s, T &t, const T &a, const T &b, const T &c, const T &d, const T &e) {
@@ -161,7 +161,7 @@ inline void r6(T &s, T &t, const T &a, const T &b, const T &c, const T &d, const
         s = -d / a;
     }
   }
-};
+}
 
 /**
  * @brief Compute the closest point on a triangle for a given test point. This only works for well-formed triangles.
@@ -214,7 +214,7 @@ inline Vec3r<T> closest_point_on_triangle(const Vec3r<T> &tri_v0, const Vec3r<T>
   }
 
   return tri_v0 + s * E0 + t * E1;
-};
+}
 
 }// namespace blazert
 

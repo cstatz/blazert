@@ -53,7 +53,7 @@ inline void cube_mesh_ccw(const Vec3r<T> &center, Vec3rList<T> &vertices, Vec3iL
   indices.emplace_back(Vec3ui{4, 5, 7});
   indices.emplace_back(Vec3ui{3, 2, 1});
   indices.emplace_back(Vec3ui{0, 3, 1});
-};
+}
 
 // CW = clockwise
 template<typename T>
@@ -81,7 +81,7 @@ inline void cube_mesh_cw(const Vec3r<T> &center, Vec3rList<T> &vertices, Vec3iLi
   indices.emplace_back(Vec3ui{4, 7, 5});
   indices.emplace_back(Vec3ui{3, 1, 2});
   indices.emplace_back(Vec3ui{0, 1, 3});
-};
+}
 
 template<typename T>
 inline void single_triangle_ccw(const Vec3r<T> &center, Vec3rList<T> &vertices, Vec3iList &indices) {
@@ -91,7 +91,7 @@ inline void single_triangle_ccw(const Vec3r<T> &center, Vec3rList<T> &vertices, 
   vertices.emplace_back(Vec3r<T>{center[0] + T(1.), center[1] + T(1.), center[2] + T(-1.)});
 
   indices.emplace_back(Vec3ui{0, 2, 1});
-};
+}
 
 template<typename T>
 inline void single_triangle_cw(const Vec3r<T> &center, Vec3rList<T> &vertices, Vec3iList &indices) {
@@ -101,7 +101,7 @@ inline void single_triangle_cw(const Vec3r<T> &center, Vec3rList<T> &vertices, V
   vertices.emplace_back(Vec3r<T>{center[0] + T(1.), center[1] + T(1.), center[2] + T(-1.)});
 
   indices.emplace_back(Vec3ui{0, 1, 2});
-};
+}
 
 template<typename T1, typename T2>
 bool Mat3_isApprox(Mat3r<T1> &m1, Mat3r<T2> &m2) {

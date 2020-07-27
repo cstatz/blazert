@@ -73,7 +73,7 @@ inline bool traverse(const BVH<T, Collection> &bvh, const Ray<T> &ray, RayHit<T>
 
     if (intersect_node(min_hit_distance, max_hit_distance, node, ray)) {
       if (!node.leaf) {// Branch node
-        const int order_near = ray.direction_sign[node.axis];
+        const unsigned int order_near = ray.direction_sign[node.axis];
         node_stack.push_back(node.children[1 - order_near]);
         node_stack.push_back(node.children[order_near]);
       }

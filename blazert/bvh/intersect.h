@@ -22,7 +22,7 @@ inline bool intersect_node(T &min_distance /* inout */, T &max_distance /* inout
   constexpr T l1 = static_cast<T>(1) + static_cast<T>(4) * std::numeric_limits<T>::epsilon();
   T min_, max_;
 
-  for (int i = 0; i < 3; i++) {
+  for (std::size_t i = 0; i < 3; i++) {
     min_ = ray.direction_sign[i] ? node.max[i] : node.min[i];
     max_ = ray.direction_sign[i] ? node.min[i] : node.max[i];
 

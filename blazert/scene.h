@@ -51,22 +51,22 @@ public:
 
   std::unique_ptr<TriangleMesh<T>> triangle_collection;
   std::unique_ptr<BVH<T, TriangleMesh>> triangles_bvh;
-  size_t triangles_geom_id = -1;
+  size_t triangles_geom_id = static_cast<unsigned int>(-1);
   bool has_triangles = false;
 
   std::unique_ptr<SphereCollection<T>> sphere_collection;
   std::unique_ptr<BVH<T, SphereCollection>> spheres_bvh;
-  size_t spheres_geom_id = -1;
+  size_t spheres_geom_id = static_cast<unsigned int>(-1);
   bool has_spheres = false;
 
   std::unique_ptr<PlaneCollection<T>> plane_collection;
   std::unique_ptr<BVH<T, PlaneCollection>> planes_bvh;
-  size_t planes_geom_id = -1;
+  size_t planes_geom_id = static_cast<unsigned int>(-1);
   bool has_planes = false;
 
   std::unique_ptr<CylinderCollection<T>> cylinder_collection;// these are needed for lifetime management...
   std::unique_ptr<BVH<T, CylinderCollection>> cylinders_bvh;
-  size_t cylinders_geom_id = -1;
+  size_t cylinders_geom_id = static_cast<unsigned int>(-1);
   bool has_cylinders = false;
 
 public:
@@ -274,7 +274,7 @@ unsigned int BlazertScene<T>::add_planes(const Vec3rList<T> &centers, const std:
     planes_geom_id = geometries++;
     return planes_geom_id;
   } else {
-    return -1;
+    return static_cast<unsigned int>(-1);
   }
 }
 
@@ -313,7 +313,7 @@ unsigned int BlazertScene<T>::add_cylinders(const Vec3rList<T> &centers, const s
     cylinders_geom_id = geometries++;
     return cylinders_geom_id;
   } else {
-    return -1;
+    return static_cast<unsigned int>(-1);
   }
 }
 
