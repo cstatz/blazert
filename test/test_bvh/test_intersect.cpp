@@ -2,6 +2,8 @@
 // Created by raph on 05.05.20.
 //
 
+#define DOCTEST_CONFIG_INCLUDE_TYPE_TRAITS
+
 #include "../test_helpers.h"
 #include <blazert/bvh/intersect.h>
 #include <blazert/bvh/node.h>

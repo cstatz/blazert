@@ -40,7 +40,7 @@ public:
 
 template<typename T, template<typename A> typename Collection,
          typename = std::enable_if_t<std::is_same<typename Collection<T>::primitive_type, Plane<T>>::value>>
-inline Plane<T> primitive_from_collection(const Collection<T> &collection, const unsigned int prim_idx) {
+[[nodiscard]] inline Plane<T> primitive_from_collection(const Collection<T> &collection, const unsigned int prim_idx) {
 
   const Vec3r<T> &center = collection.centers[prim_idx];
   const T &dx = collection.dxs[prim_idx];
@@ -97,7 +97,7 @@ public:
     }
   }
 
-  [[nodiscard]] inline unsigned int size() const noexcept { return centers.size(); }
+  [[nodiscard]] inline unsigned int size() const noexcept { return static_cast<unsigned int>(centers.size()); }
 
   [[nodiscard]] inline std::pair<Vec3r<T>, Vec3r<T>>
   get_primitive_bounding_box(const unsigned int prim_id) const noexcept {
@@ -177,7 +177,7 @@ inline void prepare_traversal(PlaneIntersector<T, Collection> &i, const Ray<T> &
    * Returns true if there's intersection.
    */
 template<typename T, template<typename> typename Collection>
-inline bool intersect_primitive(PlaneIntersector<T, Collection> &i, const Plane<T> &plane, const Ray<T> ray) {
+inline bool intersect_primitive(PlaneIntersector<T, Collection> &i, const Plane<T> &plane, [[maybe_unused]] const Ray<T> ray) {
 
   const Vec3r<T> &center = plane.center;
   const T dx = plane.dx;

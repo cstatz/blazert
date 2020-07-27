@@ -2,6 +2,8 @@
 // Created by ogarten on 13/05/2020.
 //
 
+#define DOCTEST_CONFIG_INCLUDE_TYPE_TRAITS
+
 #include <blazert/blazert.h>
 #include <blazert/bvh/accel.h>
 #include <blazert/datatypes.h>
@@ -23,8 +25,8 @@ TEST_CASE_TEMPLATE("Scene with Sphere", T, float, double) {
     centers->emplace_back(Vec3r<T>{0., 0., 0.});
     radiuss->emplace_back(1.);
 
-    Vec3r<T> org{2.f, 0.f, 0.f};
-    Vec3r<T> dir{-1.f, 0.f, 0.f};
+    Vec3r<T> org{2, 0, 0};
+    Vec3r<T> dir{-1, 0, 0};
 
     Scene<T> scene;
     unsigned int geom_id = scene.add_spheres(*centers, *radiuss);
@@ -57,8 +59,8 @@ TEST_CASE_TEMPLATE("Scene with Plane", T, float, double) {
     dys->emplace_back(2.);
     rotations->emplace_back(blaze::IdentityMatrix<T>(3UL));
 
-    Vec3r<T> org{0.f, 0.f, 5.f};
-    Vec3r<T> dir{0.f, 0.f, -1.f};
+    Vec3r<T> org{0, 0, 5};
+    Vec3r<T> dir{0, 0, -1};
 
     Scene<T> scene;
     unsigned int geom_id = scene.add_planes(*centers, *dxs, *dys, *rotations);
@@ -93,8 +95,8 @@ TEST_CASE_TEMPLATE("Scene with Cylinder", T, float, double) {
     heights->emplace_back(2.);
     rotations->emplace_back(blaze::IdentityMatrix<T>(3UL));
 
-    Vec3r<T> org{0.f, 0.f, 4.f};
-    Vec3r<T> dir{0.f, 0.f, -1.f};
+    Vec3r<T> org{0, 0, 4};
+    Vec3r<T> dir{0, 0, -1};
 
     Scene<T> scene;
     unsigned int geom_id = scene.add_cylinders(*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations);
@@ -138,8 +140,8 @@ TEST_CASE_TEMPLATE("Scene with 2 different primitives", T, float, double) {
     s_radii->emplace_back(2.);
 
     // ray
-    const Vec3r<T> org{0.f, 0.f, 7.f};
-    const Vec3r<T> dir{0.f, 0.f, -1.f};
+    const Vec3r<T> org{0, 0, 7};
+    const Vec3r<T> dir{0, 0, -1};
     const Ray<T> ray{org, dir};
 
     // scene + add primitives -> cylinder with sphere above it, only sphere should be hit!

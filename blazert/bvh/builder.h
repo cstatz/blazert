@@ -64,7 +64,8 @@ unsigned int build_recursive(std::vector<BVHNode<T, Collection>> &nodes, const C
   if (statistics.max_tree_depth < depth)
     statistics.max_tree_depth = depth;
 
-  const unsigned int n = std::distance(begin, end);
+  // std::distance theoretically can be negative, but it never is in this case
+  const unsigned int n = static_cast<unsigned int>(std::distance(begin, end));
   const auto [min, max] = compute_bounding_box<T>(collection, begin, end);
 
   // Leaf

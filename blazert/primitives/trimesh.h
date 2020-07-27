@@ -32,7 +32,7 @@ struct Triangle {
 
 template<typename T, template<typename A> typename Collection,
          typename = std::enable_if_t<std::is_same<typename Collection<T>::primitive_type, Triangle<T>>::value>>
-inline Triangle<T> primitive_from_collection(const Collection<T> &collection, const unsigned int prim_idx) {
+[[nodiscard]] inline Triangle<T> primitive_from_collection(const Collection<T> &collection, const unsigned int prim_idx) {
 
   const Vec3ui &face = collection.faces[prim_idx];
   const Vec3r<T> &a = collection.vertices[face[0]];
@@ -92,7 +92,7 @@ public:
     }
   }
 
-  [[nodiscard]] inline unsigned int size() const noexcept { return faces.size(); }
+  [[nodiscard]] inline unsigned int size() const noexcept { return static_cast<unsigned int>(faces.size()); }
 
   [[nodiscard]] inline std::pair<Vec3r<T>, Vec3r<T>>
   get_primitive_bounding_box(const unsigned int prim_index) const noexcept {

@@ -41,7 +41,7 @@ public:
 
 template<typename T, template<typename A> typename Collection,
          typename = std::enable_if_t<std::is_same<typename Collection<T>::primitive_type, Cylinder<T>>::value>>
-inline Cylinder<T> primitive_from_collection(const Collection<T> &collection, const unsigned int prim_idx) {
+[[nodiscard]] inline Cylinder<T> primitive_from_collection(const Collection<T> &collection, const unsigned int prim_idx) {
 
   const Vec3r<T> &center = collection.centers[prim_idx];
   const T &semi_axis_a = collection.semi_axes_a[prim_idx];
@@ -98,7 +98,7 @@ public:
     }
   }
 
-  [[nodiscard]] inline unsigned int size() const noexcept { return centers.size(); }
+  [[nodiscard]] inline unsigned int size() const noexcept { return static_cast<unsigned int>(centers.size()); }
 
   [[nodiscard]] inline std::pair<Vec3r<T>, Vec3r<T>>
   get_primitive_bounding_box(const unsigned int prim_id) const noexcept {
@@ -120,7 +120,7 @@ private:
 
     const Vec3r<T> &a1_tmp{a, 0, 0};
     const Vec3r<T> &b1_tmp{0, b, 0};
-    const Vec3r<T> &h1_tmp{0, 0, static_cast<T>(height / 2.)};
+    const Vec3r<T> &h1_tmp{0, 0, height / static_cast<T>(2.)};
 
     // These vectors describe the cylinder in the global coordinate system
     const Vec3r<T> &a1 = center + rotation * a1_tmp;
@@ -177,7 +177,7 @@ inline void prepare_traversal(CylinderIntersector<T, Collection> &i, const Ray<T
    * Returns true if there's intersection.
    */
 template<typename T, template<typename> typename Collection>
-inline bool intersect_primitive(CylinderIntersector<T, Collection> &i, const Cylinder<T> &cylinder, const Ray<T> ray) {
+inline bool intersect_primitive(CylinderIntersector<T, Collection> &i, const Cylinder<T> &cylinder, [[maybe_unused]] const Ray<T> ray) {
 
   const Vec3r<T> &center = cylinder.center;
   const T semi_axis_a = cylinder.semi_axis_a;
@@ -233,7 +233,7 @@ inline bool intersect_primitive(CylinderIntersector<T, Collection> &i, const Cyl
 
     // intercept point in circle
     if (b * b * intercept[0] * intercept[0] + a * a * intercept[1] * intercept[1] <= a * a * b * b) {
-      const Vec3r<T> normal{0.f, 0.f, 1.f};
+      const Vec3r<T> normal{0, 0, 1};
       const Vec3r<T> Ng = rotation * normal / norm(normal);
       i.normal = Ng;
       i.hit_distance = norm(t0 * dir);
@@ -247,8 +247,8 @@ inline bool intersect_primitive(CylinderIntersector<T, Collection> &i, const Cyl
       if (C < 0)
         return false;
 
-      const T t0 = 1.0 / A * (-B + a * b * sqrt(C));
-      const T t1 = -1.0 / A * (B + a * b * sqrt(C));
+      const T t0 = static_cast<T>(1.0f) / A * (-B + a * b * std::sqrt(C));
+      const T t1 = static_cast<T>(-1.0) / A * (B + a * b * std::sqrt(C));
 
       const Vec3r<T> intercept0 = org + dir * t0;
       const Vec3r<T> intercept1 = org + dir * t1;
@@ -256,7 +256,7 @@ inline bool intersect_primitive(CylinderIntersector<T, Collection> &i, const Cyl
       // t1 is right intercept
       if ((t1 > 0) && (t1 < t0) && (intercept1[2] <= h / static_cast<T>(2))
           && (intercept1[2] >= -h / static_cast<T>(2))) {
-        const Vec3r<T> normal{2 * intercept1[0] / (a * a), 2 * intercept1[1] / (b * b), 0.f};
+        const Vec3r<T> normal{2 * intercept1[0] / (a * a), 2 * intercept1[1] / (b * b), 0};
         const Vec3r<T> Ng = rotation * normal / norm(normal);
         i.normal = Ng;
         i.hit_distance = norm(t1 * dir);
@@ -265,7 +265,7 @@ inline bool intersect_primitive(CylinderIntersector<T, Collection> &i, const Cyl
       }
       if ((t0 > 0) && (t0 < t1) && (intercept0[2] <= h / static_cast<T>(2))
           && (intercept0[2] >= -h / static_cast<T>(2))) {
-        const Vec3r<T> normal{2 * intercept0[0] / (a * a), 2 * intercept0[1] / (b * b), 0.f};
+        const Vec3r<T> normal{2 * intercept0[0] / (a * a), 2 * intercept0[1] / (b * b), 0};
         const Vec3r<T> Ng = rotation * normal / norm(normal);
         i.normal = Ng;
         i.hit_distance = norm(t0 * dir);
@@ -287,7 +287,7 @@ inline bool intersect_primitive(CylinderIntersector<T, Collection> &i, const Cyl
 
     // intercept point in circle
     if (b * b * intercept[0] * intercept[0] + a * a * intercept[1] * intercept[1] <= a * a * b * b) {
-      const Vec3r<T> normal{0.f, 0.f, -1.f};
+      const Vec3r<T> normal{0, 0, -1};
       const Vec3r<T> Ng = rotation * normal / norm(normal);
       i.normal = Ng;
       i.hit_distance = norm(t0 * dir);
@@ -301,15 +301,15 @@ inline bool intersect_primitive(CylinderIntersector<T, Collection> &i, const Cyl
       if (C < 0)
         return false;
 
-      const T t0 = 1.0 / A * (-B + a * b * sqrt(C));
-      const T t1 = -1.0 / A * (B + a * b * sqrt(C));
+      const T t0 = static_cast<T>(1.0) / A * (-B + a * b * std::sqrt(C));
+      const T t1 = static_cast<T>(-1.0) / A * (B + a * b * std::sqrt(C));
 
       const Vec3r<T> intercept0 = org + dir * t0;
       const Vec3r<T> intercept1 = org + dir * t1;
       // t1 is right intercept
       if ((t1 > 0) && (t1 < t0) && (intercept1[2] <= h / static_cast<T>(2))
           && (intercept1[2] >= -h / static_cast<T>(2))) {
-        const Vec3r<T> normal{2 * intercept1[0] / (a * a), 2 * intercept1[1] / (b * b), 0.f};
+        const Vec3r<T> normal{2 * intercept1[0] / (a * a), 2 * intercept1[1] / (b * b), 0};
         const Vec3r<T> Ng = rotation * normal / norm(normal);
         i.normal = Ng;
         i.hit_distance = norm(t1 * dir);
@@ -318,7 +318,7 @@ inline bool intersect_primitive(CylinderIntersector<T, Collection> &i, const Cyl
       }
       if ((t0 > 0) && (t0 < t1) && (intercept0[2] <= h / static_cast<T>(2))
           && (intercept0[2] >= -h / static_cast<T>(2))) {
-        const Vec3r<T> normal{2 * intercept0[0] / (a * a), 2 * intercept0[1] / (b * b), 0.f};
+        const Vec3r<T> normal{2 * intercept0[0] / (a * a), 2 * intercept0[1] / (b * b), 0};
         const Vec3r<T> Ng = rotation * normal / norm(normal);
         i.normal = Ng;
         i.hit_distance = norm(t0 * dir);
@@ -336,15 +336,15 @@ inline bool intersect_primitive(CylinderIntersector<T, Collection> &i, const Cyl
 
     if (C < 0)
       return false;
-    const T t0 = 1.0 / A * (-B + a * b * sqrt(C));
-    const T t1 = -1.0 / A * (B + a * b * sqrt(C));
+    const T t0 = static_cast<T>(1.0) / A * (-B + a * b * std::sqrt(C));
+    const T t1 = static_cast<T>(-1.0) / A * (B + a * b * std::sqrt(C));
 
     const Vec3r<T> intercept0 = org + dir * t0;
     const Vec3r<T> intercept1 = org + dir * t1;
     // t1 is right intercept
     if ((t1 > 0) && (t1 < t0) && (intercept1[2] <= h / static_cast<T>(2))
         && (intercept1[2] >= -h / static_cast<T>(2))) {
-      const Vec3r<T> normal{2 * intercept1[0] / (a * a), 2 * intercept1[1] / (b * b), 0.f};
+      const Vec3r<T> normal{2 * intercept1[0] / (a * a), 2 * intercept1[1] / (b * b), 0};
       const Vec3r<T> Ng = rotation * normal / norm(normal);
       i.normal = Ng;
       i.hit_distance = norm(t1 * dir);
@@ -353,7 +353,7 @@ inline bool intersect_primitive(CylinderIntersector<T, Collection> &i, const Cyl
     }
     if ((t0 > 0) && (t0 < t1) && (intercept0[2] <= h / static_cast<T>(2))
         && (intercept0[2] >= -h / static_cast<T>(2))) {
-      const Vec3r<T> normal{2 * intercept0[0] / (a * a), 2 * intercept0[1] / (b * b), 0.f};
+      const Vec3r<T> normal{2 * intercept0[0] / (a * a), 2 * intercept0[1] / (b * b), 0};
       const Vec3r<T> Ng = rotation * normal / norm(normal);
       i.normal = Ng;
       i.hit_distance = norm(t0 * dir);
@@ -378,14 +378,14 @@ inline bool intersect_primitive(CylinderIntersector<T, Collection> &i, const Cyl
       if (C < 0)
         return false;
 
-      const T t0 = 1.0 / A * (-B + a * b * sqrt(C));
-      const T t1 = -1.0 / A * (B + a * b * sqrt(C));
+      const T t0 = static_cast<T>(1.0) / A * (-B + a * b * std::sqrt(C));
+      const T t1 = static_cast<T>(-1.0) / A * (B + a * b * std::sqrt(C));
 
       const Vec3r<T> intercept0 = org + dir * t0;
       const Vec3r<T> intercept1 = org + dir * t1;
       // t1 is right intercept
       if ((t1 > 0) && (intercept1[2] <= h / static_cast<T>(2)) && (intercept1[2] >= -h / static_cast<T>(2))) {
-        const Vec3r<T> normal{2 * intercept1[0] / (a * a), 2 * intercept1[1] / (b * b), 0.f};
+        const Vec3r<T> normal{2 * intercept1[0] / (a * a), 2 * intercept1[1] / (b * b), 0};
         const Vec3r<T> Ng = rotation * normal / norm(normal);
         i.normal = Ng;
         i.hit_distance = norm(t1 * dir);
@@ -393,7 +393,7 @@ inline bool intersect_primitive(CylinderIntersector<T, Collection> &i, const Cyl
         return true;
       }
       if ((t0 > 0) && (intercept0[2] <= h / static_cast<T>(2)) && (intercept0[2] >= -h / static_cast<T>(2))) {
-        const Vec3r<T> normal{2 * intercept0[0] / (a * a), 2 * intercept0[1] / (b * b), 0.f};
+        const Vec3r<T> normal{2 * intercept0[0] / (a * a), 2 * intercept0[1] / (b * b), 0};
         const Vec3r<T> Ng = rotation * normal / norm(normal);
         i.normal = Ng;
         i.hit_distance = norm(t0 * dir);
@@ -403,7 +403,7 @@ inline bool intersect_primitive(CylinderIntersector<T, Collection> &i, const Cyl
     }
     // only happens if l != 0, an k, j == 0
     // only bottom or top can have intersection
-    else if ((j == 0.f) && (k == 0.f)) {
+    else if ((j == static_cast<T>(0.)) && (k == static_cast<T>(0))) {
       // if ray points along the circular surface, intresesction not
       // possible
       if (b * b * x0 * x0 + a * a * y0 * y0 == a * a * b * b)
@@ -412,7 +412,7 @@ inline bool intersect_primitive(CylinderIntersector<T, Collection> &i, const Cyl
       if (l < 0) {
         const T t0 = (-h / static_cast<T>(2) - z0) / l;
 
-        const Vec3r<T> normal{0.f, 0.f, -1.f};
+        const Vec3r<T> normal{0, 0, -1};
         const Vec3r<T> Ng = rotation * normal / norm(normal);
         i.normal = Ng;
         i.hit_distance = norm(t0 * dir);
@@ -423,7 +423,7 @@ inline bool intersect_primitive(CylinderIntersector<T, Collection> &i, const Cyl
       if (l > 0) {
         const T t0 = (h / static_cast<T>(2) - z0) / l;
 
-        const Vec3r<T> normal{0.f, 0.f, 1.f};
+        const Vec3r<T> normal{0, 0, 1};
         const Vec3r<T> Ng = rotation * normal / norm(normal);
         i.normal = Ng;
         i.hit_distance = norm(t0 * dir);
@@ -440,15 +440,15 @@ inline bool intersect_primitive(CylinderIntersector<T, Collection> &i, const Cyl
 
       if (C < 0)
         return false;
-      const T t0 = 1.0 / A * (-B + a * b * sqrt(C));
-      const T t1 = -1.0 / A * (B + a * b * sqrt(C));
+      const T t0 = static_cast<T>(1.0) / A * (-B + a * b * std::sqrt(C));
+      const T t1 = static_cast<T>(-1.0) / A * (B + a * b * std::sqrt(C));
 
       const Vec3r<T> intercept0 = org + dir * t0;
       const Vec3r<T> intercept1 = org + dir * t1;
       // t1 is right intercept
 
       if ((t1 > 0) && (intercept1[2] <= h / static_cast<T>(2)) && (intercept1[2] >= -h / static_cast<T>(2))) {
-        const Vec3r<T> normal{2 * intercept1[0] / (a * a), 2 * intercept1[1] / (b * b), 0.f};
+        const Vec3r<T> normal{2 * intercept1[0] / (a * a), 2 * intercept1[1] / (b * b), 0};
         const Vec3r<T> Ng = rotation * normal / norm(normal);
         i.normal = Ng;
         i.hit_distance = norm(t1 * dir);
@@ -456,7 +456,7 @@ inline bool intersect_primitive(CylinderIntersector<T, Collection> &i, const Cyl
         return true;
       }
       if ((t0 > 0) && (intercept0[2] <= h / static_cast<T>(2)) && (intercept0[2] >= -h / static_cast<T>(2))) {
-        const Vec3r<T> normal{2 * intercept0[0] / (a * a), 2 * intercept0[1] / (b * b), 0.f};
+        const Vec3r<T> normal{2 * intercept0[0] / (a * a), 2 * intercept0[1] / (b * b), 0};
         i.normal = normal;
         i.hit_distance = norm(t0 * dir);
         i.prim_id = cylinder.prim_id;
@@ -467,7 +467,7 @@ inline bool intersect_primitive(CylinderIntersector<T, Collection> &i, const Cyl
       if (l < 0) {
         const T t0 = (-h / static_cast<T>(2) - z0) / l;
 
-        const Vec3r<T> normal{0.f, 0.f, -1.f};
+        const Vec3r<T> normal{0, 0, -1};
         const Vec3r<T> Ng = rotation * normal / norm(normal);
         i.normal = Ng;
         i.hit_distance = norm(t0 * dir);
@@ -478,7 +478,7 @@ inline bool intersect_primitive(CylinderIntersector<T, Collection> &i, const Cyl
       if (l > 0) {
         const T t0 = (h / static_cast<T>(2) - z0) / l;
 
-        const Vec3r<T> normal{0.f, 0.f, 1.f};
+        const Vec3r<T> normal{0, 0, 1};
         const Vec3r<T> Ng = rotation * normal / norm(normal);
         i.normal = Ng;
         i.hit_distance = norm(t0 * dir);

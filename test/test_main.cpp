@@ -6,6 +6,7 @@
 #include "xmmintrin.h"
 
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
+#define DOCTEST_CONFIG_INCLUDE_TYPE_TRAITS
 //#define DOCTEST_CONFIG_IMPLEMENT
 
 #include "test_helpers.h"
@@ -25,3 +26,8 @@
 //  if(context.shouldExit()) // important - query flags (and --exit) rely on the user doing this
 //    return res;          // propagate the result of the tests
 //}
+
+TEST_CASE_TEMPLATE("test", T, float, double) {
+  T a = 1.;
+  REQUIRE(a == doctest::Approx(1.));
+}
