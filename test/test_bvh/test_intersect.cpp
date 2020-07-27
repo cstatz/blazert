@@ -24,16 +24,16 @@ TEST_CASE_TEMPLATE("Intersect_node", T, float, double) {
     T tmax = 3.0;
 
     // correct values
-    const T tmin_cor = 1.5000000000000002;
-    const T tmax_cor = 2.519803902718557;
+    const T tmin_cor = 1.5;
+    const T tmax_cor = static_cast<T>(2.519803902718557);
 
     // parameters
     const T min_t = 0.0;
     const T max_t = 3.0;
     const Vec3r<T> bmin{-1.0, 1.0, 1.0};
     const Vec3r<T> bmax{1.0, 2.0, 2.0};
-    const Vec3r<T> ray_org{0.0, -0.4708710135363803, 1.794174202707276};
-    const Vec3r<T> ray_dir{0.0, 0.9805806756909201, -0.196116135138184};
+    const Vec3r<T> ray_org{0.0, static_cast<T>(-0.4708710135363803), static_cast<T>(1.794174202707276)};
+    const Vec3r<T> ray_dir{0.0, static_cast<T>(0.9805806756909201), static_cast<T>(-0.196116135138184)};
 
     // initialize node
     BVHNode<T, PlaneCollection> node;// could be any collection
@@ -58,8 +58,8 @@ TEST_CASE_TEMPLATE("Intersect_node", T, float, double) {
       T tmax = 3.0;
 
       // correct values
-      const T tmin_cor = 1.7320508075688772;
-      const T tmax_cor = 1.7320508075688772;
+      const T tmin_cor = static_cast<T>(1.7320508075688772);
+      const T tmax_cor = static_cast<T>(1.7320508075688772);
 
       // parameters
       const T min_t = 0.0;
@@ -67,7 +67,7 @@ TEST_CASE_TEMPLATE("Intersect_node", T, float, double) {
       const Vec3r<T> bmin{-1.0, 1.0, 1.0};
       const Vec3r<T> bmax{-1.0, 1.0, 1.0};
       const Vec3r<T> ray_org{0.0, 0.0, 0.0};
-      const Vec3r<T> ray_dir{-0.5773502691896258, 0.5773502691896258, 0.5773502691896258};
+      const Vec3r<T> ray_dir{static_cast<T>(-0.5773502691896258), static_cast<T>(0.5773502691896258), static_cast<T>(0.5773502691896258)};
 
       // initialize node
       BVHNode<T, PlaneCollection> node;// could be any collection
@@ -100,7 +100,7 @@ TEST_CASE_TEMPLATE("Intersect_node", T, float, double) {
       const Vec3r<T> bmin{-1.0, pos_inf, 1.0};
       const Vec3r<T> bmax{-1.0, pos_inf, 1.0};
       const Vec3r<T> ray_org{0.0, 0.0, 0.0};
-      const Vec3r<T> ray_dir{-0.0009999990000015, 0.9999990000015, 0.0009999990000015};
+      const Vec3r<T> ray_dir{static_cast<T>(-0.0009999990000015), static_cast<T>(0.9999990000015), static_cast<T>(0.0009999990000015)};
 
       // initialize node
       BVHNode<T, PlaneCollection> node;// could be any collection
@@ -126,8 +126,8 @@ TEST_CASE_TEMPLATE("Intersect_node", T, float, double) {
       T tmax = 3.0;
 
       // correct values
-      const T tmin_cor = 2.449489742783178;
-      const T tmax_cor = 2.449489742783178;
+      const T tmin_cor = static_cast<T>(2.449489742783178);
+      const T tmax_cor = static_cast<T>(2.449489742783178);
 
       // parameters
       const T min_t = 0.0;
@@ -135,7 +135,7 @@ TEST_CASE_TEMPLATE("Intersect_node", T, float, double) {
       const Vec3r<T> bmin{-1.0, 1.0, 1.0};
       const Vec3r<T> bmax{-1.0, 5.0, 1.0};
       const Vec3r<T> ray_org{0.0, 0.0, 0.0};
-      const Vec3r<T> ray_dir{-0.4082482904638631, 0.8164965809277261, 0.4082482904638631};
+      const Vec3r<T> ray_dir{static_cast<T>(-0.4082482904638631), static_cast<T>(0.8164965809277261), static_cast<T>(0.4082482904638631)};
 
       // initialize node
       BVHNode<T, PlaneCollection> node;// could be any collection
@@ -159,8 +159,8 @@ TEST_CASE_TEMPLATE("Intersect_node", T, float, double) {
       T tmax = 3.0;
 
       // correct values
-      const T tmin_cor = 2.449489742783178;
-      const T tmax_cor = 2.449489742783178;
+      const T tmin_cor = static_cast<T>(2.449489742783178);
+      const T tmax_cor = static_cast<T>(2.449489742783178);
 
       // parameters
       const T min_t = 0.0;
@@ -168,7 +168,7 @@ TEST_CASE_TEMPLATE("Intersect_node", T, float, double) {
       const Vec3r<T> bmin{-1.0, 1.0, 1.0};
       const Vec3r<T> bmax{-1.0, pos_inf, 1.0};
       const Vec3r<T> ray_org{0.0, 0.0, 0.0};
-      const Vec3r<T> ray_dir{-0.4082482904638631, 0.8164965809277261, 0.4082482904638631};
+      const Vec3r<T> ray_dir{static_cast<T>(-0.4082482904638631), static_cast<T>(0.8164965809277261), static_cast<T>(0.4082482904638631)};
 
       // initialize node
       BVHNode<T, PlaneCollection> node;// could be any collection
@@ -194,8 +194,8 @@ TEST_CASE_TEMPLATE("Intersect_node", T, float, double) {
       T tmax = 5.0;
 
       // correct values
-      const T tmin_cor = 3.7416573867739413;
-      const T tmax_cor = 3.7416573867739413;
+      const T tmin_cor = static_cast<T>(3.7416573867739413);
+      const T tmax_cor = static_cast<T>(3.7416573867739413);
 
       // parameters
       const T min_t = 0.0;
@@ -203,7 +203,7 @@ TEST_CASE_TEMPLATE("Intersect_node", T, float, double) {
       const Vec3r<T> bmin{-1.0, 1.0, 1.0};
       const Vec3r<T> bmax{-1.0, 5.0, 5.0};
       const Vec3r<T> ray_org{0.0, 0.0, 0.0};
-      const Vec3r<T> ray_dir{-0.2672612419124244, 0.5345224838248488, 0.8017837257372732};
+      const Vec3r<T> ray_dir{static_cast<T>(-0.2672612419124244), static_cast<T>(0.5345224838248488), static_cast<T>(0.8017837257372732)};
 
       // initialize node
       BVHNode<T, PlaneCollection> node;// could be any collection
@@ -226,8 +226,8 @@ TEST_CASE_TEMPLATE("Intersect_node", T, float, double) {
       T tmax = pos_inf;
 
       // correct values
-      const T tmin_cor = 2.692582403567252;
-      const T tmax_cor = 2.692582403567252;
+      const T tmin_cor = static_cast<T>(2.692582403567252);
+      const T tmax_cor = static_cast<T>(2.692582403567252);
 
       // parameters
       const T min_t = 0.0;
@@ -235,7 +235,7 @@ TEST_CASE_TEMPLATE("Intersect_node", T, float, double) {
       const Vec3r<T> bmin{-1.0, 1.0, 1.0};
       const Vec3r<T> bmax{-1.0, pos_inf, 2.0};
       const Vec3r<T> ray_org{0.0, 0.0, 0.0};
-      const Vec3r<T> ray_dir{-0.3713906763541037, 0.7427813527082074, 0.5570860145311556};
+      const Vec3r<T> ray_dir{static_cast<T>(-0.3713906763541037), static_cast<T>(0.7427813527082074), static_cast<T>(0.5570860145311556)};
 
       // initialize node
       BVHNode<T, PlaneCollection> node;// could be any collection
@@ -258,8 +258,8 @@ TEST_CASE_TEMPLATE("Intersect_node", T, float, double) {
       T tmax = pos_inf;
 
       // correct values
-      const T tmin_cor = 2.692582403567252;
-      const T tmax_cor = 2.692582403567252;
+      const T tmin_cor = static_cast<T>(2.692582403567252);
+      const T tmax_cor = static_cast<T>(2.692582403567252);
 
       // parameters
       const T min_t = 0.0;
@@ -267,7 +267,7 @@ TEST_CASE_TEMPLATE("Intersect_node", T, float, double) {
       const Vec3r<T> bmin{-1.0, 1.0, 1.0};
       const Vec3r<T> bmax{-1.0, pos_inf, pos_inf};
       const Vec3r<T> ray_org{0.0, 0.0, 0.0};
-      const Vec3r<T> ray_dir{-0.3713906763541037, 0.7427813527082074, 0.5570860145311556};
+      const Vec3r<T> ray_dir{static_cast<T>(-0.3713906763541037), static_cast<T>(0.7427813527082074), static_cast<T>(0.5570860145311556)};
 
       // initialize node
       BVHNode<T, PlaneCollection> node;// could be any collection
