@@ -33,8 +33,6 @@ public:
   CullBackFace cull_back_face;
   AnyHit any_hit;
 
-
-
 public:
   Ray() = delete;
   /**
@@ -48,8 +46,8 @@ public:
    * @param direction Dircetion in which the ray is launched.
    * @param min_hit_distance  Minimum length the ray needs to have (default = 0).
    * @param max_hit_distance Maximum length the ray can have (default = std::numeric_limits<T>::max()).
-   * @param cull_back_face If true, culling backfaces will be used (default = false).
-   * @param any_hit If true, the first hit found in the traversal will register as the hit, which might not be the hit (default = false) closest to the ray origin.
+   * @param cull_back_face If set to blazert::Ray<T>::CullBackFace::yes, culling backfaces will be used (default = no).
+   * @param any_hit If set to blazert::Ray<T>::AnyHit::yes, the first hit found in the traversal will register as the hit, which might not be the hit (default = no) closest to the ray origin.
    *
    * @todo backface culling is no implemented yet.
    * @todo replace boolean variables by enum classes for choices
@@ -57,7 +55,8 @@ public:
    *
    */
   Ray(const Vec3r<T> &origin, const Vec3r<T> &direction, T min_hit_distance = T(0.),
-      T max_hit_distance = std::numeric_limits<T>::max(), CullBackFace cull_back_face = CullBackFace::no, AnyHit any_hit = AnyHit::no)
+      T max_hit_distance = std::numeric_limits<T>::max(), CullBackFace cull_back_face = CullBackFace::no,
+      AnyHit any_hit = AnyHit::no)
       : origin{origin}, direction{normalize(direction)},
         direction_inv{(static_cast<T>(1.) / direction)},// TODO: maybe normalize on creation?
         direction_sign{static_cast<unsigned int>(direction[0] < static_cast<T>(0.0) ? 1 : 0),
