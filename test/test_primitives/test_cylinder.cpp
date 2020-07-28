@@ -39,6 +39,8 @@
  *  The same cases as in 3.1 are implemented for shifted center
  */
 
+#define DOCTEST_CONFIG_INCLUDE_TYPE_TRAITS
+
 #include <blazert/bvh/accel.h>
 #include <blazert/bvh/builder.h>
 #include <blazert/datatypes.h>
@@ -63,7 +65,7 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
 
   SUBCASE("bounding box") {
     SUBCASE("center at origin") {
-      centers->emplace_back(Vec3r<T>{0.f, 0.f, 0.f});
+      centers->emplace_back(Vec3r<T>{0, 0, 0});
       semi_axes_a->emplace_back(1);
       semi_axes_b->emplace_back(1);
       heights->emplace_back(2);
@@ -87,7 +89,7 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
       }
     }
     SUBCASE("shifted center") {
-      centers->emplace_back(Vec3r<T>{0.f, 1.f, 4.f});
+      centers->emplace_back(Vec3r<T>{0, 1, 4});
       semi_axes_a->emplace_back(1);
       semi_axes_b->emplace_back(1);
       heights->emplace_back(2);
@@ -113,7 +115,7 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
   }
   SUBCASE("primitive center") {
     SUBCASE("center at origin") {
-      centers->emplace_back(Vec3r<T>{0.f, 0.f, 0.f});
+      centers->emplace_back(Vec3r<T>{0, 0, 0});
       semi_axes_a->emplace_back(1);
       semi_axes_b->emplace_back(1);
       heights->emplace_back(2);
@@ -135,7 +137,7 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
       }
     }
     SUBCASE("shifted center") {
-      centers->emplace_back(Vec3r<T>{0.f, 1.f, 4.f});
+      centers->emplace_back(Vec3r<T>{0, 1, 4});
       semi_axes_a->emplace_back(1);
       semi_axes_b->emplace_back(1);
       heights->emplace_back(2);
@@ -159,7 +161,7 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
   }
   SUBCASE("intersections") {
     SUBCASE("center at origin") {
-      centers->emplace_back(Vec3r<T>{0.f, 0.f, 0.f});
+      centers->emplace_back(Vec3r<T>{0, 0, 0});
       semi_axes_a->emplace_back(1);
       semi_axes_b->emplace_back(2);
       heights->emplace_back(2);
@@ -168,8 +170,8 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
         SUBCASE("hits") {
           SUBCASE("origin above") {
             SUBCASE("perpendicular incidence on top") {
-              Vec3r<T> org1{0.f, 0.f, 7.5f};
-              Vec3r<T> dir1{0.f, 0.f, -1.f};
+              Vec3r<T> org1{0, 0, 7.5};
+              Vec3r<T> dir1{0, 0, -1};
 
               Ray<T> ray{org1, dir1};
 
@@ -187,8 +189,8 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               }
             }
             SUBCASE("oblique incidence on top") {
-              Vec3r<T> org1{4.f, 0.f, 6.f};
-              Vec3r<T> dir1{-1.f, 0.f, -1.f};
+              Vec3r<T> org1{4, 0, 6};
+              Vec3r<T> dir1{-1, 0, -1};
 
               Ray<T> ray{org1, dir1};
 
@@ -196,7 +198,7 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
 
               const bool true_hit = true;
               const unsigned int true_prim_id = 0;
-              const T true_distance = std::sqrt(50);
+              const T true_distance = static_cast<T>(std::sqrt(50));
               const Vec3r<T> true_normal{0, 0, 1};
               SUBCASE("intersect primitive") {
                 assert_intersect_primitive_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
@@ -214,7 +216,7 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
 
               const bool true_hit = true;
               const unsigned int true_prim_id = 0;
-              const T true_distance = std::sqrt(32);
+              const T true_distance = static_cast<T>(std::sqrt(32));
               const Vec3r<T> true_normal{1, 0, 0};
               SUBCASE("intersect primitive") {
                 assert_intersect_primitive_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
@@ -232,7 +234,7 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
 
               const bool true_hit = true;
               const unsigned int true_prim_id = 0;
-              const T true_distance = std::sqrt(32);
+              const T true_distance = static_cast<T>(std::sqrt(32));
               const Vec3r<T> true_normal{-1, 0, 0};
               SUBCASE("intersect primitive") {
                 assert_intersect_primitive_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
@@ -250,7 +252,7 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
 
               const bool true_hit = true;
               const unsigned int true_prim_id = 0;
-              const T true_distance = std::sqrt(18);
+              const T true_distance = static_cast<T>(std::sqrt(18));
               const Vec3r<T> true_normal{0, 1, 0};
               SUBCASE("intersect primitive") {
                 assert_intersect_primitive_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
@@ -268,7 +270,7 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
 
               const bool true_hit = true;
               const unsigned int true_prim_id = 0;
-              const T true_distance = std::sqrt(18);
+              const T true_distance = static_cast<T>(std::sqrt(18));
               const Vec3r<T> true_normal{0, -1, 0};
               SUBCASE("intersect primitive") {
                 assert_intersect_primitive_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
@@ -280,8 +282,8 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
           }
           SUBCASE("origin below") {
             SUBCASE("perpendicular incidence on bottom") {
-              Vec3r<T> org1{0.f, 0.f, -8.5f};
-              Vec3r<T> dir1{0.f, 0.f, 1.f};
+              Vec3r<T> org1{0, 0, -8.5};
+              Vec3r<T> dir1{0, 0, 1};
 
               Ray<T> ray{org1, dir1};
               RayHit<T> rayhit;
@@ -299,15 +301,15 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               }
             }
             SUBCASE("oblique incidence on bottom") {
-              Vec3r<T> org1{5.f, 0.f, -6.f};
-              Vec3r<T> dir1{-1.f, 0.f, 1.f};
+              Vec3r<T> org1{5, 0, -6};
+              Vec3r<T> dir1{-1, 0, 1};
 
               Ray<T> ray{org1, dir1};
               CylinderCollection<T> cylinders{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
 
               const bool true_hit = true;
               const unsigned int true_prim_id = 0;
-              const T true_distance = std::sqrt(50);
+              const T true_distance = static_cast<T>(std::sqrt(50));
               const Vec3r<T> true_normal{0, 0, -1};
               SUBCASE("intersect primitive") {
                 assert_intersect_primitive_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
@@ -323,7 +325,7 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               CylinderCollection<T> cylinders{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
               const bool true_hit = true;
               const unsigned int true_prim_id = 0;
-              const T true_distance = std::sqrt(32);
+              const T true_distance = static_cast<T>(std::sqrt(32));
               const Vec3r<T> true_normal{1, 0, 0};
               SUBCASE("intersect primitive") {
                 assert_intersect_primitive_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
@@ -340,7 +342,7 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
 
               const bool true_hit = true;
               const unsigned int true_prim_id = 0;
-              const T true_distance = std::sqrt(32);
+              const T true_distance = static_cast<T>(std::sqrt(32));
               const Vec3r<T> true_normal{-1, 0, 0};
               SUBCASE("intersect primitive") {
                 assert_intersect_primitive_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
@@ -358,7 +360,7 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
 
               const bool true_hit = true;
               const unsigned int true_prim_id = 0;
-              const T true_distance = std::sqrt(18);
+              const T true_distance = static_cast<T>(std::sqrt(18));
               const Vec3r<T> true_normal{0, 1, 0};
               SUBCASE("intersect primitive") {
                 assert_intersect_primitive_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
@@ -374,7 +376,7 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               CylinderCollection<T> cylinders{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
               const bool true_hit = true;
               const unsigned int true_prim_id = 0;
-              const T true_distance = std::sqrt(18);
+              const T true_distance = static_cast<T>(std::sqrt(18));
               const Vec3r<T> true_normal{0, -1, 0};
               SUBCASE("intersect primitive") {
                 assert_intersect_primitive_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
@@ -567,8 +569,8 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
           SUBCASE("origin above (direction inverted)") {
             SUBCASE("perpendicular incidence on top") {
 
-              Vec3r<T> org1{0.f, 0.f, 6.5f};
-              Vec3r<T> dir1{0.f, 0.f, 1.f};
+              Vec3r<T> org1{0, 0, 6.5};
+              Vec3r<T> dir1{0, 0, 1};
 
               Ray<T> ray{org1, dir1};
               CylinderCollection<T> cylinders{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
@@ -585,8 +587,8 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               }
             }
             SUBCASE("oblique incidence on top") {
-              Vec3r<T> org1{5.f, 0.f, 6.f};
-              Vec3r<T> dir1{1.f, 0.f, 1.f};
+              Vec3r<T> org1{5, 0, 6};
+              Vec3r<T> dir1{1, 0, 1};
 
               Ray<T> ray{org1, dir1};
               CylinderCollection<T> cylinders{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
@@ -673,8 +675,8 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
           }
           SUBCASE("origin below (direction inverted)") {
             SUBCASE("perpendicular incidence on bottom") {
-              Vec3r<T> org1{0.f, 0.f, -8.5f};
-              Vec3r<T> dir1{0.f, 0.f, -1.f};
+              Vec3r<T> org1{0, 0, -8.5};
+              Vec3r<T> dir1{0, 0, -1};
 
               Ray<T> ray{org1, dir1};
               CylinderCollection<T> cylinders{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
@@ -691,8 +693,8 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               }
             }
             SUBCASE("oblique incidence on bottom") {
-              Vec3r<T> org1{5.f, 0.f, -6.f};
-              Vec3r<T> dir1{1.f, 0.f, -1.f};
+              Vec3r<T> org1{5, 0, -6};
+              Vec3r<T> dir1{1, 0, -1};
 
               Ray<T> ray{org1, dir1};
               CylinderCollection<T> cylinders{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
@@ -859,8 +861,8 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
             Mat3r<T> rot = arbitraryRotationMatrix(axis, pi<T> / 2);
             rotations->push_back(rot);
 
-            Vec3r<T> org1{0.f, 0.f, 6.5f};
-            Vec3r<T> dir1{0.f, 0.f, -1.f};
+            Vec3r<T> org1{0, 0, 6.5};
+            Vec3r<T> dir1{0, 0, -1};
 
             Ray<T> ray{org1, dir1};
             CylinderCollection<T> cylinders{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
@@ -881,8 +883,8 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
             Mat3r<T> rot = arbitraryRotationMatrix(axis, pi<T> / 2);
             rotations->push_back(rot);
 
-            Vec3r<T> org1{6.5f, 0.f, 0.f};
-            Vec3r<T> dir1{-1.f, 0.f, 0.f};
+            Vec3r<T> org1{6.5, 0, 0};
+            Vec3r<T> dir1{-1, 0, 0};
 
             Ray<T> ray{org1, dir1};
             CylinderCollection<T> cylinders{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
@@ -903,8 +905,8 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
             Mat3r<T> rot = arbitraryRotationMatrix(axis, pi<T> / 2);
             rotations->push_back(rot);
 
-            Vec3r<T> org1{0.f, 8.5f, 0.f};
-            Vec3r<T> dir1{0.f, -1.f, 0.f};
+            Vec3r<T> org1{0, 8.5, 0};
+            Vec3r<T> dir1{0, -1, 0};
 
             Ray<T> ray{org1, dir1};
             CylinderCollection<T> cylinders{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
@@ -927,8 +929,8 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
             Mat3r<T> rot = arbitraryRotationMatrix(axis, pi<T> / 2);
             rotations->push_back(rot);
 
-            Vec3r<T> org1{0.f, 0.f, 6.5f};
-            Vec3r<T> dir1{0.f, 0.f, 1.f};
+            Vec3r<T> org1{0, 0, 6.5};
+            Vec3r<T> dir1{0, 0, 1};
 
             Ray<T> ray{org1, dir1};
             CylinderCollection<T> cylinders{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
@@ -949,8 +951,8 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
             Mat3r<T> rot = arbitraryRotationMatrix(axis, pi<T> / 2);
             rotations->push_back(rot);
 
-            Vec3r<T> org1{6.5f, 0.f, 0.f};
-            Vec3r<T> dir1{1.f, 0.f, 0.f};
+            Vec3r<T> org1{6.5, 0, 0};
+            Vec3r<T> dir1{1, 0, 0};
 
             Ray<T> ray{org1, dir1};
             CylinderCollection<T> cylinders{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
@@ -971,8 +973,8 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
             Mat3r<T> rot = arbitraryRotationMatrix(axis, pi<T> / 2);
             rotations->push_back(rot);
 
-            Vec3r<T> org1{0.f, 6.5f, 0.f};
-            Vec3r<T> dir1{0.f, 1.f, 0.f};
+            Vec3r<T> org1{0, 6.5, 0};
+            Vec3r<T> dir1{0, 1, 0};
 
             Ray<T> ray{org1, dir1};
             CylinderCollection<T> cylinders{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
@@ -993,7 +995,7 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
     }
 
     SUBCASE("shifted center") {
-      centers->emplace_back(Vec3r<T>{1.f, 2.f, 0.f});
+      centers->emplace_back(Vec3r<T>{1, 2, 0});
       semi_axes_a->emplace_back(1);
       semi_axes_b->emplace_back(2);
       heights->emplace_back(2);
@@ -1003,8 +1005,8 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
           SUBCASE("origin above") {
             SUBCASE("perpendicular incidence on top") {
 
-              Vec3r<T> org1{1.f, 2.f, 6.5f};
-              Vec3r<T> dir1{0.f, 0.f, -1.f};
+              Vec3r<T> org1{1, 2, 6.5};
+              Vec3r<T> dir1{0, 0, -1};
 
               Ray<T> ray{org1, dir1};
               CylinderCollection<T> cylinders{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
@@ -1021,15 +1023,15 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               }
             }
             SUBCASE("oblique incidence on top") {
-              Vec3r<T> org1{6.f, 2.f, 6.f};
-              Vec3r<T> dir1{-1.f, 0.f, -1.f};
+              Vec3r<T> org1{6, 2, 6};
+              Vec3r<T> dir1{-1, 0, -1};
 
               Ray<T> ray{org1, dir1};
               CylinderCollection<T> cylinders{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
 
               const bool true_hit = true;
               const unsigned int true_prim_id = 0;
-              const T true_distance = std::sqrt(50);
+              const T true_distance = static_cast<T>(std::sqrt(50));
               const Vec3r<T> true_normal{0, 0, 1};
               SUBCASE("intersect primitive") {
                 assert_intersect_primitive_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
@@ -1046,7 +1048,7 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
 
               const bool true_hit = true;
               const unsigned int true_prim_id = 0;
-              const T true_distance = std::sqrt(32);
+              const T true_distance = static_cast<T>(std::sqrt(32));
               const Vec3r<T> true_normal{1, 0, 0};
               SUBCASE("intersect primitive") {
                 assert_intersect_primitive_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
@@ -1063,7 +1065,7 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
 
               const bool true_hit = true;
               const unsigned int true_prim_id = 0;
-              const T true_distance = std::sqrt(32);
+              const T true_distance = static_cast<T>(std::sqrt(32));
               const Vec3r<T> true_normal{-1, 0, 0};
               SUBCASE("intersect primitive") {
                 assert_intersect_primitive_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
@@ -1080,7 +1082,7 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
 
               const bool true_hit = true;
               const unsigned int true_prim_id = 0;
-              const T true_distance = std::sqrt(18);
+              const T true_distance = static_cast<T>(std::sqrt(18));
               const Vec3r<T> true_normal{0, 1, 0};
               SUBCASE("intersect primitive") {
                 assert_intersect_primitive_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
@@ -1097,7 +1099,7 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
 
               const bool true_hit = true;
               const unsigned int true_prim_id = 0;
-              const T true_distance = std::sqrt(18);
+              const T true_distance = static_cast<T>(std::sqrt(18));
               const Vec3r<T> true_normal{0, -1, 0};
               SUBCASE("intersect primitive") {
                 assert_intersect_primitive_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
@@ -1109,8 +1111,8 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
           }
           SUBCASE("origin below") {
             SUBCASE("perpendicular incidence on bottom") {
-              Vec3r<T> org1{1.f, 2.f, -8.5f};
-              Vec3r<T> dir1{0.f, 0.f, 1.f};
+              Vec3r<T> org1{1, 2, -8.5};
+              Vec3r<T> dir1{0, 0, 1};
 
               Ray<T> ray{org1, dir1};
               CylinderCollection<T> cylinders{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
@@ -1127,15 +1129,15 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               }
             }
             SUBCASE("oblique incidence on bottom") {
-              Vec3r<T> org1{6.f, 2.f, -6.f};
-              Vec3r<T> dir1{-1.f, 0.f, 1.f};
+              Vec3r<T> org1{6, 2, -6};
+              Vec3r<T> dir1{-1, 0, 1};
 
               Ray<T> ray{org1, dir1};
               CylinderCollection<T> cylinders{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
 
               const bool true_hit = true;
               const unsigned int true_prim_id = 0;
-              const T true_distance = std::sqrt(50);
+              const T true_distance = static_cast<T>(std::sqrt(50));
               const Vec3r<T> true_normal{0, 0, -1};
               SUBCASE("intersect primitive") {
                 assert_intersect_primitive_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
@@ -1152,7 +1154,7 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
 
               const bool true_hit = true;
               const unsigned int true_prim_id = 0;
-              const T true_distance = std::sqrt(32);
+              const T true_distance = static_cast<T>(std::sqrt(32));
               const Vec3r<T> true_normal{1, 0, 0};
               SUBCASE("intersect primitive") {
                 assert_intersect_primitive_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
@@ -1169,7 +1171,7 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
 
               const bool true_hit = true;
               const unsigned int true_prim_id = 0;
-              const T true_distance = std::sqrt(32);
+              const T true_distance = static_cast<T>(std::sqrt(32));
               const Vec3r<T> true_normal{-1, 0, 0};
               SUBCASE("intersect primitive") {
                 assert_intersect_primitive_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
@@ -1186,7 +1188,7 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
 
               const bool true_hit = true;
               const unsigned int true_prim_id = 0;
-              const T true_distance = std::sqrt(18);
+              const T true_distance = static_cast<T>(std::sqrt(18));
               const Vec3r<T> true_normal{0, 1, 0};
               SUBCASE("intersect primitive") {
                 assert_intersect_primitive_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
@@ -1203,7 +1205,7 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
 
               const bool true_hit = true;
               const unsigned int true_prim_id = 0;
-              const T true_distance = std::sqrt(18);
+              const T true_distance = static_cast<T>(std::sqrt(18));
               const Vec3r<T> true_normal{0, -1, 0};
               SUBCASE("intersect primitive") {
                 assert_intersect_primitive_hit(cylinders, ray, true_hit, true_prim_id, true_distance, true_normal);
@@ -1394,8 +1396,8 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
           SUBCASE("origin above (direction inverted)") {
             SUBCASE("perpendicular incidence on top") {
 
-              Vec3r<T> org1{1.f, 2.f, 6.5f};
-              Vec3r<T> dir1{0.f, 0.f, 1.f};
+              Vec3r<T> org1{1, 2, 6.5};
+              Vec3r<T> dir1{0, 0, 1};
 
               Ray<T> ray{org1, dir1};
               CylinderCollection<T> cylinders{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
@@ -1412,8 +1414,8 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               }
             }
             SUBCASE("oblique incidence on top") {
-              Vec3r<T> org1{6.f, 2.f, 6.f};
-              Vec3r<T> dir1{1.f, 0.f, 1.f};
+              Vec3r<T> org1{6, 2, 6};
+              Vec3r<T> dir1{1, 0, 1};
 
               Ray<T> ray{org1, dir1};
               CylinderCollection<T> cylinders{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
@@ -1500,8 +1502,8 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
           }
           SUBCASE("origin below (direction inverted)") {
             SUBCASE("perpendicular incidence on bottom") {
-              Vec3r<T> org1{1.f, 2.f, -8.5f};
-              Vec3r<T> dir1{0.f, 0.f, -1.f};
+              Vec3r<T> org1{1, 2, -8.5};
+              Vec3r<T> dir1{0, 0, -1};
 
               Ray<T> ray{org1, dir1};
               CylinderCollection<T> cylinders{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
@@ -1518,8 +1520,8 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
               }
             }
             SUBCASE("oblique incidence on bottom") {
-              Vec3r<T> org1{6.f, 2.f, -6.f};
-              Vec3r<T> dir1{1.f, 0.f, -1.f};
+              Vec3r<T> org1{6, 2, -6};
+              Vec3r<T> dir1{1, 0, -1};
 
               Ray<T> ray{org1, dir1};
               CylinderCollection<T> cylinders{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
@@ -1685,8 +1687,8 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
             Mat3r<T> rot = arbitraryRotationMatrix(axis, pi<T> / 2);
             rotations->push_back(rot);
 
-            Vec3r<T> org1{1.f, 2.f, 6.5f};
-            Vec3r<T> dir1{0.f, 0.f, -1.f};
+            Vec3r<T> org1{1, 2, 6.5};
+            Vec3r<T> dir1{0, 0, -1};
 
             Ray<T> ray{org1, dir1};
             CylinderCollection<T> cylinders{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
@@ -1707,8 +1709,8 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
             Mat3r<T> rot = arbitraryRotationMatrix(axis, pi<T> / 2);
             rotations->push_back(rot);
 
-            Vec3r<T> org1{7.5f, 2.f, 0.f};
-            Vec3r<T> dir1{-1.f, 0.f, 0.f};
+            Vec3r<T> org1{7.5, 2, 0};
+            Vec3r<T> dir1{-1, 0, 0};
 
             Ray<T> ray{org1, dir1};
             CylinderCollection<T> cylinders{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
@@ -1729,8 +1731,8 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
             Mat3r<T> rot = arbitraryRotationMatrix(axis, pi<T> / 2);
             rotations->push_back(rot);
 
-            Vec3r<T> org1{1.f, 10.5f, 0.f};
-            Vec3r<T> dir1{0.f, -1.f, 0.f};
+            Vec3r<T> org1{1, 10.5, 0};
+            Vec3r<T> dir1{0, -1, 0};
 
             Ray<T> ray{org1, dir1};
             CylinderCollection<T> cylinders{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
@@ -1753,8 +1755,8 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
             Mat3r<T> rot = arbitraryRotationMatrix(axis, pi<T> / 2);
             rotations->push_back(rot);
 
-            Vec3r<T> org1{1.f, 2.f, 7.5f};
-            Vec3r<T> dir1{0.f, 0.f, 1.f};
+            Vec3r<T> org1{1, 2, 7.5};
+            Vec3r<T> dir1{0, 0, 1};
 
             Ray<T> ray{org1, dir1};
             CylinderCollection<T> cylinders{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
@@ -1775,8 +1777,8 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
             Mat3r<T> rot = arbitraryRotationMatrix(axis, pi<T> / 2);
             rotations->push_back(rot);
 
-            Vec3r<T> org1{8.5f, 2.f, 0.f};
-            Vec3r<T> dir1{1.f, 0.f, 0.f};
+            Vec3r<T> org1{8.5, 2, 0};
+            Vec3r<T> dir1{1, 0, 0};
 
             Ray<T> ray{org1, dir1};
             CylinderCollection<T> cylinders{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};
@@ -1797,8 +1799,8 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
             Mat3r<T> rot = arbitraryRotationMatrix(axis, pi<T> / 2);
             rotations->push_back(rot);
 
-            Vec3r<T> org1{1.f, 5.5f, 0.f};
-            Vec3r<T> dir1{0.f, 1.f, 0.f};
+            Vec3r<T> org1{1, 5.5, 0};
+            Vec3r<T> dir1{0, 1, 0};
 
             Ray<T> ray{org1, dir1};
             CylinderCollection<T> cylinders{*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations};

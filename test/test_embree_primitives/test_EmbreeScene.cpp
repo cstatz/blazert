@@ -2,6 +2,8 @@
 // Created by ogarten on 13/05/2020.
 //
 
+#define DOCTEST_CONFIG_INCLUDE_TYPE_TRAITS
+
 #include <blazert/embree/primitives/EmbreeSphere.h>
 #include <blazert/embree/scene.h>
 #include <third_party/doctest/doctest/doctest.h>
@@ -11,8 +13,8 @@ using namespace doctest;
 
 TEST_CASE_TEMPLATE("EmbreeScene", T, float, double) {
   SUBCASE("Sphere") {
-    Vec3r<T> center{0.f, 0.f, 0.f};
-    float radius = 1.f;
+    Vec3r<T> center{0., 0., 0.};
+    float radius = 1.;
 
     auto centers = std::make_unique<Vec3rList<T>>();
     auto radii = std::make_unique<std::vector<T>>();
@@ -27,8 +29,8 @@ TEST_CASE_TEMPLATE("EmbreeScene", T, float, double) {
           unsigned int prim_id = scene.add_spheres(*centers, *radii);
           scene.commit();
 
-          Vec3r<T> org1{2.f, 0.f, 0.f};
-          Vec3r<T> dir1{-1.f, 0.f, 0.f};
+          Vec3r<T> org1{2., 0., 0.};
+          Vec3r<T> dir1{-1., 0., 0.};
 
           const Ray<T> ray1{org1, dir1};
           RayHit<T> rayhit1;
@@ -36,7 +38,7 @@ TEST_CASE_TEMPLATE("EmbreeScene", T, float, double) {
           // should be in distance of 1
           CHECK(hit);
           CHECK(rayhit1.prim_id == prim_id);
-          CHECK(rayhit1.hit_distance == Approx(1.f));
+          CHECK(rayhit1.hit_distance == Approx(1.));
           CHECK(rayhit1.normal[0] == Approx(1));
           CHECK(rayhit1.normal[1] == Approx(0));
           CHECK(rayhit1.normal[2] == Approx(0));
@@ -46,15 +48,15 @@ TEST_CASE_TEMPLATE("EmbreeScene", T, float, double) {
           unsigned int prim_id = scene.add_spheres(*centers, *radii);
           scene.commit();
 
-          Vec3r<T> org3{0.f, 0.f, 3.f};
-          Vec3r<T> dir3{0.f, 0.f, -1.f};
+          Vec3r<T> org3{0., 0., 3.};
+          Vec3r<T> dir3{0., 0., -1.};
           const Ray<T> ray3{org3, dir3};
           RayHit<T> rayhit3;
           const bool hit = intersect1(scene, ray3, rayhit3);
           // should be in distance of 2
           CHECK(hit);
           CHECK(rayhit3.prim_id == prim_id);
-          CHECK(rayhit3.hit_distance == Approx(2.f));
+          CHECK(rayhit3.hit_distance == Approx(2.));
           CHECK(rayhit3.normal[0] == Approx(0));
           CHECK(rayhit3.normal[1] == Approx(0));
           CHECK(rayhit3.normal[2] == Approx(1));
@@ -64,8 +66,8 @@ TEST_CASE_TEMPLATE("EmbreeScene", T, float, double) {
           scene.add_spheres(*centers, *radii);
           scene.commit();
 
-          Vec3r<T> org2{2.f, 0.f, 2.5f};
-          Vec3r<T> dir2{-1.f, 0.f, 0.f};
+          Vec3r<T> org2{2., 0., 2.5};
+          Vec3r<T> dir2{-1., 0., 0.};
           const Ray<T> ray2{org2, dir2};
           RayHit<T> rayhit2;
           const bool hit = intersect1(scene, ray2, rayhit2);
@@ -81,15 +83,15 @@ TEST_CASE_TEMPLATE("EmbreeScene", T, float, double) {
           unsigned int prim_id = scene.add_spheres(*centers, *radii);
           scene.commit();
 
-          Vec3r<T> org1{0.f, 0.f, 0.f};
-          Vec3r<T> dir1{-1.f, 0.f, 0.f};
+          Vec3r<T> org1{0., 0., 0.};
+          Vec3r<T> dir1{-1., 0., 0.};
           const Ray<T> ray1{org1, dir1};
           RayHit<T> rayhit1;
           const bool hit = intersect1(scene, ray1, rayhit1);
           // should be in distance of 1
           CHECK(hit);
           CHECK(rayhit1.prim_id == prim_id);
-          CHECK(rayhit1.hit_distance == Approx(1.f));
+          CHECK(rayhit1.hit_distance == Approx(1.));
           CHECK(rayhit1.normal[0] == Approx(-1));
           CHECK(rayhit1.normal[1] == Approx(0));
           CHECK(rayhit1.normal[2] == Approx(0));
@@ -99,18 +101,18 @@ TEST_CASE_TEMPLATE("EmbreeScene", T, float, double) {
           unsigned int prim_id = scene.add_spheres(*centers, *radii);
           scene.commit();
 
-          Vec3r<T> org2{0.f, 0.f, 0.5f};
-          Vec3r<T> dir2{0.f, 0.f, -1.f};
+          Vec3r<T> org2{0., 0., 0.5};
+          Vec3r<T> dir2{0., 0., -1.};
           const Ray<T> ray2{org2, dir2};
           RayHit<T> rayhit2;
           const bool hit = intersect1(scene, ray2, rayhit2);
           // should  hit in distance of 1.5
           CHECK(hit);
           CHECK(rayhit2.prim_id == prim_id);
-          CHECK(rayhit2.hit_distance == Approx(1.5f));
+          CHECK(rayhit2.hit_distance == Approx(1.5));
           CHECK(rayhit2.normal[0] == Approx(0));
           CHECK(rayhit2.normal[1] == Approx(0));
-          CHECK(rayhit2.normal[2] == Approx(-1.f));
+          CHECK(rayhit2.normal[2] == Approx(-1.));
         }
       }
       SUBCASE("Ray origin on sphere") {
@@ -119,15 +121,15 @@ TEST_CASE_TEMPLATE("EmbreeScene", T, float, double) {
           unsigned int prim_id = scene.add_spheres(*centers, *radii);
           scene.commit();
 
-          Vec3r<T> org1{1.f, 0.f, 0.f};
-          Vec3r<T> dir1{-1.f, 0.f, 0.f};
+          Vec3r<T> org1{1., 0., 0.};
+          Vec3r<T> dir1{-1., 0., 0.};
           const Ray<T> ray1{org1, dir1};
           RayHit<T> rayhit1;
           const bool hit = intersect1(scene, ray1, rayhit1);
           // should hit in distance of 2
           CHECK(hit);
           CHECK(rayhit1.prim_id == prim_id);
-          CHECK(rayhit1.hit_distance == Approx(2.f));
+          CHECK(rayhit1.hit_distance == Approx(2.));
           CHECK(rayhit1.normal[0] == Approx(-1));
           CHECK(rayhit1.normal[1] == Approx(0));
           CHECK(rayhit1.normal[2] == Approx(0));
@@ -137,8 +139,8 @@ TEST_CASE_TEMPLATE("EmbreeScene", T, float, double) {
           scene.add_spheres(*centers, *radii);
           scene.commit();
 
-          Vec3r<T> org2{1.f, 0.f, 0.f};
-          Vec3r<T> dir2{1.f, 0.f, 0.f};
+          Vec3r<T> org2{1., 0., 0.};
+          Vec3r<T> dir2{1., 0., 0.};
           const Ray<T> ray2{org2, dir2};
           RayHit<T> rayhit2;
           const bool hit = intersect1(scene, ray2, rayhit2);
@@ -151,8 +153,8 @@ TEST_CASE_TEMPLATE("EmbreeScene", T, float, double) {
         unsigned int prim_id = scene.add_spheres(*centers, *radii);
         scene.commit();
 
-        Vec3r<T> org1{2.f, 0.5f, 0.f};
-        Vec3r<T> dir1{-1.f, 0.f, 0.f};
+        Vec3r<T> org1{2., 0.5, 0.};
+        Vec3r<T> dir1{-1., 0., 0.};
         const Ray<T> ray1{org1, dir1};
         RayHit<T> rayhit1;
         const bool hit = intersect1(scene, ray1, rayhit1);
@@ -162,7 +164,7 @@ TEST_CASE_TEMPLATE("EmbreeScene", T, float, double) {
         CHECK(rayhit1.hit_distance == Approx(1.133974596));
         CHECK(rayhit1.normal[0] == Approx(sqrt(3) / 2));
         CHECK(rayhit1.normal[1] == Approx(sqrt(1) / 2));
-        CHECK(rayhit1.normal[2] == Approx(0.f));
+        CHECK(rayhit1.normal[2] == Approx(0.));
       }
     }
   }
@@ -182,8 +184,8 @@ TEST_CASE_TEMPLATE("EmbreeScene", T, float, double) {
     scene.commit();
 
     SUBCASE("intersections") {
-      Vec3r<T> org{0.f, 0.f, 5.f};
-      Vec3r<T> dir{0.f, 0.f, -1.f};
+      Vec3r<T> org{0., 0., 5.};
+      Vec3r<T> dir{0., 0., -1.};
 
       const Ray<T> ray{org, dir};
       RayHit<T> rayhit;
@@ -216,8 +218,8 @@ TEST_CASE_TEMPLATE("EmbreeScene", T, float, double) {
     scene.commit();
 
     SUBCASE("intersections") {
-      Vec3r<T> org{0.f, 0.f, 5.f};
-      Vec3r<T> dir{0.f, 0.f, -1.f};
+      Vec3r<T> org{0., 0., 5.};
+      Vec3r<T> dir{0., 0., -1.};
 
       const Ray<T> ray{org, dir};
       RayHit<T> rayhit;

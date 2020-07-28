@@ -20,7 +20,7 @@ struct Mesh {
 };
 
 template<typename T>
-bool LoadObj(Mesh<T> &mesh, std::vector<tinyobj::material_t> &materials, const char *filename, float scale, const char *mtl_path) {
+bool LoadObj(Mesh<T> &mesh, std::vector<tinyobj::material_t> &materials, const char *filename, const float scale, const char *mtl_path) {
 
   std::vector<tinyobj::shape_t> shapes;
   std::string err = tinyobj::LoadObj(shapes, materials, filename, mtl_path);
@@ -43,7 +43,7 @@ bool LoadObj(Mesh<T> &mesh, std::vector<tinyobj::material_t> &materials, const c
     // Faces + Mats
     for (size_t f = 0; f < shapes[i].mesh.indices.size() / 3; f++) {
       mesh.faces.push_back(Vec3ui{shapes[i].mesh.indices[3 * f + 0], shapes[i].mesh.indices[3 * f + 1], shapes[i].mesh.indices[3 * f + 2]} + vertexIdxOffset);
-      mesh.material_ids.push_back(shapes[i].mesh.material_ids[f]);
+      mesh.material_ids.push_back(static_cast<unsigned int>(shapes[i].mesh.material_ids[f]));
     }
 
     // Vertices
@@ -56,9 +56,9 @@ bool LoadObj(Mesh<T> &mesh, std::vector<tinyobj::material_t> &materials, const c
     if (shapes[i].mesh.texcoords.size() > 0) {
       for (size_t f = 0; f < shapes[i].mesh.indices.size() / 3; f++) {
 
-        const int f0 = shapes[i].mesh.indices[3 * f + 0];
-        const int f1 = shapes[i].mesh.indices[3 * f + 1];
-        const int f2 = shapes[i].mesh.indices[3 * f + 2];
+        const unsigned int f0 = shapes[i].mesh.indices[3 * f + 0];
+        const unsigned int f1 = shapes[i].mesh.indices[3 * f + 1];
+        const unsigned int f2 = shapes[i].mesh.indices[3 * f + 2];
 
         const Vec3r<ft> n0{shapes[i].mesh.texcoords[2 * f0 + 0], shapes[i].mesh.texcoords[2 * f0 + 1], 0.};
         const Vec3r<ft> n1{shapes[i].mesh.texcoords[2 * f1 + 0], shapes[i].mesh.texcoords[2 * f1 + 1], 0.};

@@ -36,7 +36,6 @@ typedef struct {
   std::map<std::string, std::string> unknown_parameter;
 } material_t;
 
-
 typedef struct {
   std::vector<float> positions;
   std::vector<float> normals;
@@ -44,7 +43,6 @@ typedef struct {
   std::vector<unsigned int> indices;
   std::vector<int> material_ids;// per-mesh material ID
 } mesh_t;
-
 
 typedef struct {
   std::string name;
@@ -56,18 +54,15 @@ public:
   MaterialReader() {}
   virtual ~MaterialReader() {}
 
-  virtual std::string operator()(const std::string &matId,
-                                 std::vector<material_t> &materials,
+  virtual std::string operator()(const std::string &matId, std::vector<material_t> &materials,
                                  std::map<std::string, int> &matMap) = 0;
 };
 
 class MaterialFileReader : public MaterialReader {
 public:
-  MaterialFileReader(const std::string &mtl_basepath)
-      : m_mtlBasePath(mtl_basepath) {}
+  MaterialFileReader(const std::string &mtl_basepath) : m_mtlBasePath(mtl_basepath) {}
   virtual ~MaterialFileReader() {}
-  virtual std::string operator()(const std::string &matId,
-                                 std::vector<material_t> &materials,
+  virtual std::string operator()(const std::string &matId, std::vector<material_t> &materials,
                                  std::map<std::string, int> &matMap);
 
 private:
@@ -92,8 +87,8 @@ std::string LoadObj(std::vector<shape_t> &shapes,      // [output]
 
 /// Loads materials into std::map
 /// Returns an empty string if successful
-std::string LoadMtl(std::map<std::string, int> &material_map,
-                    std::vector<material_t> &materials, std::istream &inStream);
+std::string LoadMtl(std::map<std::string, int> &material_map, std::vector<material_t> &materials,
+                    std::istream &inStream);
 
 std::string LoadObj(std::vector<shape_t> &shapes,// [output]
                     const char *filename);

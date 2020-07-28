@@ -12,7 +12,7 @@
 
 #include <third_party/bvh/include/bvh/binned_sah_builder.hpp>
 #include <third_party/bvh/include/bvh/bvh.hpp>
-#include <third_party/bvh/include/bvh/intersectors.hpp>
+#include <third_party/bvh/include/bvh/primitive_intersectors.hpp>
 #include <third_party/bvh/include/bvh/ray.hpp>
 #include <third_party/bvh/include/bvh/single_ray_traverser.hpp>
 #include <third_party/bvh/include/bvh/sweep_sah_builder.hpp>

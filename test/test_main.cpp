@@ -6,6 +6,7 @@
 #include "xmmintrin.h"
 
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
+#define DOCTEST_CONFIG_INCLUDE_TYPE_TRAITS
 //#define DOCTEST_CONFIG_IMPLEMENT
 
 #include "test_helpers.h"
