@@ -1,15 +1,15 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 3.7.0)
-PROJECT(blazert CXX)
+cmake_minimum_required(VERSION 3.7.0)
+project(blazert CXX)
 
 # include build option flags
 include(cmake/build_options.cmake)
 
 # turn on test coverage
-IF(TEST_COVERAGE)
-    SET(COVERAGE_FLAGS "--coverage")
-ELSE()
-    SET(COVERAGE_FLAGS "")
-ENDIF()
+if(TEST_COVERAGE)
+    set(COVERAGE_FLAGS "--coverage")
+else()
+    set(COVERAGE_FLAGS "")
+endif()
 
 # add library target
 add_library(blazeRT INTERFACE)
@@ -21,53 +21,53 @@ set_project_warnings(blazeRT INTERFACE)
 
 # Compiler Flags
 set(CMAKE_CXX_STANDARD 17)
-IF (CMAKE_COMPILER_IS_GNUCXX)
+if (CMAKE_COMPILER_IS_GNUCXX)
     set(CMAKE_CXX_FLAGS "-std=c++17 -O3 -fPIC -funroll-loops -march=native ${COVERAGE_FLAGS}")
-ELSEIF (MSVC)
+elseif (MSVC)
     # this currently works, but is not really the way to go..
     set(CMAKE_CXX_FLAGS "/std:c++17 /Wall /arch:AVX")
-ELSE ()
+else ()
     set(CMAKE_CXX_FLAGS "-std=c++17 -O3 -fPIC -funroll-loops -march=native -fno-finite-math-only -fno-signed-zeros -freciprocal-math -ffp-contract=fast")
-ENDIF (CMAKE_COMPILER_IS_GNUCXX)
+endif (CMAKE_COMPILER_IS_GNUCXX)
 
-IF (FORCE_COLOR_OUTPUT)
-    IF (CMAKE_COMPILER_IS_GNUCXX)
+if (FORCE_COLOR_OUTPUT)
+    if (CMAKE_COMPILER_IS_GNUCXX)
         add_compile_options(-fdiagnostics-color=always)
-    ELSE ()
+    else ()
         add_compile_options(-fcolor-diagnostics)
-    ENDIF ()
-ENDIF (FORCE_COLOR_OUTPUT)
+    endif ()
+endif (FORCE_COLOR_OUTPUT)
 
-INCLUDE(CheckCXXCompilerFlag)
-INCLUDE(GNUInstallDirs)
-
-
+include(CheckCXXCompilerFlag)
+include(GNUInstallDirs)
 
 
-IF (NOT ("${BLAZE_INCLUDE_OVERRIDE}" STREQUAL ""))
+
+
+if (NOT ("${BLAZE_INCLUDE_OVERRIDE}" STREQUAL ""))
     INCLUDE_DIRECTORIES(${BLAZE_INCLUDE_OVERRIDE})
-ELSE ()
+else ()
     FIND_PACKAGE(blaze 3.7)
     INCLUDE_DIRECTORIES(${BLAZE_INCLUDE_DIRS})
-ENDIF ()
+endif ()
 
-IF (EMBREE_BACKEND)
+if (EMBREE_BACKEND)
     find_package(embree 3.9)
-ENDIF ()
+endif ()
 
-FIND_PACKAGE(Threads)
+find_package(Threads)
 
-IF (ENABLE_OMP)
-    FIND_PACKAGE(OpenMP)
-    IF (OpenMP_CXX_FOUND)
-        SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+if (ENABLE_OMP)
+    find_package(OpenMP)
+    if (OpenMP_CXX_FOUND)
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
         link_libraries(OpenMP::OpenMP_CXX)
         include_directories(${OpenMP_CXX_INCLUDE_DIRS})
-    ENDIF ()
-ENDIF ()
+    endif ()
+endif ()
 
-IF (BUILD_TEST)
-    ENABLE_TESTING()
+if (BUILD_TEST)
+    enable_testing()
     add_subdirectory(test)
 
     find_package(ImageMagick COMPONENTS compare QUIET)
@@ -98,34 +98,34 @@ IF (BUILD_TEST)
                 WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/examples)
     endif ()
 
-ENDIF ()
+endif ()
 
-IF (BUILD_EXAMPLES)
-    ADD_SUBDIRECTORY(examples)
-ENDIF ()
+if (BUILD_EXAMPLES)
+    add_subdirectory(examples)
+endif ()
 
-IF (BUILD_BENCHMARK)
+if (BUILD_BENCHMARK)
     add_subdirectory(benchmarks)
-ENDIF ()
+endif ()
 
-SET(BLAZERT_VERSION_NUMBER 20.2.1)
-SET(BLAZERT_VERSION_STRING ${BLAZERT_VERSION_NUMBER})
-SET(BLAZERT_DEFINITIONS "")
-SET(BLAZERT_INCLUDE_DIR "${CMAKE_INSTALL_PREFIX}/include")
-SET(BLAZERT_ROOT_DIR ${CMAKE_INSTALL_PREFIX})
+set(BLAZERT_VERSION_NUMBER 20.2.1)
+set(BLAZERT_VERSION_STRING ${BLAZERT_VERSION_NUMBER})
+set(BLAZERT_DEFINITIONS "")
+set(BLAZERT_INCLUDE_DIR "${CMAKE_INSTALL_PREFIX}/include")
+set(BLAZERT_ROOT_DIR ${CMAKE_INSTALL_PREFIX})
 
-INCLUDE(CMakePackageConfigHelpers)
+include(CMakePackageConfigHelpers)
 
-CONFIGURE_PACKAGE_CONFIG_FILE(
+configure_package_config_file(
         ${CMAKE_CURRENT_SOURCE_DIR}/cmake/blazert.cmake.in
         ${CMAKE_CURRENT_BINARY_DIR}/blazertConfig.cmake
         PATH_VARS BLAZERT_INCLUDE_DIR BLAZERT_ROOT_DIR
         INSTALL_DESTINATION ${CMAKE_INSTALL_DATADIR}/blazert/cmake
         NO_CHECK_REQUIRED_COMPONENTS_MACRO)
 
-WRITE_BASIC_PACKAGE_VERSION_FILE(blazertConfigVersion.cmake VERSION ${BLAZERT_VERSION_NUMBER} COMPATIBILITY SameMajorVersion)
-INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/blazertConfig.cmake ${CMAKE_CURRENT_BINARY_DIR}/blazertConfigVersion.cmake DESTINATION ${CMAKE_INSTALL_DATADIR}/blazert/cmake)
-INSTALL(DIRECTORY blazert DESTINATION include)
+write_basic_package_version_file(blazertConfigVersion.cmake VERSION ${BLAZERT_VERSION_NUMBER} COMPATIBILITY SameMajorVersion)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/blazertConfig.cmake ${CMAKE_CURRENT_BINARY_DIR}/blazertConfigVersion.cmake DESTINATION ${CMAKE_INSTALL_DATADIR}/blazert/cmake)
+install(DIRECTORY blazert DESTINATION include)
 
 
 
