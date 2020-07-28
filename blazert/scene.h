@@ -209,7 +209,6 @@ unsigned int BlazertScene<T>::add_mesh(const Vec3rList<T> &vertices, const Vec3i
   }
 }
 
-
 /**
  * @brief Adds spheres at centers with radii.
  *
@@ -240,7 +239,6 @@ unsigned int BlazertScene<T>::add_spheres(const Vec3rList<T> &centers, const std
     return static_cast<unsigned int>(-1);
   }
 }
-
 
 /**
  * @brief Adds planes at centers with dimensions dxs and dys rotated around rotations.

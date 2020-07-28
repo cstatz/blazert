@@ -53,7 +53,8 @@ public:
   unsigned int prim_id;
 
   TriangleIntersector() = delete;
-  explicit TriangleIntersector(const Collection<T> &collection) : collection(collection), prim_id(static_cast<unsigned int>(-1)) {}
+  explicit TriangleIntersector(const Collection<T> &collection)
+      : collection(collection), prim_id(static_cast<unsigned int>(-1)) {}
 };
 
 template<typename T>

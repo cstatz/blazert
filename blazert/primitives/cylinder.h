@@ -66,7 +66,8 @@ public:
   unsigned int prim_id;
 
   CylinderIntersector() = delete;
-  explicit CylinderIntersector(const Collection<T> &collection) : collection(collection), prim_id(static_cast<unsigned int>(-1)) {}
+  explicit CylinderIntersector(const Collection<T> &collection)
+      : collection(collection), prim_id(static_cast<unsigned int>(-1)) {}
 };
 
 template<typename T>

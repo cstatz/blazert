@@ -142,7 +142,6 @@ inline bool intersect1(const EmbreeScene<T> &scene, const Ray<T> &ray, RayHit<T>
   return hit;
 }
 
-
 /**
  * @brief Adds a triangular mesh to the scene
  * @details

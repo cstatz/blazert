@@ -53,7 +53,8 @@ public:
   unsigned int prim_id;
 
   SphereIntersector() = delete;
-  explicit SphereIntersector(const Collection<T> &collection) : collection(collection), prim_id(static_cast<unsigned int>(-1)) {}
+  explicit SphereIntersector(const Collection<T> &collection)
+      : collection(collection), prim_id(static_cast<unsigned int>(-1)) {}
 };
 
 template<typename T>

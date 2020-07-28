@@ -64,7 +64,8 @@ public:
   unsigned int prim_id;
 
   PlaneIntersector() = delete;
-  explicit PlaneIntersector(const Collection<T> &collection) : collection(collection), prim_id(static_cast<unsigned int>(-1)) {}
+  explicit PlaneIntersector(const Collection<T> &collection)
+      : collection(collection), prim_id(static_cast<unsigned int>(-1)) {}
 };
 
 template<typename T>
