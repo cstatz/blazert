@@ -118,7 +118,7 @@ static void BM_bvh_BUILD_BHV_Sphere_SweepSAH(benchmark::State &state) {
   const auto os = std::make_unique<OriginSphere<T>>(state.range(0));
 
   std::vector<Triangle> triangles;
-  triangles.reserve(os->triangles.size()/3);
+  triangles.reserve(os->triangles.size() / 3);
   for (uint32_t i = 0; i < os->triangles.size(); i += 3) {
     const Vec3ui &face = os->triangles[i];
     const Vec3r<T> &p0 = os->vertices[face[0]];
@@ -148,7 +148,7 @@ static void BM_bvh_BUILD_BHV_Sphere_BinnedSAH(benchmark::State &state) {
   const auto os = std::make_unique<OriginSphere<T>>(state.range(0));
 
   std::vector<Triangle> triangles;
-  triangles.reserve(os->triangles.size()/3);
+  triangles.reserve(os->triangles.size() / 3);
   for (uint32_t i = 0; i < os->triangles.size(); i += 3) {
     const Vec3ui &face = os->triangles[i];
     const Vec3r<T> &p0 = os->vertices[face[0]];

@@ -37,7 +37,7 @@ inline Sphere<T> primitive_from_collection(const Collection<T> &collection, cons
   const Vec3r<T> &center = collection.centers[prim_idx];
   const T &radius = collection.radii[prim_idx];
   return {center, radius, prim_idx};
-};
+}
 
 template<typename T, template<typename A> typename Collection>
 class SphereIntersector {
@@ -53,7 +53,8 @@ public:
   unsigned int prim_id;
 
   SphereIntersector() = delete;
-  explicit SphereIntersector(const Collection<T> &collection) : collection(collection), prim_id(-1) {}
+  explicit SphereIntersector(const Collection<T> &collection)
+      : collection(collection), prim_id(static_cast<unsigned int>(-1)) {}
 };
 
 template<typename T>
@@ -128,7 +129,7 @@ inline void prepare_traversal(SphereIntersector<T, Collection> &i, const Ray<T> 
   i.min_hit_distance = ray.min_hit_distance;
   i.hit_distance = ray.max_hit_distance;
   i.uv = static_cast<T>(0.);
-  i.prim_id = -1;
+  i.prim_id = static_cast<unsigned int>(-1);
 }
 
 /**

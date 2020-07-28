@@ -39,7 +39,7 @@ inline Triangle<T> primitive_from_collection(const Collection<T> &collection, co
   const Vec3r<T> &b = collection.vertices[face[1]];
   const Vec3r<T> &c = collection.vertices[face[2]];
   return {a, b, c, prim_idx};
-};
+}
 
 template<typename T, template<typename A> typename Collection>
 class TriangleIntersector {
@@ -53,7 +53,8 @@ public:
   unsigned int prim_id;
 
   TriangleIntersector() = delete;
-  explicit TriangleIntersector(const Collection<T> &collection) : collection(collection), prim_id(-1) {}
+  explicit TriangleIntersector(const Collection<T> &collection)
+      : collection(collection), prim_id(static_cast<unsigned int>(-1)) {}
 };
 
 template<typename T>
@@ -145,7 +146,7 @@ inline void prepare_traversal(TriangleIntersector<T, Collection> &i, const Ray<T
   i.min_hit_distance = ray.min_hit_distance;
   i.hit_distance = ray.max_hit_distance;
   i.uv = static_cast<T>(0.);
-  i.prim_id = -1;
+  i.prim_id = static_cast<unsigned int>(-1);
 }
 
 template<typename T, template<typename> typename Collection>

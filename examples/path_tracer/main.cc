@@ -263,7 +263,7 @@ inline bool check_for_occluder(const Vec3r<T> &p1, const Vec3r<T> &p2, const Mes
   Vec3r<T> dir{p2 - p1};
   const T dist = length(dir);
 
-  const blazert::Ray<T> shadow_ray{p1, dir, ray_eps, dist - ray_eps, false, true};
+  const blazert::Ray<T> shadow_ray{p1, dir, ray_eps, dist - ray_eps, blazert::Ray<T>::CullBackFace::no, blazert::Ray<T>::AnyHit::yes};
 
   blazert::RayHit<T> rayhit;
   return traverse(bvh, shadow_ray, rayhit);

@@ -47,7 +47,7 @@ inline Plane<T> primitive_from_collection(const Collection<T> &collection, const
   const T &dy = collection.dys[prim_idx];
   const Mat3r<T> &rotation = collection.rotations[prim_idx];
   return {center, dx, dy, rotation, prim_idx};
-};
+}
 
 template<typename T, template<typename A> typename Collection>
 class PlaneIntersector {
@@ -64,7 +64,8 @@ public:
   unsigned int prim_id;
 
   PlaneIntersector() = delete;
-  explicit PlaneIntersector(const Collection<T> &collection) : collection(collection), prim_id(-1) {}
+  explicit PlaneIntersector(const Collection<T> &collection)
+      : collection(collection), prim_id(static_cast<unsigned int>(-1)) {}
 };
 
 template<typename T>
@@ -168,7 +169,7 @@ inline void prepare_traversal(PlaneIntersector<T, Collection> &i, const Ray<T> &
   i.min_hit_distance = ray.min_hit_distance;
   i.hit_distance = ray.max_hit_distance;
   i.uv = static_cast<T>(0.);
-  i.prim_id = -1;
+  i.prim_id = static_cast<unsigned int>(-1);
 }
 
 /**

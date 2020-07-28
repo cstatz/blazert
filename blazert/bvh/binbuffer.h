@@ -81,13 +81,13 @@ inline std::pair<unsigned int, Vec3r<T>> find_best_split_binned(const Collection
   Vec3r<T> cut_pos;
   Vec3r<T> min_cost(std::numeric_limits<T>::max());
 
-  for (int j = 0; j < 3; j++) {
+  for (std::size_t j = 0; j < 3; j++) {
     // Sweep left to accumulate bounding boxes and compute the right-hand side of the cost
     size_t count = 0;
     Vec3r<T> min_(std::numeric_limits<T>::max());
     Vec3r<T> max_(-std::numeric_limits<T>::max());
 
-    for (size_t i = bins.size - 1; i > 0; i--) {
+    for (std::size_t i = bins.size - 1; i > 0; i--) {
       Bin<T> &bin = bins.bin[j * bins.size + i];
       unity(min_, max_, bin.min, bin.max);
       count += bin.count;
@@ -101,7 +101,7 @@ inline std::pair<unsigned int, Vec3r<T>> find_best_split_binned(const Collection
 
     unsigned int min_bin = 1;
 
-    for (size_t i = 0; i < bins.size - 1; i++) {
+    for (std::size_t i = 0; i < bins.size - 1; i++) {
       Bin<T> &bin = bins.bin[j * bins.size + i];
       Bin<T> &next_bin = bins.bin[j * bins.size + i + 1];
       unity(min_, max_, bin.min, bin.max);

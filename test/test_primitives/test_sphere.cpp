@@ -184,7 +184,7 @@ TEST_CASE_TEMPLATE("Sphere", T, float, double) {
         SphereCollection spheres(*centers, *radii);
 
         const bool true_hit = false;
-        const unsigned int true_prim_id = -1;
+        const unsigned int true_prim_id = static_cast<unsigned int>(-1);
         const T true_distance = std::numeric_limits<T>::max();
         const Vec3r<T> true_normal{0, 0, 0};
 
