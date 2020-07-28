@@ -46,8 +46,8 @@ public:
    * @param direction Dircetion in which the ray is launched.
    * @param min_hit_distance  Minimum length the ray needs to have (default = 0).
    * @param max_hit_distance Maximum length the ray can have (default = std::numeric_limits<T>::max()).
-   * @param cull_back_face If true, culling backfaces will be used (default = false).
-   * @param any_hit If true, the first hit found in the traversal will register as the hit, which might not be the hit (default = false) closest to the ray origin.
+   * @param cull_back_face If set to blazert::Ray<T>::CullBackFace::yes, culling backfaces will be used (default = no).
+   * @param any_hit If set to blazert::Ray<T>::AnyHit::yes, the first hit found in the traversal will register as the hit, which might not be the hit (default = no) closest to the ray origin.
    *
    * @todo backface culling is no implemented yet.
    * @todo replace boolean variables by enum classes for choices
