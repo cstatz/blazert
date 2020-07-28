@@ -9,6 +9,7 @@ ELSE()
     LIST(REMOVE_ITEM TEST_SRC ${CMAKE_SOURCE_DIR}/test/test_embree_primitives/test_EmbreeSphere.cpp)
 ENDIF ()
 
+
 ADD_EXECUTABLE(test_blazert ${TEST_SRC} ${EMBREE_PRIMITIVES_SRC})
 TARGET_INCLUDE_DIRECTORIES(test_blazert PUBLIC ${CMAKE_SOURCE_DIR} ${EMBREE_INCLUDE_DIRS} ${BLAZE_INCLUDE_DIRS} "/usr/local/include")
 TARGET_LINK_LIBRARIES(test_blazert ${EMBREE_LIBRARY})
@@ -17,4 +18,4 @@ ADD_TEST(main test_blazert)
 
 # standard compiler warnings
 include(../cmake/compiler_warnings.cmake)
-set_project_warnings(test_blazert)
+set_project_warnings(test_blazert PRIVATE)
