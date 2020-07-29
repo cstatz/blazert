@@ -166,10 +166,10 @@ unsigned int EmbreeScene<T>::add_mesh(const Vec3rList<T> &vertices, const Vec3iL
     constexpr const int bytestride_float = sizeof(Vec3r<float>) / 8 * sizeof(Vec3r<float>::ElementType);
 
     triangle_mesh = rtcNewGeometry(device, RTC_GEOMETRY_TYPE_TRIANGLE);
-    rtcSetSharedGeometryBuffer(triangle_mesh, RTC_BUFFER_TYPE_INDEX, 0, RTC_FORMAT_UINT3, (void *) (triangles.data()),
-                               0, bytestride_int, triangles.size());
-    rtcSetSharedGeometryBuffer(triangle_mesh, RTC_BUFFER_TYPE_VERTEX, 0, RTC_FORMAT_FLOAT3, (void *) (vertices.data()),
-                               0, bytestride_float, vertices.size());
+    rtcSetSharedGeometryBuffer(triangle_mesh, RTC_BUFFER_TYPE_INDEX, 0, RTC_FORMAT_UINT3,
+                               reinterpret_cast<const void *>(triangles.data()), 0, bytestride_int, triangles.size());
+    rtcSetSharedGeometryBuffer(triangle_mesh, RTC_BUFFER_TYPE_VERTEX, 0, RTC_FORMAT_FLOAT3,
+                               reinterpret_cast<const void *>(vertices.data()), 0, bytestride_float, vertices.size());
     rtcCommitGeometry(triangle_mesh);
     auto geom_id = rtcAttachGeometry(rtcscene, triangle_mesh);
     id = geom_id;

@@ -54,7 +54,7 @@ inline EmbreeCylinder::EmbreeCylinder(const RTCDevice &device, const RTCScene &s
 }
 
 inline void cylinderBoundsFunc(const RTCBoundsFunctionArguments *args) {
-  const EmbreeCylinder &cylinder = ((EmbreeCylinder *) (args->geometryUserPtr))[args->primID];
+  const EmbreeCylinder &cylinder = static_cast<const EmbreeCylinder *>(args->geometryUserPtr)[args->primID];
   const Mat3r<float> &rot = cylinder.rotMatrix;
 
   // rot.transposeInPlace();
@@ -96,7 +96,7 @@ inline void cylinderBoundsFunc(const RTCBoundsFunctionArguments *args) {
 }
 
 inline void cylinderIntersectFunc(const RTCIntersectFunctionNArguments *args) {
-  const EmbreeCylinder &cylinder = ((EmbreeCylinder *) (args->geometryUserPtr))[args->primID];
+  const EmbreeCylinder &cylinder = static_cast<const EmbreeCylinder *>(args->geometryUserPtr)[args->primID];
 
   // get rotation matrix and transpose it
   const Mat3r<float> &rot = cylinder.rotMatrix;
@@ -112,7 +112,7 @@ inline void cylinderIntersectFunc(const RTCIntersectFunctionNArguments *args) {
 
   // loads the ray and hit structure for the following calculation
   // see occludedFunc to do this differently
-  RTCRayHit *rayhit = (RTCRayHit *) args->rayhit;
+  RTCRayHit *rayhit = reinterpret_cast<RTCRayHit *>(args->rayhit);
   RTCRay *ray = &(rayhit->ray);
 
   const Vec3r<float> org_tmp{ray->org_x, ray->org_y, ray->org_z};
@@ -151,7 +151,7 @@ inline void cylinderIntersectFunc(const RTCIntersectFunctionNArguments *args) {
   const float h = cylinder.height;
 
   // area 1
-  if (z0 > h / 2.) {
+  if (z0 > h / 2.f) {
     if (l == 0)
       return;
     const float t0 = (h / 2 - z0) / l;
@@ -173,8 +173,9 @@ inline void cylinderIntersectFunc(const RTCIntersectFunctionNArguments *args) {
 
       if (C < 0)
         return;
-      const float t0 = 1.0 / A * (-B + a * b * sqrt(C));
-      const float t1 = -1.0 / A * (B + a * b * sqrt(C));
+
+      const float t0 = 1.0f / A * (-B + a * b * std::sqrt(C));
+      const float t1 = -1.0f / A * (B + a * b * std::sqrt(C));
 
       const Vec3r<float> &intercept0 = org + dir * t0;
       const Vec3r<float> &intercept1 = org + dir * t1;
@@ -217,8 +218,8 @@ inline void cylinderIntersectFunc(const RTCIntersectFunctionNArguments *args) {
 
       if (C < 0)
         return;
-      const float t0 = 1.0 / A * (-B + a * b * sqrt(C));
-      const float t1 = -1.0 / A * (B + a * b * sqrt(C));
+      const float t0 = 1.0f / A * (-B + a * b * std::sqrt(C));
+      const float t1 = -1.0f / A * (B + a * b * std::sqrt(C));
 
       const Vec3r<float> &intercept0 = org + dir * t0;
       const Vec3r<float> &intercept1 = org + dir * t1;
@@ -245,8 +246,8 @@ inline void cylinderIntersectFunc(const RTCIntersectFunctionNArguments *args) {
 
     if (C < 0)
       return;
-    const float t0 = 1.0 / A * (-B + a * b * sqrt(C));
-    const float t1 = -1.0 / A * (B + a * b * sqrt(C));
+    const float t0 = 1.0f / A * (-B + a * b * std::sqrt(C));
+    const float t1 = -1.0f / A * (B + a * b * std::sqrt(C));
 
     const Vec3r<float> &intercept0 = org + dir * t0;
     const Vec3r<float> &intercept1 = org + dir * t1;
@@ -279,8 +280,8 @@ inline void cylinderIntersectFunc(const RTCIntersectFunctionNArguments *args) {
 
       if (C < 0)
         return;
-      const float t0 = 1.0 / A * (-B + a * b * sqrt(C));
-      const float t1 = -1.0 / A * (B + a * b * sqrt(C));
+      const float t0 = 1.0f / A * (-B + a * b * std::sqrt(C));
+      const float t1 = -1.0f / A * (B + a * b * std::sqrt(C));
 
       const Vec3r<float> &intercept0 = org + dir * t0;
       const Vec3r<float> &intercept1 = org + dir * t1;
@@ -334,8 +335,8 @@ inline void cylinderIntersectFunc(const RTCIntersectFunctionNArguments *args) {
 
       if (C < 0)
         return;
-      const float t0 = 1.0 / A * (-B + a * b * sqrt(C));
-      const float t1 = -1.0 / A * (B + a * b * sqrt(C));
+      const float t0 = 1.0f / A * (-B + a * b * std::sqrt(C));
+      const float t1 = -1.0f / A * (B + a * b * std::sqrt(C));
 
       const Vec3r<float> &intercept0 = org + dir * t0;
       const Vec3r<float> &intercept1 = org + dir * t1;
@@ -379,7 +380,7 @@ inline void cylinderIntersectFunc(const RTCIntersectFunctionNArguments *args) {
 }
 
 inline void cylinderOccludedFunc(const RTCOccludedFunctionNArguments *args) {
-  const EmbreeCylinder &cylinder = ((EmbreeCylinder *) (args->geometryUserPtr))[args->primID];
+  const EmbreeCylinder &cylinder = static_cast<const EmbreeCylinder *>(args->geometryUserPtr)[args->primID];
 
   // get rotation matrix and transpose it
   const Mat3r<float> &rot = cylinder.rotMatrix;
@@ -392,7 +393,7 @@ inline void cylinderOccludedFunc(const RTCOccludedFunctionNArguments *args) {
   // loads the ray and hit structure for the following calculation
   // see occludedFunc to do this differently
 
-  RTCRay *ray = (RTCRay *) (args->ray);
+  RTCRay *ray = reinterpret_cast<RTCRay *>(args->ray);
   const Vec3r<float> &org_tmp{ray->org_x, ray->org_y, ray->org_z};
   const Vec3r<float> &dir_tmp{ray->dir_x, ray->dir_y, ray->dir_z};
 
@@ -452,8 +453,8 @@ inline void cylinderOccludedFunc(const RTCOccludedFunctionNArguments *args) {
 
       if (C < 0)
         return;
-      const float t0 = 1.0 / A * (-B + a * b * sqrt(C));
-      const float t1 = -1.0 / A * (B + a * b * sqrt(C));
+      const float t0 = 1.0f / A * (-B + a * b * std::sqrt(C));
+      const float t1 = -1.0f / A * (B + a * b * std::sqrt(C));
 
       const Vec3r<float> &intercept0 = org + dir * t0;
       const Vec3r<float> &intercept1 = org + dir * t1;
@@ -488,8 +489,8 @@ inline void cylinderOccludedFunc(const RTCOccludedFunctionNArguments *args) {
       if (C < 0)
         return;
 
-      const float t0 = 1.0 / A * (-B + a * b * sqrt(C));
-      const float t1 = -1.0 / A * (B + a * b * sqrt(C));
+      const float t0 = 1.0f / A * (-B + a * b * std::sqrt(C));
+      const float t1 = -1.0f / A * (B + a * b * std::sqrt(C));
 
       const Vec3r<float> &intercept0 = org + dir * t0;
       const Vec3r<float> &intercept1 = org + dir * t1;
@@ -512,8 +513,8 @@ inline void cylinderOccludedFunc(const RTCOccludedFunctionNArguments *args) {
 
     if (C < 0)
       return;
-    const float t0 = 1.0 / A * (-B + a * b * sqrt(C));
-    const float t1 = -1.0 / A * (B + a * b * sqrt(C));
+    const float t0 = 1.0f / A * (-B + a * b * std::sqrt(C));
+    const float t1 = -1.0f / A * (B + a * b * std::sqrt(C));
 
     if ((t0 < 0) && (t1 < 0))
       return;// no intersection if both t's change the direction of the
@@ -535,8 +536,8 @@ inline void cylinderOccludedFunc(const RTCOccludedFunctionNArguments *args) {
 
     if (C < 0)
       return;
-    const float t0 = 1.0 / A * (-B + a * b * sqrt(C));
-    const float t1 = -1.0 / A * (B + a * b * sqrt(C));
+    const float t0 = 1.0f / A * (-B + a * b * std::sqrt(C));
+    const float t1 = -1.0f / A * (B + a * b * std::sqrt(C));
 
     if ((t0 <= 0) && (t1 <= 0))
       return;// no intersection if both t's change the direction of the

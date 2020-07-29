@@ -122,7 +122,7 @@ inline void r4(T &s, T &t, const T &a, const T &c, const T &d, const T &e) {
 }
 
 template<typename T>
-inline void r5(T &s, T &t, const T &a, const T &d, const T &f) {
+inline void r5(T &s, T &t, const T &a, const T &d, [[maybe_unused]] const T &f) {
 
   t = T(0.);
 

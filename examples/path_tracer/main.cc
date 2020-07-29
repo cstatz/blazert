@@ -145,12 +145,12 @@ public:
 };
 
 // TODO: This eats float ... we need to convert.
-void SaveImagePNG(const char *filename, const float *rgb, int width,
-                  int height) {
+void SaveImagePNG(const char *filename, const float *rgb, const unsigned int width,
+                  const unsigned int height) {
   auto *bytes = new unsigned char[width * height * 3];
-  for (int y = 0; y < height; y++) {
-    for (int x = 0; x < width; x++) {
-      const int index = y * width + x;
+  for (unsigned int y = 0; y < height; y++) {
+    for (unsigned int x = 0; x < width; x++) {
+      const unsigned int index = y * width + x;
       bytes[index * 3 + 0] = (unsigned char) std::max(
           0.0f, std::min(rgb[index * 3 + 0] * 255.0f, 255.0f));
       bytes[index * 3 + 1] = (unsigned char) std::max(
@@ -159,7 +159,7 @@ void SaveImagePNG(const char *filename, const float *rgb, int width,
           0.0f, std::min(rgb[index * 3 + 2] * 255.0f, 255.0f));
     }
   }
-  stbi_write_png(filename, width, height, 3, bytes, width * 3);
+  stbi_write_png(filename, static_cast<int>(width), static_cast<int>(height), 3, bytes, static_cast<int>(width * 3));
   delete[] bytes;
 }
 
@@ -187,7 +187,7 @@ bool LoadObj(Mesh<T> &mesh, std::vector<tinyobj::material_t> &materials, const c
     // Faces + Mats
     for (size_t f = 0; f < shapes[i].mesh.indices.size() / 3; f++) {
       mesh.faces.push_back(Vec3ui{shapes[i].mesh.indices[3 * f + 0], shapes[i].mesh.indices[3 * f + 1], shapes[i].mesh.indices[3 * f + 2]} + vertexIdxOffset);
-      mesh.material_ids.push_back(shapes[i].mesh.material_ids[f]);
+      mesh.material_ids.push_back(static_cast<unsigned int>(shapes[i].mesh.material_ids[f]));
     }
 
     // Vertices
@@ -200,9 +200,9 @@ bool LoadObj(Mesh<T> &mesh, std::vector<tinyobj::material_t> &materials, const c
     if (shapes[i].mesh.texcoords.size() > 0) {
       for (size_t f = 0; f < shapes[i].mesh.indices.size() / 3; f++) {
 
-        const int f0 = shapes[i].mesh.indices[3 * f + 0];
-        const int f1 = shapes[i].mesh.indices[3 * f + 1];
-        const int f2 = shapes[i].mesh.indices[3 * f + 2];
+        const unsigned int f0 = shapes[i].mesh.indices[3 * f + 0];
+        const unsigned int f1 = shapes[i].mesh.indices[3 * f + 1];
+        const unsigned int f2 = shapes[i].mesh.indices[3 * f + 2];
 
         const Vec3r<ft> n0{shapes[i].mesh.texcoords[2 * f0 + 0], shapes[i].mesh.texcoords[2 * f0 + 1], 0.};
         const Vec3r<ft> n1{shapes[i].mesh.texcoords[2 * f1 + 0], shapes[i].mesh.texcoords[2 * f1 + 1], 0.};
@@ -245,7 +245,7 @@ inline T fresnel_schlick(const Vec3r<T> &H, const Vec3r<T> &norm, T n1) {
   return r0 + (static_cast<T>(1.) - r0) * pow5(static_cast<T>(1.) - dot(H, norm));
 }
 
-void progressBar(int tick, int total, int width = 100) {
+void progressBar(unsigned long tick, unsigned long total, unsigned long width = 100) {
   float ratio = 100.0f * tick / total;
   float count = width * tick / total;
   std::string bar(width, ' ');
@@ -271,8 +271,8 @@ inline bool check_for_occluder(const Vec3r<T> &p1, const Vec3r<T> &p2, const Mes
 
 int main(int argc, char **argv) {
 
-  int width = 512;
-  int height = 512;
+  unsigned int width = 512;
+  unsigned int height = 512;
 
   ft scale{1.0};
 
@@ -321,8 +321,8 @@ int main(int argc, char **argv) {
 #ifdef _OPENMP
 #pragma omp parallel for schedule(dynamic, 1)
 #endif
-  for (int y = 0; y < height; y++) {
-    for (int x = 0; x < width; x++) {
+  for (unsigned int y = 0; y < height; y++) {
+    for (unsigned int x = 0; x < width; x++) {
       Vec3r<ft> finalColor{0, 0, 0};
       for (int i = 0; i < SPP; ++i) {
         ft px = ft(x) + uniform(ft(-0.5), ft(0.5));
