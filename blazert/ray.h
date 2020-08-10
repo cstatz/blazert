@@ -20,8 +20,8 @@ namespace blazert {
 template<typename T>
 class BLAZERTALIGN Ray {
 public:
-  enum class CullBackFace { yes, no };
-  enum class AnyHit { yes, no };
+  enum class Culling { None, Backface };
+  enum class RegisterHit { Closest, Any };
 
 public:
   const Vec3r<T> origin;
@@ -30,8 +30,8 @@ public:
   const Vec3ui direction_sign;
   T min_hit_distance;
   T max_hit_distance;
-  CullBackFace cull_back_face;
-  AnyHit any_hit;
+  Culling cull_back_face;
+  RegisterHit any_hit;
 
 public:
   Ray() = delete;
@@ -46,17 +46,15 @@ public:
    * @param direction Dircetion in which the ray is launched.
    * @param min_hit_distance  Minimum length the ray needs to have (default = 0).
    * @param max_hit_distance Maximum length the ray can have (default = std::numeric_limits<T>::max()).
-   * @param cull_back_face If set to blazert::Ray<T>::CullBackFace::yes, culling backfaces will be used (default = no).
-   * @param any_hit If set to blazert::Ray<T>::AnyHit::yes, the first hit found in the traversal will register as the hit, which might not be the hit (default = no) closest to the ray origin.
+   * @param cull_back_face If set to blazert::Ray<T>::Culling::Backface, culling back faces will be used (default = None).
+   * @param any_hit If set to blazert::Ray<T>::RegisteredHit::Any, the first hit found in the traversal will register as the hit, which might not be the hit (default = Closest) closest to the ray origin.
    *
    * @todo backface culling is no implemented yet.
-   * @todo replace boolean variables by enum classes for choices
-   *
    *
    */
   Ray(const Vec3r<T> &origin, const Vec3r<T> &direction, T min_hit_distance = T(0.),
-      T max_hit_distance = std::numeric_limits<T>::max(), CullBackFace cull_back_face = CullBackFace::no,
-      AnyHit any_hit = AnyHit::no)
+      T max_hit_distance = std::numeric_limits<T>::max(), Culling cull_back_face = Culling::None,
+      RegisterHit any_hit = RegisterHit::Closest)
       : origin{origin}, direction{normalize(direction)},
         direction_inv{(static_cast<T>(1.) / direction)},// TODO: maybe normalize on creation?
         direction_sign{static_cast<unsigned int>(direction[0] < static_cast<T>(0.0) ? 1 : 0),
