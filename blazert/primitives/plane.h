@@ -38,6 +38,24 @@ public:
   Plane &operator=(const Plane &rhs) = delete;
 };
 
+template<typename T>
+std::ostream &operator<<(std::ostream &stream, const Plane<T> &plane) {
+  /// Conveniently output a single plane as JSON.
+  stream << "{\n";
+
+  stream << "  Plane: " << &plane << ",\n";
+  stream << "  center: [" << plane.center[0] << "," << plane.center[1] << "," << plane.center[2] << "],\n";
+  stream << "  dx: " << plane.dx << ",\n";
+  stream << "  dy: " << plane.dy << ",\n";
+  stream << "  rotation: [[" << plane.rotation(0,0) << ", " << plane.rotation(0,1) << ", "<< plane.rotation(0,2) << "],\n"
+         << "             [" << plane.rotation(1,0) << ", " << plane.rotation(1,1) << ", "<< plane.rotation(1,2) << "],\n"
+         << "             [" << plane.rotation(2,0) << ", " << plane.rotation(2,1) << ", "<< plane.rotation(2,2) << "]],\n";
+  stream << "  prim_id: " << plane.prim_id << "\n";
+
+  stream << "}\n";
+  return stream;
+}
+
 template<typename T, template<typename A> typename Collection,
          typename = std::enable_if_t<std::is_same<typename Collection<T>::primitive_type, Plane<T>>::value>>
 [[nodiscard]] inline Plane<T> primitive_from_collection(const Collection<T> &collection, const unsigned int prim_idx) {
@@ -149,6 +167,25 @@ private:
     return std::make_pair(std::move(min), std::move(max));
   }
 };
+
+template<typename T>
+std::ostream &operator<<(std::ostream& stream, const PlaneCollection<T> &collection) {
+  stream << "{\n";
+  stream << "PlaneCollection: [\n";
+  stream << "  size: " << collection.size() << ",\n";
+
+  for(uint32_t id_plane = 0; id_plane < collection.size(); id_plane++){
+    stream << primitive_from_collection(collection, id_plane);
+    if(id_plane == collection.size() - 1) {
+      stream << "]\n";
+    } else {
+      stream << ", \n";
+    }
+  }
+
+  stream << "}\n";
+  return stream;
+}
 
 template<typename T, template<typename> typename Collection>
 inline void post_traversal(PlaneIntersector<T, Collection> &i, RayHit<T> &rayhit) {
