@@ -37,7 +37,7 @@ std::ostream &operator<<(std::ostream &stream, const Sphere<T> &sphere) {
 
   stream << "  Sphere: " << &sphere << ",\n";
   stream << "  center: [" << sphere.center[0] << "," << sphere.center[1] << "," << sphere.center[2] << "],\n";
-  stream << "  radius: " << sphere.dx << ",\n";
+  stream << "  radius: " << sphere.radius<< ",\n";
   stream << "  prim_id: " << sphere.prim_id << "\n";
 
   stream << "}\n";
