@@ -30,6 +30,21 @@ struct Triangle {
   Triangle &operator=(const Triangle &rhs) = delete;
 };
 
+template<typename T>
+std::ostream &operator<<(std::ostream &stream, const Triangle<T> &triangle) {
+  /// Conveniently output a single plane as JSON.
+  stream << "{\n";
+
+  stream << "  Triangle: " << &triangle << ",\n";
+  stream << "  a: [" << triangle.a[0] << "," << triangle.c[1] << "," << triangle.a[2] << "],\n";
+  stream << "  b: [" << triangle.b[0] << "," << triangle.b[1] << "," << triangle.b[2] << "],\n";
+  stream << "  c: [" << triangle.c[0] << "," << triangle.c[1] << "," << triangle.c[2] << "],\n";
+  stream << "  prim_id: " << triangle.prim_id << "\n";
+
+  stream << "}\n";
+  return stream;
+}
+
 template<typename T, template<typename A> typename Collection,
          typename = std::enable_if_t<std::is_same<typename Collection<T>::primitive_type, Triangle<T>>::value>>
 [[nodiscard]] inline Triangle<T> primitive_from_collection(const Collection<T> &collection,
@@ -130,6 +145,25 @@ private:
   }
 };
 
+template<typename T>
+std::ostream &operator<<(std::ostream& stream, const TriangleMesh<T> &collection) {
+  stream << "{\n";
+  stream << "TriangleMesh: [\n";
+  stream << "  size: " << collection.size() << ",\n";
+
+  for(uint32_t id_triangle = 0; id_triangle < collection.size(); id_triangle++){
+    stream << primitive_from_collection(collection, id_triangle);
+    if(id_triangle == collection.size() - 1) {
+      stream << "]\n";
+    } else {
+      stream << ", \n";
+    }
+  }
+
+  stream << "}\n";
+  return stream;
+}
+
 template<typename T, template<typename> typename Collection>
 inline void post_traversal(const TriangleIntersector<T, Collection> &i, RayHit<T> &rayhit) noexcept {
   rayhit.hit_distance = i.hit_distance;
@@ -180,10 +214,10 @@ inline bool intersect_primitive(TriangleIntersector<T, Collection> &i, const Tri
   return false;
 }
 
-template<typename T>
-std::ostream &operator<<(std::ostream &stream, const TriangleMesh<T> &mesh) {
-  stream << "Collection size:" << mesh.size();
-  return stream;
-}
+//template<typename T>
+//std::ostream &operator<<(std::ostream &stream, const TriangleMesh<T> &mesh) {
+//  stream << "Collection size:" << mesh.size();
+//  return stream;
+//}
 }// namespace blazert
 #endif// BLAZERT_PRIMITIVES_TRIMESH_H_
