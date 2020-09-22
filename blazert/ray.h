@@ -85,6 +85,41 @@ struct BLAZERTALIGN RayHit {
   unsigned int geom_id = static_cast<unsigned int>(-1);
 };
 
+template<typename T>
+std::ostream &operator<<(std::ostream &stream, const Ray<T> &ray) {
+  /// Conveniently output a single cylinder as JSON.
+  stream << "{\n";
+
+  stream << "  Ray: " << &ray << ",\n";
+  stream << "  origin: [" << ray.origin[0] << "," << ray.origin[1] << "," << ray.origin[2] << "],\n";
+  stream << "  direction: [" << ray.direction[0] << "," << ray.direction[1] << "," << ray.direction[2] << "],\n";
+  stream << "  direction_inv: ["<< ray.direction_inv[0] << "," << ray.direction_inv[1] << "," << ray.direction_inv[2] << "],\n";
+  stream << "  direction_sign: [" << ray.direction_sign[0] << "," << ray.direction_sign[1] << "," << ray.direction_sign[2] << "],\n";
+  stream << "  min_hit_distance: " << ray.min_hit_distance << ",\n";
+  stream << "  max_hit_distance " << ray.max_hit_distance << ",\n";
+  stream << "  cull_back_face " << (ray.cull_back_face == Ray<T>::CullBackFace::no ? "no" : "yes") << ",\n";
+  stream << "  any_hit: " << (ray.any_hit == Ray<T>::AnyHit::no ? "no" : "yes") << "\n";
+
+  stream << "}\n";
+  return stream;
+}
+
+template<typename T>
+std::ostream &operator<<(std::ostream &stream, const RayHit<T> &rayhit) {
+  /// Conveniently output a single cylinder as JSON.
+  stream << "{\n";
+
+  stream << "  Ray: " << &rayhit << ",\n";
+  stream << "  normal: [" << rayhit.normal[0] << "," << rayhit.normal[1] << "," << rayhit.normal[2] << "],\n";
+  stream << "  uv: [" << rayhit.uv[0] << "," << rayhit.uv[1] << "],\n";
+  stream << "  hit_distance: "<< rayhit.hit_distance ",\n";
+  stream << "  prim_id: " << rayhit.prim_id << ",\n";
+  stream << "  geom_id: " << rayhit.geom_id << ",\n";
+
+  stream << "}\n";
+  return stream;
+}
+
 }// namespace blazert
 
 #endif// BLAZERT_RAY_H_
