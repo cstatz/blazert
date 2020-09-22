@@ -115,6 +115,17 @@ public:
   };
 };
 
+template<typename T>
+std::ostream &operator<<(std::ostream &stream, const BlazertScene<T> &scene) {
+  /// Conveniently output a single cylinder as JSON.
+  stream << "{\n";
+
+  stream << "  Scene: " << &scene << ",\n";
+
+  stream << "}\n";
+  return stream;
+}
+
 /**
  * @brief Runs intersection tests for a given BlazertScene and Ray.
  *
