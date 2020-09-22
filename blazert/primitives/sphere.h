@@ -37,7 +37,7 @@ std::ostream &operator<<(std::ostream &stream, const Sphere<T> &sphere) {
 
   stream << "  Sphere: " << &sphere << ",\n";
   stream << "  center: [" << sphere.center[0] << "," << sphere.center[1] << "," << sphere.center[2] << "],\n";
-  stream << "  radius: " << sphere.radius<< ",\n";
+  stream << "  radius: " << sphere.radius << ",\n";
   stream << "  prim_id: " << sphere.prim_id << "\n";
 
   stream << "}\n";
@@ -120,14 +120,14 @@ private:
 };
 
 template<typename T>
-std::ostream &operator<<(std::ostream& stream, const SphereCollection<T> &collection) {
+std::ostream &operator<<(std::ostream &stream, const SphereCollection<T> &collection) {
   stream << "{\n";
   stream << "SphereCollection: [\n";
   stream << "  size: " << collection.size() << ",\n";
 
-  for(uint32_t id_sphere = 0; id_sphere < collection.size(); id_sphere++){
+  for (uint32_t id_sphere = 0; id_sphere < collection.size(); id_sphere++) {
     stream << primitive_from_collection(collection, id_sphere);
-    if(id_sphere == collection.size() - 1) {
+    if (id_sphere == collection.size() - 1) {
       stream << "]\n";
     } else {
       stream << ", \n";

@@ -49,9 +49,12 @@ std::ostream &operator<<(std::ostream &stream, const Cylinder<T> &cylinder) {
   stream << "  semi_axis_a: " << cylinder.semi_axis_a << ",\n";
   stream << "  semi_axis_b: " << cylinder.semi_axis_b << ",\n";
   stream << "  height: " << cylinder.height << ",\n";
-  stream << "  rotation: [[" << cylinder.rotation(0,0) << ", " << cylinder.rotation(0,1) << ", "<< cylinder.rotation(0,2) << "],\n"
-         << "             [" << cylinder.rotation(1,0) << ", " << cylinder.rotation(1,1) << ", "<< cylinder.rotation(1,2) << "],\n"
-         << "             [" << cylinder.rotation(2,0) << ", " << cylinder.rotation(2,1) << ", "<< cylinder.rotation(2,2) << "]],\n";
+  stream << "  rotation: [[" << cylinder.rotation(0, 0) << ", " << cylinder.rotation(0, 1) << ", "
+         << cylinder.rotation(0, 2) << "],\n"
+         << "             [" << cylinder.rotation(1, 0) << ", " << cylinder.rotation(1, 1) << ", "
+         << cylinder.rotation(1, 2) << "],\n"
+         << "             [" << cylinder.rotation(2, 0) << ", " << cylinder.rotation(2, 1) << ", "
+         << cylinder.rotation(2, 2) << "]],\n";
   stream << "  prim_id: " << cylinder.prim_id << "\n";
 
   stream << "}\n";
@@ -167,14 +170,14 @@ private:
 };
 
 template<typename T>
-std::ostream &operator<<(std::ostream& stream, const CylinderCollection<T> &collection) {
+std::ostream &operator<<(std::ostream &stream, const CylinderCollection<T> &collection) {
   stream << "{\n";
   stream << "CylinderCollection: [\n";
   stream << "  size: " << collection.size() << ",\n";
 
-  for(uint32_t id_cylinder = 0; id_cylinder < collection.size(); id_cylinder++){
+  for (uint32_t id_cylinder = 0; id_cylinder < collection.size(); id_cylinder++) {
     stream << primitive_from_collection(collection, id_cylinder);
-    if(id_cylinder == collection.size() - 1) {
+    if (id_cylinder == collection.size() - 1) {
       stream << "]\n";
     } else {
       stream << ", \n";
