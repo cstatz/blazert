@@ -30,6 +30,20 @@ public:
   Sphere &operator=(const Sphere &rhs) = delete;
 };
 
+template<typename T>
+std::ostream &operator<<(std::ostream &stream, const Sphere<T> &sphere) {
+  /// Conveniently output a single plane as JSON.
+  stream << "{\n";
+
+  stream << "  Sphere: " << &sphere << ",\n";
+  stream << "  center: [" << sphere.center[0] << "," << sphere.center[1] << "," << sphere.center[2] << "],\n";
+  stream << "  radius: " << sphere.dx << ",\n";
+  stream << "  prim_id: " << sphere.prim_id << "\n";
+
+  stream << "}\n";
+  return stream;
+}
+
 template<typename T, template<typename A> typename Collection,
          typename = std::enable_if_t<std::is_same<typename Collection<T>::primitive_type, Sphere<T>>::value>>
 [[nodiscard]] inline Sphere<T> primitive_from_collection(const Collection<T> &collection, const unsigned int prim_idx) {
@@ -104,6 +118,25 @@ private:
     return std::make_pair(std::move(min), std::move(max));
   }
 };
+
+template<typename T>
+std::ostream &operator<<(std::ostream& stream, const SphereCollection<T> &collection) {
+  stream << "{\n";
+  stream << "SphereCollection: [\n";
+  stream << "  size: " << collection.size() << ",\n";
+
+  for(uint32_t id_sphere = 0; id_sphere < collection.size(); id_sphere++){
+    stream << primitive_from_collection(collection, id_sphere);
+    if(id_sphere == collection.size() - 1) {
+      stream << "]\n";
+    } else {
+      stream << ", \n";
+    }
+  }
+
+  stream << "}\n";
+  return stream;
+}
 
 /**
    * Post BVH traversal stuff.
