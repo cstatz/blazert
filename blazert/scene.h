@@ -121,6 +121,10 @@ std::ostream &operator<<(std::ostream &stream, const BlazertScene<T> &scene) {
   stream << "{\n";
 
   stream << "  Scene: " << &scene << ",\n";
+  if (scene.triangle_collection != nullptr) stream << *scene.triangle_collection << ",\n";
+  if (scene.sphere_collection != nullptr) stream << *scene.sphere_collection << ",\n";
+  if (scene.cylinder_collection != nullptr) stream << *scene.cylinder_collection << ",\n";
+  if (scene.plane_collection != nullptr) stream << *scene.plane_collection << "\n";
 
   stream << "}\n";
   return stream;

@@ -112,7 +112,7 @@ std::ostream &operator<<(std::ostream &stream, const RayHit<T> &rayhit) {
   stream << "  Ray: " << &rayhit << ",\n";
   stream << "  normal: [" << rayhit.normal[0] << "," << rayhit.normal[1] << "," << rayhit.normal[2] << "],\n";
   stream << "  uv: [" << rayhit.uv[0] << "," << rayhit.uv[1] << "],\n";
-  stream << "  hit_distance: "<< rayhit.hit_distance ",\n";
+  stream << "  hit_distance: "<< rayhit.hit_distance << ",\n";
   stream << "  prim_id: " << rayhit.prim_id << ",\n";
   stream << "  geom_id: " << rayhit.geom_id << ",\n";
 
