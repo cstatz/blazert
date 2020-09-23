@@ -494,6 +494,47 @@ inline bool intersect_primitive(CylinderIntersector<T, Collection> &i, const Cyl
   return false;
 }
 
+template<typename T>
+std::ostream &operator<<(std::ostream &stream, const Cylinder<T> &cylinder) {
+  /// Conveniently output a single cylinder as JSON.
+  stream << "{\n";
+
+  stream << R"(  "Cylinder": )" << &cylinder << ",\n";
+  stream << R"(  "center": [)" << cylinder.center[0] << "," << cylinder.center[1] << "," << cylinder.center[2] << "],\n";
+  stream << R"(  "semi_axis_a": )" << cylinder.semi_axis_a << ",\n";
+  stream << R"(  "semi_axis_b": )" << cylinder.semi_axis_b << ",\n";
+  stream << R"(  "height": )" << cylinder.height << ",\n";
+  stream << R"(  "rotation": [[)" << cylinder.rotation(0, 0) << ", " << cylinder.rotation(0, 1) << ", "
+         << cylinder.rotation(0, 2) << "],\n"
+         << "             [" << cylinder.rotation(1, 0) << ", " << cylinder.rotation(1, 1) << ", "
+         << cylinder.rotation(1, 2) << "],\n"
+         << "             [" << cylinder.rotation(2, 0) << ", " << cylinder.rotation(2, 1) << ", "
+         << cylinder.rotation(2, 2) << "]],\n";
+  stream << R"(  "prim_id": )" << cylinder.prim_id << "\n";
+
+  stream << "}\n";
+  return stream;
+}
+
+template<typename T>
+std::ostream &operator<<(std::ostream &stream, const CylinderCollection<T> &collection) {
+  stream << "{\n";
+  stream << R"("CylinderCollection": [)" << "\n";
+  stream << R"({ "size": )" << collection.size() << "},\n";
+
+  for (uint32_t id_cylinder = 0; id_cylinder < collection.size(); id_cylinder++) {
+    stream << primitive_from_collection(collection, id_cylinder);
+    if (id_cylinder == collection.size() - 1) {
+      stream << "]\n";
+    } else {
+      stream << ", \n";
+    }
+  }
+
+  stream << "}\n";
+  return stream;
+}
+
 }// namespace blazert
 
 #endif//BLAZERT_CYLINDER_H

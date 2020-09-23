@@ -269,6 +269,48 @@ inline bool intersect_primitive(PlaneIntersector<T, Collection> &i, const Plane<
   return false;
 }
 
+
+template<typename T>
+std::ostream &operator<<(std::ostream &stream, const Plane<T> &plane) {
+  /// Conveniently output a single plane as JSON.
+  stream << "{\n";
+
+  stream << R"(  "Plane": )" << &plane << ",\n";
+  stream << R"(  "center": [)" << plane.center[0] << "," << plane.center[1] << "," << plane.center[2] << "],\n";
+  stream << R"(  "dx": )" << plane.dx << ",\n";
+  stream << R"(  "dy": )" << plane.dy << ",\n";
+  stream << R"(  "rotation": [[)" << plane.rotation(0, 0) << ", " << plane.rotation(0, 1) << ", " << plane.rotation(0, 2)
+         << "],\n"
+         << "             [" << plane.rotation(1, 0) << ", " << plane.rotation(1, 1) << ", " << plane.rotation(1, 2)
+         << "],\n"
+         << "             [" << plane.rotation(2, 0) << ", " << plane.rotation(2, 1) << ", " << plane.rotation(2, 2)
+         << "]],\n";
+  stream << R"(  "prim_id": )" << plane.prim_id << "\n";
+
+  stream << "}\n";
+  return stream;
+}
+
+template<typename T>
+std::ostream &operator<<(std::ostream &stream, const PlaneCollection<T> &collection) {
+  stream << "{\n";
+  stream << R"("PlaneCollection": [)"
+         << "\n";
+  stream << R"({"size": )" << collection.size() << "},\n";
+
+  for (uint32_t id_plane = 0; id_plane < collection.size(); id_plane++) {
+    stream << primitive_from_collection(collection, id_plane);
+    if (id_plane == collection.size() - 1) {
+      stream << "]\n";
+    } else {
+      stream << ", \n";
+    }
+  }
+
+  stream << "}\n";
+  return stream;
+}
+
 }// namespace blazert
 
 #endif//BLAZERT_PLANE_H
