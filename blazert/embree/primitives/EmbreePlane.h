@@ -263,6 +263,29 @@ inline void planeOccludedFunc(const RTCOccludedFunctionNArguments *args) {
   }
 }
 
+inline std::ostream &operator<<(std::ostream &stream, const EmbreePlane &plane) {
+  /// Conveniently output a single plane as JSON.
+  stream << "{\n";
+
+  stream << R"(  "EmbreePlane": )" << &plane
+         << ",\n";
+  stream << R"(  "center": [)"
+         << plane.planeCenter[0] << "," << plane.planeCenter[1] << "," << plane.planeCenter[2] << "],\n";
+  stream << R"(  "d1": )" << plane.d1
+         << "\n";
+  stream << R"(  "d2": )" << plane.d2
+         << "\n";
+  stream << R"(  "rotation": [[)" << plane.rot(0, 0) << ", " << plane.rot(0, 1) << ", " << plane.rot(0, 2)
+         << "],\n"
+         << "             [" << plane.rot(1, 0) << ", " << plane.rot(1, 1) << ", " << plane.rot(1, 2)
+         << "],\n"
+         << "             [" << plane.rot(2, 0) << ", " << plane.rot(2, 1) << ", " << plane.rot(2, 2)
+         << "]],\n";
+
+  stream << "}\n";
+  return stream;
+}
+
 }// namespace blazert
 
 #endif// BLAZERT_EMBREEPLANE_H

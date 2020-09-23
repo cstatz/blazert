@@ -187,6 +187,21 @@ inline void sphereOccludedFunc(const RTCOccludedFunctionNArguments *args) {
   }
 }
 
+inline std::ostream &operator<<(std::ostream &stream, const EmbreeSphere &sphere) {
+  /// Conveniently output a single plane as JSON.
+  stream << "{\n";
+
+  stream << R"(  "EmbreeSphere": )" << &sphere
+         << ",\n";
+  stream << R"(  "center": [)"
+         << sphere.center[0] << "," << sphere.center[1] << "," << sphere.center[2] << "],\n";
+  stream << R"(  "radius": )" << sphere.radius
+         << "\n";
+
+  stream << "}\n";
+  return stream;
+}
+
 }// namespace blazert
 
 #endif// EM_EMBREESPHERE_H

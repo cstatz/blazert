@@ -548,5 +548,30 @@ inline void cylinderOccludedFunc(const RTCOccludedFunctionNArguments *args) {
   }
 }
 
+inline std::ostream &operator<<(std::ostream &stream, const EmbreeCylinder &cylinder) {
+  /// Conveniently output a single plane as JSON.
+  stream << "{\n";
+
+  stream << R"(  "EmbreeCylinder": )" << &cylinder
+         << ",\n";
+  stream << R"(  "cylinder": [)"
+         << cylinder.center[0] << "," << cylinder.center[1] << "," << cylinder.center[2] << "],\n";
+  stream << R"(  "a": )" << cylinder.a
+         << "\n";
+  stream << R"(  "b": )" << cylinder.b
+         << "\n";
+  stream << R"(  "height": )" << cylinder.height
+         << "\n";
+  stream << R"(  "rotation": [[)" << cylinder.rotMatrix(0, 0) << ", " << cylinder.rotMatrix(0, 1) << ", " << cylinder.rotMatrix(0, 2)
+         << "],\n"
+         << "             [" << cylinder.rotMatrix(1, 0) << ", " << cylinder.rotMatrix(1, 1) << ", " << cylinder.rotMatrix(1, 2)
+         << "],\n"
+         << "             [" << cylinder.rotMatrix(2, 0) << ", " << cylinder.rotMatrix(2, 1) << ", " << cylinder.rotMatrix(2, 2)
+         << "]],\n";
+
+  stream << "}\n";
+  return stream;
+}
+
 }// namespace blazert
 #endif// BLAZERT_EMBREECYLINDER_H
