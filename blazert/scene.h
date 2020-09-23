@@ -115,6 +115,21 @@ public:
   };
 };
 
+template<typename T>
+std::ostream &operator<<(std::ostream &stream, const BlazertScene<T> &scene) {
+  /// Conveniently output a single cylinder as JSON.
+  stream << "{\n";
+
+  stream << "  Scene: " << &scene << ",\n";
+  if (scene.triangle_collection != nullptr) stream << *scene.triangle_collection << ",\n";
+  if (scene.sphere_collection != nullptr) stream << *scene.sphere_collection << ",\n";
+  if (scene.cylinder_collection != nullptr) stream << *scene.cylinder_collection << ",\n";
+  if (scene.plane_collection != nullptr) stream << *scene.plane_collection << "\n";
+
+  stream << "}\n";
+  return stream;
+}
+
 /**
  * @brief Runs intersection tests for a given BlazertScene and Ray.
  *

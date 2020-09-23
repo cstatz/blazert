@@ -21,12 +21,12 @@ struct Triangle {
   const Vec3r<T> &a;
   const Vec3r<T> b;
   const Vec3r<T> c;
-  unsigned int i;
+  unsigned int prim_id;
   Triangle() = delete;
-  Triangle(const Vec3r<T> &a, const Vec3r<T> &b_, const Vec3r<T> &c_, const unsigned int i)
-      : a(a), b(c_ - a), c(a - b_), i(i) {}
+  Triangle(const Vec3r<T> &a, const Vec3r<T> &b_, const Vec3r<T> &c_, const unsigned int prim_id)
+      : a(a), b(c_ - a), c(a - b_), prim_id(prim_id) {}
   Triangle(Triangle &&rhs) noexcept
-      : a(std::move(rhs.a)), b(std::move(rhs.b)), c(std::move(rhs.c)), i(std::exchange(rhs.i, -1)) {}
+      : a(std::move(rhs.a)), b(std::move(rhs.b)), c(std::move(rhs.c)), prim_id(std::exchange(rhs.prim_id, -1)) {}
   Triangle &operator=(const Triangle &rhs) = delete;
 };
 
@@ -173,7 +173,7 @@ inline bool intersect_primitive(TriangleIntersector<T, Collection> &i, const Tri
       const auto inv_det = static_cast<T>(1.0) / abs_det;
       i.hit_distance = t * inv_det;
       i.uv = {u * inv_det, v * inv_det};
-      i.prim_id = tri.i;
+      i.prim_id = tri.prim_id;
       return true;
     }
   }
