@@ -499,18 +499,18 @@ std::ostream &operator<<(std::ostream &stream, const Cylinder<T> &cylinder) {
   /// Conveniently output a single cylinder as JSON.
   stream << "{\n";
 
-  stream << "  Cylinder: " << &cylinder << ",\n";
-  stream << "  center: [" << cylinder.center[0] << "," << cylinder.center[1] << "," << cylinder.center[2] << "],\n";
-  stream << "  semi_axis_a: " << cylinder.semi_axis_a << ",\n";
-  stream << "  semi_axis_b: " << cylinder.semi_axis_b << ",\n";
-  stream << "  height: " << cylinder.height << ",\n";
-  stream << "  rotation: [[" << cylinder.rotation(0, 0) << ", " << cylinder.rotation(0, 1) << ", "
+  stream << R"(  "Cylinder": )" << &cylinder << ",\n";
+  stream << R"(  "center": [)" << cylinder.center[0] << "," << cylinder.center[1] << "," << cylinder.center[2] << "],\n";
+  stream << R"(  "semi_axis_a": )" << cylinder.semi_axis_a << ",\n";
+  stream << R"(  "semi_axis_b": )" << cylinder.semi_axis_b << ",\n";
+  stream << R"(  "height": )" << cylinder.height << ",\n";
+  stream << R"(  "rotation": [[)" << cylinder.rotation(0, 0) << ", " << cylinder.rotation(0, 1) << ", "
          << cylinder.rotation(0, 2) << "],\n"
          << "             [" << cylinder.rotation(1, 0) << ", " << cylinder.rotation(1, 1) << ", "
          << cylinder.rotation(1, 2) << "],\n"
          << "             [" << cylinder.rotation(2, 0) << ", " << cylinder.rotation(2, 1) << ", "
          << cylinder.rotation(2, 2) << "]],\n";
-  stream << "  prim_id: " << cylinder.prim_id << "\n";
+  stream << R"(  "prim_id": )" << cylinder.prim_id << "\n";
 
   stream << "}\n";
   return stream;
@@ -519,8 +519,8 @@ std::ostream &operator<<(std::ostream &stream, const Cylinder<T> &cylinder) {
 template<typename T>
 std::ostream &operator<<(std::ostream &stream, const CylinderCollection<T> &collection) {
   stream << "{\n";
-  stream << "CylinderCollection: [\n";
-  stream << "  size: " << collection.size() << ",\n";
+  stream << R"("CylinderCollection": [)" << "\n";
+  stream << R"({ "size": )" << collection.size() << "},\n";
 
   for (uint32_t id_cylinder = 0; id_cylinder < collection.size(); id_cylinder++) {
     stream << primitive_from_collection(collection, id_cylinder);

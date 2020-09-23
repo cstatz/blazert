@@ -275,17 +275,17 @@ std::ostream &operator<<(std::ostream &stream, const Plane<T> &plane) {
   /// Conveniently output a single plane as JSON.
   stream << "{\n";
 
-  stream << "  Plane: " << &plane << ",\n";
-  stream << "  center: [" << plane.center[0] << "," << plane.center[1] << "," << plane.center[2] << "],\n";
-  stream << "  dx: " << plane.dx << ",\n";
-  stream << "  dy: " << plane.dy << ",\n";
-  stream << "  rotation: [[" << plane.rotation(0, 0) << ", " << plane.rotation(0, 1) << ", " << plane.rotation(0, 2)
+  stream << R"(  "Plane": )" << &plane << ",\n";
+  stream << R"(  "center": [)" << plane.center[0] << "," << plane.center[1] << "," << plane.center[2] << "],\n";
+  stream << R"(  "dx": )" << plane.dx << ",\n";
+  stream << R"(  "dy": )" << plane.dy << ",\n";
+  stream << R"(  "rotation": [[)" << plane.rotation(0, 0) << ", " << plane.rotation(0, 1) << ", " << plane.rotation(0, 2)
          << "],\n"
          << "             [" << plane.rotation(1, 0) << ", " << plane.rotation(1, 1) << ", " << plane.rotation(1, 2)
          << "],\n"
          << "             [" << plane.rotation(2, 0) << ", " << plane.rotation(2, 1) << ", " << plane.rotation(2, 2)
          << "]],\n";
-  stream << "  prim_id: " << plane.prim_id << "\n";
+  stream << R"(  "prim_id": )" << plane.prim_id << "\n";
 
   stream << "}\n";
   return stream;
@@ -294,8 +294,9 @@ std::ostream &operator<<(std::ostream &stream, const Plane<T> &plane) {
 template<typename T>
 std::ostream &operator<<(std::ostream &stream, const PlaneCollection<T> &collection) {
   stream << "{\n";
-  stream << "PlaneCollection: [\n";
-  stream << "  size: " << collection.size() << ",\n";
+  stream << R"("PlaneCollection": [)"
+         << "\n";
+  stream << R"({"size": )" << collection.size() << "},\n";
 
   for (uint32_t id_plane = 0; id_plane < collection.size(); id_plane++) {
     stream << primitive_from_collection(collection, id_plane);

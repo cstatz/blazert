@@ -117,15 +117,30 @@ public:
 
 template<typename T>
 std::ostream &operator<<(std::ostream &stream, const BlazertScene<T> &scene) {
-  /// Conveniently output a single cylinder as JSON.
+  /// Conveniently output the scene as JSON
   stream << "{\n";
 
-  stream << "  Scene: " << &scene << ",\n";
-  if (scene.triangle_collection != nullptr) stream << *scene.triangle_collection << ",\n";
-  if (scene.sphere_collection != nullptr) stream << *scene.sphere_collection << ",\n";
-  if (scene.cylinder_collection != nullptr) stream << *scene.cylinder_collection << ",\n";
-  if (scene.plane_collection != nullptr) stream << *scene.plane_collection << "\n";
+  stream << R"(  "Scene": )"
+         << (&scene)
+         << ",\n";
+  stream << R"(  "Collections": [)"
+         << "\n";
 
+  if (scene.triangle_collection != nullptr) {
+    stream << *scene.triangle_collection;
+    if (scene.has_spheres || scene.has_cylinders || scene.has_planes) stream << ",\n";
+  }
+  if (scene.sphere_collection != nullptr) {
+    stream << *scene.sphere_collection;
+    if (scene.has_cylinders || scene.has_planes) stream << ",\n";
+  }
+  if (scene.cylinder_collection != nullptr) {
+    stream << *scene.cylinder_collection;
+    if (scene.has_planes) stream << ",\n";
+  }
+  if (scene.plane_collection != nullptr) stream << *scene.plane_collection;
+
+  stream << "  ]\n";
   stream << "}\n";
   return stream;
 }

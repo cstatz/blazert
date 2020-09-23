@@ -186,10 +186,14 @@ std::ostream &operator<<(std::ostream &stream, const Sphere<T> &sphere) {
   /// Conveniently output a single plane as JSON.
   stream << "{\n";
 
-  stream << "  Sphere: " << &sphere << ",\n";
-  stream << "  center: [" << sphere.center[0] << "," << sphere.center[1] << "," << sphere.center[2] << "],\n";
-  stream << "  radius: " << sphere.radius << ",\n";
-  stream << "  prim_id: " << sphere.prim_id << "\n";
+  stream << R"(  "Sphere": )" << &sphere
+         << ",\n";
+  stream << R"(  "center": [)"
+         << sphere.center[0] << "," << sphere.center[1] << "," << sphere.center[2] << "],\n";
+  stream << R"(  "radius": )" << sphere.radius
+         << ",\n";
+  stream << R"(  "prim_id": )" << sphere.prim_id
+         << "\n";
 
   stream << "}\n";
   return stream;
@@ -198,8 +202,9 @@ std::ostream &operator<<(std::ostream &stream, const Sphere<T> &sphere) {
 template<typename T>
 std::ostream &operator<<(std::ostream &stream, const SphereCollection<T> &collection) {
   stream << "{\n";
-  stream << "SphereCollection: [\n";
-  stream << "  size: " << collection.size() << ",\n";
+  stream << R"("SphereCollection": [)"
+         << "\n";
+  stream << R"({"size": )" << collection.size() << "},\n";
 
   for (uint32_t id_sphere = 0; id_sphere < collection.size(); id_sphere++) {
     stream << primitive_from_collection(collection, id_sphere);

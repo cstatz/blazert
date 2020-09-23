@@ -183,14 +183,14 @@ inline bool intersect_primitive(TriangleIntersector<T, Collection> &i, const Tri
 
 template<typename T>
 std::ostream &operator<<(std::ostream &stream, const Triangle<T> &triangle) {
-  /// Conveniently output a single plane as JSON.
+  /// Conveniently output a single triangle as JSON.
   stream << "{\n";
 
-  stream << "  Triangle: " << &triangle << ",\n";
-  stream << "  a: [" << triangle.a[0] << "," << triangle.c[1] << "," << triangle.a[2] << "],\n";
-  stream << "  b: [" << triangle.b[0] << "," << triangle.b[1] << "," << triangle.b[2] << "],\n";
-  stream << "  c: [" << triangle.c[0] << "," << triangle.c[1] << "," << triangle.c[2] << "],\n";
-  stream << "  prim_id: " << triangle.prim_id << "\n";
+  stream << R"(  "Triangle": )" << &triangle << ",\n";
+  stream << R"(  "a": [ )" << triangle.a[0] << ", " << triangle.c[1] << ", " << triangle.a[2] << "],\n";
+  stream << R"(  "b": [ )" << triangle.b[0] << ", " << triangle.b[1] << ", " << triangle.b[2] << "],\n";
+  stream << R"(  "c": [ )" << triangle.c[0] << ", " << triangle.c[1] << ", " << triangle.c[2] << "],\n";
+  stream << R"(  "prim_id": )" << triangle.prim_id << "\n";
 
   stream << "}\n";
   return stream;
@@ -199,8 +199,8 @@ std::ostream &operator<<(std::ostream &stream, const Triangle<T> &triangle) {
 template<typename T>
 std::ostream &operator<<(std::ostream& stream, const TriangleMesh<T> &collection) {
   stream << "{\n";
-  stream << "TriangleMesh: [\n";
-  stream << "  size: " << collection.size() << ",\n";
+  stream << R"("TriangleMesh": [)" << "\n";
+  stream << R"({"size": )" << collection.size() << "},\n";
 
   for(uint32_t id_triangle = 0; id_triangle < collection.size(); id_triangle++){
     stream << primitive_from_collection(collection, id_triangle);
