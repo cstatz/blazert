@@ -32,12 +32,12 @@ public:
 
 template<typename T, template<typename A> typename Collection,
          typename = std::enable_if_t<std::is_same<typename Collection<T>::primitive_type, Sphere<T>>::value>>
-inline Sphere<T> primitive_from_collection(const Collection<T> &collection, const unsigned int prim_idx) {
+[[nodiscard]] inline Sphere<T> primitive_from_collection(const Collection<T> &collection, const unsigned int prim_idx) {
 
   const Vec3r<T> &center = collection.centers[prim_idx];
   const T &radius = collection.radii[prim_idx];
   return {center, radius, prim_idx};
-};
+}
 
 template<typename T, template<typename A> typename Collection>
 class SphereIntersector {
@@ -53,7 +53,8 @@ public:
   unsigned int prim_id;
 
   SphereIntersector() = delete;
-  explicit SphereIntersector(const Collection<T> &collection) : collection(collection), prim_id(-1) {}
+  explicit SphereIntersector(const Collection<T> &collection)
+      : collection(collection), prim_id(static_cast<unsigned int>(-1)) {}
 };
 
 template<typename T>
@@ -77,7 +78,7 @@ public:
     }
   }
 
-  [[nodiscard]] inline unsigned int size() const noexcept { return centers.size(); }
+  [[nodiscard]] inline unsigned int size() const noexcept { return static_cast<unsigned int>(centers.size()); }
 
   [[nodiscard]] inline std::pair<Vec3r<T>, Vec3r<T>>
   get_primitive_bounding_box(const unsigned int prim_id) const noexcept {
@@ -128,7 +129,7 @@ inline void prepare_traversal(SphereIntersector<T, Collection> &i, const Ray<T> 
   i.min_hit_distance = ray.min_hit_distance;
   i.hit_distance = ray.max_hit_distance;
   i.uv = static_cast<T>(0.);
-  i.prim_id = -1;
+  i.prim_id = static_cast<unsigned int>(-1);
 }
 
 /**
@@ -137,7 +138,8 @@ inline void prepare_traversal(SphereIntersector<T, Collection> &i, const Ray<T> 
    * Returns true if there's intersection.
    */
 template<typename T, template<typename> typename Collection>
-inline bool intersect_primitive(SphereIntersector<T, Collection> &i, const Sphere<T> &sphere, const Ray<T> ray) {
+inline bool intersect_primitive(SphereIntersector<T, Collection> &i, const Sphere<T> &sphere,
+                                [[maybe_unused]] const Ray<T> ray) {
 
   const Vec3r<T> &org = i.ray_org;
   const Vec3r<T> &dir = i.ray_dir;
@@ -158,7 +160,7 @@ inline bool intersect_primitive(SphereIntersector<T, Collection> &i, const Spher
   if (D < static_cast<T>(0.0))
     return false;
 
-  const T Q = sqrtf(D);
+  const T Q = std::sqrt(D);
   const T rcpA = static_cast<T>(1.) / A;
   const T t0 = static_cast<T>(0.5) * rcpA * (-B - Q);
   const T t1 = static_cast<T>(0.5) * rcpA * (-B + Q);
@@ -177,6 +179,44 @@ inline bool intersect_primitive(SphereIntersector<T, Collection> &i, const Spher
     return true;
   }
   return false;
+}
+
+template<typename T>
+std::ostream &operator<<(std::ostream &stream, const Sphere<T> &sphere) {
+  /// Conveniently output a single plane as JSON.
+  stream << "{\n";
+
+  stream << R"(  "Sphere": )" << &sphere
+         << ",\n";
+  stream << R"(  "center": [)"
+         << sphere.center[0] << "," << sphere.center[1] << "," << sphere.center[2] << "],\n";
+  stream << R"(  "radius": )" << sphere.radius
+         << ",\n";
+  stream << R"(  "prim_id": )" << sphere.prim_id
+         << "\n";
+
+  stream << "}\n";
+  return stream;
+}
+
+template<typename T>
+std::ostream &operator<<(std::ostream &stream, const SphereCollection<T> &collection) {
+  stream << "{\n";
+  stream << R"("SphereCollection": [)"
+         << "\n";
+  stream << R"({"size": )" << collection.size() << "},\n";
+
+  for (uint32_t id_sphere = 0; id_sphere < collection.size(); id_sphere++) {
+    stream << primitive_from_collection(collection, id_sphere);
+    if (id_sphere == collection.size() - 1) {
+      stream << "]\n";
+    } else {
+      stream << ", \n";
+    }
+  }
+
+  stream << "}\n";
+  return stream;
 }
 
 }// namespace blazert

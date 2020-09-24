@@ -1,0 +1,5 @@
+find_package(benchmark)
+file(GLOB_RECURSE BENCHMARK_SRC ${CMAKE_SOURCE_DIR}/benchmarks/*)
+add_executable(benchmark_blazeRT ${BENCHMARK_SRC})
+target_include_directories(benchmark_blazeRT PUBLIC ${CMAKE_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/third_party/bvh/include ${CMAKE_SOURCE_DIR}/third_party/nanort ${BLAZE_INCLUDE_DIRS} ${EMBREE_INCLUDE_DIRS})
+target_link_libraries(benchmark_blazeRT PUBLIC benchmark::benchmark ${BLAZE_LIBRARY} ${LAPACK_LIBRARIES} ${EMBREE_LIBRARY})

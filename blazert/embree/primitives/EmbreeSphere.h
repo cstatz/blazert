@@ -27,9 +27,9 @@ public:
   EmbreeSphere(const RTCDevice &device, const RTCScene &scene, const Vec3r<float> &center, float radius) noexcept;
   ~EmbreeSphere() = default;
 
-  inline double distance_to_surface(const Vec3r<float> &point) const {
+  inline float distance_to_surface(const Vec3r<float> &point) const {
     const Vec3r<float> &distance = center - point;
-    return abs(norm(distance) - radius);
+    return std::abs(norm(distance) - radius);
   }
 };
 
@@ -61,7 +61,7 @@ inline EmbreeSphere::EmbreeSphere(const RTCDevice &device, const RTCScene &scene
  * will not be called directly
  */
 inline void sphereBoundsFunc(const RTCBoundsFunctionArguments *args) {
-  const EmbreeSphere &sphere = ((EmbreeSphere *) (args->geometryUserPtr))[args->primID];
+  const EmbreeSphere &sphere = static_cast<const EmbreeSphere *>((args->geometryUserPtr))[args->primID];
 
   const Vec3r<float> center = sphere.center;
 
@@ -85,7 +85,7 @@ inline void sphereIntersectFunc(const RTCIntersectFunctionNArguments *args) {
   assert(args->N == 1);
 
   // load correct sphere from data ptr
-  const EmbreeSphere &sphere = ((const EmbreeSphere *) (args->geometryUserPtr))[args->primID];
+  const EmbreeSphere &sphere = static_cast<const EmbreeSphere *>(args->geometryUserPtr)[args->primID];
   const Vec3r<float> &center = sphere.center;
 
   const unsigned int primID = args->primID;
@@ -98,7 +98,7 @@ inline void sphereIntersectFunc(const RTCIntersectFunctionNArguments *args) {
 
   // loads the ray and hit structure for the following calculation
   // see occludedFunc to do this differently
-  RTCRayHit *rayhit = (RTCRayHit *) args->rayhit;
+  RTCRayHit *rayhit = reinterpret_cast<RTCRayHit *>(args->rayhit);
   RTCRay *ray = &(rayhit->ray);
 
   const Vec3r<float> &org{ray->org_x, ray->org_y, ray->org_z};
@@ -144,7 +144,7 @@ inline void sphereOccludedFunc(const RTCOccludedFunctionNArguments *args) {
   assert(args->N == 1);
 
   // load correct sphere from data ptr
-  const EmbreeSphere &sphere = ((EmbreeSphere *) (args->geometryUserPtr))[args->primID];
+  const EmbreeSphere &sphere = static_cast<const EmbreeSphere *>(args->geometryUserPtr)[args->primID];
   const Vec3r<float> &center = sphere.center;
 
   // return if the ray is declared as not valid
@@ -185,6 +185,21 @@ inline void sphereOccludedFunc(const RTCOccludedFunctionNArguments *args) {
   if ((RTCRayN_tnear(args->ray, 1, 0) < t0) && (t1 < RTCRayN_tfar(args->ray, 1, 0))) {
     RTCRayN_tfar(args->ray, args->N, 0) = -std::numeric_limits<float>().infinity();
   }
+}
+
+inline std::ostream &operator<<(std::ostream &stream, const EmbreeSphere &sphere) {
+  /// Conveniently output a single plane as JSON.
+  stream << "{\n";
+
+  stream << R"(  "EmbreeSphere": )" << &sphere
+         << ",\n";
+  stream << R"(  "center": [)"
+         << sphere.center[0] << "," << sphere.center[1] << "," << sphere.center[2] << "],\n";
+  stream << R"(  "radius": )" << sphere.radius
+         << "\n";
+
+  stream << "}\n";
+  return stream;
 }
 
 }// namespace blazert

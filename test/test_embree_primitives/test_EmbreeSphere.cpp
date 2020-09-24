@@ -2,6 +2,8 @@
 // Created by ogarten on 1/23/19.
 //
 
+#define DOCTEST_CONFIG_INCLUDE_TYPE_TRAITS
+
 #include <blazert/embree/primitives/EmbreeSphere.h>
 #include <third_party/doctest/doctest/doctest.h>
 

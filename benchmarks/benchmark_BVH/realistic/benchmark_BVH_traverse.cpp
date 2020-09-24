@@ -16,7 +16,7 @@
 
 #include <third_party/bvh/include/bvh/binned_sah_builder.hpp>
 #include <third_party/bvh/include/bvh/bvh.hpp>
-#include <third_party/bvh/include/bvh/intersectors.hpp>
+#include <third_party/bvh/include/bvh/primitive_intersectors.hpp>
 #include <third_party/bvh/include/bvh/ray.hpp>
 #include <third_party/bvh/include/bvh/single_ray_traverser.hpp>
 #include <third_party/bvh/include/bvh/sweep_sah_builder.hpp>
@@ -216,7 +216,7 @@ static void BM_bvh_TRAVERSE_REALISTIC_Sphere_SweepSAH(benchmark::State &state) {
                 0.0,                         // minimum distance
                 std::numeric_limits<T>::max()// maximum distance
         );
-        bvh::ClosestIntersector<false, Bvh, Triangle> intersector(bvh, triangles.data());
+        bvh::ClosestPrimitiveIntersector<Bvh, Triangle, false> intersector(bvh, triangles.data());
         bvh::SingleRayTraverser<Bvh> traverser(bvh);
 
         const auto hit = traverser.traverse(ray, intersector);
@@ -271,7 +271,7 @@ static void BM_bvh_TRAVERSE_REALISTIC_Sphere_BinnedSAH(benchmark::State &state) 
                 0.0,                         // minimum distance
                 std::numeric_limits<T>::max()// maximum distance
         );
-        bvh::ClosestIntersector<false, Bvh, Triangle> intersector(bvh, triangles.data());
+        bvh::ClosestPrimitiveIntersector<Bvh, Triangle, false> intersector(bvh, triangles.data());
         bvh::SingleRayTraverser<Bvh> traverser(bvh);
 
         const auto hit = traverser.traverse(ray, intersector);
