@@ -1,6 +1,24 @@
-//
-// Created by tobiask on 22.09.20.
-//
+/*
+ * Created by tobiask on 22.09.20.
+ *
+ *
+ * This file holds test cases for the trimesh primitive for the following cases:
+ * 1. single triangle cw
+ *  1.1 correct bounding box
+ *    1.1.1 center at origin
+ *    1.1.2 center shifted
+ *
+ *  1.2 testing primitive center function
+ *    1.2.1 center at origin
+ *    1.2.2 center shifted
+ *
+ *  1.3 intersection tests
+ *    1.3.1 center at origin
+ *        origin    hit where?
+ *        __________________________
+ *        above       top
+ *
+ */
 
 #include <blazert/bvh/accel.h>
 #include <blazert/bvh/builder.h>
@@ -56,7 +74,7 @@ TEST_CASE_TEMPLATE("Trimesh", T, float, double) {
         TriangleMesh triangles_cw(*vertices, *indices);
 
         // focus triangle  = 1/3 * (v1 + v2 + v3)
-        const Vec3r<T> calc_focus_triangle{0.33333, 0.33333, -0.33333};
+        const Vec3r<T> calc_focus_triangle{static_cast<T>(0.33333), static_cast<T>(0.33333), static_cast<T>(-0.33333)};
         assert_primitive_center(triangles_cw, 0, calc_focus_triangle);
       }
 
@@ -67,7 +85,7 @@ TEST_CASE_TEMPLATE("Trimesh", T, float, double) {
         TriangleMesh triangles_cw(*vertices, *indices);
 
         // focus triangle  = 1/3 * (v1 + v2 + v3)
-        const Vec3r<T> calc_focus_triangle{1.33333f, 0.33333f, -0.33333f};
+        const Vec3r<T> calc_focus_triangle{static_cast<T>(1.33333), static_cast<T>(0.33333), static_cast<T>(-0.33333)};
         assert_primitive_center(triangles_cw, 0, calc_focus_triangle);
       }
     }
@@ -75,24 +93,58 @@ TEST_CASE_TEMPLATE("Trimesh", T, float, double) {
     SUBCASE("intersections") {
       SUBCASE("center at origin") {
         const Vec3r<T> center{0, 0, 0};
-        single_triangle_cw_flat_xy(center, *vertices, *indices);
-        TriangleMesh triangles_cw(*vertices, *indices);
-        SUBCASE("hits"){
-          SUBCASE("origin above"){
-            Vec3r<T> org1{1, 1, 1};
-            Vec3r<T> dir1{-1,-1,-1};
 
-            Ray<T> ray{org1, dir1};
+        SUBCASE("assembled cw") {
+          single_triangle_cw_flat_xy(center, *vertices, *indices);
+          TriangleMesh triangles(*vertices, *indices);
 
-            const bool true_hit = true;
-            const unsigned int true_prim_id = 0;
-//            const T true_distance =
+          SUBCASE("hits") {
+            SUBCASE("origin above") {
+              Vec3r<T> org1{0.25, 0.25, 5};
+              Vec3r<T> dir1{0, 0, -1};
 
+              Ray<T> ray{org1, dir1};
+
+              const bool true_hit = true;
+              const unsigned int true_prim_id = 0;
+              const T true_distance = 5;
+              const Vec3r<T> true_normal{0, 0, -1};// depending on the direction in which the triangles are assembled
+
+              SUBCASE("intersect primitive") {
+                assert_intersect_primitive_hit(triangles, ray, true_hit, true_prim_id, true_distance, true_normal);
+              }
+              SUBCASE("traverse bvh") {
+                assert_traverse_bvh_hit(triangles, ray, true_hit, true_prim_id, true_distance, true_normal);
+              }
+            }
           }
-//          SUBCASE("origin below")
         }
 
+        SUBCASE("assembled ccw"){
+          single_triangle_ccw_flat_xy(center, *vertices, *indices);
+          TriangleMesh triangles(*vertices, *indices);
 
+              SUBCASE("hits") {
+                SUBCASE("origin above") {
+              Vec3r<T> org1{0.25, 0.25, 5};
+              Vec3r<T> dir1{0, 0, -1};
+
+              Ray<T> ray{org1, dir1};
+
+              const bool true_hit = true;
+              const unsigned int true_prim_id = 0;
+              const T true_distance = 5;
+              const Vec3r<T> true_normal{0, 0, 1};// depending on the direction in which the triangles are assembled
+
+                  SUBCASE("intersect primitive") {
+                assert_intersect_primitive_hit(triangles, ray, true_hit, true_prim_id, true_distance, true_normal);
+              }
+                  SUBCASE("traverse bvh") {
+                assert_traverse_bvh_hit(triangles, ray, true_hit, true_prim_id, true_distance, true_normal);
+              }
+            }
+          }
+        }
       }
     }
   }
