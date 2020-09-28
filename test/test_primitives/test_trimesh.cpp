@@ -100,32 +100,131 @@ TEST_CASE_TEMPLATE("Trimesh", T, float, double) {
 
           SUBCASE("hits") {
             SUBCASE("origin above") {
-              Vec3r<T> org1{0.25, 0.25, 5};
-              Vec3r<T> dir1{0, 0, -1};
+              SUBCASE("perpendicular incidence on top") {
+                Vec3r<T> org1{0.25, 0.25, 5};
+                Vec3r<T> dir1{0, 0, -1};
 
-              Ray<T> ray{org1, dir1};
+                Ray<T> ray{org1, dir1};
 
-              const bool true_hit = true;
-              const unsigned int true_prim_id = 0;
-              const T true_distance = 5;
-              const Vec3r<T> true_normal{0, 0, -1};// depending on the direction in which the triangles are assembled
+                const bool true_hit = true;
+                const unsigned int true_prim_id = 0;
+                const T true_distance = 5;
+                const Vec3r<T> true_normal{0, 0, -1};// depending on the direction in which the triangles are assembled
 
-              SUBCASE("intersect primitive") {
-                assert_intersect_primitive_hit(triangles, ray, true_hit, true_prim_id, true_distance, true_normal);
+                SUBCASE("intersect primitive") {
+                  assert_intersect_primitive_hit(triangles, ray, true_hit, true_prim_id, true_distance, true_normal);
+                }
+                SUBCASE("traverse bvh") {
+                  assert_traverse_bvh_hit(triangles, ray, true_hit, true_prim_id, true_distance, true_normal);
+                }
               }
-              SUBCASE("traverse bvh") {
-                assert_traverse_bvh_hit(triangles, ray, true_hit, true_prim_id, true_distance, true_normal);
+              SUBCASE("oblique incidence on top") {
+                Vec3r<T> org1{1, 1, 1};
+                Vec3r<T> dir1{-0.75, -0.75, -1};
+
+                Ray<T> ray{org1, dir1};
+
+                const bool true_hit = true;
+                const unsigned int true_prim_id = 0;
+                const T true_distance = static_cast<T>(std::sqrt(1 + 2 * 0.75 * 0.75));
+                const Vec3r<T> true_normal{0, 0, -1};// depending on the direction in which the triangles are assembled
+
+                SUBCASE("intersect primitive") {
+                  assert_intersect_primitive_hit(triangles, ray, true_hit, true_prim_id, true_distance, true_normal);
+                }
+                SUBCASE("traverse bvh") {
+                  assert_traverse_bvh_hit(triangles, ray, true_hit, true_prim_id, true_distance, true_normal);
+                }
+              }
+            }
+            SUBCASE("origin below"){
+              SUBCASE("perpendicular incidence from below") {
+                Vec3r<T> org1{0.25, 0.25, -5};
+                Vec3r<T> dir1{0, 0, 1};
+
+                Ray<T> ray{org1, dir1};
+
+                const bool true_hit = true;
+                const unsigned int true_prim_id = 0;
+                const T true_distance = 5;
+                const Vec3r<T> true_normal{0, 0, -1};// depending on the direction in which the triangles are assembled
+
+                    SUBCASE("intersect primitive") {
+                  assert_intersect_primitive_hit(triangles, ray, true_hit, true_prim_id, true_distance, true_normal);
+                }
+                    SUBCASE("traverse bvh") {
+                  assert_traverse_bvh_hit(triangles, ray, true_hit, true_prim_id, true_distance, true_normal);
+                }
+              }
+              SUBCASE("oblique incidenc from below") {
+                Vec3r<T> org1{1, 1, -1};
+                Vec3r<T> dir1{-0.75, -0.75, 1};
+
+                Ray<T> ray{org1, dir1};
+
+                const bool true_hit = true;
+                const unsigned int true_prim_id = 0;
+                const T true_distance = static_cast<T>(std::sqrt(1 + 2 * 0.75 * 0.75));
+                const Vec3r<T> true_normal{0, 0, -1};// depending on the direction in which the triangles are assembled
+
+                    SUBCASE("intersect primitive") {
+                  assert_intersect_primitive_hit(triangles, ray, true_hit, true_prim_id, true_distance, true_normal);
+                }
+                    SUBCASE("traverse bvh") {
+                  assert_traverse_bvh_hit(triangles, ray, true_hit, true_prim_id, true_distance, true_normal);
+                }
               }
             }
           }
+          SUBCASE("no hits"){
+                SUBCASE("origin above (inverted direction)") {
+                  SUBCASE("perpendicular incidence on top") {
+                Vec3r<T> org1{0.25, 0.25, 5};
+                Vec3r<T> dir1{0, 0, 1};
+
+                Ray<T> ray{org1, dir1};
+
+                const bool true_hit = false;
+                const unsigned int true_prim_id = static_cast<unsigned int>(-1);
+                const T true_distance = std::numeric_limits<T>::max();
+                const Vec3r<T> true_normal{0, 0, 0};// depending on the direction in which the triangles are assembled
+
+                    SUBCASE("intersect primitive") {
+                  assert_intersect_primitive_hit(triangles, ray, true_hit, true_prim_id, true_distance, true_normal);
+                }
+                    SUBCASE("traverse bvh") {
+                  assert_traverse_bvh_hit(triangles, ray, true_hit, true_prim_id, true_distance, true_normal);
+                }
+              }
+                  SUBCASE("oblique incidence on top") {
+                Vec3r<T> org1{1, 1, 1};
+                Vec3r<T> dir1{-0.75, -0.75, 1};
+
+                Ray<T> ray{org1, dir1};
+
+                const bool true_hit = false;
+                const unsigned int true_prim_id = static_cast<unsigned int>(-1);
+                const T true_distance = std::numeric_limits<T>::max();
+                const Vec3r<T> true_normal{0, 0, 0};// depending on the direction in which the triangles are assembled
+
+                    SUBCASE("intersect primitive") {
+                  assert_intersect_primitive_hit(triangles, ray, true_hit, true_prim_id, true_distance, true_normal);
+                }
+                    SUBCASE("traverse bvh") {
+                  assert_traverse_bvh_hit(triangles, ray, true_hit, true_prim_id, true_distance, true_normal);
+                }
+              }
+            }
+
+          }
         }
 
-        SUBCASE("assembled ccw"){
+        SUBCASE("assembled ccw") {
           single_triangle_ccw_flat_xy(center, *vertices, *indices);
           TriangleMesh triangles(*vertices, *indices);
 
-              SUBCASE("hits") {
-                SUBCASE("origin above") {
+          SUBCASE("hits") {
+            SUBCASE("origin above") {
               Vec3r<T> org1{0.25, 0.25, 5};
               Vec3r<T> dir1{0, 0, -1};
 
@@ -136,10 +235,10 @@ TEST_CASE_TEMPLATE("Trimesh", T, float, double) {
               const T true_distance = 5;
               const Vec3r<T> true_normal{0, 0, 1};// depending on the direction in which the triangles are assembled
 
-                  SUBCASE("intersect primitive") {
+              SUBCASE("intersect primitive") {
                 assert_intersect_primitive_hit(triangles, ray, true_hit, true_prim_id, true_distance, true_normal);
               }
-                  SUBCASE("traverse bvh") {
+              SUBCASE("traverse bvh") {
                 assert_traverse_bvh_hit(triangles, ray, true_hit, true_prim_id, true_distance, true_normal);
               }
             }
