@@ -39,9 +39,9 @@ TEST_CASE_TEMPLATE("Trimesh", T, float, double) {
   auto centers = std::make_unique<Vec3rList<T>>();
   auto vertices = std::make_unique<Vec3rList<T>>();
   auto indices = std::make_unique<Vec3iList>();
-  SUBCASE("single triangle cw") {
-    SUBCASE("bounding box") {
-      SUBCASE("center at origin") {
+  SUBCASE("1. single triangle cw") {
+    SUBCASE("1.1 bounding box") {
+      SUBCASE("1.1.1 center at origin") {
         const Vec3r<T> center{0, 0, 0};
 
         single_triangle_cw(center, *vertices, *indices);
@@ -53,7 +53,7 @@ TEST_CASE_TEMPLATE("Trimesh", T, float, double) {
         assert_bounding_box(triangles_cw, 0, true_bmin, true_bmax);
       }
 
-      SUBCASE("shifted center") {
+      SUBCASE("1.1.2 shifted center") {
         const Vec3r<T> center{0, 1, 0};
 
         single_triangle_cw(center, *vertices, *indices);
@@ -66,7 +66,7 @@ TEST_CASE_TEMPLATE("Trimesh", T, float, double) {
       }
     }
 
-    SUBCASE("primitive center") {
+    SUBCASE("1.2 primitive center") {
       SUBCASE("center at origin") {
         const Vec3r<T> center{0, 0, 0};
 
@@ -90,8 +90,8 @@ TEST_CASE_TEMPLATE("Trimesh", T, float, double) {
       }
     }
 
-    SUBCASE("intersections") {
-      SUBCASE("center at origin") {
+    SUBCASE("1.3 intersections") {
+      SUBCASE("1.3.1 center at origin") {
         const Vec3r<T> center{0, 0, 0};
 
         SUBCASE("assembled cw") {
@@ -279,6 +279,114 @@ TEST_CASE_TEMPLATE("Trimesh", T, float, double) {
                   assert_intersect_primitive_hit(triangles, ray, true_hit, true_prim_id, true_distance, true_normal);
                 }
                 SUBCASE("traverse bvh") {
+                  assert_traverse_bvh_hit(triangles, ray, true_hit, true_prim_id, true_distance, true_normal);
+                }
+              }
+                  SUBCASE("edge 1") {
+                Vec3r<T> org1{0.5, 0, -5};
+                Vec3r<T> dir1{0, 0, 1};
+
+                Ray<T> ray{org1, dir1};
+
+                const bool true_hit = true;
+                const unsigned int true_prim_id = 0;
+                const T true_distance = static_cast<T>(5.0);
+                const Vec3r<T> true_normal{0, 0, -1};// dep
+
+                    SUBCASE("intersect primitive") {
+                  assert_intersect_primitive_hit(triangles, ray, true_hit, true_prim_id, true_distance, true_normal);
+                }
+                    SUBCASE("traverse bvh") {
+                  assert_traverse_bvh_hit(triangles, ray, true_hit, true_prim_id, true_distance, true_normal);
+                }
+              }
+                  SUBCASE("edge 2") {
+                Vec3r<T> org1{0, 0.5, -5};
+                Vec3r<T> dir1{0, 0, 1};
+
+                Ray<T> ray{org1, dir1};
+
+                const bool true_hit = true;
+                const unsigned int true_prim_id = 0;
+                const T true_distance = static_cast<T>(5.0);
+                const Vec3r<T> true_normal{0, 0, -1};// dep
+
+                    SUBCASE("intersect primitive") {
+                  assert_intersect_primitive_hit(triangles, ray, true_hit, true_prim_id, true_distance, true_normal);
+                }
+                    SUBCASE("traverse bvh") {
+                  assert_traverse_bvh_hit(triangles, ray, true_hit, true_prim_id, true_distance, true_normal);
+                }
+              }
+                  SUBCASE("edge 3") {
+                Vec3r<T> org1{0.5, 0.5, -5};
+                Vec3r<T> dir1{0, 0, 1};
+
+                Ray<T> ray{org1, dir1};
+
+                const bool true_hit = true;
+                const unsigned int true_prim_id = 0;
+                const T true_distance = static_cast<T>(5.0);
+                const Vec3r<T> true_normal{0, 0, -1};// dep
+
+                    SUBCASE("intersect primitive") {
+                  assert_intersect_primitive_hit(triangles, ray, true_hit, true_prim_id, true_distance, true_normal);
+                }
+                    SUBCASE("traverse bvh") {
+                  assert_traverse_bvh_hit(triangles, ray, true_hit, true_prim_id, true_distance, true_normal);
+                }
+              }
+                  SUBCASE("corner 1") {
+                Vec3r<T> org1{0, 0, -5};
+                Vec3r<T> dir1{0, 0, 1};
+
+                Ray<T> ray{org1, dir1};
+
+                const bool true_hit = true;
+                const unsigned int true_prim_id = 0;
+                const T true_distance = static_cast<T>(5.0);
+                const Vec3r<T> true_normal{0, 0, -1};// dep
+
+                    SUBCASE("intersect primitive") {
+                  assert_intersect_primitive_hit(triangles, ray, true_hit, true_prim_id, true_distance, true_normal);
+                }
+                    SUBCASE("traverse bvh") {
+                  assert_traverse_bvh_hit(triangles, ray, true_hit, true_prim_id, true_distance, true_normal);
+                }
+              }
+                  SUBCASE("corner 2") {
+                Vec3r<T> org1{0, 1, -5};
+                Vec3r<T> dir1{0, 0, 1};
+
+                Ray<T> ray{org1, dir1};
+
+                const bool true_hit = true;
+                const unsigned int true_prim_id = 0;
+                const T true_distance = static_cast<T>(5.0);
+                const Vec3r<T> true_normal{0, 0, -1};// dep
+
+                    SUBCASE("intersect primitive") {
+                  assert_intersect_primitive_hit(triangles, ray, true_hit, true_prim_id, true_distance, true_normal);
+                }
+                    SUBCASE("traverse bvh") {
+                  assert_traverse_bvh_hit(triangles, ray, true_hit, true_prim_id, true_distance, true_normal);
+                }
+              }
+                  SUBCASE("corner 3") {
+                Vec3r<T> org1{1, 0, -5};
+                Vec3r<T> dir1{0, 0, 1};
+
+                Ray<T> ray{org1, dir1};
+
+                const bool true_hit = true;
+                const unsigned int true_prim_id = 0;
+                const T true_distance = static_cast<T>(5.0);
+                const Vec3r<T> true_normal{0, 0, -1};// dep
+
+                    SUBCASE("intersect primitive") {
+                  assert_intersect_primitive_hit(triangles, ray, true_hit, true_prim_id, true_distance, true_normal);
+                }
+                    SUBCASE("traverse bvh") {
                   assert_traverse_bvh_hit(triangles, ray, true_hit, true_prim_id, true_distance, true_normal);
                 }
               }
