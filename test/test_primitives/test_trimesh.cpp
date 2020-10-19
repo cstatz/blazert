@@ -136,7 +136,7 @@ TEST_CASE_TEMPLATE("Trimesh", T, float, double) {
                   assert_traverse_bvh_hit(triangles, ray, true_hit, true_prim_id, true_distance, true_normal);
                 }
               }
-              SUBCASE("edge 1") {
+              SUBCASE("edge x axis") {
                 Vec3r<T> org1{0.5, 0, 5};
                 Vec3r<T> dir1{0, 0, -1};
 
@@ -154,7 +154,7 @@ TEST_CASE_TEMPLATE("Trimesh", T, float, double) {
                   assert_traverse_bvh_hit(triangles, ray, true_hit, true_prim_id, true_distance, true_normal);
                 }
               }
-              SUBCASE("edge 2") {
+              SUBCASE("edge y axis") {
                 Vec3r<T> org1{0, 0.5, 5};
                 Vec3r<T> dir1{0, 0, -1};
 
@@ -172,7 +172,7 @@ TEST_CASE_TEMPLATE("Trimesh", T, float, double) {
                   assert_traverse_bvh_hit(triangles, ray, true_hit, true_prim_id, true_distance, true_normal);
                 }
               }
-              SUBCASE("edge 3") {
+              SUBCASE("edge hypotenuse") {
                 Vec3r<T> org1{0.5, 0.5, 5};
                 Vec3r<T> dir1{0, 0, -1};
 
@@ -190,7 +190,7 @@ TEST_CASE_TEMPLATE("Trimesh", T, float, double) {
                   assert_traverse_bvh_hit(triangles, ray, true_hit, true_prim_id, true_distance, true_normal);
                 }
               }
-              SUBCASE("corner 1") {
+              SUBCASE("corner center") {
                 Vec3r<T> org1{0, 0, 5};
                 Vec3r<T> dir1{0, 0, -1};
 
@@ -208,7 +208,7 @@ TEST_CASE_TEMPLATE("Trimesh", T, float, double) {
                   assert_traverse_bvh_hit(triangles, ray, true_hit, true_prim_id, true_distance, true_normal);
                 }
               }
-              SUBCASE("corner 2") {
+              SUBCASE("corner y axis") {
                 Vec3r<T> org1{0, 1, 5};
                 Vec3r<T> dir1{0, 0, -1};
 
@@ -226,7 +226,7 @@ TEST_CASE_TEMPLATE("Trimesh", T, float, double) {
                   assert_traverse_bvh_hit(triangles, ray, true_hit, true_prim_id, true_distance, true_normal);
                 }
               }
-              SUBCASE("corner 3") {
+              SUBCASE("corner x axis") {
                 Vec3r<T> org1{1, 0, 5};
                 Vec3r<T> dir1{0, 0, -1};
 
@@ -401,7 +401,7 @@ TEST_CASE_TEMPLATE("Trimesh", T, float, double) {
                 Ray<T> ray{org1, dir1};
 
                 const bool true_hit = false;
-                const unsigned int true_prim_id = static_cast<unsigned int>(-1);
+                auto true_prim_id = static_cast<unsigned int>(-1);
                 const T true_distance = std::numeric_limits<T>::max();
                 const Vec3r<T> true_normal{0, 0, 0};// depending on the direction in which the triangles are assembled
 
@@ -419,7 +419,7 @@ TEST_CASE_TEMPLATE("Trimesh", T, float, double) {
                 Ray<T> ray{org1, dir1};
 
                 const bool true_hit = false;
-                const unsigned int true_prim_id = static_cast<unsigned int>(-1);
+                auto true_prim_id = static_cast<unsigned int>(-1);
                 const T true_distance = std::numeric_limits<T>::max();
                 const Vec3r<T> true_normal{0, 0, 0};// depending on the direction in which the triangles are assembled
 
