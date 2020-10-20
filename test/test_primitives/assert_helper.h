@@ -77,7 +77,6 @@ inline void assert_distance_to_surface(const Collection<T> &collection, const un
   CHECK(collection.distance_to_surface(point, prim_id) == Approx(true_distance));
 }
 
-
 /***
  * Asserts whether a ray (origin, direction) hits a primitive with prim_id from the collection. It also asserts if the
  * computed results (distance, normal vector) are correct.
@@ -110,7 +109,6 @@ inline void assert_intersect_primitive_hit(const Collection<T> &collection, cons
   CHECK(rayhit.normal[1] == Approx(static_cast<T>(normal[1])));
   CHECK(rayhit.normal[2] == Approx(static_cast<T>(normal[2])));
 }
-
 
 /**
  * Asserts whether a ray hits the primitive with prim_id from the collection by traversing the BVH. It also asserts if
