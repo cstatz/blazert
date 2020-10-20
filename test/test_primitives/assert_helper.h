@@ -16,6 +16,16 @@
 using namespace blazert;
 using namespace doctest;
 
+/***
+ * Asserts all necessary boundaries for the primitive with prim_id within the collection.
+ * @tparam T primitive type
+ * @tparam Collection collection type
+ *
+ * @param collection a collection of primitives
+ * @param prim_id unique id for a certain primitive within the collection
+ * @param true_min minimum point of the bounding box to assert against
+ * @param true_max maximum point of the bounding box to assert against
+ */
 template<typename T, template<typename> typename Collection>
 inline void assert_bounding_box(const Collection<T> &collection, const unsigned int prim_id, const Vec3r<T> &true_min,
                                 const Vec3r<T> &true_max) {
@@ -29,6 +39,16 @@ inline void assert_bounding_box(const Collection<T> &collection, const unsigned 
   CHECK(bmax[2] == Approx(true_max[2]));
 }
 
+/***
+ * Asserts whether the center of the primitive with prim_id from collection is at true_center.
+ *
+ * @tparam T primitive type
+ * @tparam Collection collection type
+ *
+ * @param collection a collection of primitives
+ * @param prim_id unique id for a certain primitive within the collection
+ * @param true_center center location to assert against
+ */
 template<typename T, template<typename> typename Collection>
 inline void assert_primitive_center(const Collection<T> &collection, const unsigned int prim_id,
                                     const Vec3r<T> &true_center) {
@@ -39,12 +59,39 @@ inline void assert_primitive_center(const Collection<T> &collection, const unsig
   CHECK(center[2] == Approx(true_center[2]));
 }
 
+/***
+ * Asserts whether the distance from an arbitrary point to the surface of the primitive with prim_id from collection
+ * is equal to true_distance
+ *
+ * @tparam T primitive type
+ * @tparam Collection collection type
+ *
+ * @param collection a collection of primitives
+ * @param prim_id unique id for a certain primitive within the collection
+ * @param point point from which the distance is to be calculated
+ * @param true_distance distance to asssert against
+ */
 template<typename T, template<typename> typename Collection>
 inline void assert_distance_to_surface(const Collection<T> &collection, const unsigned int prim_id,
                                        const Vec3r<T> &point, const T true_distance) {
   CHECK(collection.distance_to_surface(point, prim_id) == Approx(true_distance));
 }
 
+
+/***
+ * Asserts whether a ray (origin, direction) hits a primitive with prim_id from the collection. It also asserts if the
+ * computed results (distance, normal vector) are correct.
+ *
+ * @tparam T primitive type
+ * @tparam Collection collection type
+ *
+ * @param collection a collection of primitives
+ * @param ray Ray against for which the intersection is computed
+ * @param true_hit true if a hit is expected
+ * @param prim_id unique id for a certain primitive within the collection
+ * @param distance expected distance between ray origin and the intersection point
+ * @param normal expected normal vector on the surface of the primitive at the intersection point
+ */
 template<typename T, template<typename> typename Collection>
 inline void assert_intersect_primitive_hit(const Collection<T> &collection, const Ray<T> &ray, const bool true_hit,
                                            const unsigned int prim_id, const T distance, const Vec3r<T> &normal) {
@@ -64,6 +111,21 @@ inline void assert_intersect_primitive_hit(const Collection<T> &collection, cons
   CHECK(rayhit.normal[2] == Approx(static_cast<T>(normal[2])));
 }
 
+
+/**
+ * Asserts whether a ray hits the primitive with prim_id from the collection by traversing the BVH. It also asserts if
+ * the computed results (distance, normal vector) are correct.
+ *
+ * @tparam T primitive type
+ * @tparam Collection collection type
+ *
+ * @param collection a collection of primitives
+ * @param ray Ray against for which the intersection is computed
+ * @param true_hit true if a hit is expected
+ * @param prim_id unique id for a certain primitive within the collection
+ * @param distance expected distance between ray origin and the intersection point
+ * @param normal expected normal vector on the surface of the primitive at the intersection point
+ */
 template<typename T, template<typename> typename Collection>
 inline void assert_traverse_bvh_hit(const Collection<T> &collection, const Ray<T> &ray, const bool true_hit,
                                     const unsigned int prim_id, const T distance, const Vec3r<T> &normal) {
