@@ -2,6 +2,8 @@
 // Created by ogarten on 18/05/2020.
 //
 
+#define DOCTEST_CONFIG_INCLUDE_TYPE_TRAITS
+
 #include <blazert/embree/primitives/EmbreeCylinder.h>
 #include <blazert/embree/scene.h>
 #include <third_party/doctest/doctest/doctest.h>

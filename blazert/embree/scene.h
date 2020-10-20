@@ -142,7 +142,6 @@ inline bool intersect1(const EmbreeScene<T> &scene, const Ray<T> &ray, RayHit<T>
   return hit;
 }
 
-
 /**
  * @brief Adds a triangular mesh to the scene
  * @details
@@ -160,17 +159,17 @@ inline bool intersect1(const EmbreeScene<T> &scene, const Ray<T> &ray, RayHit<T>
 template<typename T>
 unsigned int EmbreeScene<T>::add_mesh(const Vec3rList<T> &vertices, const Vec3iList &triangles) {
 
-  unsigned int id = -1;
+  unsigned int id = static_cast<unsigned int>(-1);
 
   if constexpr (std::is_same<float, T>::value) {
     constexpr const int bytestride_int = sizeof(Vec3ui) / 8 * sizeof(Vec3ui::ElementType);
     constexpr const int bytestride_float = sizeof(Vec3r<float>) / 8 * sizeof(Vec3r<float>::ElementType);
 
     triangle_mesh = rtcNewGeometry(device, RTC_GEOMETRY_TYPE_TRIANGLE);
-    rtcSetSharedGeometryBuffer(triangle_mesh, RTC_BUFFER_TYPE_INDEX, 0, RTC_FORMAT_UINT3, (void *) (triangles.data()),
-                               0, bytestride_int, triangles.size());
-    rtcSetSharedGeometryBuffer(triangle_mesh, RTC_BUFFER_TYPE_VERTEX, 0, RTC_FORMAT_FLOAT3, (void *) (vertices.data()),
-                               0, bytestride_float, vertices.size());
+    rtcSetSharedGeometryBuffer(triangle_mesh, RTC_BUFFER_TYPE_INDEX, 0, RTC_FORMAT_UINT3,
+                               reinterpret_cast<const void *>(triangles.data()), 0, bytestride_int, triangles.size());
+    rtcSetSharedGeometryBuffer(triangle_mesh, RTC_BUFFER_TYPE_VERTEX, 0, RTC_FORMAT_FLOAT3,
+                               reinterpret_cast<const void *>(vertices.data()), 0, bytestride_float, vertices.size());
     rtcCommitGeometry(triangle_mesh);
     auto geom_id = rtcAttachGeometry(rtcscene, triangle_mesh);
     id = geom_id;
@@ -201,7 +200,7 @@ unsigned int EmbreeScene<T>::add_mesh(const Vec3rList<T> &vertices, const Vec3iL
 template<typename T>
 unsigned int EmbreeScene<T>::add_spheres(const Vec3rList<T> &centers, const std::vector<T> &radii) {
 
-  unsigned int id = -1;
+  unsigned int id = static_cast<unsigned int>(-1);
 
   if constexpr (std::is_same<float, T>::value) {
     // TODO: We are looking for something more like this:
@@ -246,7 +245,7 @@ template<typename T>
 unsigned int EmbreeScene<T>::add_planes(const Vec3rList<T> &centers, const std::vector<T> &dxs,
                                         const std::vector<T> &dys, const Mat3rList<T> &rotations) {
 
-  unsigned int id = -1;
+  unsigned int id = static_cast<unsigned int>(-1);
 
   if constexpr (std::is_same<float, T>::value) {
     plane = std::make_unique<EmbreePlane>(device, rtcscene, centers[0], dxs[0], dys[0], rotations[0]);
@@ -294,7 +293,7 @@ template<typename T>
 unsigned int EmbreeScene<T>::add_cylinders(const Vec3rList<T> &centers, const std::vector<T> &semi_axes_a,
                                            const std::vector<T> &semi_axes_b, const std::vector<T> &heights,
                                            const Mat3rList<T> &rotations) {
-  unsigned int id = -1;
+  unsigned int id = static_cast<unsigned int>(-1);
 
   if constexpr (std::is_same<float, T>::value) {
     cylinder = std::make_unique<EmbreeCylinder>(device, rtcscene, centers[0], semi_axes_a[0], semi_axes_b[0],
