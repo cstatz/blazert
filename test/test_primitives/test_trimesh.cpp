@@ -464,19 +464,23 @@ TEST_CASE_TEMPLATE("Trimesh", T, float, double) {
       }
     }
   }
-  SUBCASE("2. cube mesh cw") {
-    SUBCASE("2.1 bounding box") {
-      SUBCASE("1.1.1 center at origin") {
-        const Vec3r<T> center{0, 0, 0};
+}
 
-        cube_mesh_ccw(center, *vertices, *indices);
-        TriangleMesh triangles_cw(*vertices, *indices);
+TEST_CASE_TEMPLATE("2. cube mesh cw", T, float, double) {
+  auto centers = std::make_unique<Vec3rList<T>>();
+  auto vertices = std::make_unique<Vec3rList<T>>();
+  auto indices = std::make_unique<Vec3iList>();
+  SUBCASE("2.1 bounding box") {
+    SUBCASE("2.1.1 center at origin") {
+      const Vec3r<T> center{0, 0, 0};
 
-        const Vec3r<T> true_bmin{-1, -1, -1};
-        const Vec3r<T> true_bmax{1, 1, 1};
+      cube_mesh_ccw(center, *vertices, *indices);
+      TriangleMesh triangles_cw(*vertices, *indices);
 
-//        assert_bounding_box(triangles_cw, 0, true_bmin, true_bmax); # find solution for cube mesh
-      }
+      const Vec3r<T> true_bmin{-1, -1, -1};
+      const Vec3r<T> true_bmax{1, 1, 1};
+
+      //        assert_bounding_box(triangles_cw, 0, true_bmin, true_bmax); # find solution for cube mesh
     }
   }
 }
