@@ -29,6 +29,37 @@ inline void assert_bounding_box(const Collection<T> &collection, const unsigned 
   CHECK(bmax[2] == Approx(true_max[2]));
 }
 
+/**
+    If multiple IDs (more objects) are used, all are checked and a global minimum and maximum are searched for
+    @param num_prim_id : Number of prim_ids in object
+*/
+template<typename T, template<typename> typename Collection>
+inline void assert_bounding_box_multi_prim_id(const Collection<T> &collection, const unsigned int prim_id,
+                                              const Vec3r<T> &true_min, const Vec3r<T> &true_max,
+                                              const unsigned int num_prim_id) {
+
+  const auto [bmin_, bmax_] = collection.get_primitive_bounding_box(prim_id);
+
+  Vec3r<T> bmin{bmin_[0], bmin_[1], bmin_[2]};
+  Vec3r<T> bmax{bmax_[0], bmax_[1], bmax_[2]};
+
+  for (unsigned int i = 0; i < num_prim_id; i++) {
+    const auto [bmin_temp, bmax_temp] = collection.get_primitive_bounding_box(i);
+
+    for (unsigned int k = 0; k < 3; k++) {
+      bmin[k] = std::min(bmin[k], bmin_temp[k]);
+      bmax[k] = std::max(bmax[k], bmax_temp[k]);
+    }
+  }
+
+  CHECK(bmin[0] == Approx(true_min[0]));
+  CHECK(bmin[1] == Approx(true_min[1]));
+  CHECK(bmin[2] == Approx(true_min[2]));
+  CHECK(bmax[0] == Approx(true_max[0]));
+  CHECK(bmax[1] == Approx(true_max[1]));
+  CHECK(bmax[2] == Approx(true_max[2]));
+}
+
 template<typename T, template<typename> typename Collection>
 inline void assert_primitive_center(const Collection<T> &collection, const unsigned int prim_id,
                                     const Vec3r<T> &true_center) {
