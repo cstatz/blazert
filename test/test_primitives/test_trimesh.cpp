@@ -482,7 +482,7 @@ TEST_CASE_TEMPLATE("Trimesh -> Multiple triangles", T, float, double) {
   auto indices = std::make_unique<Vec3iList>();
   SUBCASE("2. cube mesh cw") {
     SUBCASE("2.1 bounding box") {
-      SUBCASE("2.1.1 center at origin") {
+      SUBCASE("2.1.1 center at origin / ccw") {
         const Vec3r<T> center{0, 0, 0};
 
         cube_mesh_ccw(center, *vertices, *indices);
@@ -492,6 +492,17 @@ TEST_CASE_TEMPLATE("Trimesh -> Multiple triangles", T, float, double) {
         const Vec3r<T> true_bmax{1, 1, 1};
 
         assert_bounding_box_multi_prim_id(triangles_ccw, 0, true_bmin, true_bmax, 8);
+      }
+      SUBCASE("2.1.1 center at origin / cw") {
+        const Vec3r<T> center{0, 0, 0};
+
+        cube_mesh_cw(center, *vertices, *indices);
+        TriangleMesh triangles_cw(*vertices, *indices);
+
+        const Vec3r<T> true_bmin{-1, -1, -1};
+        const Vec3r<T> true_bmax{1, 1, 1};
+
+        assert_bounding_box_multi_prim_id(triangles_cw, 0, true_bmin, true_bmax, 8);
       }
     }
   }
