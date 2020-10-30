@@ -67,7 +67,6 @@ public:
 
   const Vec3rList<T> &vertices;
   const Vec3iList &faces;
-
   Vec3rList<T> centers;
   std::vector<std::pair<Vec3r<T>, Vec3r<T>>> box;
   Vec3rList<T> face_normals;
