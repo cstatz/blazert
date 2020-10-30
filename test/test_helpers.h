@@ -118,7 +118,7 @@ inline void single_triangle_cw_flat_xy(const Vec3r<T> &center, Vec3rList<T> &ver
   vertices.emplace_back(Vec3r<T>{center[0], center[1] + T(1.), center[2]});
 
   indices.emplace_back(Vec3ui{0, 1, 2});
-};
+}
 
 // Creation of triangle in xy plane / counter clockwise
 template<typename T>
@@ -129,7 +129,7 @@ inline void single_triangle_ccw_flat_xy(const Vec3r<T> &center, Vec3rList<T> &ve
   vertices.emplace_back(Vec3r<T>{center[0], center[1] + T(1.), center[2]});
 
   indices.emplace_back(Vec3ui{0, 2, 1});
-};
+}
 
 template<typename T1, typename T2>
 bool Mat3_isApprox(Mat3r<T1> &m1, Mat3r<T2> &m2) {
