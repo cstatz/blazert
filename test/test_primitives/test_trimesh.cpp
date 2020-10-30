@@ -37,13 +37,13 @@
 using namespace blazert;
 using namespace doctest;
 
-TEST_CASE_TEMPLATE("Trimesh", T, float, double) {
+TEST_CASE_TEMPLATE("Trimesh -> Single Triangle", T, float, double) {
   auto centers = std::make_unique<Vec3rList<T>>();
   auto vertices = std::make_unique<Vec3rList<T>>();
   auto indices = std::make_unique<Vec3iList>();
   SUBCASE("1. single triangle cw") {
     SUBCASE("1.1 bounding box") {
-      SUBCASE("1.1.1 center at origin") {
+      SUBCASE("1.1.1 center at origin (triangle across the room)") {
         const Vec3r<T> center{0, 0, 0};
 
         single_triangle_cw(center, *vertices, *indices);
@@ -466,13 +466,14 @@ TEST_CASE_TEMPLATE("Trimesh", T, float, double) {
   }
 }
 
-TEST_CASE_TEMPLATE("2. cube mesh cw", T, float, double) {
+TEST_CASE_TEMPLATE("Trimesh -> Multiple triangles", T, float, double) {
   auto centers = std::make_unique<Vec3rList<T>>();
   auto vertices = std::make_unique<Vec3rList<T>>();
   auto indices = std::make_unique<Vec3iList>();
-  SUBCASE("2.1 bounding box") {
-    SUBCASE("2.1.1 center at origin") {
-      const Vec3r<T> center{0, 0, 0};
+  SUBCASE("2. cube mesh cw") {
+    SUBCASE("2.1 bounding box") {
+      SUBCASE("2.1.1 center at origin") {
+        const Vec3r<T> center{0, 0, 0};
 
       cube_mesh_ccw(center, *vertices, *indices);
       TriangleMesh triangles_cw(*vertices, *indices);
