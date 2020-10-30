@@ -54,7 +54,17 @@ TEST_CASE_TEMPLATE("Trimesh -> Single Triangle", T, float, double) {
 
         assert_bounding_box(triangles_cw, 0, true_bmin, true_bmax);
       }
+      SUBCASE("1.1.1 center at origin (triangle in xy plane)") {
+        const Vec3r<T> center{0, 0, 0};
 
+        single_triangle_cw_flat_xy(center, *vertices, *indices);
+        TriangleMesh triangles_cw(*vertices, *indices);
+
+        const Vec3r<T> true_bmin{0, 0, 0};
+        const Vec3r<T> true_bmax{1, 1, 0};
+
+        assert_bounding_box(triangles_cw, 0, true_bmin, true_bmax);
+      }
       SUBCASE("1.1.2 shifted center") {
         const Vec3r<T> center{0, 1, 0};
 
