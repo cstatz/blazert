@@ -503,6 +503,27 @@ TEST_CASE_TEMPLATE("Trimesh -> Multiple triangles", T, float, double) {
           assert_bounding_box_multi_prim_id(triangles_cw, 0, true_bmin, true_bmax, 8);
         }
       }
+      SUBCASE("2.1.2 center shifted") {
+        const Vec3r<T> center{4, 2, 0};
+        SUBCASE("counter clockwise") {
+          cube_mesh_ccw(center, *vertices, *indices);
+          TriangleMesh triangles_ccw(*vertices, *indices);
+
+          const Vec3r<T> true_bmin{3, 1, -1};
+          const Vec3r<T> true_bmax{5, 3, 1};
+
+          assert_bounding_box_multi_prim_id(triangles_ccw, 0, true_bmin, true_bmax, 8);
+        }
+        SUBCASE("clockwise") {
+          cube_mesh_cw(center, *vertices, *indices);
+          TriangleMesh triangles_cw(*vertices, *indices);
+
+          const Vec3r<T> true_bmin{3, 1, -1};
+          const Vec3r<T> true_bmax{5, 3, 1};
+
+          assert_bounding_box_multi_prim_id(triangles_cw, 0, true_bmin, true_bmax, 8);
+        }
+      }
     }
   }
 }
