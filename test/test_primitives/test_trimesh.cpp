@@ -119,7 +119,7 @@ TEST_CASE_TEMPLATE("Trimesh -> Single Triangle", T, float, double) {
               const bool true_hit = true;
               const unsigned int true_prim_id = 0;
               const T true_distance = 5;
-              const Vec3r<T> true_normal{0, -1, 0};// depending on the direction in which the triangles are assembled
+              const Vec3r<T> true_normal{0, 1, 0};// depending on the direction in which the triangles are assembled
 
               SUBCASE("intersect primitive") {
                 assert_intersect_primitive_hit(triangles, ray, true_hit, true_prim_id, true_distance, true_normal);
@@ -552,13 +552,13 @@ TEST_CASE_TEMPLATE("Trimesh -> Multiple triangles", T, float, double) {
       SUBCASE("2.1.2 center shifted") {
         const Vec3r<T> center{4, 2, 0};
         SUBCASE("counter clockwise") {
-          cube_mesh_ccw(center, *vertices, *indices);
+          cube_mesh_ccw_01(center, *vertices, *indices);
           TriangleMesh triangles_ccw(*vertices, *indices);
 
           const Vec3r<T> true_bmin{3, 1, -1};
           const Vec3r<T> true_bmax{5, 3, 1};
 
-          assert_bounding_box_multi_prim_id(triangles_ccw, 0, true_bmin, true_bmax, 8);
+          assert_bounding_box_multi_prim_id(triangles_ccw, 0, true_bmin, true_bmax, 12);
         }
         SUBCASE("clockwise") {
           cube_mesh_cw(center, *vertices, *indices);
@@ -567,7 +567,7 @@ TEST_CASE_TEMPLATE("Trimesh -> Multiple triangles", T, float, double) {
           const Vec3r<T> true_bmin{3, 1, -1};
           const Vec3r<T> true_bmax{5, 3, 1};
 
-          assert_bounding_box_multi_prim_id(triangles_cw, 0, true_bmin, true_bmax, 8);
+          assert_bounding_box_multi_prim_id(triangles_cw, 0, true_bmin, true_bmax, 12);
         }
       }
     }
@@ -578,17 +578,17 @@ TEST_CASE_TEMPLATE("Trimesh -> Multiple triangles", T, float, double) {
       SUBCASE("2.2.1 center at origin") {
         const Vec3r<T> center{0, 0, 0};
         SUBCASE("assembled cw") {
-          cube_mesh_ccw(center, *vertices, *indices);
+          cube_mesh_ccw_01(center, *vertices, *indices);
           TriangleMesh triangle_cw(*vertices, *indices);
           SUBCASE("outside") {
-            Vec3r<T> org1{5, 0, 0};
-            Vec3r<T> dir1{-1, 0, 0};
+            Vec3r<T> org1{0.25,0.25,5};
+            Vec3r<T> dir1{0, 0, -1};
 
             Ray<T> ray{org1, dir1};
 
             const bool true_hit = true;
             const T true_distance = 4;
-            const Vec3r<T> true_normal{-1, 0, 0};
+            const Vec3r<T> true_normal{0, 0, -1};
 
             SUBCASE("traverse bvh") {
               assert_traverse_bvh_hit_trimesh(triangle_cw, ray, true_hit, true_distance, true_normal);

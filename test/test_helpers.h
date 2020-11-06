@@ -105,7 +105,6 @@ inline void single_triangle_ccw(const Vec3r<T> &center, Vec3rList<T> &vertices, 
   indices.emplace_back(Vec3ui{0, 2, 1});
 }
 
-
 // Create single triangle clockwise (Order of Indices: 0 -> 1 -> 2)
 template<typename T>
 inline void single_triangle_cw(const Vec3r<T> &center, Vec3rList<T> &vertices, Vec3iList &indices) {
@@ -116,7 +115,6 @@ inline void single_triangle_cw(const Vec3r<T> &center, Vec3rList<T> &vertices, V
 
   indices.emplace_back(Vec3ui{0, 1, 2});
 }
-
 
 // Creation of triangle in xy plane / clockwise
 template<typename T>
@@ -137,7 +135,7 @@ inline void single_triangle_cw_flat_xz(const Vec3r<T> &center, Vec3rList<T> &ver
   // 1  (1, 0, 0) + center
   vertices.emplace_back(Vec3r<T>{center[0] + T(1.), center[1], center[2]});
   // 2  (0, 0, 1) + center
-  vertices.emplace_back(Vec3r<T>{center[0], center[1], center[2]} + T(1.));
+  vertices.emplace_back(Vec3r<T>{center[0], center[1], center[2] + T(1.)});
 
   indices.emplace_back(Vec3ui{0, 1, 2});
 }
@@ -150,7 +148,7 @@ inline void single_triangle_cw_flat_yz(const Vec3r<T> &center, Vec3rList<T> &ver
   // 1  (0, 1, 0) + center
   vertices.emplace_back(Vec3r<T>{center[0], center[1] + T(1.), center[2]});
   // 2  (0, 0, 1) + center
-  vertices.emplace_back(Vec3r<T>{center[0], center[1], center[2]} + T(1.));
+  vertices.emplace_back(Vec3r<T>{center[0], center[1], center[2] + T(1.)});
 
   indices.emplace_back(Vec3ui{0, 1, 2});
 }
