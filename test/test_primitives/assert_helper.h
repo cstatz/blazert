@@ -95,44 +95,27 @@ inline void assert_intersect_primitive_hit(const Collection<T> &collection, cons
   CHECK(rayhit.normal[2] == Approx(static_cast<T>(normal[2])));
 }
 
+
 /**
-  * If the trimesh is used, this function can be used to test the intersections
-  *//*
+  * Used for trimesh, if more than one triangle is used
+  */
 template<typename T, template<typename> typename Collection>
-inline void assert_intersect_primitive_hit_trimesh(const Collection<T> &collection, const Ray<T> &ray,
-                                                   const bool true_hit, const unsigned int prim_id, const T distance,
-                                                   const Vec3r<T> &normal, const unsigned int num_prim_id) {
-  typename Collection<T>::intersector intersector(collection);
+inline void assert_traverse_bvh_hit_trimesh(const Collection<T> &collection, const Ray<T> &ray, const bool true_hit,
+                                            const T distance, const Vec3r<T> &normal) {
+
+  BVH bvh(collection);
+  SAHBinnedBuilder builder;
+
+  [[maybe_unused]] auto statistics = builder.build(bvh);
+
   RayHit<T> rayhit;
-  // Test intersections
-  prepare_traversal(intersector, ray);
-
-  for (unsigned int temp_id = 0; temp_id < num_prim_id; temp_id++) {
-    const bool hit = intersect_primitive(intersector, primitive_from_collection(collection, temp_id), ray);
-
-    if (hit) {
-      post_traversal(intersector, rayhit);
-
-      CHECK(hit == true_hit);
-      CHECK(rayhit.prim_id == temp_id);
-      CHECK(rayhit.hit_distance == Approx(static_cast<T>(distance)));
-      CHECK(rayhit.normal[0] == Approx(static_cast<T>(normal[0])));
-      CHECK(rayhit.normal[1] == Approx(static_cast<T>(normal[1])));
-      CHECK(rayhit.normal[2] == Approx(static_cast<T>(normal[2])));
-    }
-  }
-
-  //  const bool hit = intersect_primitive(intersector, primitive_from_collection(collection, 0), ray);
-  //  if (hit)
-  //    post_traversal(intersector, rayhit);
-  //
-  //  CHECK(hit == true_hit);
-  //  CHECK(rayhit.prim_id == prim_id);
-  //  CHECK(rayhit.hit_distance == Approx(static_cast<T>(distance)));
-  //  CHECK(rayhit.normal[0] == Approx(static_cast<T>(normal[0])));
-  //  CHECK(rayhit.normal[1] == Approx(static_cast<T>(normal[1])));
-  //  CHECK(rayhit.normal[2] == Approx(static_cast<T>(normal[2])));
-}*/
+  const bool hit = traverse(bvh, ray, rayhit);
+  CHECK(hit == true_hit);
+  CHECK(rayhit.hit_distance == Approx(static_cast<T>(distance)));
+  CHECK(rayhit.normal[0] == Approx(static_cast<T>(normal[0])));
+  CHECK(rayhit.normal[1] == Approx(static_cast<T>(normal[1])));
+  CHECK(rayhit.normal[2] == Approx(static_cast<T>(normal[2])));
+}
 
 template<typename T, template<typename> typename Collection>
 inline void assert_traverse_bvh_hit(const Collection<T> &collection, const Ray<T> &ray, const bool true_hit,
