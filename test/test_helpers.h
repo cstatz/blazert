@@ -33,13 +33,22 @@ inline bool is_almost_equal(const T &in_a, const T &in_b, const double eps) {
 template<typename T>
 inline void cube_mesh_ccw(const Vec3r<T> &center, Vec3rList<T> &vertices, Vec3iList &indices) {
   // BBox (-1, -1, -1) ( 1,  1,  1)
+
+  // 0  (-1, -1, -1) + center
   vertices.emplace_back(Vec3r<T>{center[0] + T(-1.), center[1] + T(-1.), center[2] + T(-1.)});
+  // 1  (1, -1, -1) + center
   vertices.emplace_back(Vec3r<T>{center[0] + T(1.), center[1] + T(-1.), center[2] + T(-1.)});
+  // 2  (1, -1, 1) + center
   vertices.emplace_back(Vec3r<T>{center[0] + T(1.), center[1] + T(-1.), center[2] + T(1.)});
+  // 3  (-1, -1, 1) + center
   vertices.emplace_back(Vec3r<T>{center[0] + T(-1.), center[1] + T(-1.), center[2] + T(1.)});
+  // 4  (-1, 1, -1) + center
   vertices.emplace_back(Vec3r<T>{center[0] + T(-1.), center[1] + T(1.), center[2] + T(-1.)});
+  // 5  (1, 1, -1) + center
   vertices.emplace_back(Vec3r<T>{center[0] + T(1.), center[1] + T(1.), center[2] + T(-1.)});
+  // 6  (1, 1, 1) + center
   vertices.emplace_back(Vec3r<T>{center[0] + T(1.), center[1] + T(1.), center[2] + T(1.)});
+  // 7  (-1, 1, 1) + center
   vertices.emplace_back(Vec3r<T>{center[0] + T(-1.), center[1] + T(1.), center[2] + T(1.)});
 
   // CCW Tris
@@ -116,6 +125,32 @@ inline void single_triangle_cw_flat_xy(const Vec3r<T> &center, Vec3rList<T> &ver
   vertices.emplace_back(Vec3r<T>{center[0], center[1], center[2]});
   vertices.emplace_back(Vec3r<T>{center[0] + T(1.), center[1], center[2]});
   vertices.emplace_back(Vec3r<T>{center[0], center[1] + T(1.), center[2]});
+
+  indices.emplace_back(Vec3ui{0, 1, 2});
+}
+
+// Creation of triangle in xz plane / clockwise
+template<typename T>
+inline void single_triangle_cw_flat_xz(const Vec3r<T> &center, Vec3rList<T> &vertices, Vec3iList &indices) {
+  // 0  (0,0,0) + center
+  vertices.emplace_back(Vec3r<T>{center[0], center[1], center[2]});
+  // 1  (1, 0, 0) + center
+  vertices.emplace_back(Vec3r<T>{center[0] + T(1.), center[1], center[2]});
+  // 2  (0, 0, 1) + center
+  vertices.emplace_back(Vec3r<T>{center[0], center[1], center[2]} + T(1.));
+
+  indices.emplace_back(Vec3ui{0, 1, 2});
+}
+
+// Creation of triangle in yz plane / clockwise
+template<typename T>
+inline void single_triangle_cw_flat_yz(const Vec3r<T> &center, Vec3rList<T> &vertices, Vec3iList &indices) {
+  // 0  (0, 0, 0) + center
+  vertices.emplace_back(Vec3r<T>{center[0], center[1], center[2]});
+  // 1  (0, 1, 0) + center
+  vertices.emplace_back(Vec3r<T>{center[0], center[1] + T(1.), center[2]});
+  // 2  (0, 0, 1) + center
+  vertices.emplace_back(Vec3r<T>{center[0], center[1], center[2]} + T(1.));
 
   indices.emplace_back(Vec3ui{0, 1, 2});
 }
