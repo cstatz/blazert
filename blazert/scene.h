@@ -51,22 +51,22 @@ public:
 
   std::unique_ptr<TriangleMesh<T>> triangle_collection;
   std::unique_ptr<BVH<T, TriangleMesh>> triangles_bvh;
-  size_t triangles_geom_id = -1;
+  unsigned int triangles_geom_id = static_cast<unsigned int>(-1);
   bool has_triangles = false;
 
   std::unique_ptr<SphereCollection<T>> sphere_collection;
   std::unique_ptr<BVH<T, SphereCollection>> spheres_bvh;
-  size_t spheres_geom_id = -1;
+  unsigned int spheres_geom_id = static_cast<unsigned int>(-1);
   bool has_spheres = false;
 
   std::unique_ptr<PlaneCollection<T>> plane_collection;
   std::unique_ptr<BVH<T, PlaneCollection>> planes_bvh;
-  size_t planes_geom_id = -1;
+  unsigned int planes_geom_id = static_cast<unsigned int>(-1);
   bool has_planes = false;
 
   std::unique_ptr<CylinderCollection<T>> cylinder_collection;// these are needed for lifetime management...
   std::unique_ptr<BVH<T, CylinderCollection>> cylinders_bvh;
-  size_t cylinders_geom_id = -1;
+  unsigned int cylinders_geom_id = static_cast<unsigned int>(-1);
   bool has_cylinders = false;
 
 public:
@@ -114,6 +114,36 @@ public:
     return has_been_committed;
   };
 };
+
+template<typename T>
+std::ostream &operator<<(std::ostream &stream, const BlazertScene<T> &scene) {
+  /// Conveniently output the scene as JSON
+  stream << "{\n";
+
+  stream << R"(  "Scene": )"
+         << (&scene)
+         << ",\n";
+  stream << R"(  "Collections": [)"
+         << "\n";
+
+  if (scene.triangle_collection != nullptr) {
+    stream << *scene.triangle_collection;
+    if (scene.has_spheres || scene.has_cylinders || scene.has_planes) stream << ",\n";
+  }
+  if (scene.sphere_collection != nullptr) {
+    stream << *scene.sphere_collection;
+    if (scene.has_cylinders || scene.has_planes) stream << ",\n";
+  }
+  if (scene.cylinder_collection != nullptr) {
+    stream << *scene.cylinder_collection;
+    if (scene.has_planes) stream << ",\n";
+  }
+  if (scene.plane_collection != nullptr) stream << *scene.plane_collection;
+
+  stream << "  ]\n";
+  stream << "}\n";
+  return stream;
+}
 
 /**
  * @brief Runs intersection tests for a given BlazertScene and Ray.
@@ -209,7 +239,6 @@ unsigned int BlazertScene<T>::add_mesh(const Vec3rList<T> &vertices, const Vec3i
   }
 }
 
-
 /**
  * @brief Adds spheres at centers with radii.
  *
@@ -240,7 +269,6 @@ unsigned int BlazertScene<T>::add_spheres(const Vec3rList<T> &centers, const std
     return static_cast<unsigned int>(-1);
   }
 }
-
 
 /**
  * @brief Adds planes at centers with dimensions dxs and dys rotated around rotations.
@@ -274,7 +302,7 @@ unsigned int BlazertScene<T>::add_planes(const Vec3rList<T> &centers, const std:
     planes_geom_id = geometries++;
     return planes_geom_id;
   } else {
-    return -1;
+    return static_cast<unsigned int>(-1);
   }
 }
 
@@ -313,7 +341,7 @@ unsigned int BlazertScene<T>::add_cylinders(const Vec3rList<T> &centers, const s
     cylinders_geom_id = geometries++;
     return cylinders_geom_id;
   } else {
-    return -1;
+    return static_cast<unsigned int>(-1);
   }
 }
 

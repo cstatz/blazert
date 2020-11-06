@@ -21,25 +21,26 @@ struct Triangle {
   const Vec3r<T> &a;
   const Vec3r<T> b;
   const Vec3r<T> c;
-  unsigned int i;
+  unsigned int prim_id;
   Triangle() = delete;
-  Triangle(const Vec3r<T> &a, const Vec3r<T> &b_, const Vec3r<T> &c_, const unsigned int i)
-      : a(a), b(c_ - a), c(a - b_), i(i) {}
+  Triangle(const Vec3r<T> &a, const Vec3r<T> &b_, const Vec3r<T> &c_, const unsigned int prim_id)
+      : a(a), b(c_ - a), c(a - b_), prim_id(prim_id) {}
   Triangle(Triangle &&rhs) noexcept
-      : a(std::move(rhs.a)), b(std::move(rhs.b)), c(std::move(rhs.c)), i(std::exchange(rhs.i, -1)) {}
+      : a(std::move(rhs.a)), b(std::move(rhs.b)), c(std::move(rhs.c)), prim_id(std::exchange(rhs.prim_id, -1)) {}
   Triangle &operator=(const Triangle &rhs) = delete;
 };
 
 template<typename T, template<typename A> typename Collection,
          typename = std::enable_if_t<std::is_same<typename Collection<T>::primitive_type, Triangle<T>>::value>>
-inline Triangle<T> primitive_from_collection(const Collection<T> &collection, const unsigned int prim_idx) {
+[[nodiscard]] inline Triangle<T> primitive_from_collection(const Collection<T> &collection,
+                                                           const unsigned int prim_idx) {
 
   const Vec3ui &face = collection.faces[prim_idx];
   const Vec3r<T> &a = collection.vertices[face[0]];
   const Vec3r<T> &b = collection.vertices[face[1]];
   const Vec3r<T> &c = collection.vertices[face[2]];
   return {a, b, c, prim_idx};
-};
+}
 
 template<typename T, template<typename A> typename Collection>
 class TriangleIntersector {
@@ -53,7 +54,8 @@ public:
   unsigned int prim_id;
 
   TriangleIntersector() = delete;
-  explicit TriangleIntersector(const Collection<T> &collection) : collection(collection), prim_id(-1) {}
+  explicit TriangleIntersector(const Collection<T> &collection)
+      : collection(collection), prim_id(static_cast<unsigned int>(-1)) {}
 };
 
 template<typename T>
@@ -92,7 +94,7 @@ public:
     }
   }
 
-  [[nodiscard]] inline unsigned int size() const noexcept { return faces.size(); }
+  [[nodiscard]] inline unsigned int size() const noexcept { return static_cast<unsigned int>(faces.size()); }
 
   [[nodiscard]] inline std::pair<Vec3r<T>, Vec3r<T>>
   get_primitive_bounding_box(const unsigned int prim_index) const noexcept {
@@ -145,7 +147,7 @@ inline void prepare_traversal(TriangleIntersector<T, Collection> &i, const Ray<T
   i.min_hit_distance = ray.min_hit_distance;
   i.hit_distance = ray.max_hit_distance;
   i.uv = static_cast<T>(0.);
-  i.prim_id = -1;
+  i.prim_id = static_cast<unsigned int>(-1);
 }
 
 template<typename T, template<typename> typename Collection>
@@ -171,16 +173,45 @@ inline bool intersect_primitive(TriangleIntersector<T, Collection> &i, const Tri
       const auto inv_det = static_cast<T>(1.0) / abs_det;
       i.hit_distance = t * inv_det;
       i.uv = {u * inv_det, v * inv_det};
-      i.prim_id = tri.i;
+      i.prim_id = tri.prim_id;
       return true;
     }
   }
   return false;
 }
 
+
 template<typename T>
-std::ostream &operator<<(std::ostream &stream, const TriangleMesh<T> &mesh) {
-  stream << "Collection size:" << mesh.size();
+std::ostream &operator<<(std::ostream &stream, const Triangle<T> &triangle) {
+  /// Conveniently output a single triangle as JSON.
+  stream << "{\n";
+
+  stream << R"(  "Triangle": )" << &triangle << ",\n";
+  stream << R"(  "a": [ )" << triangle.a[0] << ", " << triangle.c[1] << ", " << triangle.a[2] << "],\n";
+  stream << R"(  "b": [ )" << triangle.b[0] << ", " << triangle.b[1] << ", " << triangle.b[2] << "],\n";
+  stream << R"(  "c": [ )" << triangle.c[0] << ", " << triangle.c[1] << ", " << triangle.c[2] << "],\n";
+  stream << R"(  "prim_id": )" << triangle.prim_id << "\n";
+
+  stream << "}\n";
+  return stream;
+}
+
+template<typename T>
+std::ostream &operator<<(std::ostream& stream, const TriangleMesh<T> &collection) {
+  stream << "{\n";
+  stream << R"("TriangleMesh": [)" << "\n";
+  stream << R"({"size": )" << collection.size() << "},\n";
+
+  for(uint32_t id_triangle = 0; id_triangle < collection.size(); id_triangle++){
+    stream << primitive_from_collection(collection, id_triangle);
+    if(id_triangle == collection.size() - 1) {
+      stream << "]\n";
+    } else {
+      stream << ", \n";
+    }
+  }
+
+  stream << "}\n";
   return stream;
 }
 }// namespace blazert

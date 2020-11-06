@@ -64,7 +64,8 @@ unsigned int build_recursive(std::vector<BVHNode<T, Collection>> &nodes, const C
   if (statistics.max_tree_depth < depth)
     statistics.max_tree_depth = depth;
 
-  const unsigned int n = std::distance(begin, end);
+  // std::distance theoretically can be negative, but it never is in this case
+  const unsigned int n = static_cast<unsigned int>(std::distance(begin, end));
   const auto [min, max] = compute_bounding_box<T>(collection, begin, end);
 
   // Leaf
@@ -94,14 +95,14 @@ inline BVHNode<T, Collection> create_leaf(const Collection<T> &collection, Itera
   node.max = bmax;
 
   node.leaf = 1;
-  node.primitives.reserve(std::distance(begin, end));
+  node.primitives.reserve(static_cast<long unsigned int>(std::distance(begin, end)));
 
   for (auto it = begin; it != end; ++it) {
     node.primitives.push_back(std::move(primitive_from_collection(collection, *it)));
   }
 
   return node;
-};
+}
 
 template<typename T, typename Iterator, template<typename> typename Collection>
 inline std::pair<BVHNode<T, Collection>, Iterator>

@@ -19,7 +19,7 @@ public:
   EmbreeGeometryObject(const RTCScene &scene) : scene(scene){};
 
   RTCGeometry geometry;
-  unsigned int geomID = -1;
+  unsigned int geomID = static_cast<unsigned int>(-1);
   unsigned int kind = 0;
 };
 

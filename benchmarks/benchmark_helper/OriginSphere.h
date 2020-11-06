@@ -116,6 +116,6 @@ OriginSphere<T>::OriginSphere(uint32_t resolution) {
 
   OriginMesh<T>::triangles = meshes.back().triangles;
   OriginMesh<T>::vertices = meshes.back().vertices;
-};
+}
 
 #endif// EM_ORIGINSPHERE_H

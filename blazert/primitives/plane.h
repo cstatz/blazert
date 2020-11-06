@@ -40,14 +40,14 @@ public:
 
 template<typename T, template<typename A> typename Collection,
          typename = std::enable_if_t<std::is_same<typename Collection<T>::primitive_type, Plane<T>>::value>>
-inline Plane<T> primitive_from_collection(const Collection<T> &collection, const unsigned int prim_idx) {
+[[nodiscard]] inline Plane<T> primitive_from_collection(const Collection<T> &collection, const unsigned int prim_idx) {
 
   const Vec3r<T> &center = collection.centers[prim_idx];
   const T &dx = collection.dxs[prim_idx];
   const T &dy = collection.dys[prim_idx];
   const Mat3r<T> &rotation = collection.rotations[prim_idx];
   return {center, dx, dy, rotation, prim_idx};
-};
+}
 
 template<typename T, template<typename A> typename Collection>
 class PlaneIntersector {
@@ -64,7 +64,8 @@ public:
   unsigned int prim_id;
 
   PlaneIntersector() = delete;
-  explicit PlaneIntersector(const Collection<T> &collection) : collection(collection), prim_id(-1) {}
+  explicit PlaneIntersector(const Collection<T> &collection)
+      : collection(collection), prim_id(static_cast<unsigned int>(-1)) {}
 };
 
 template<typename T>
@@ -97,7 +98,7 @@ public:
     }
   }
 
-  [[nodiscard]] inline unsigned int size() const noexcept { return centers.size(); }
+  [[nodiscard]] inline unsigned int size() const noexcept { return static_cast<unsigned int>(centers.size()); }
 
   [[nodiscard]] inline std::pair<Vec3r<T>, Vec3r<T>>
   get_primitive_bounding_box(const unsigned int prim_id) const noexcept {
@@ -168,7 +169,7 @@ inline void prepare_traversal(PlaneIntersector<T, Collection> &i, const Ray<T> &
   i.min_hit_distance = ray.min_hit_distance;
   i.hit_distance = ray.max_hit_distance;
   i.uv = static_cast<T>(0.);
-  i.prim_id = -1;
+  i.prim_id = static_cast<unsigned int>(-1);
 }
 
 /**
@@ -177,7 +178,8 @@ inline void prepare_traversal(PlaneIntersector<T, Collection> &i, const Ray<T> &
    * Returns true if there's intersection.
    */
 template<typename T, template<typename> typename Collection>
-inline bool intersect_primitive(PlaneIntersector<T, Collection> &i, const Plane<T> &plane, const Ray<T> ray) {
+inline bool intersect_primitive(PlaneIntersector<T, Collection> &i, const Plane<T> &plane,
+                                [[maybe_unused]] const Ray<T> ray) {
 
   const Vec3r<T> &center = plane.center;
   const T dx = plane.dx;
@@ -279,6 +281,48 @@ template<typename T>
     return std::abs(local_point[2]);
 
   return std::numeric_limits<T>::max();
+}
+
+
+template<typename T>
+std::ostream &operator<<(std::ostream &stream, const Plane<T> &plane) {
+  /// Conveniently output a single plane as JSON.
+  stream << "{\n";
+
+  stream << R"(  "Plane": )" << &plane << ",\n";
+  stream << R"(  "center": [)" << plane.center[0] << "," << plane.center[1] << "," << plane.center[2] << "],\n";
+  stream << R"(  "dx": )" << plane.dx << ",\n";
+  stream << R"(  "dy": )" << plane.dy << ",\n";
+  stream << R"(  "rotation": [[)" << plane.rotation(0, 0) << ", " << plane.rotation(0, 1) << ", " << plane.rotation(0, 2)
+         << "],\n"
+         << "             [" << plane.rotation(1, 0) << ", " << plane.rotation(1, 1) << ", " << plane.rotation(1, 2)
+         << "],\n"
+         << "             [" << plane.rotation(2, 0) << ", " << plane.rotation(2, 1) << ", " << plane.rotation(2, 2)
+         << "]],\n";
+  stream << R"(  "prim_id": )" << plane.prim_id << "\n";
+
+  stream << "}\n";
+  return stream;
+}
+
+template<typename T>
+std::ostream &operator<<(std::ostream &stream, const PlaneCollection<T> &collection) {
+  stream << "{\n";
+  stream << R"("PlaneCollection": [)"
+         << "\n";
+  stream << R"({"size": )" << collection.size() << "},\n";
+
+  for (uint32_t id_plane = 0; id_plane < collection.size(); id_plane++) {
+    stream << primitive_from_collection(collection, id_plane);
+    if (id_plane == collection.size() - 1) {
+      stream << "]\n";
+    } else {
+      stream << ", \n";
+    }
+  }
+
+  stream << "}\n";
+  return stream;
 }
 
 }// namespace blazert

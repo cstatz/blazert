@@ -1,4 +1,4 @@
-SET(SINGLE_HEADER_TARGET_DIR "." CACHE STRING "Directory where the blazer headers are located.")
+set(SINGLE_HEADER_TARGET_DIR "." CACHE STRING "Directory where the blazer headers are located.")
 message("Generating blazert_single_header.h in ${SINGLE_HEADER_TARGET_DIR}.")
 
 file(READ ${SINGLE_HEADER_TARGET_DIR}/blazert/defines.h 		defines)

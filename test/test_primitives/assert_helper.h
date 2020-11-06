@@ -5,6 +5,8 @@
 #ifndef BLAZERT_ASSERT_HELPER_H
 #define BLAZERT_ASSERT_HELPER_H
 
+#define DOCTEST_CONFIG_INCLUDE_TYPE_TRAITS
+
 #include <blazert/bvh/accel.h>
 #include <blazert/bvh/builder.h>
 #include <blazert/datatypes.h>
