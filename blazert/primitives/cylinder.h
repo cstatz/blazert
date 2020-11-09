@@ -498,14 +498,26 @@ template<typename T>
 [[nodiscard]] inline T distance_to_surface(const Cylinder<T> &cylinder, const Vec3r<T> point) noexcept {
   const Vec3r<T> &local_point = trans(cylinder.rotation) * (point - cylinder.center);
 
+  // reference sphere radius
+  const T R = 1;
+
+  const T a = cylinder.semi_axis_a;
+  const T b = cylinder.semi_axis_b;
+
+  const Mat3r<T> ellipse_to_sphere {a/R, 0, 0,
+                                   0, b/R, 0,
+                                   0 ,0, 1};
+  const T determinant_ellipse_to_sphere = det(ellipse_to_sphere);
+
   // 1. calculate distance to shell
-  const T dist_shell = 0;
+  const T distance_equivalent_sphere = std::sqrt(std::pow(a*local_point[0]/R,2 ) + std::pow(b*local_point[1]/R, 2));
+  const T dist_shell = std::abs(determinant_ellipse_to_sphere) * distance_equivalent_sphere;
 
   // 2. calculate distance to top
-  const T dist_top= 0;
+  const T dist_top = std::abs(local_point[2] - cylinder.height/2);
 
   // 3. calculate distance to bottom
-  const T dist_bottom = 0;
+  const T dist_bottom = std::abs(local_point[2] + cylinder.height/2);;
 
   return std::min(dist_shell, dist_top, dist_bottom);
 }
