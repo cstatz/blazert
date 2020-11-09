@@ -129,10 +129,10 @@ TEST_CASE_TEMPLATE("Trimesh -> Single Triangle", T, float, double) {
               }
             }
           }
-              SUBCASE("assembled cw  /  flat yz") {
+          SUBCASE("assembled cw  /  flat yz") {
             single_triangle_cw_flat_yz(center, *vertices, *indices);
             TriangleMesh triangles(*vertices, *indices);
-                SUBCASE("right") {
+            SUBCASE("right") {
               Vec3r<T> org1{5, 0.25, 0.25};
               Vec3r<T> dir1{-1, 0, 0};
 
@@ -143,10 +143,10 @@ TEST_CASE_TEMPLATE("Trimesh -> Single Triangle", T, float, double) {
               const T true_distance = 5;
               const Vec3r<T> true_normal{-1, 0, 0};// depending on the direction in which the triangles are assembled
 
-                  SUBCASE("intersect primitive") {
+              SUBCASE("intersect primitive") {
                 assert_intersect_primitive_hit(triangles, ray, true_hit, true_prim_id, true_distance, true_normal);
               }
-                  SUBCASE("traverse bvh") {
+              SUBCASE("traverse bvh") {
                 assert_traverse_bvh_hit(triangles, ray, true_hit, true_prim_id, true_distance, true_normal);
               }
             }
@@ -522,7 +522,7 @@ TEST_CASE_TEMPLATE("Trimesh -> Single Triangle", T, float, double) {
   }
 }
 
-TEST_CASE_TEMPLATE("Trimesh -> Multiple triangles", T, float, double) {
+TEST_CASE_TEMPLATE("Trimesh -> Multiple triangles : Cube Mesh", T, float, double) {
   auto centers = std::make_unique<Vec3rList<T>>();
   auto vertices = std::make_unique<Vec3rList<T>>();
   auto indices = std::make_unique<Vec3iList>();
@@ -531,6 +531,7 @@ TEST_CASE_TEMPLATE("Trimesh -> Multiple triangles", T, float, double) {
       SUBCASE("2.1.1 center at origin") {
         const Vec3r<T> center{0, 0, 0};
         SUBCASE("counter clockwise") {
+
           cube_mesh_ccw(center, *vertices, *indices);
           TriangleMesh triangles_ccw(*vertices, *indices);
 
@@ -581,7 +582,7 @@ TEST_CASE_TEMPLATE("Trimesh -> Multiple triangles", T, float, double) {
           cube_mesh_ccw_01(center, *vertices, *indices);
           TriangleMesh triangle_cw(*vertices, *indices);
           SUBCASE("outside") {
-            Vec3r<T> org1{0.25,0.25,5};
+            Vec3r<T> org1{0.25, 0.25, 5};
             Vec3r<T> dir1{0, 0, -1};
 
             Ray<T> ray{org1, dir1};
@@ -597,6 +598,77 @@ TEST_CASE_TEMPLATE("Trimesh -> Multiple triangles", T, float, double) {
           SUBCASE("inside") {}
           SUBCASE("on surface") {}
         }
+      }
+    }
+  }
+}
+
+TEST_CASE_TEMPLATE("Trimesh -> two triangles", T, float, double) {
+  auto centers = std::make_unique<Vec3rList<T>>();
+  auto vertices = std::make_unique<Vec3rList<T>>();
+  auto indices = std::make_unique<Vec3iList>();
+  SUBCASE("Intersections") {
+    SUBCASE("center at origin") {
+      const Vec3r<T> center{0, 0, 0};
+      SUBCASE("xy plane") {
+        two_triangle_ccw_plane_xy(center, *vertices, *indices);
+        TriangleMesh triangle(*vertices, *indices);
+
+        Vec3r<T> org1{0.25, 0.25, 5};
+        Vec3r<T> dir1{0, 0, -1};
+
+        Ray<T> ray{org1, dir1};
+
+        const bool true_hit = true;
+        const T true_distance = 5;
+        const Vec3r<T> true_normal{0, 0, -1};
+
+        assert_traverse_bvh_hit_trimesh(triangle, ray, true_hit, true_distance, true_normal);
+      }
+      SUBCASE("xz plane") {
+        two_triangle_ccw_plane_xz(center, *vertices, *indices);
+        TriangleMesh triangle(*vertices, *indices);
+
+        Vec3r<T> org1{0.25, 5, 0.25};
+        Vec3r<T> dir1{0, -1, 0};
+
+        Ray<T> ray{org1, dir1};
+
+        const bool true_hit = true;
+        const T true_distance = 5;
+        const Vec3r<T> true_normal{0, 1, 0};
+
+        assert_traverse_bvh_hit_trimesh(triangle, ray, true_hit, true_distance, true_normal);
+      }
+      SUBCASE("two planes in xy") {
+        two_plane_mesh(center, *vertices, *indices);
+        TriangleMesh triangle(*vertices, *indices);
+
+        Vec3r<T> org1{0.25, 0.25, 5};
+        Vec3r<T> dir1{0, 0, -1};
+
+        Ray<T> ray{org1, dir1};
+
+        const bool true_hit = true;
+        const T true_distance = 4;
+        const Vec3r<T> true_normal{0, 0, -1};
+
+        assert_traverse_bvh_hit_trimesh(triangle, ray, true_hit, true_distance, true_normal);
+      }
+      SUBCASE("two planes 90 degree"){
+        two_plane_mesh_90_deg(center, *vertices, *indices);
+        TriangleMesh triangle(*vertices, *indices);
+
+        Vec3r<T> org1{0.25, 0.25, 5};
+        Vec3r<T> dir1{0, 0, -1};
+
+        Ray<T> ray{org1, dir1};
+
+        const bool true_hit = true;
+        const T true_distance = 4;
+        const Vec3r<T> true_normal{0, 0, -1};
+
+        assert_traverse_bvh_hit_trimesh(triangle, ray, true_hit, true_distance, true_normal);
       }
     }
   }

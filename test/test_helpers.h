@@ -66,6 +66,54 @@ inline void cube_mesh_ccw(const Vec3r<T> &center, Vec3rList<T> &vertices, Vec3iL
   indices.emplace_back(Vec3ui{0, 3, 1});
 }
 
+template<typename T>
+inline void cube_mesh_ccw_01(const Vec3r<T> &center, Vec3rList<T> &vertices, Vec3iList &indices) {
+  // BBox (-1, -1, -1) ( 1,  1,  1)
+
+  // 0  (1, 1, -1)
+  vertices.emplace_back(Vec3r<T>{center[0] + T(1.), center[1] + T(1.), center[2] + T(-1.)});
+  // 1  (-1, 1, -1)
+  vertices.emplace_back(Vec3r<T>{center[0] + T(-1.), center[1] + T(1.), center[2] + T(-1.)});
+  // 2  (-1, -1, -1)
+  vertices.emplace_back(Vec3r<T>{center[0] + T(-1.), center[1] + T(-1.), center[2] + T(-1.)});
+  // 3  (1, -1, -1)
+  vertices.emplace_back(Vec3r<T>{center[0] + T(1.), center[1] + T(-1.), center[2] + T(-1.)});
+
+  // 4  (1, 1, 1)
+  vertices.emplace_back(Vec3r<T>{center[0] + T(1.), center[1] + T(1.), center[2] + T(1.)});
+  // 5  (-1, 1, 1)
+  vertices.emplace_back(Vec3r<T>{center[0] + T(-1.), center[1] + T(1.), center[2] + T(1.)});
+  // 6  (-1, -1, 1)
+  vertices.emplace_back(Vec3r<T>{center[0] + T(-1.), center[1] + T(-1.), center[2] + T(1.)});
+  // 7  (1, -1, 1)
+  vertices.emplace_back(Vec3r<T>{center[0] + T(1.), center[1] + T(-1.), center[2] + T(1.)});
+
+  // CCW
+
+  // xy Plane (z=-1)
+  indices.emplace_back(Vec3ui{0, 1, 3});
+  indices.emplace_back(Vec3ui{2, 3, 1});
+  // xy Plane (z=1)
+  indices.emplace_back(Vec3ui{4, 5, 7});
+  indices.emplace_back(Vec3ui{6, 7, 5});
+
+  // xz Plane (y=-1)
+  indices.emplace_back(Vec3ui{7, 6, 3});
+  indices.emplace_back(Vec3ui{2, 3, 6});
+
+  // xz Plane (y=1)
+  indices.emplace_back(Vec3ui{4, 5, 0});
+  indices.emplace_back(Vec3ui{6, 0, 5});
+
+  // yz Plane (x=-1)
+  indices.emplace_back(Vec3ui{5, 6, 1});
+  indices.emplace_back(Vec3ui{2, 1, 6});
+
+  // yz Plane (x=1)
+  indices.emplace_back(Vec3ui{4, 7, 0});
+  indices.emplace_back(Vec3ui{3, 0, 7});
+}
+
 // CW = clockwise
 template<typename T>
 inline void cube_mesh_cw(const Vec3r<T> &center, Vec3rList<T> &vertices, Vec3iList &indices) {
@@ -92,6 +140,115 @@ inline void cube_mesh_cw(const Vec3r<T> &center, Vec3rList<T> &vertices, Vec3iLi
   indices.emplace_back(Vec3ui{4, 7, 5});
   indices.emplace_back(Vec3ui{3, 1, 2});
   indices.emplace_back(Vec3ui{0, 1, 3});
+}
+
+template<typename T>
+inline void two_plane_mesh_90_deg(const Vec3r<T> &center, Vec3rList<T> &vertices, Vec3iList &indices) {
+  // BBox (-1, -1, -1) ( 1,  1,  1)
+
+  // 0  (1, 1, -1)
+  vertices.emplace_back(Vec3r<T>{center[0] + T(1.), center[1] + T(1.), center[2] + T(-1.)});
+  // 1  (-1, 1, -1)
+  vertices.emplace_back(Vec3r<T>{center[0] + T(-1.), center[1] + T(1.), center[2] + T(-1.)});
+  // 2  (-1, -1, -1)
+  vertices.emplace_back(Vec3r<T>{center[0] + T(-1.), center[1] + T(-1.), center[2] + T(-1.)});
+  // 3  (1, -1, -1)
+  vertices.emplace_back(Vec3r<T>{center[0] + T(1.), center[1] + T(-1.), center[2] + T(-1.)});
+
+  // 4  (1, 1, 1)
+  vertices.emplace_back(Vec3r<T>{center[0] + T(1.), center[1] + T(1.), center[2] + T(1.)});
+  // 5  (-1, 1, 1)
+  vertices.emplace_back(Vec3r<T>{center[0] + T(-1.), center[1] + T(1.), center[2] + T(1.)});
+  // 6  (-1, -1, 1)
+  vertices.emplace_back(Vec3r<T>{center[0] + T(-1.), center[1] + T(-1.), center[2] + T(1.)});
+  // 7  (1, -1, 1)
+  vertices.emplace_back(Vec3r<T>{center[0] + T(1.), center[1] + T(-1.), center[2] + T(1.)});
+
+  // CCW
+
+  // xy Plane (z=1)
+  indices.emplace_back(Vec3ui{4, 5, 7});
+  indices.emplace_back(Vec3ui{6, 7, 5});
+
+//  // xz Plane (y=-1)
+//  indices.emplace_back(Vec3ui{7, 6, 3});
+//  indices.emplace_back(Vec3ui{2, 3, 6});
+
+  // xz Plane (y=1)
+  indices.emplace_back(Vec3ui{4, 5, 0});
+  indices.emplace_back(Vec3ui{6, 0, 5});
+//
+//  // yz Plane (x=-1)
+//  indices.emplace_back(Vec3ui{5, 6, 1});
+//  indices.emplace_back(Vec3ui{2, 1, 6});
+//
+//  // yz Plane (x=1)
+//  indices.emplace_back(Vec3ui{4, 7, 0});
+//  indices.emplace_back(Vec3ui{3, 0, 7});
+}
+
+template<typename T>
+inline void two_plane_mesh(const Vec3r<T> &center, Vec3rList<T> &vertices, Vec3iList &indices) {
+  // BBox (-1, -1, -1) ( 1,  1,  1)
+
+  // 0  (1, 1, -1)
+  vertices.emplace_back(Vec3r<T>{center[0] + T(1.), center[1] + T(1.), center[2] + T(-1.)});
+  // 1  (-1, 1, -1)
+  vertices.emplace_back(Vec3r<T>{center[0] + T(-1.), center[1] + T(1.), center[2] + T(-1.)});
+  // 2  (-1, -1, -1)
+  vertices.emplace_back(Vec3r<T>{center[0] + T(-1.), center[1] + T(-1.), center[2] + T(-1.)});
+  // 3  (1, -1, -1)
+  vertices.emplace_back(Vec3r<T>{center[0] + T(1.), center[1] + T(-1.), center[2] + T(-1.)});
+
+  // 4  (1, 1, 1)
+  vertices.emplace_back(Vec3r<T>{center[0] + T(1.), center[1] + T(1.), center[2] + T(1.)});
+  // 5  (-1, 1, 1)
+  vertices.emplace_back(Vec3r<T>{center[0] + T(-1.), center[1] + T(1.), center[2] + T(1.)});
+  // 6  (-1, -1, 1)
+  vertices.emplace_back(Vec3r<T>{center[0] + T(-1.), center[1] + T(-1.), center[2] + T(1.)});
+  // 7  (1, -1, 1)
+  vertices.emplace_back(Vec3r<T>{center[0] + T(1.), center[1] + T(-1.), center[2] + T(1.)});
+
+  // CCW
+
+  // xy Plane (z=-1)
+  indices.emplace_back(Vec3ui{0, 1, 3});
+  indices.emplace_back(Vec3ui{2, 3, 1});
+  // xy Plane (z=1)
+  indices.emplace_back(Vec3ui{4, 5, 7});
+  indices.emplace_back(Vec3ui{6, 7, 5});
+}
+
+// Create two triangle in one plane
+template<typename T>
+inline void two_triangle_ccw_plane_xy(const Vec3r<T> &center, Vec3rList<T> &vertices, Vec3iList &indices) {
+  // 0  (1, 1, -1)
+  vertices.emplace_back(Vec3r<T>{center[0] + T(1.), center[1] + T(1.), center[2] + T(0)});
+  // 1  (-1, 1, -1)
+  vertices.emplace_back(Vec3r<T>{center[0] + T(-1.), center[1] + T(1.), center[2] + T(0)});
+  // 2  (-1, -1, -1)
+  vertices.emplace_back(Vec3r<T>{center[0] + T(-1.), center[1] + T(-1.), center[2] + T(0)});
+  // 3  (1, -1, -1)
+  vertices.emplace_back(Vec3r<T>{center[0] + T(1.), center[1] + T(-1.), center[2] + T(0)});
+
+  indices.emplace_back(Vec3ui{0, 1, 3});
+  indices.emplace_back(Vec3ui{2, 3, 1});
+}
+
+// Create two triangle in one plane
+template<typename T>
+inline void two_triangle_ccw_plane_xz(const Vec3r<T> &center, Vec3rList<T> &vertices, Vec3iList &indices) {
+  // 0  (-1, -1, -1)
+  vertices.emplace_back(Vec3r<T>{center[0] + T(-1.), center[1] + T(0), center[2] + T(-1.)});
+  // 1  (1, -1, -1)
+  vertices.emplace_back(Vec3r<T>{center[0] + T(1.), center[1] + T(0), center[2] + T(-1.)});
+  // 2  (-1, -1, 1)
+  vertices.emplace_back(Vec3r<T>{center[0] + T(-1.), center[1] + T(0), center[2] + T(1.)});
+  // 3  (1, -1, 1)
+  vertices.emplace_back(Vec3r<T>{center[0] + T(1.), center[1] + T(0), center[2] + T(1.)});
+
+  indices.emplace_back(Vec3ui{3, 2, 1});
+  indices.emplace_back(Vec3ui{0, 1, 2});
 }
 
 // Create single triangle counter clockwise (Order of Indices: 0 -> 2 -> 1)
