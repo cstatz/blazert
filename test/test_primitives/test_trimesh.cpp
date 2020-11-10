@@ -614,7 +614,7 @@ TEST_CASE_TEMPLATE("Trimesh -> two triangles", T, float, double) {
         two_triangle_ccw_plane_xy(center, *vertices, *indices);
         TriangleMesh triangle(*vertices, *indices);
 
-        Vec3r<T> org1{0.25, 0.25, 5};
+        Vec3r<T> org1{0, 0, 5};
         Vec3r<T> dir1{0, 0, -1};
 
         Ray<T> ray{org1, dir1};
@@ -629,7 +629,7 @@ TEST_CASE_TEMPLATE("Trimesh -> two triangles", T, float, double) {
         two_triangle_ccw_plane_xz(center, *vertices, *indices);
         TriangleMesh triangle(*vertices, *indices);
 
-        Vec3r<T> org1{0.25, 5, 0.25};
+        Vec3r<T> org1{0, 5, 0};
         Vec3r<T> dir1{0, -1, 0};
 
         Ray<T> ray{org1, dir1};
@@ -644,7 +644,7 @@ TEST_CASE_TEMPLATE("Trimesh -> two triangles", T, float, double) {
         two_plane_mesh(center, *vertices, *indices);
         TriangleMesh triangle(*vertices, *indices);
 
-        Vec3r<T> org1{0.25, 0.25, 5};
+        Vec3r<T> org1{0, 0, 5};
         Vec3r<T> dir1{0, 0, -1};
 
         Ray<T> ray{org1, dir1};
@@ -659,7 +659,7 @@ TEST_CASE_TEMPLATE("Trimesh -> two triangles", T, float, double) {
         two_plane_mesh_90_deg(center, *vertices, *indices);
         TriangleMesh triangle(*vertices, *indices);
 
-        Vec3r<T> org1{0.25, 0.25, 5};
+        Vec3r<T> org1{0, 0, 5};
         Vec3r<T> dir1{0, 0, -1};
 
         Ray<T> ray{org1, dir1};
