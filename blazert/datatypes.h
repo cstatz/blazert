@@ -44,6 +44,9 @@ using Vec2ui = blaze::StaticVector<unsigned int, 2UL, blaze::columnVector, A_, P
 /// 3x3 matrix of type `T`.
 template<class T>
 using Mat3r = blaze::StaticMatrix<T, 3UL, 3UL, blaze::rowMajor, A_, P_>;
+/// 2x2 matrix of type 'T'.
+template<class T>
+using Mat2r = blaze::StaticMatrix<T, 2UL, 2UL, blaze::rowMajor, A_, P_>;
 
 // Container
 /// `std::vector` with `Vec3r<T>` and blaze allocator for aligned allocation.

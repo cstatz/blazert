@@ -11,9 +11,21 @@
  * 2.1 center at origin ( rotated, non-rotated cylinder)
  * 2.2 center not at origin ( rotated, non-rotated cylinder)
  *
- * 3. intersection tests
+ * 3. distance to surface
  * 3.1 center at origin
- *  3.1.1 non-rotated cylinder
+ *  3.1.1 non-rotated
+ *  3.1.1 rotated aroung y-axis
+ * 3.2 center not at origin
+ *  3.2.1 circular base area
+ *      non-rotated
+ *      rotated
+ *  3.2.2 elliptical base ares
+ *      non-rotated
+ *      rotated
+ *
+ * 4. intersection tests
+ * 4.1 center at origin
+ *  4.1.1 non-rotated cylinder
  *      origin    hit where?
  *      __________________________
  *      above     top, perpendicular
@@ -27,7 +39,7 @@
  *      above     no hits
  *      below     no hits
  *      outside   no hits
- *  3.1.2 rotated cylinder
+ *  4.1.2 rotated cylinder
  *      rotation  origin  hit where?
  *      ____________________________
  *      z-axis    z-axis  top + no hit
@@ -35,7 +47,7 @@
  *      x-axis    y-axis  top + no hit
  *
  *
- * 3.2 center not at origin
+ * 4.2 center not at origin
  *  The same cases as in 3.1 are implemented for shifted center
  */
 
@@ -159,6 +171,498 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
       }
     }
   }
+
+  SUBCASE("distance to surface") {
+    SUBCASE("center at origin") {
+      centers->emplace_back(Vec3r<T>{0, 0, 0});
+      heights->emplace_back(2);
+      SUBCASE("circular top/bottom") {
+        semi_axes_a->emplace_back(1);
+        semi_axes_b->emplace_back(1);
+
+        SUBCASE("non-rotated") {
+          const Mat3r<T> rot = blaze::IdentityMatrix<T>(3UL);
+          rotations->push_back(rot);
+          CylinderCollection cylinders(*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations);
+          const unsigned int prim_id = 0;
+
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, 0, 0}, static_cast<T>(1.));
+          // points directly on the shell
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, 0, 1}, static_cast<T>(0.));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, 0, -1}, static_cast<T>(0.));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, 1, 0}, static_cast<T>(0.));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, -1, 1}, static_cast<T>(0.));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{-1, 0, 0}, static_cast<T>(0.));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 0, 0}, static_cast<T>(0.));
+
+          // check other points
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, 0, 0.5}, static_cast<T>(0.5));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, 0.5, 0.5}, static_cast<T>(0.5));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, 0.6, 0.5}, static_cast<T>(0.4));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, 0.5, 0.6}, static_cast<T>(0.4));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0.6, 0, 0.5}, static_cast<T>(0.4));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{-0.5, 0, -0.6}, static_cast<T>(0.4));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{-0.5, -0.5, 0},
+                                     static_cast<T>(1. - std::sqrt(2) * 0.5));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0.5, 0.5, -0.1},
+                                     static_cast<T>(1. - std::sqrt(2) * 0.5));
+        }
+
+        SUBCASE("rotated") {
+          // rotated around the y plane -> x-axis is now the axis of the cylinder
+          Mat3r<T> rot{{0, 0, 1}, {0, 1, 0}, {-1, 0, 0}};
+          rotations->push_back(rot);
+          CylinderCollection cylinders(*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations);
+          const unsigned int prim_id = 0;
+
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, 0, 0}, static_cast<T>(1.));
+          // points directly on the shell
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 0, 0}, static_cast<T>(0.));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{-1, 0, 0}, static_cast<T>(0.));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, 1, 0}, static_cast<T>(0.));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, -1, 0}, static_cast<T>(0.));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, 0, -1}, static_cast<T>(0.));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, 0, 1}, static_cast<T>(0.));
+
+          // check other points
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0.5, 0, 0}, static_cast<T>(0.5));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0.5, 0.5, 0}, static_cast<T>(0.5));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0.5, 0.6, 0}, static_cast<T>(0.4));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0.6, 0.5, 0}, static_cast<T>(0.4));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0.5, 0, 0.6}, static_cast<T>(0.4));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{-0.6, 0, -0.5}, static_cast<T>(0.4));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, -0.5, -0.5},
+                                     static_cast<T>(1. - std::sqrt(2) * 0.5));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{-.1, 0.5, 0.5},
+                                     static_cast<T>(1. - std::sqrt(2) * 0.5));
+        }
+      }
+
+      SUBCASE("elliptical top/bottom") {
+        // r = 1 on x-axis, r=2 on y-axis
+        semi_axes_a->emplace_back(1);
+        semi_axes_b->emplace_back(2);
+
+        SUBCASE("non-rotated") {
+          const Mat3r<T> rot = blaze::IdentityMatrix<T>(3UL);
+          rotations->push_back(rot);
+          CylinderCollection cylinders(*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations);
+          const unsigned int prim_id = 0;
+
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, 0, 0}, static_cast<T>(1.));
+          // points directly on the shell
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, 0, 1}, static_cast<T>(0.));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, 0, -1}, static_cast<T>(0.));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, 2, 0}, static_cast<T>(0.));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, -2, 0}, static_cast<T>(0.));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{-1, 0, 0}, static_cast<T>(0.));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 0, 0}, static_cast<T>(0.));
+
+          // check other points
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, 0, 0.5}, static_cast<T>(0.5));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, 0.5, 0.5}, static_cast<T>(0.5));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, 1.5, 0.5}, static_cast<T>(0.5));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, 1.75, 0.5}, static_cast<T>(0.25));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, -1.75, 0.5}, static_cast<T>(0.25));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0.5, 0, 0.5}, static_cast<T>(0.5));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{-0.5, 0, 0.5}, static_cast<T>(0.5));
+
+          // closing in to the border at x
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0.1, 0, 0.0}, static_cast<T>(0.9));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0.2, 0, 0.0}, static_cast<T>(0.8));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0.3, 0, 0.0}, static_cast<T>(0.7));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0.4, 0, 0.0}, static_cast<T>(0.6));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0.5, 0, 0.0}, static_cast<T>(0.5));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0.6, 0, 0.0}, static_cast<T>(0.4));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0.7, 0, 0.0}, static_cast<T>(0.3));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0.8, 0, 0.0}, static_cast<T>(0.2));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0.9, 0, 0.0}, static_cast<T>(0.1));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{-0.1, 0, 0.0}, static_cast<T>(0.9));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{-0.2, 0, 0.0}, static_cast<T>(0.8));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{-0.3, 0, 0.0}, static_cast<T>(0.7));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{-0.4, 0, 0.0}, static_cast<T>(0.6));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{-0.5, 0, 0.0}, static_cast<T>(0.5));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{-0.6, 0, 0.0}, static_cast<T>(0.4));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{-0.7, 0, 0.0}, static_cast<T>(0.3));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{-0.8, 0, 0.0}, static_cast<T>(0.2));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{-0.9, 0, 0.0}, static_cast<T>(0.1));
+
+          // closing in to the border of y
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, 0.1, 0}, static_cast<T>(1.0));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, 0.2, 0}, static_cast<T>(1.0));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, 0.3, 0}, static_cast<T>(1.0));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, 0.4, 0}, static_cast<T>(1.0));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, 0.5, 0}, static_cast<T>(1.0));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, 0.6, 0}, static_cast<T>(1.0));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, 0.7, 0}, static_cast<T>(1.0));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, 0.8, 0}, static_cast<T>(1.0));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, 0.9, 0}, static_cast<T>(1.0));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, 1.0, 0}, static_cast<T>(1.0));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, 1.1, 0}, static_cast<T>(0.9));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, 1.2, 0}, static_cast<T>(0.8));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, 1.3, 0}, static_cast<T>(0.7));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, 1.4, 0}, static_cast<T>(0.6));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, 1.5, 0}, static_cast<T>(0.5));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, 1.6, 0}, static_cast<T>(0.4));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, 1.7, 0}, static_cast<T>(0.3));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, 1.8, 0}, static_cast<T>(0.2));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, 1.9, 0}, static_cast<T>(0.1));
+
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, -0.1, 0}, static_cast<T>(1.0));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, -0.2, 0}, static_cast<T>(1.0));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, -0.3, 0}, static_cast<T>(1.0));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, -0.4, 0}, static_cast<T>(1.0));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, -0.5, 0}, static_cast<T>(1.0));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, -0.6, 0}, static_cast<T>(1.0));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, -0.7, 0}, static_cast<T>(1.0));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, -0.8, 0}, static_cast<T>(1.0));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, -0.9, 0}, static_cast<T>(1.0));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, -1.0, 0}, static_cast<T>(1.0));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, -1.1, 0}, static_cast<T>(0.9));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, -1.2, 0}, static_cast<T>(0.8));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, -1.3, 0}, static_cast<T>(0.7));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, -1.4, 0}, static_cast<T>(0.6));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, -1.5, 0}, static_cast<T>(0.5));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, -1.6, 0}, static_cast<T>(0.4));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, -1.7, 0}, static_cast<T>(0.3));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, -1.8, 0}, static_cast<T>(0.2));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, -1.9, 0}, static_cast<T>(0.1));
+        }
+        SUBCASE("rotated") {
+
+          // rotated around the y plane -> x-axis is now the axis of the cylinder
+          Mat3r<T> rot{{0, 0, 1}, {0, 1, 0}, {-1, 0, 0}};
+          rotations->push_back(rot);
+          CylinderCollection cylinders(*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations);
+          const unsigned int prim_id = 0;
+
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, 0, 0}, static_cast<T>(1.));
+          // points directly on the shell
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 0, 0}, static_cast<T>(0.));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{-1, 0, 0}, static_cast<T>(0.));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, 2, 0}, static_cast<T>(0.));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, -2, 0}, static_cast<T>(0.));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, 0, -1}, static_cast<T>(0.));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, 0, 1}, static_cast<T>(0.));
+
+          //  check other points
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0.5, 0, 0}, static_cast<T>(0.5));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0.5, 0.5, 0}, static_cast<T>(0.5));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0.5, 1.5, 0}, static_cast<T>(0.5));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0.5, 1.75, 0}, static_cast<T>(0.25));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0.5, -1.75, 0}, static_cast<T>(0.25));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0.5, 0, 0.5}, static_cast<T>(0.5));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0.5, 0, -0.5}, static_cast<T>(0.5));
+
+          // closing in to the border at x
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, 0, 0.1}, static_cast<T>(0.9));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, 0, 0.2}, static_cast<T>(0.8));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, 0, 0.3}, static_cast<T>(0.7));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, 0, 0.4}, static_cast<T>(0.6));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, 0, 0.5}, static_cast<T>(0.5));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, 0, 0.6}, static_cast<T>(0.4));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, 0, 0.7}, static_cast<T>(0.3));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, 0, 0.8}, static_cast<T>(0.2));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, 0, 0.9}, static_cast<T>(0.1));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, 0, -0.1}, static_cast<T>(0.9));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, 0, -0.2}, static_cast<T>(0.8));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, 0, -0.3}, static_cast<T>(0.7));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, 0, -0.4}, static_cast<T>(0.6));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, 0, -0.5}, static_cast<T>(0.5));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, 0, -0.6}, static_cast<T>(0.4));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, 0, -0.7}, static_cast<T>(0.3));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, 0, -0.8}, static_cast<T>(0.2));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, 0, -0.9}, static_cast<T>(0.1));
+
+          // closing in to the border of y
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, 0.1, 0}, static_cast<T>(1.0));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, 0.2, 0}, static_cast<T>(1.0));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, 0.3, 0}, static_cast<T>(1.0));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, 0.4, 0}, static_cast<T>(1.0));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, 0.5, 0}, static_cast<T>(1.0));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, 0.6, 0}, static_cast<T>(1.0));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, 0.7, 0}, static_cast<T>(1.0));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, 0.8, 0}, static_cast<T>(1.0));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, 0.9, 0}, static_cast<T>(1.0));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, 1.0, 0}, static_cast<T>(1.0));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, 1.1, 0}, static_cast<T>(0.9));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, 1.2, 0}, static_cast<T>(0.8));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, 1.3, 0}, static_cast<T>(0.7));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, 1.4, 0}, static_cast<T>(0.6));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, 1.5, 0}, static_cast<T>(0.5));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, 1.6, 0}, static_cast<T>(0.4));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, 1.7, 0}, static_cast<T>(0.3));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, 1.8, 0}, static_cast<T>(0.2));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, 1.9, 0}, static_cast<T>(0.1));
+
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, -0.1, 0}, static_cast<T>(1.0));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, -0.2, 0}, static_cast<T>(1.0));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, -0.3, 0}, static_cast<T>(1.0));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, -0.4, 0}, static_cast<T>(1.0));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, -0.5, 0}, static_cast<T>(1.0));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, -0.6, 0}, static_cast<T>(1.0));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, -0.7, 0}, static_cast<T>(1.0));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, -0.8, 0}, static_cast<T>(1.0));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, -0.9, 0}, static_cast<T>(1.0));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, -1.0, 0}, static_cast<T>(1.0));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, -1.1, 0}, static_cast<T>(0.9));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, -1.2, 0}, static_cast<T>(0.8));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, -1.3, 0}, static_cast<T>(0.7));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, -1.4, 0}, static_cast<T>(0.6));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, -1.5, 0}, static_cast<T>(0.5));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, -1.6, 0}, static_cast<T>(0.4));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, -1.7, 0}, static_cast<T>(0.3));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, -1.8, 0}, static_cast<T>(0.2));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, -1.9, 0}, static_cast<T>(0.1));
+        }
+      }
+    }
+    SUBCASE("shifted center") {
+      centers->emplace_back(Vec3r<T>{1, 1, 1});
+      heights->emplace_back(2);
+      SUBCASE("circular top/bottom") {
+        semi_axes_a->emplace_back(1);
+        semi_axes_b->emplace_back(1);
+
+        SUBCASE("non-rotated") {
+          const Mat3r<T> rot = blaze::IdentityMatrix<T>(3UL);
+          rotations->push_back(rot);
+          CylinderCollection cylinders(*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations);
+          const unsigned int prim_id = 0;
+
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 1, 1}, static_cast<T>(1.));
+          // points directly on the shell
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 1, 2}, static_cast<T>(0.));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 1, 0}, static_cast<T>(0.));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 2, 1}, static_cast<T>(0.));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 0, 2}, static_cast<T>(0.));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, 1, 1}, static_cast<T>(0.));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{2, 1, 1}, static_cast<T>(0.));
+
+          // check other points
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 1, 1.5}, static_cast<T>(0.5));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 1.5, 1.5}, static_cast<T>(0.5));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 1.6, 1.5}, static_cast<T>(0.4));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 1.5, 1.6}, static_cast<T>(0.4));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1.6, 1, 1.5}, static_cast<T>(0.4));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0.5, 1, 0.4}, static_cast<T>(0.4));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0.5, 0.5, 1},
+                                     static_cast<T>(1. - std::sqrt(2) * 0.5));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1.5, 1.5, 0.9},
+                                     static_cast<T>(1. - std::sqrt(2) * 0.5));
+        }
+
+        SUBCASE("rotated") {
+          // rotated around the y plane -> x-axis is now the axis of the cylinder
+          Mat3r<T> rot{{0, 0, 1}, {0, 1, 0}, {-1, 0, 0}};
+          rotations->push_back(rot);
+          CylinderCollection cylinders(*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations);
+          const unsigned int prim_id = 0;
+
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 1, 1}, static_cast<T>(1.));
+          // points directly on the shell
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{2, 1, 1}, static_cast<T>(0.));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, 1, 1}, static_cast<T>(0.));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 2, 1}, static_cast<T>(0.));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{2, 0, 1}, static_cast<T>(0.));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 1, 0}, static_cast<T>(0.));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 1, 2}, static_cast<T>(0.));
+
+          // check other points
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1.5, 1, 1}, static_cast<T>(0.5));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1.5, 1.5, 1}, static_cast<T>(0.5));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1.5, 1.6, 1}, static_cast<T>(0.4));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1.6, 1.5, 1}, static_cast<T>(0.4));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1.5, 1, 1.6}, static_cast<T>(0.4));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0.4, 1, 0.5}, static_cast<T>(0.4));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 0.5, 0.5},
+                                     static_cast<T>(1. - std::sqrt(2) * 0.5));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0.9, 1.5, 1.5},
+                                     static_cast<T>(1. - std::sqrt(2) * 0.5));
+        }
+      }
+
+      SUBCASE("elliptical top/bottom") {
+        // r = 1 on x-axis, r=2 on y-axis
+        semi_axes_a->emplace_back(1);
+        semi_axes_b->emplace_back(2);
+
+        SUBCASE("non-rotated") {
+          const Mat3r<T> rot = blaze::IdentityMatrix<T>(3UL);
+          rotations->push_back(rot);
+          CylinderCollection cylinders(*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations);
+          const unsigned int prim_id = 0;
+
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 1, 1}, static_cast<T>(1.));
+          // points directly on the shell
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 1, 2}, static_cast<T>(0.));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 1, 0}, static_cast<T>(0.));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 3, 1}, static_cast<T>(0.));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, -1, 1}, static_cast<T>(0.));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, 1, 1}, static_cast<T>(0.));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{2, 1, 1}, static_cast<T>(0.));
+
+          // check other points
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 1, 1.5}, static_cast<T>(0.5));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 1.5, 1.5}, static_cast<T>(0.5));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 2.5, 1.5}, static_cast<T>(0.5));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 2.75, 1.5}, static_cast<T>(0.25));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, -0.75, 1.5}, static_cast<T>(0.25));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1.5, 1, 1.5}, static_cast<T>(0.5));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0.5, 1, 1.5}, static_cast<T>(0.5));
+
+          // closing in to the border at x
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1.1, 1, 1}, static_cast<T>(0.9));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1.2, 1, 1}, static_cast<T>(0.8));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1.3, 1, 1}, static_cast<T>(0.7));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1.4, 1, 1}, static_cast<T>(0.6));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1.5, 1, 1}, static_cast<T>(0.5));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1.6, 1, 1}, static_cast<T>(0.4));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1.7, 1, 1}, static_cast<T>(0.3));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1.8, 1, 1}, static_cast<T>(0.2));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1.9, 1, 1}, static_cast<T>(0.1));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0.9, 1, 1}, static_cast<T>(0.9));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0.8, 1, 1}, static_cast<T>(0.8));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0.7, 1, 1}, static_cast<T>(0.7));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0.6, 1, 1}, static_cast<T>(0.6));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0.5, 1, 1}, static_cast<T>(0.5));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0.4, 1, 1}, static_cast<T>(0.4));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0.3, 1, 1}, static_cast<T>(0.3));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0.2, 1, 1}, static_cast<T>(0.2));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0.1, 1, 1}, static_cast<T>(0.1));
+
+          // closing in to the border of y
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 1.1, 1}, static_cast<T>(1.0));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 1.2, 1}, static_cast<T>(1.0));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 1.3, 1}, static_cast<T>(1.0));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 1.4, 1}, static_cast<T>(1.0));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 1.5, 1}, static_cast<T>(1.0));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 1.6, 1}, static_cast<T>(1.0));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 1.7, 1}, static_cast<T>(1.0));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 1.8, 1}, static_cast<T>(1.0));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 1.9, 1}, static_cast<T>(1.0));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 2.0, 1}, static_cast<T>(1.0));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 2.1, 1}, static_cast<T>(0.9));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 2.2, 1}, static_cast<T>(0.8));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 2.3, 1}, static_cast<T>(0.7));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 2.4, 1}, static_cast<T>(0.6));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 2.5, 1}, static_cast<T>(0.5));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 2.6, 1}, static_cast<T>(0.4));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 2.7, 1}, static_cast<T>(0.3));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 2.8, 1}, static_cast<T>(0.2));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 2.9, 1}, static_cast<T>(0.1));
+
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 0.9, 1}, static_cast<T>(1.0));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 0.8, 1}, static_cast<T>(1.0));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 0.7, 1}, static_cast<T>(1.0));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 0.6, 1}, static_cast<T>(1.0));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 0.5, 1}, static_cast<T>(1.0));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 0.4, 1}, static_cast<T>(1.0));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 0.3, 1}, static_cast<T>(1.0));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 0.2, 1}, static_cast<T>(1.0));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 0.1, 1}, static_cast<T>(1.0));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 0.0, 1}, static_cast<T>(1.0));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, -0.1, 1}, static_cast<T>(0.9));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, -0.2, 1}, static_cast<T>(0.8));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, -0.3, 1}, static_cast<T>(0.7));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, -0.4, 1}, static_cast<T>(0.6));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, -0.5, 1}, static_cast<T>(0.5));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, -0.6, 1}, static_cast<T>(0.4));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, -0.7, 1}, static_cast<T>(0.3));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, -0.8, 1}, static_cast<T>(0.2));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, -0.9, 1}, static_cast<T>(0.1));
+        }
+        SUBCASE("rotated") {
+
+          // rotated around the y plane -> x-axis is now the axis of the cylinder
+          Mat3r<T> rot{{0, 0, 1}, {0, 1, 0}, {-1, 0, 0}};
+          rotations->push_back(rot);
+          CylinderCollection cylinders(*centers, *semi_axes_a, *semi_axes_b, *heights, *rotations);
+          const unsigned int prim_id = 0;
+
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 1, 1}, static_cast<T>(1.));
+          // points directly on the shell
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{2, 1, 1}, static_cast<T>(0.));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0, 1, 1}, static_cast<T>(0.));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 3, 1}, static_cast<T>(0.));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, -1, 1}, static_cast<T>(0.));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 1, 0}, static_cast<T>(0.));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 1, 2}, static_cast<T>(0.));
+
+          //  check other points
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1.5, 1, 1}, static_cast<T>(0.5));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1.5, 1.5, 1}, static_cast<T>(0.5));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1.5, 2.5, 1}, static_cast<T>(0.5));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1.5, 2.75, 1}, static_cast<T>(0.25));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1.5, -0.75, 1}, static_cast<T>(0.25));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1.5, 1, 1.5}, static_cast<T>(0.5));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1.5, 1, 0.5}, static_cast<T>(0.5));
+
+          // closing in to the border at x
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 1, 1.1}, static_cast<T>(0.9));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 1, 1.2}, static_cast<T>(0.8));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 1, 1.3}, static_cast<T>(0.7));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 1, 1.4}, static_cast<T>(0.6));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 1, 1.5}, static_cast<T>(0.5));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 1, 1.6}, static_cast<T>(0.4));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 1, 1.7}, static_cast<T>(0.3));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 1, 1.8}, static_cast<T>(0.2));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 1, 1.9}, static_cast<T>(0.1));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 1, 0.9}, static_cast<T>(0.9));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 1, 0.8}, static_cast<T>(0.8));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 1, 0.7}, static_cast<T>(0.7));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 1, 0.6}, static_cast<T>(0.6));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 1, 0.5}, static_cast<T>(0.5));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 1, 0.4}, static_cast<T>(0.4));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 1, 0.3}, static_cast<T>(0.3));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 1, 0.2}, static_cast<T>(0.2));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 1, 0.1}, static_cast<T>(0.1));
+
+          // closing in to the border of y
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 1.1, 1}, static_cast<T>(1.0));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 1.2, 1}, static_cast<T>(1.0));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 1.3, 1}, static_cast<T>(1.0));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 1.4, 1}, static_cast<T>(1.0));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 1.5, 1}, static_cast<T>(1.0));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 1.6, 1}, static_cast<T>(1.0));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 1.7, 1}, static_cast<T>(1.0));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 1.8, 1}, static_cast<T>(1.0));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 1.9, 1}, static_cast<T>(1.0));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 2.0, 1}, static_cast<T>(1.0));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 2.1, 1}, static_cast<T>(0.9));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 2.2, 1}, static_cast<T>(0.8));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 2.3, 1}, static_cast<T>(0.7));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 2.4, 1}, static_cast<T>(0.6));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 2.5, 1}, static_cast<T>(0.5));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 2.6, 1}, static_cast<T>(0.4));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 2.7, 1}, static_cast<T>(0.3));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 2.8, 1}, static_cast<T>(0.2));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 2.9, 1}, static_cast<T>(0.1));
+
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 0.9, 1}, static_cast<T>(1.0));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 0.8, 1}, static_cast<T>(1.0));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 0.7, 1}, static_cast<T>(1.0));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 0.6, 1}, static_cast<T>(1.0));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 0.5, 1}, static_cast<T>(1.0));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 0.4, 1}, static_cast<T>(1.0));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 0.3, 1}, static_cast<T>(1.0));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 0.2, 1}, static_cast<T>(1.0));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 0.1, 1}, static_cast<T>(1.0));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, 0.0, 1}, static_cast<T>(1.0));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, -0.1, 1}, static_cast<T>(0.9));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, -0.2, 1}, static_cast<T>(0.8));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, -0.3, 1}, static_cast<T>(0.7));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, -0.4, 1}, static_cast<T>(0.6));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, -0.5, 1}, static_cast<T>(0.5));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, -0.6, 1}, static_cast<T>(0.4));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, -0.7, 1}, static_cast<T>(0.3));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, -0.8, 1}, static_cast<T>(0.2));
+          assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1, -0.9, 1}, static_cast<T>(0.1));
+        }
+      }
+    }
+  }
+
   SUBCASE("intersections") {
     SUBCASE("center at origin") {
       centers->emplace_back(Vec3r<T>{0, 0, 0});

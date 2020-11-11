@@ -495,31 +495,61 @@ inline bool intersect_primitive(CylinderIntersector<T, Collection> &i, const Cyl
 }
 
 template<typename T>
-[[nodiscard]] inline T distance_to_surface(const Cylinder<T> &cylinder, const Vec3r<T> point) noexcept {
+[[nodiscard]] inline T distance_to_surface(const Cylinder<T> &cylinder, const Vec3r<T> &point) noexcept {
   const Vec3r<T> &local_point = trans(cylinder.rotation) * (point - cylinder.center);
 
+  // 0. calculate distance to top
+  const T dist_top = std::fabs(local_point[2] - cylinder.height / 2);
+
+  // 1. calculate distance to bottom
+  const T dist_bottom = std::fabs(local_point[2] + cylinder.height / 2);
+
+
+  // 2. calculate distance to shell
   // reference sphere radius
-  const T R = 1;
+  const T R = 1.;
 
   const T a = cylinder.semi_axis_a;
   const T b = cylinder.semi_axis_b;
 
-  const Mat3r<T> ellipse_to_sphere {a/R, 0, 0,
-                                   0, b/R, 0,
-                                   0 ,0, 1};
-  const T determinant_ellipse_to_sphere = det(ellipse_to_sphere);
+  // we are now only interested in any xy-cut
+  const Vec2r<T> &local_point_xy{local_point[0], local_point[1]};
 
-  // 1. calculate distance to shell
-  const T distance_equivalent_sphere = std::sqrt(std::pow(a*local_point[0]/R,2 ) + std::pow(b*local_point[1]/R, 2));
-  const T dist_shell = std::abs(determinant_ellipse_to_sphere) * distance_equivalent_sphere;
+  // if the points is in the center, the distance is determined by how far away each of the shells is
+  if (isZero(local_point_xy)) {
+    //std::cout << "local_point_xy = " << local_point_xy << "\n";
+    //std::cout << "a = " << a << "\nb = " << b << "\ndist_top = " << dist_top << "\ndist_bottom = " << dist_bottom << "\n";
+    return std::min({a, b, dist_top, dist_bottom});
+  }
 
-  // 2. calculate distance to top
-  const T dist_top = std::abs(local_point[2] - cylinder.height/2);
+  const Mat2r<T> ellipse_to_circle{{R / a, 0}, {0, R / b}};
+  const Mat2r<T> circle_to_ellipse{{a / R, 0}, {0, b / R}};
 
-  // 3. calculate distance to bottom
-  const T dist_bottom = std::abs(local_point[2] + cylinder.height/2);;
+  const Vec2r<T> local_point_equivalent_circle = ellipse_to_circle * local_point_xy;
 
-  return std::min(dist_shell, dist_top, dist_bottom);
+  // if the query point is on the z-axis the distance is determined by the minimum of the semi_axes as well as the distance
+  // to the bottom or top of the cylinder
+  if (isZero(local_point_equivalent_circle))
+    return std::min({a, b, dist_top, dist_bottom});
+
+  // distance between local_point and equivalent cirlce
+  const T distance_equivalent_circle = std::fabs(norm(local_point_equivalent_circle) - R);
+  // std::fabs(std::sqrt(std::pow(R*local_point[0]/a, static_cast<T>(2.)) + std::pow(R*local_point[1]/b, static_cast<T>(2.))) - R);
+
+  const Vec2r<T> distance_vector_equivalent_circle =
+      distance_equivalent_circle * local_point_equivalent_circle / norm(local_point_equivalent_circle);
+
+  const Vec2r<T> distance_vector_ellipse = distance_equivalent_circle * circle_to_ellipse * local_point_equivalent_circle / norm(local_point_equivalent_circle);
+      // distance_vector_equivalent_circle / norm(distance_vector_equivalent_circle);
+  const T dist_shell = norm(distance_vector_ellipse);
+  //std::sqrt(d_ellipse_x*d_ellipse_x + d_ellipse_y*d_ellipse_y); //distance_equivalent_sphere / std::fabs(determinant_sphere_to_ellipse);
+
+  //std::cout << cylinder <<
+  //    "\n dist_shell  = " << dist_shell <<
+  //    "\n dist_top    = " << dist_top <<
+  //   "\n dist_bottom = " << dist_bottom << "\n";
+
+  return std::min({dist_shell, dist_top, dist_bottom});
 }
 
 template<typename T>
@@ -528,7 +558,8 @@ std::ostream &operator<<(std::ostream &stream, const Cylinder<T> &cylinder) {
   stream << "{\n";
 
   stream << R"(  "Cylinder": )" << &cylinder << ",\n";
-  stream << R"(  "center": [)" << cylinder.center[0] << "," << cylinder.center[1] << "," << cylinder.center[2] << "],\n";
+  stream << R"(  "center": [)" << cylinder.center[0] << "," << cylinder.center[1] << "," << cylinder.center[2]
+         << "],\n";
   stream << R"(  "semi_axis_a": )" << cylinder.semi_axis_a << ",\n";
   stream << R"(  "semi_axis_b": )" << cylinder.semi_axis_b << ",\n";
   stream << R"(  "height": )" << cylinder.height << ",\n";
@@ -547,7 +578,8 @@ std::ostream &operator<<(std::ostream &stream, const Cylinder<T> &cylinder) {
 template<typename T>
 std::ostream &operator<<(std::ostream &stream, const CylinderCollection<T> &collection) {
   stream << "{\n";
-  stream << R"("CylinderCollection": [)" << "\n";
+  stream << R"("CylinderCollection": [)"
+         << "\n";
   stream << R"({ "size": )" << collection.size() << "},\n";
 
   for (uint32_t id_cylinder = 0; id_cylinder < collection.size(); id_cylinder++) {
