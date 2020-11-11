@@ -180,6 +180,17 @@ inline bool intersect_primitive(TriangleIntersector<T, Collection> &i, const Tri
   return false;
 }
 
+template<typename T>
+[[nodiscard]] inline T distance_to_surface(const Triangle<T> &triangle, const Vec3r<T> &point) noexcept {
+
+  // Triangle<T> saves one vertex and two edges
+  const Vec3r<T> &v0 = triangle.a;
+  const Vec3r<T> &v1 = triangle.b + triangle.a;
+  const Vec3r<T> &v2 = triangle.c - triangle.a;
+
+  return closest_point_on_triangle(v0, v1, v2, point);
+}
+
 
 template<typename T>
 std::ostream &operator<<(std::ostream &stream, const Triangle<T> &triangle) {
