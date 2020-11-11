@@ -515,6 +515,10 @@ template<typename T>
   // we are now only interested in any xy-cut
   const Vec2r<T> &local_point_xy{local_point[0], local_point[1]};
 
+  // if z-coordinate is above or below the cylinder, only distance to the top or bottom can be correct
+  if(local_point[2] > cylinder.height/2) return dist_top;
+  if(local_point[2] < -cylinder.height/2) return dist_bottom;
+
   // if the points is in the center, the distance is determined by how far away each of the shells is
   if (isZero(local_point_xy)) {
     //std::cout << "local_point_xy = " << local_point_xy << "\n";
