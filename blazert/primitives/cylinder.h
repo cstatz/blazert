@@ -526,10 +526,11 @@ template<typename T>
     return std::min({a, b, dist_top, dist_bottom});
   }
 
-  const Mat2r<T> ellipse_to_circle{{R / a, 0}, {0, R / b}};
-  const Mat2r<T> circle_to_ellipse{{a / R, 0}, {0, b / R}};
+  // transformation matrices to transform vectors from elliptical to circular and back
+  const Mat2r<T> &ellipse_to_circle{{R / a, 0}, {0, R / b}};
+  const Mat2r<T> &circle_to_ellipse{{a / R, 0}, {0, b / R}};
 
-  const Vec2r<T> local_point_equivalent_circle = ellipse_to_circle * local_point_xy;
+  const Vec2r<T> &local_point_equivalent_circle = ellipse_to_circle * local_point_xy;
 
   // if the query point is on the z-axis the distance is determined by the minimum of the semi_axes as well as the distance
   // to the bottom or top of the cylinder
@@ -538,20 +539,12 @@ template<typename T>
 
   // distance between local_point and equivalent cirlce
   const T distance_equivalent_circle = std::fabs(norm(local_point_equivalent_circle) - R);
-  // std::fabs(std::sqrt(std::pow(R*local_point[0]/a, static_cast<T>(2.)) + std::pow(R*local_point[1]/b, static_cast<T>(2.))) - R);
 
-  const Vec2r<T> distance_vector_equivalent_circle =
+  const Vec2r<T> &distance_vector_equivalent_circle =
       distance_equivalent_circle * local_point_equivalent_circle / norm(local_point_equivalent_circle);
 
-  const Vec2r<T> distance_vector_ellipse = distance_equivalent_circle * circle_to_ellipse * local_point_equivalent_circle / norm(local_point_equivalent_circle);
-      // distance_vector_equivalent_circle / norm(distance_vector_equivalent_circle);
+  const Vec2r<T> &distance_vector_ellipse = distance_equivalent_circle * circle_to_ellipse * local_point_equivalent_circle / norm(local_point_equivalent_circle);
   const T dist_shell = norm(distance_vector_ellipse);
-  //std::sqrt(d_ellipse_x*d_ellipse_x + d_ellipse_y*d_ellipse_y); //distance_equivalent_sphere / std::fabs(determinant_sphere_to_ellipse);
-
-  //std::cout << cylinder <<
-  //    "\n dist_shell  = " << dist_shell <<
-  //    "\n dist_top    = " << dist_top <<
-  //   "\n dist_bottom = " << dist_bottom << "\n";
 
   return std::min({dist_shell, dist_top, dist_bottom});
 }
