@@ -575,31 +575,40 @@ TEST_CASE_TEMPLATE("Trimesh: Cube Mesh - Bounding Box", T, float, double) {
   }
 }
 
-    // https://en.cppreference.com/w/cpp/types/numeric_limits
+// https://en.cppreference.com/w/cpp/types/numeric_limits
+TEST_CASE_TEMPLATE("Trimesh : Cube Mesh - Intersections", T, float, double) {
+  auto centers = std::make_unique<Vec3rList<T>>();
+  auto vertices = std::make_unique<Vec3rList<T>>();
+  auto indices = std::make_unique<Vec3iList>();
+  SUBCASE("Center at origin") {
+    const Vec3r<T> center{0, 0, 0};
+    SUBCASE("assembled ccw") {
+      cube_mesh_ccw_01(center, *vertices, *indices);
+      TriangleMesh triangle_cw(*vertices, *indices);
+      SUBCASE("source outside in +z") {
+        Vec3r<T> org1{0, 0, 5};
+        Vec3r<T> dir1{0, 0, -1};
 
-    SUBCASE("2.2 intersections") {
-      SUBCASE("2.2.1 center at origin") {
-        const Vec3r<T> center{0, 0, 0};
-        SUBCASE("assembled cw") {
-          cube_mesh_ccw_01(center, *vertices, *indices);
-          TriangleMesh triangle_cw(*vertices, *indices);
-          SUBCASE("outside") {
-            Vec3r<T> org1{0.25, 0.25, 5};
-            Vec3r<T> dir1{0, 0, -1};
+        Ray<T> ray{org1, dir1};
 
-            Ray<T> ray{org1, dir1};
+        const bool true_hit = true;
+        const T true_distance = 4;
 
-            const bool true_hit = true;
-            const T true_distance = 4;
-            const Vec3r<T> true_normal{0, 0, -1};
+        assert_traverse_bvh_hit_trimesh_temp(triangle_cw, ray, true_hit, true_distance);
 
-            SUBCASE("traverse bvh") {
-              assert_traverse_bvh_hit_trimesh(triangle_cw, ray, true_hit, true_distance, true_normal);
-            }
-          }
-          SUBCASE("inside") {}
-          SUBCASE("on surface") {}
-        }
+        //        const Vec3r<T> true_normal{0, 0, -1};
+        //        assert_traverse_bvh_hit_trimesh(triangle_cw, ray, true_hit, true_distance, true_normal);
+      }
+      SUBCASE("source outside in -z") {
+        Vec3r<T> org1{0, 0, -5};
+        Vec3r<T> dir1{0, 0, 1};
+
+        Ray<T> ray{org1, dir1};
+
+        const bool true_hit = true;
+        const T true_distance = 4;
+
+        assert_traverse_bvh_hit_trimesh_temp(triangle_cw, ray, true_hit, true_distance);
       }
     }
   }
