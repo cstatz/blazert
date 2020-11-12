@@ -346,7 +346,7 @@ inline void pyramid_mesh(const Vec3r<T> &center, Vec3rList<T> &vertices, Vec3iLi
   indices.emplace_back(Vec3ui{0, 1, 2});
 
   // side -x
-  indices.emplace_back(Vec3ui{0, 3,  5});
+  indices.emplace_back(Vec3ui{0, 3,  4});
 
   // site y
   indices.emplace_back(Vec3ui{0, 4,  1});
