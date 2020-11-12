@@ -37,7 +37,7 @@
 using namespace blazert;
 using namespace doctest;
 
-TEST_CASE_TEMPLATE("Trimesh -> Single Triangle", T, float, double) {
+TEST_CASE_TEMPLATE("Trimesh : Single Triangle", T, float, double) {
   auto centers = std::make_unique<Vec3rList<T>>();
   auto vertices = std::make_unique<Vec3rList<T>>();
   auto indices = std::make_unique<Vec3iList>();
@@ -522,7 +522,7 @@ TEST_CASE_TEMPLATE("Trimesh -> Single Triangle", T, float, double) {
   }
 }
 
-TEST_CASE_TEMPLATE("Trimesh -> Multiple triangles : Cube Mesh", T, float, double) {
+TEST_CASE_TEMPLATE("Trimesh: Cube Mesh - Bounding Box", T, float, double) {
   auto centers = std::make_unique<Vec3rList<T>>();
   auto vertices = std::make_unique<Vec3rList<T>>();
   auto indices = std::make_unique<Vec3iList>();
@@ -572,6 +572,8 @@ TEST_CASE_TEMPLATE("Trimesh -> Multiple triangles : Cube Mesh", T, float, double
         }
       }
     }
+  }
+}
 
     // https://en.cppreference.com/w/cpp/types/numeric_limits
 
