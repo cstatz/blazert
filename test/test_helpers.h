@@ -321,6 +321,40 @@ inline void single_triangle_ccw_flat_xy(const Vec3r<T> &center, Vec3rList<T> &ve
   indices.emplace_back(Vec3ui{0, 2, 1});
 }
 
+/**
+ * Pyramid mesh
+ */
+template<typename T>
+inline void pyramid_mesh(const Vec3r<T> &center, Vec3rList<T> &vertices, Vec3iList &indices) {
+
+  // 0 (0, 0, 1)
+  vertices.emplace_back(Vec3r<T>{center[0] + T(0), center[1] + T(0), center[2] + T(1)});
+  // 1 (1, 1, 0)
+  vertices.emplace_back(Vec3r<T>{center[0] + T(1.), center[1] + T(1.), center[2] + T(0)});
+  // 2 (1, -1, 0)
+  vertices.emplace_back(Vec3r<T>{center[0] + T(1.), center[1] + T(-1.), center[2] + T(0)});
+  // 3 (-1, -1, 0)
+  vertices.emplace_back(Vec3r<T>{center[0] + T(-1.), center[1] + T(-1.), center[2] + T(0)});
+  // 4 (-1, 1, 0)
+  vertices.emplace_back(Vec3r<T>{center[0] + T(-1.), center[1] + T(1.), center[2] + T(0)});
+
+  // ground plane cw
+  indices.emplace_back(Vec3ui{1, 2, 3});
+  indices.emplace_back(Vec3ui{2, 3, 4});
+
+  // site x
+  indices.emplace_back(Vec3ui{0, 1, 2});
+
+  // side -x
+  indices.emplace_back(Vec3ui{0, 3,  5});
+
+  // site y
+  indices.emplace_back(Vec3ui{0, 4,  1});
+
+  // site -y
+  indices.emplace_back(Vec3ui{0, 2,  3});
+}
+
 template<typename T1, typename T2>
 bool Mat3_isApprox(Mat3r<T1> &m1, Mat3r<T2> &m2) {
   bool res = true;
