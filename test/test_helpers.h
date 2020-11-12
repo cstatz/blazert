@@ -103,7 +103,7 @@ inline void cube_mesh_ccw_01(const Vec3r<T> &center, Vec3rList<T> &vertices, Vec
 
   // xz Plane (y=1)
   indices.emplace_back(Vec3ui{4, 5, 0});
-  indices.emplace_back(Vec3ui{6, 0, 5});
+  indices.emplace_back(Vec3ui{1, 0, 5});// 6, 0, 5 : old
 
   // yz Plane (x=-1)
   indices.emplace_back(Vec3ui{5, 6, 1});
@@ -176,15 +176,15 @@ inline void two_plane_mesh_90_deg(const Vec3r<T> &center, Vec3rList<T> &vertices
 
   // xz Plane (y=1)
   indices.emplace_back(Vec3ui{4, 5, 0});
-  indices.emplace_back(Vec3ui{6, 0, 5});
-//
-//  // yz Plane (x=-1)
-//  indices.emplace_back(Vec3ui{5, 6, 1});
-//  indices.emplace_back(Vec3ui{2, 1, 6});
-//
-//  // yz Plane (x=1)
-//  indices.emplace_back(Vec3ui{4, 7, 0});
-//  indices.emplace_back(Vec3ui{3, 0, 7});
+  indices.emplace_back(Vec3ui{1, 0, 5});
+  //
+  //  // yz Plane (x=-1)
+  //  indices.emplace_back(Vec3ui{5, 6, 1});
+  //  indices.emplace_back(Vec3ui{2, 1, 6});
+  //
+  //  // yz Plane (x=1)
+  //  indices.emplace_back(Vec3ui{4, 7, 0});
+  //  indices.emplace_back(Vec3ui{3, 0, 7});
 }
 
 template<typename T>
