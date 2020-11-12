@@ -170,9 +170,9 @@ inline void two_plane_mesh_90_deg(const Vec3r<T> &center, Vec3rList<T> &vertices
   indices.emplace_back(Vec3ui{4, 5, 7});
   indices.emplace_back(Vec3ui{6, 7, 5});
 
-//  // xz Plane (y=-1)
-//  indices.emplace_back(Vec3ui{7, 6, 3});
-//  indices.emplace_back(Vec3ui{2, 3, 6});
+  //  // xz Plane (y=-1)
+  //  indices.emplace_back(Vec3ui{7, 6, 3});
+  //  indices.emplace_back(Vec3ui{2, 3, 6});
 
   // xz Plane (y=1)
   indices.emplace_back(Vec3ui{4, 5, 0});
