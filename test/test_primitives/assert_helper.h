@@ -117,6 +117,25 @@ inline void assert_traverse_bvh_hit_trimesh(const Collection<T> &collection, con
   CHECK(rayhit.normal[2] == Approx(static_cast<T>(normal[2])));
 }
 
+/**
+ * Temporary used for Cube mesh, for hit check and right distance to surface
+ * TODO: Find out how to correctly check normals of cube mesh
+ */
+template<typename T, template<typename> typename Collection>
+inline void assert_traverse_bvh_hit_trimesh_temp(const Collection<T> &collection, const Ray<T> &ray,
+                                                 const bool true_hit, const T distance) {
+
+  BVH bvh(collection);
+  SAHBinnedBuilder builder;
+
+  [[maybe_unused]] auto statistics = builder.build(bvh);
+
+  RayHit<T> rayhit;
+  const bool hit = traverse(bvh, ray, rayhit);
+  CHECK(hit == true_hit);
+  CHECK(rayhit.hit_distance == Approx(static_cast<T>(distance)));
+}
+
 template<typename T, template<typename> typename Collection>
 inline void assert_traverse_bvh_hit(const Collection<T> &collection, const Ray<T> &ray, const bool true_hit,
                                     const unsigned int prim_id, const T distance, const Vec3r<T> &normal) {
