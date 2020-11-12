@@ -614,7 +614,29 @@ TEST_CASE_TEMPLATE("Trimesh : Cube Mesh - Intersections", T, float, double) {
   }
 }
 
-TEST_CASE_TEMPLATE("Trimesh -> two triangles", T, float, double) {
+TEST_CASE_TEMPLATE("Trimesh : Pyramid - Intersections", T, float, double){
+  auto centers = std::make_unique<Vec3rList<T>>();
+  auto vertices = std::make_unique<Vec3rList<T>>();
+  auto indices = std::make_unique<Vec3iList>();
+  SUBCASE("center at orgin"){
+    const Vec3r<T> center{0, 0, 0};
+
+    pyramid_mesh(center, *vertices, *indices);
+    TriangleMesh triangle(*vertices, *indices);
+
+    Vec3r<T> org1{0, 0, 5};
+    Vec3r<T> dir1{0, 0, -1};
+
+    Ray<T> ray{org1, dir1};
+
+    const bool true_hit = true;
+    const T true_distance = 4;
+    const Vec3r<T> true_normal{0, 0, 1};
+
+    assert_traverse_bvh_hit_trimesh(triangle, ray, true_hit, true_distance, true_normal);
+  }
+}
+/* TEST_CASE_TEMPLATE("Trimesh : Two Triangles - Intersections", T, float, double) {
   auto centers = std::make_unique<Vec3rList<T>>();
   auto vertices = std::make_unique<Vec3rList<T>>();
   auto indices = std::make_unique<Vec3iList>();
