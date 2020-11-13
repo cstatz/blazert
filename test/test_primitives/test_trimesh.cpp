@@ -581,28 +581,30 @@ TEST_CASE_TEMPLATE("Trimesh : Cube Mesh - Intersections", T, float, double) {
     SUBCASE("assembled ccw") {
       cube_mesh_ccw_01(center, *vertices, *indices);
       TriangleMesh triangle_cw(*vertices, *indices);
-      SUBCASE("source outside in +z") {
-        Vec3r<T> org1{0, 0, 5};
-        Vec3r<T> dir1{0, 0, -1};
+      SUBCASE("source outside") {
+        SUBCASE("HIT") {
+          SUBCASE("positive Z-Axis") {
+            Vec3r<T> org1{0, 0, 5};
+            Vec3r<T> dir1{0, 0, -1};
 
-        Ray<T> ray{org1, dir1};
+            Ray<T> ray{org1, dir1};
 
-        const bool true_hit = true;
-        const T true_distance = 4;
+            const bool true_hit = true;
+            const T true_distance = 4;
 
-        assert_traverse_bvh_hit_trimesh_temp(triangle_cw, ray, true_hit, true_distance);
+            assert_traverse_bvh_hit_trimesh_temp(triangle_cw, ray, true_hit, true_distance);
 
-        //        const Vec3r<T> true_normal{0, 0, -1};
-        //        assert_traverse_bvh_hit_trimesh(triangle_cw, ray, true_hit, true_distance, true_normal);
-      }
-      SUBCASE("source outside in -z") {
-        Vec3r<T> org1{0, 0, -5};
-        Vec3r<T> dir1{0, 0, 1};
+            //        const Vec3r<T> true_normal{0, 0, -1};
+            //        assert_traverse_bvh_hit_trimesh(triangle_cw, ray, true_hit, true_distance, true_normal);
+          }
+          SUBCASE("negativ Z-Axis") {
+            Vec3r<T> org1{0, 0, -5};
+            Vec3r<T> dir1{0, 0, 1};
 
-        Ray<T> ray{org1, dir1};
+            Ray<T> ray{org1, dir1};
 
-        const bool true_hit = true;
-        const T true_distance = 4;
+            const bool true_hit = true;
+            const T true_distance = 4;
 
         assert_traverse_bvh_hit_trimesh_temp(triangle_cw, ray, true_hit, true_distance);
       }
@@ -610,11 +612,11 @@ TEST_CASE_TEMPLATE("Trimesh : Cube Mesh - Intersections", T, float, double) {
   }
 }
 
-TEST_CASE_TEMPLATE("Trimesh : Pyramid - Intersections", T, float, double){
+TEST_CASE_TEMPLATE("Trimesh : Pyramid - Intersections", T, float, double) {
   auto centers = std::make_unique<Vec3rList<T>>();
   auto vertices = std::make_unique<Vec3rList<T>>();
   auto indices = std::make_unique<Vec3iList>();
-  SUBCASE("center at orgin"){
+  SUBCASE("center at orgin") {
     const Vec3r<T> center{0, 0, 0};
 
     pyramid_mesh(center, *vertices, *indices);
