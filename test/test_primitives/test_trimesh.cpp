@@ -523,11 +523,11 @@ TEST_CASE_TEMPLATE("Trimesh : Single Triangle", T, float, double) {
 }
 
 TEST_CASE_TEMPLATE("Trimesh : Single Triangle - Precision (float)", T, float){
-  // TODO: Teste wie nah ein Strahl an eine Kante oder Ecke sein kann, damit getroffen oder verfehlt wird
+  // TODO: Test how close a beam can be to an edge or corner to hit or miss
 }
 
 TEST_CASE_TEMPLATE("Trimesh : Single Triangle - Precision (double)", T, double){
-  // TODO: Teste wie nah ein Strahl an eine Kante oder Ecke sein kann, damit getroffen oder verfehlt wird
+  // TODO: Test how close a beam can be to an edge or corner to hit or miss
 }
 
 TEST_CASE_TEMPLATE("Trimesh: Cube Mesh - Bounding Box", T, float, double) {
