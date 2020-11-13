@@ -526,51 +526,47 @@ TEST_CASE_TEMPLATE("Trimesh: Cube Mesh - Bounding Box", T, float, double) {
   auto centers = std::make_unique<Vec3rList<T>>();
   auto vertices = std::make_unique<Vec3rList<T>>();
   auto indices = std::make_unique<Vec3iList>();
-  SUBCASE("2. cube mesh") {
-    SUBCASE("2.1 bounding box") {
-      SUBCASE("2.1.1 center at origin") {
-        const Vec3r<T> center{0, 0, 0};
-        SUBCASE("counter clockwise") {
+  SUBCASE("2.1.1 center at origin") {
+    const Vec3r<T> center{0, 0, 0};
+    SUBCASE("counter clockwise") {
 
-          cube_mesh_ccw(center, *vertices, *indices);
-          TriangleMesh triangles_ccw(*vertices, *indices);
+      cube_mesh_ccw(center, *vertices, *indices);
+      TriangleMesh triangles_ccw(*vertices, *indices);
 
-          const Vec3r<T> true_bmin{-1, -1, -1};
-          const Vec3r<T> true_bmax{1, 1, 1};
+      const Vec3r<T> true_bmin{-1, -1, -1};
+      const Vec3r<T> true_bmax{1, 1, 1};
 
-          assert_bounding_box_multi_prim_id(triangles_ccw, 0, true_bmin, true_bmax, 8);
-        }
-        SUBCASE("clockwise") {
-          cube_mesh_cw(center, *vertices, *indices);
-          TriangleMesh triangles_cw(*vertices, *indices);
+      assert_bounding_box_multi_prim_id(triangles_ccw, 0, true_bmin, true_bmax, 8);
+    }
+    SUBCASE("clockwise") {
+      cube_mesh_cw(center, *vertices, *indices);
+      TriangleMesh triangles_cw(*vertices, *indices);
 
-          const Vec3r<T> true_bmin{-1, -1, -1};
-          const Vec3r<T> true_bmax{1, 1, 1};
+      const Vec3r<T> true_bmin{-1, -1, -1};
+      const Vec3r<T> true_bmax{1, 1, 1};
 
-          assert_bounding_box_multi_prim_id(triangles_cw, 0, true_bmin, true_bmax, 8);
-        }
-      }
-      SUBCASE("2.1.2 center shifted") {
-        const Vec3r<T> center{4, 2, 0};
-        SUBCASE("counter clockwise") {
-          cube_mesh_ccw_01(center, *vertices, *indices);
-          TriangleMesh triangles_ccw(*vertices, *indices);
+      assert_bounding_box_multi_prim_id(triangles_cw, 0, true_bmin, true_bmax, 8);
+    }
+  }
+  SUBCASE("2.1.2 center shifted") {
+    const Vec3r<T> center{4, 2, 0};
+    SUBCASE("counter clockwise") {
+      cube_mesh_ccw_01(center, *vertices, *indices);
+      TriangleMesh triangles_ccw(*vertices, *indices);
 
-          const Vec3r<T> true_bmin{3, 1, -1};
-          const Vec3r<T> true_bmax{5, 3, 1};
+      const Vec3r<T> true_bmin{3, 1, -1};
+      const Vec3r<T> true_bmax{5, 3, 1};
 
-          assert_bounding_box_multi_prim_id(triangles_ccw, 0, true_bmin, true_bmax, 12);
-        }
-        SUBCASE("clockwise") {
-          cube_mesh_cw(center, *vertices, *indices);
-          TriangleMesh triangles_cw(*vertices, *indices);
+      assert_bounding_box_multi_prim_id(triangles_ccw, 0, true_bmin, true_bmax, 12);
+    }
+    SUBCASE("clockwise") {
+      cube_mesh_cw(center, *vertices, *indices);
+      TriangleMesh triangles_cw(*vertices, *indices);
 
-          const Vec3r<T> true_bmin{3, 1, -1};
-          const Vec3r<T> true_bmax{5, 3, 1};
+      const Vec3r<T> true_bmin{3, 1, -1};
+      const Vec3r<T> true_bmax{5, 3, 1};
 
-          assert_bounding_box_multi_prim_id(triangles_cw, 0, true_bmin, true_bmax, 12);
-        }
-      }
+      assert_bounding_box_multi_prim_id(triangles_cw, 0, true_bmin, true_bmax, 12);
     }
   }
 }
