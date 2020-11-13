@@ -653,304 +653,354 @@ TEST_CASE_TEMPLATE("Trimesh : Cube Mesh - Intersections", T, float, double) {
             assert_traverse_bvh_hit_trimesh_temp(triangle_cw, ray, true_hit, true_distance);
           }
         }
-        SUBCASE("NO HIT"){
+        SUBCASE("NO HIT") {
+          SUBCASE("ray parallel to z-Axis") {
+            Vec3r<T> org1{2, 2, -5};
+            Vec3r<T> dir1{0, 0, 1};
 
-        }
-      }
-      SUBCASE("source inside") {
-        SUBCASE("source at cube origin center") {
-          SUBCASE("Hit : center of planes") {
-            SUBCASE("Ray-Direction: +Z") {
-              Vec3r<T> org1{0, 0, 0};
-              Vec3r<T> dir1{0, 0, 1};
+            Ray<T> ray{org1, dir1};
 
-              Ray<T> ray{org1, dir1};
-
-              const bool true_hit = true;
-              const T true_distance = 1;
-
-              assert_traverse_bvh_hit_trimesh_temp(triangle_cw, ray, true_hit, true_distance);
+            const bool true_hit = false;
+            auto true_prim_id = static_cast<unsigned int>(-1);
+            const T true_distance = std::numeric_limits<T>::max();
+            const Vec3r<T> true_normal{0, 0, 0};
+            SUBCASE("intersect primitive") {
+              assert_intersect_primitive_hit(triangle_cw, ray, true_hit, true_prim_id, true_distance, true_normal);
             }
-            SUBCASE("Ray-Direction: -Z") {
-              Vec3r<T> org1{0, 0, 0};
-              Vec3r<T> dir1{0, 0, -1};
-
-              Ray<T> ray{org1, dir1};
-
-              const bool true_hit = true;
-              const T true_distance = 1;
-
-              assert_traverse_bvh_hit_trimesh_temp(triangle_cw, ray, true_hit, true_distance);
-            }
-            SUBCASE("Ray-Direction: +Y") {
-              Vec3r<T> org1{0, 0, 0};
-              Vec3r<T> dir1{0, 1, 0};
-
-              Ray<T> ray{org1, dir1};
-
-              const bool true_hit = true;
-              const T true_distance = 1;
-
-              assert_traverse_bvh_hit_trimesh_temp(triangle_cw, ray, true_hit, true_distance);
-            }
-            SUBCASE("Ray-Direction: -Y") {
-              Vec3r<T> org1{0, 0, 0};
-              Vec3r<T> dir1{0, -1, 0};
-
-              Ray<T> ray{org1, dir1};
-
-              const bool true_hit = true;
-              const T true_distance = 1;
-
-              assert_traverse_bvh_hit_trimesh_temp(triangle_cw, ray, true_hit, true_distance);
-            }
-            SUBCASE("Ray-Direction: +X") {
-              Vec3r<T> org1{0, 0, 0};
-              Vec3r<T> dir1{1, 0, 0};
-
-              Ray<T> ray{org1, dir1};
-
-              const bool true_hit = true;
-              const T true_distance = 1;
-
-              assert_traverse_bvh_hit_trimesh_temp(triangle_cw, ray, true_hit, true_distance);
-            }
-            SUBCASE("Ray-Direction: -X") {
-              Vec3r<T> org1{0, 0, 0};
-              Vec3r<T> dir1{-1, 0, 0};
-
-              Ray<T> ray{org1, dir1};
-
-              const bool true_hit = true;
-              const T true_distance = 1;
-
-              assert_traverse_bvh_hit_trimesh_temp(triangle_cw, ray, true_hit, true_distance);
+            SUBCASE("traverse bvh") {
+              assert_traverse_bvh_hit(triangle_cw, ray, true_hit, true_prim_id, true_distance, true_normal);
             }
           }
-          SUBCASE("Hit : edges") {
-            SUBCASE("center of edge = (1, 1, 0)") {
-              Vec3r<T> org1{0, 0, 0};
-              Vec3r<T> dir1{1, 1, 0};
+          SUBCASE("ray parallel to y-Axis") {
+            Vec3r<T> org1{2, -5, 2};
+            Vec3r<T> dir1{0, 1, 0};
 
-              Ray<T> ray{org1, dir1};
+            Ray<T> ray{org1, dir1};
 
-              const bool true_hit = true;
-              const T true_distance = static_cast<T>(std::sqrt(2));
-
-              assert_traverse_bvh_hit_trimesh_temp(triangle_cw, ray, true_hit, true_distance);
+            const bool true_hit = false;
+            auto true_prim_id = static_cast<unsigned int>(-1);
+            const T true_distance = std::numeric_limits<T>::max();
+            const Vec3r<T> true_normal{0, 0, 0};
+            SUBCASE("intersect primitive") {
+              assert_intersect_primitive_hit(triangle_cw, ray, true_hit, true_prim_id, true_distance, true_normal);
             }
-            SUBCASE("center of edge = (1, -1, 0)") {
-              Vec3r<T> org1{0, 0, 0};
-              Vec3r<T> dir1{1, -1, 0};
-
-              Ray<T> ray{org1, dir1};
-
-              const bool true_hit = true;
-              const T true_distance = static_cast<T>(std::sqrt(2));
-
-              assert_traverse_bvh_hit_trimesh_temp(triangle_cw, ray, true_hit, true_distance);
-            }
-            SUBCASE("center of edge = (-1, 1, 0)") {
-              Vec3r<T> org1{0, 0, 0};
-              Vec3r<T> dir1{-1, 1, 0};
-
-              Ray<T> ray{org1, dir1};
-
-              const bool true_hit = true;
-              const T true_distance = static_cast<T>(std::sqrt(2));
-
-              assert_traverse_bvh_hit_trimesh_temp(triangle_cw, ray, true_hit, true_distance);
-            }
-            SUBCASE("center of edge = (-1, -1, 0)") {
-              Vec3r<T> org1{0, 0, 0};
-              Vec3r<T> dir1{-1, -1, 0};
-
-              Ray<T> ray{org1, dir1};
-
-              const bool true_hit = true;
-              const T true_distance = static_cast<T>(std::sqrt(2));
-
-              assert_traverse_bvh_hit_trimesh_temp(triangle_cw, ray, true_hit, true_distance);
-            }
-
-            SUBCASE("center of edge = (1, 0, 1)") {
-              Vec3r<T> org1{0, 0, 0};
-              Vec3r<T> dir1{1, 0, 1};
-
-              Ray<T> ray{org1, dir1};
-
-              const bool true_hit = true;
-              const T true_distance = static_cast<T>(std::sqrt(2));
-
-              assert_traverse_bvh_hit_trimesh_temp(triangle_cw, ray, true_hit, true_distance);
-            }
-            SUBCASE("center of edge = (1, 0, -1)") {
-              Vec3r<T> org1{0, 0, 0};
-              Vec3r<T> dir1{1, 0, -1};
-
-              Ray<T> ray{org1, dir1};
-
-              const bool true_hit = true;
-              const T true_distance = static_cast<T>(std::sqrt(2));
-
-              assert_traverse_bvh_hit_trimesh_temp(triangle_cw, ray, true_hit, true_distance);
-            }
-            SUBCASE("center of edge = (-1, 0, 1)") {
-              Vec3r<T> org1{0, 0, 0};
-              Vec3r<T> dir1{-1, 0, 1};
-
-              Ray<T> ray{org1, dir1};
-
-              const bool true_hit = true;
-              const T true_distance = static_cast<T>(std::sqrt(2));
-
-              assert_traverse_bvh_hit_trimesh_temp(triangle_cw, ray, true_hit, true_distance);
-            }
-            SUBCASE("center of edge = (-1, 0, -1)") {
-              Vec3r<T> org1{0, 0, 0};
-              Vec3r<T> dir1{-1, 0, -1};
-
-              Ray<T> ray{org1, dir1};
-
-              const bool true_hit = true;
-              const T true_distance = static_cast<T>(std::sqrt(2));
-
-              assert_traverse_bvh_hit_trimesh_temp(triangle_cw, ray, true_hit, true_distance);
-            }
-
-            SUBCASE("center of edge = (0, 1, 1)") {
-              Vec3r<T> org1{0, 0, 0};
-              Vec3r<T> dir1{0, 1, 1};
-
-              Ray<T> ray{org1, dir1};
-
-              const bool true_hit = true;
-              const T true_distance = static_cast<T>(std::sqrt(2));
-
-              assert_traverse_bvh_hit_trimesh_temp(triangle_cw, ray, true_hit, true_distance);
-            }
-            SUBCASE("center of edge = (0, 1, -1)") {
-              Vec3r<T> org1{0, 0, 0};
-              Vec3r<T> dir1{0, 1, -1};
-
-              Ray<T> ray{org1, dir1};
-
-              const bool true_hit = true;
-              const T true_distance = static_cast<T>(std::sqrt(2));
-
-              assert_traverse_bvh_hit_trimesh_temp(triangle_cw, ray, true_hit, true_distance);
-            }
-            SUBCASE("center of edge = (0, -1, 1)") {
-              Vec3r<T> org1{0, 0, 0};
-              Vec3r<T> dir1{0, -1, 1};
-
-              Ray<T> ray{org1, dir1};
-
-              const bool true_hit = true;
-              const T true_distance = static_cast<T>(std::sqrt(2));
-
-              assert_traverse_bvh_hit_trimesh_temp(triangle_cw, ray, true_hit, true_distance);
-            }
-            SUBCASE("center of edge = (0, -1, -1)") {
-              Vec3r<T> org1{0, 0, 0};
-              Vec3r<T> dir1{0, -1, -1};
-
-              Ray<T> ray{org1, dir1};
-
-              const bool true_hit = true;
-              const T true_distance = static_cast<T>(std::sqrt(2));
-
-              assert_traverse_bvh_hit_trimesh_temp(triangle_cw, ray, true_hit, true_distance);
+            SUBCASE("traverse bvh") {
+              assert_traverse_bvh_hit(triangle_cw, ray, true_hit, true_prim_id, true_distance, true_normal);
             }
           }
-          SUBCASE("Hit : corners") {
-            SUBCASE("corner  = (1, 1, 1)") {
-              Vec3r<T> org1{0, 0, 0};
-              Vec3r<T> dir1{1, 1, 1};
+          SUBCASE("ray parallel to x-Axis") {
+            Vec3r<T> org1{-5, 2, 2};
+            Vec3r<T> dir1{1, 0, 0};
 
-              Ray<T> ray{org1, dir1};
+            Ray<T> ray{org1, dir1};
 
-              const bool true_hit = true;
-              const T true_distance = static_cast<T>(std::sqrt(3));
-
-              assert_traverse_bvh_hit_trimesh_temp(triangle_cw, ray, true_hit, true_distance);
+            const bool true_hit = false;
+            auto true_prim_id = static_cast<unsigned int>(-1);
+            const T true_distance = std::numeric_limits<T>::max();
+            const Vec3r<T> true_normal{0, 0, 0};
+            SUBCASE("intersect primitive") {
+              assert_intersect_primitive_hit(triangle_cw, ray, true_hit, true_prim_id, true_distance, true_normal);
             }
-            SUBCASE("corner  = (1, -1, 1)") {
-              Vec3r<T> org1{0, 0, 0};
-              Vec3r<T> dir1{1, -1, 1};
-
-              Ray<T> ray{org1, dir1};
-
-              const bool true_hit = true;
-              const T true_distance = static_cast<T>(std::sqrt(3));
-
-              assert_traverse_bvh_hit_trimesh_temp(triangle_cw, ray, true_hit, true_distance);
+            SUBCASE("traverse bvh") {
+              assert_traverse_bvh_hit(triangle_cw, ray, true_hit, true_prim_id, true_distance, true_normal);
             }
-            SUBCASE("corner  = (-1, 1, 1)") {
-              Vec3r<T> org1{0, 0, 0};
-              Vec3r<T> dir1{-1, 1, 1};
+          }
+          SUBCASE("source inside") {
+            SUBCASE("source at cube origin center") {
+              SUBCASE("Hit : center of planes") {
+                SUBCASE("Ray-Direction: +Z") {
+                  Vec3r<T> org1{0, 0, 0};
+                  Vec3r<T> dir1{0, 0, 1};
 
-              Ray<T> ray{org1, dir1};
+                  Ray<T> ray{org1, dir1};
 
-              const bool true_hit = true;
-              const T true_distance = static_cast<T>(std::sqrt(3));
+                  const bool true_hit = true;
+                  const T true_distance = 1;
 
-              assert_traverse_bvh_hit_trimesh_temp(triangle_cw, ray, true_hit, true_distance);
-            }
-            SUBCASE("corner  = (-1, -1, 1)") {
-              Vec3r<T> org1{0, 0, 0};
-              Vec3r<T> dir1{-1, -1, 1};
+                  assert_traverse_bvh_hit_trimesh_temp(triangle_cw, ray, true_hit, true_distance);
+                }
+                SUBCASE("Ray-Direction: -Z") {
+                  Vec3r<T> org1{0, 0, 0};
+                  Vec3r<T> dir1{0, 0, -1};
 
-              Ray<T> ray{org1, dir1};
+                  Ray<T> ray{org1, dir1};
 
-              const bool true_hit = true;
-              const T true_distance = static_cast<T>(std::sqrt(3));
+                  const bool true_hit = true;
+                  const T true_distance = 1;
 
-              assert_traverse_bvh_hit_trimesh_temp(triangle_cw, ray, true_hit, true_distance);
-            }
-            SUBCASE("corner  = (1, 1, -1)") {
-              Vec3r<T> org1{0, 0, 0};
-              Vec3r<T> dir1{1, 1, -1};
+                  assert_traverse_bvh_hit_trimesh_temp(triangle_cw, ray, true_hit, true_distance);
+                }
+                SUBCASE("Ray-Direction: +Y") {
+                  Vec3r<T> org1{0, 0, 0};
+                  Vec3r<T> dir1{0, 1, 0};
 
-              Ray<T> ray{org1, dir1};
+                  Ray<T> ray{org1, dir1};
 
-              const bool true_hit = true;
-              const T true_distance = static_cast<T>(std::sqrt(3));
+                  const bool true_hit = true;
+                  const T true_distance = 1;
 
-              assert_traverse_bvh_hit_trimesh_temp(triangle_cw, ray, true_hit, true_distance);
-            }
-            SUBCASE("corner  = (1, -1, -1)") {
-              Vec3r<T> org1{0, 0, 0};
-              Vec3r<T> dir1{1, -1, -1};
+                  assert_traverse_bvh_hit_trimesh_temp(triangle_cw, ray, true_hit, true_distance);
+                }
+                SUBCASE("Ray-Direction: -Y") {
+                  Vec3r<T> org1{0, 0, 0};
+                  Vec3r<T> dir1{0, -1, 0};
 
-              Ray<T> ray{org1, dir1};
+                  Ray<T> ray{org1, dir1};
 
-              const bool true_hit = true;
-              const T true_distance = static_cast<T>(std::sqrt(3));
+                  const bool true_hit = true;
+                  const T true_distance = 1;
 
-              assert_traverse_bvh_hit_trimesh_temp(triangle_cw, ray, true_hit, true_distance);
-            }
-            SUBCASE("corner  = (-1, 1, -1)") {
-              Vec3r<T> org1{0, 0, 0};
-              Vec3r<T> dir1{-1, 1, -1};
+                  assert_traverse_bvh_hit_trimesh_temp(triangle_cw, ray, true_hit, true_distance);
+                }
+                SUBCASE("Ray-Direction: +X") {
+                  Vec3r<T> org1{0, 0, 0};
+                  Vec3r<T> dir1{1, 0, 0};
 
-              Ray<T> ray{org1, dir1};
+                  Ray<T> ray{org1, dir1};
 
-              const bool true_hit = true;
-              const T true_distance = static_cast<T>(std::sqrt(3));
+                  const bool true_hit = true;
+                  const T true_distance = 1;
 
-              assert_traverse_bvh_hit_trimesh_temp(triangle_cw, ray, true_hit, true_distance);
-            }
-            SUBCASE("corner  = (-1, -1, -1)") {
-              Vec3r<T> org1{0, 0, 0};
-              Vec3r<T> dir1{-1, -1, -1};
+                  assert_traverse_bvh_hit_trimesh_temp(triangle_cw, ray, true_hit, true_distance);
+                }
+                SUBCASE("Ray-Direction: -X") {
+                  Vec3r<T> org1{0, 0, 0};
+                  Vec3r<T> dir1{-1, 0, 0};
 
-              Ray<T> ray{org1, dir1};
+                  Ray<T> ray{org1, dir1};
 
-              const bool true_hit = true;
-              const T true_distance = static_cast<T>(std::sqrt(3));
+                  const bool true_hit = true;
+                  const T true_distance = 1;
 
-              assert_traverse_bvh_hit_trimesh_temp(triangle_cw, ray, true_hit, true_distance);
+                  assert_traverse_bvh_hit_trimesh_temp(triangle_cw, ray, true_hit, true_distance);
+                }
+              }
+              SUBCASE("Hit : edges") {
+                SUBCASE("center of edge = (1, 1, 0)") {
+                  Vec3r<T> org1{0, 0, 0};
+                  Vec3r<T> dir1{1, 1, 0};
+
+                  Ray<T> ray{org1, dir1};
+
+                  const bool true_hit = true;
+                  const T true_distance = static_cast<T>(std::sqrt(2));
+
+                  assert_traverse_bvh_hit_trimesh_temp(triangle_cw, ray, true_hit, true_distance);
+                }
+                SUBCASE("center of edge = (1, -1, 0)") {
+                  Vec3r<T> org1{0, 0, 0};
+                  Vec3r<T> dir1{1, -1, 0};
+
+                  Ray<T> ray{org1, dir1};
+
+                  const bool true_hit = true;
+                  const T true_distance = static_cast<T>(std::sqrt(2));
+
+                  assert_traverse_bvh_hit_trimesh_temp(triangle_cw, ray, true_hit, true_distance);
+                }
+                SUBCASE("center of edge = (-1, 1, 0)") {
+                  Vec3r<T> org1{0, 0, 0};
+                  Vec3r<T> dir1{-1, 1, 0};
+
+                  Ray<T> ray{org1, dir1};
+
+                  const bool true_hit = true;
+                  const T true_distance = static_cast<T>(std::sqrt(2));
+
+                  assert_traverse_bvh_hit_trimesh_temp(triangle_cw, ray, true_hit, true_distance);
+                }
+                SUBCASE("center of edge = (-1, -1, 0)") {
+                  Vec3r<T> org1{0, 0, 0};
+                  Vec3r<T> dir1{-1, -1, 0};
+
+                  Ray<T> ray{org1, dir1};
+
+                  const bool true_hit = true;
+                  const T true_distance = static_cast<T>(std::sqrt(2));
+
+                  assert_traverse_bvh_hit_trimesh_temp(triangle_cw, ray, true_hit, true_distance);
+                }
+
+                SUBCASE("center of edge = (1, 0, 1)") {
+                  Vec3r<T> org1{0, 0, 0};
+                  Vec3r<T> dir1{1, 0, 1};
+
+                  Ray<T> ray{org1, dir1};
+
+                  const bool true_hit = true;
+                  const T true_distance = static_cast<T>(std::sqrt(2));
+
+                  assert_traverse_bvh_hit_trimesh_temp(triangle_cw, ray, true_hit, true_distance);
+                }
+                SUBCASE("center of edge = (1, 0, -1)") {
+                  Vec3r<T> org1{0, 0, 0};
+                  Vec3r<T> dir1{1, 0, -1};
+
+                  Ray<T> ray{org1, dir1};
+
+                  const bool true_hit = true;
+                  const T true_distance = static_cast<T>(std::sqrt(2));
+
+                  assert_traverse_bvh_hit_trimesh_temp(triangle_cw, ray, true_hit, true_distance);
+                }
+                SUBCASE("center of edge = (-1, 0, 1)") {
+                  Vec3r<T> org1{0, 0, 0};
+                  Vec3r<T> dir1{-1, 0, 1};
+
+                  Ray<T> ray{org1, dir1};
+
+                  const bool true_hit = true;
+                  const T true_distance = static_cast<T>(std::sqrt(2));
+
+                  assert_traverse_bvh_hit_trimesh_temp(triangle_cw, ray, true_hit, true_distance);
+                }
+                SUBCASE("center of edge = (-1, 0, -1)") {
+                  Vec3r<T> org1{0, 0, 0};
+                  Vec3r<T> dir1{-1, 0, -1};
+
+                  Ray<T> ray{org1, dir1};
+
+                  const bool true_hit = true;
+                  const T true_distance = static_cast<T>(std::sqrt(2));
+
+                  assert_traverse_bvh_hit_trimesh_temp(triangle_cw, ray, true_hit, true_distance);
+                }
+
+                SUBCASE("center of edge = (0, 1, 1)") {
+                  Vec3r<T> org1{0, 0, 0};
+                  Vec3r<T> dir1{0, 1, 1};
+
+                  Ray<T> ray{org1, dir1};
+
+                  const bool true_hit = true;
+                  const T true_distance = static_cast<T>(std::sqrt(2));
+
+                  assert_traverse_bvh_hit_trimesh_temp(triangle_cw, ray, true_hit, true_distance);
+                }
+                SUBCASE("center of edge = (0, 1, -1)") {
+                  Vec3r<T> org1{0, 0, 0};
+                  Vec3r<T> dir1{0, 1, -1};
+
+                  Ray<T> ray{org1, dir1};
+
+                  const bool true_hit = true;
+                  const T true_distance = static_cast<T>(std::sqrt(2));
+
+                  assert_traverse_bvh_hit_trimesh_temp(triangle_cw, ray, true_hit, true_distance);
+                }
+                SUBCASE("center of edge = (0, -1, 1)") {
+                  Vec3r<T> org1{0, 0, 0};
+                  Vec3r<T> dir1{0, -1, 1};
+
+                  Ray<T> ray{org1, dir1};
+
+                  const bool true_hit = true;
+                  const T true_distance = static_cast<T>(std::sqrt(2));
+
+                  assert_traverse_bvh_hit_trimesh_temp(triangle_cw, ray, true_hit, true_distance);
+                }
+                SUBCASE("center of edge = (0, -1, -1)") {
+                  Vec3r<T> org1{0, 0, 0};
+                  Vec3r<T> dir1{0, -1, -1};
+
+                  Ray<T> ray{org1, dir1};
+
+                  const bool true_hit = true;
+                  const T true_distance = static_cast<T>(std::sqrt(2));
+
+                  assert_traverse_bvh_hit_trimesh_temp(triangle_cw, ray, true_hit, true_distance);
+                }
+              }
+              SUBCASE("Hit : corners") {
+                SUBCASE("corner  = (1, 1, 1)") {
+                  Vec3r<T> org1{0, 0, 0};
+                  Vec3r<T> dir1{1, 1, 1};
+
+                  Ray<T> ray{org1, dir1};
+
+                  const bool true_hit = true;
+                  const T true_distance = static_cast<T>(std::sqrt(3));
+
+                  assert_traverse_bvh_hit_trimesh_temp(triangle_cw, ray, true_hit, true_distance);
+                }
+                SUBCASE("corner  = (1, -1, 1)") {
+                  Vec3r<T> org1{0, 0, 0};
+                  Vec3r<T> dir1{1, -1, 1};
+
+                  Ray<T> ray{org1, dir1};
+
+                  const bool true_hit = true;
+                  const T true_distance = static_cast<T>(std::sqrt(3));
+
+                  assert_traverse_bvh_hit_trimesh_temp(triangle_cw, ray, true_hit, true_distance);
+                }
+                SUBCASE("corner  = (-1, 1, 1)") {
+                  Vec3r<T> org1{0, 0, 0};
+                  Vec3r<T> dir1{-1, 1, 1};
+
+                  Ray<T> ray{org1, dir1};
+
+                  const bool true_hit = true;
+                  const T true_distance = static_cast<T>(std::sqrt(3));
+
+                  assert_traverse_bvh_hit_trimesh_temp(triangle_cw, ray, true_hit, true_distance);
+                }
+                SUBCASE("corner  = (-1, -1, 1)") {
+                  Vec3r<T> org1{0, 0, 0};
+                  Vec3r<T> dir1{-1, -1, 1};
+
+                  Ray<T> ray{org1, dir1};
+
+                  const bool true_hit = true;
+                  const T true_distance = static_cast<T>(std::sqrt(3));
+
+                  assert_traverse_bvh_hit_trimesh_temp(triangle_cw, ray, true_hit, true_distance);
+                }
+                SUBCASE("corner  = (1, 1, -1)") {
+                  Vec3r<T> org1{0, 0, 0};
+                  Vec3r<T> dir1{1, 1, -1};
+
+                  Ray<T> ray{org1, dir1};
+
+                  const bool true_hit = true;
+                  const T true_distance = static_cast<T>(std::sqrt(3));
+
+                  assert_traverse_bvh_hit_trimesh_temp(triangle_cw, ray, true_hit, true_distance);
+                }
+                SUBCASE("corner  = (1, -1, -1)") {
+                  Vec3r<T> org1{0, 0, 0};
+                  Vec3r<T> dir1{1, -1, -1};
+
+                  Ray<T> ray{org1, dir1};
+
+                  const bool true_hit = true;
+                  const T true_distance = static_cast<T>(std::sqrt(3));
+
+                  assert_traverse_bvh_hit_trimesh_temp(triangle_cw, ray, true_hit, true_distance);
+                }
+                SUBCASE("corner  = (-1, 1, -1)") {
+                  Vec3r<T> org1{0, 0, 0};
+                  Vec3r<T> dir1{-1, 1, -1};
+
+                  Ray<T> ray{org1, dir1};
+
+                  const bool true_hit = true;
+                  const T true_distance = static_cast<T>(std::sqrt(3));
+
+                  assert_traverse_bvh_hit_trimesh_temp(triangle_cw, ray, true_hit, true_distance);
+                }
+                SUBCASE("corner  = (-1, -1, -1)") {
+                  Vec3r<T> org1{0, 0, 0};
+                  Vec3r<T> dir1{-1, -1, -1};
+
+                  Ray<T> ray{org1, dir1};
+
+                  const bool true_hit = true;
+                  const T true_distance = static_cast<T>(std::sqrt(3));
+
+                  assert_traverse_bvh_hit_trimesh_temp(triangle_cw, ray, true_hit, true_distance);
+                }
+              }
             }
           }
         }
