@@ -522,6 +522,14 @@ TEST_CASE_TEMPLATE("Trimesh : Single Triangle", T, float, double) {
   }
 }
 
+TEST_CASE_TEMPLATE("Trimesh : Single Triangle - Precision (float)", T, float){
+  // TODO: Teste wie nah ein Strahl an eine Kante oder Ecke sein kann, damit getroffen oder verfehlt wird
+}
+
+TEST_CASE_TEMPLATE("Trimesh : Single Triangle - Precision (double)", T, double){
+  // TODO: Teste wie nah ein Strahl an eine Kante oder Ecke sein kann, damit getroffen oder verfehlt wird
+}
+
 TEST_CASE_TEMPLATE("Trimesh: Cube Mesh - Bounding Box", T, float, double) {
   auto centers = std::make_unique<Vec3rList<T>>();
   auto vertices = std::make_unique<Vec3rList<T>>();
