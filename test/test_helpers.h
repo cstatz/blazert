@@ -277,9 +277,9 @@ inline void single_triangle_cw(const Vec3r<T> &center, Vec3rList<T> &vertices, V
 template<typename T>
 inline void single_triangle_cw_flat_xy(const Vec3r<T> &center, Vec3rList<T> &vertices, Vec3iList &indices) {
   // v1 = (0,0,0), v2 = (1,0,0), v3 = (0,1,0)
-  vertices.emplace_back(Vec3r<T>{center[0], center[1], center[2]});
-  vertices.emplace_back(Vec3r<T>{center[0] + T(1.), center[1], center[2]});
-  vertices.emplace_back(Vec3r<T>{center[0], center[1] + T(1.), center[2]});
+  vertices.emplace_back(Vec3r<T>{center[0] + T(0), center[1] + T(0), center[2] + T(0)});
+  vertices.emplace_back(Vec3r<T>{center[0] + T(1.), center[1] + T(0), center[2] + T(0)});
+  vertices.emplace_back(Vec3r<T>{center[0] + T(0), center[1] + T(1.), center[2] + T(0)});
 
   indices.emplace_back(Vec3ui{0, 1, 2});
 }

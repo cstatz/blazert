@@ -522,13 +522,31 @@ TEST_CASE_TEMPLATE("Trimesh : Single Triangle", T, float, double) {
   }
 }
 
-TEST_CASE_TEMPLATE("Trimesh : Single Triangle - Precision (float)", T, float){
+TEST_CASE_TEMPLATE("Trimesh : Single Triangle - Precision (double)", T, float) {
   // TODO: Test how close a beam can be to an edge or corner to hit or miss
+  auto centers = std::make_unique<Vec3rList<T>>();
+  auto vertices = std::make_unique<Vec3rList<T>>();
+  auto indices = std::make_unique<Vec3iList>();
+
+  const Vec3r<T> center{0, 0, 0};
+  single_triangle_cw_flat_xy(center, *vertices, *indices);
+  TriangleMesh triangle(*vertices, *indices);
+
+  const T epsilon{std::numeric_limits<T>::min()};
+
+  Vec3r<T> org1{0.5, 0 - epsilon, 5};
+  Vec3r<T> dir1{0, 0, -1};
+  Ray<T> ray{org1, dir1};
+
+  const bool true_hit = false;
+  const T true_distance = 4;
+
+  assert_traverse_bvh_hit_trimesh_temp(triangle, ray, true_hit, true_distance);
 }
 
-TEST_CASE_TEMPLATE("Trimesh : Single Triangle - Precision (double)", T, double){
+/*TEST_CASE_TEMPLATE("Trimesh : Single Triangle - Precision (double)", T, double){
   // TODO: Test how close a beam can be to an edge or corner to hit or miss
-}
+}*/
 
 TEST_CASE_TEMPLATE("Trimesh: Cube Mesh - Bounding Box", T, float, double) {
   auto centers = std::make_unique<Vec3rList<T>>();
