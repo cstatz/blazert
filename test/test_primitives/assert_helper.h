@@ -123,7 +123,7 @@ inline void assert_traverse_bvh_hit_trimesh(const Collection<T> &collection, con
  */
 template<typename T, template<typename> typename Collection>
 inline void assert_traverse_bvh_hit_trimesh_distance(const Collection<T> &collection, const Ray<T> &ray,
-                                                 const bool true_hit, const T distance) {
+                                                     const bool true_hit, const T distance) {
 
   BVH bvh(collection);
   SAHBinnedBuilder builder;
@@ -134,6 +134,26 @@ inline void assert_traverse_bvh_hit_trimesh_distance(const Collection<T> &collec
   const bool hit = traverse(bvh, ray, rayhit);
   CHECK(hit == true_hit);
   CHECK(rayhit.hit_distance == Approx(static_cast<T>(distance)));
+}
+// WARN(hit == true_hit);
+
+template<typename T, template<typename> typename Collection>
+inline void assert_traverse_bvh_hit_trimesh_precision(const Collection<T> &collection, const Ray<T> &ray,
+                                                      const bool true_hit, const T epsilon, const T run_var) {
+
+  BVH bvh(collection);
+  SAHBinnedBuilder builder;
+
+  [[maybe_unused]] auto statistics = builder.build(bvh);
+
+  RayHit<T> rayhit;
+  const bool hit = traverse(bvh, ray, rayhit);
+/*  if (hit != true_hit) {
+    std::cout << "The precision is greater than or equal " << run_var << "*epsilon. (epsilon = " << epsilon << ")"
+              << std::endl;
+  }*/
+  WARN_MESSAGE(hit == true_hit,
+               "The precision is greater than or equal " << run_var << "*epsilon. (epsilon = " << epsilon << ")");
 }
 
 template<typename T, template<typename> typename Collection>

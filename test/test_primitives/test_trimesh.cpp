@@ -522,7 +522,7 @@ TEST_CASE_TEMPLATE("Trimesh : Single Triangle", T, float, double) {
   }
 }
 
-TEST_CASE_TEMPLATE("Trimesh : Single Triangle - Precision (double)", T, float) {
+TEST_CASE_TEMPLATE("Trimesh : Single Triangle - Precision", T, float, double) {
   // TODO: Test how close a beam can be to an edge or corner to hit or miss
   auto centers = std::make_unique<Vec3rList<T>>();
   auto vertices = std::make_unique<Vec3rList<T>>();
@@ -534,19 +534,48 @@ TEST_CASE_TEMPLATE("Trimesh : Single Triangle - Precision (double)", T, float) {
 
   const T epsilon{std::numeric_limits<T>::min()};
 
-  Vec3r<T> org1{0.5, 0 - epsilon, 5};
-  Vec3r<T> dir1{0, 0, -1};
-  Ray<T> ray{org1, dir1};
+  SUBCASE("edge (0,0,0) -> (1, 0, 0)") {
+    Vec3r<T> dir1{0, 0, -1};
+    const bool true_hit = false;
+    // TODO: check what happens if test fails and problems that occur
+    for(int i = 1; i<=10; ++i){
+      auto i_temp = static_cast<T>(i);
+      Vec3r<T> org1{0.5, 0 - i_temp*epsilon, 5};
+      Ray<T> ray{org1, dir1};
+      assert_traverse_bvh_hit_trimesh_precision(triangle, ray, true_hit, epsilon, i_temp);
+    }
+  }
+/*  SUBCASE("edge (0,0,0) -> (0, 1, 0)") {
+    Vec3r<T> org1{0 - epsilon, 0.5, 5};
+    Vec3r<T> dir1{0, 0, -1};
+    Ray<T> ray{org1, dir1};
 
-  const bool true_hit = false;
-  const T true_distance = 4;
+    const bool true_hit = false;
+    const T true_distance = std::numeric_limits<T>::max();
 
-  assert_traverse_bvh_hit_trimesh_distance(triangle, ray, true_hit, true_distance);
+    assert_traverse_bvh_hit_trimesh_distance(triangle, ray, true_hit, true_distance);
+  }
+  SUBCASE("edge (0,0,0) -> (0, 1, 0)") {
+    Vec3r<T> org1{0 - epsilon, 0.5, 5};
+    Vec3r<T> dir1{0, 0, -1};
+    Ray<T> ray{org1, dir1};
+
+    const bool true_hit = false;
+    const T true_distance = std::numeric_limits<T>::max();
+
+    assert_traverse_bvh_hit_trimesh_distance(triangle, ray, true_hit, true_distance);
+  }
+  SUBCASE("corner") {
+    Vec3r<T> org1{0 - epsilon / 2, 0 - epsilon / 2, 5};
+    Vec3r<T> dir1{0, 0, -1};
+    Ray<T> ray{org1, dir1};
+
+    const bool true_hit = false;
+    const T true_distance = std::numeric_limits<T>::max();
+
+    assert_traverse_bvh_hit_trimesh_distance(triangle, ray, true_hit, true_distance);
+  }*/
 }
-
-/*TEST_CASE_TEMPLATE("Trimesh : Single Triangle - Precision (double)", T, double){
-  // TODO: Test how close a beam can be to an edge or corner to hit or miss
-}*/
 
 TEST_CASE_TEMPLATE("Trimesh: Cube Mesh - Bounding Box", T, float, double) {
   auto centers = std::make_unique<Vec3rList<T>>();
