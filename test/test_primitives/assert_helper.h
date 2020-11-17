@@ -122,7 +122,7 @@ inline void assert_traverse_bvh_hit_trimesh(const Collection<T> &collection, con
  * TODO: Find out how to correctly check normals of cube mesh
  */
 template<typename T, template<typename> typename Collection>
-inline void assert_traverse_bvh_hit_trimesh_temp(const Collection<T> &collection, const Ray<T> &ray,
+inline void assert_traverse_bvh_hit_trimesh_distance(const Collection<T> &collection, const Ray<T> &ray,
                                                  const bool true_hit, const T distance) {
 
   BVH bvh(collection);

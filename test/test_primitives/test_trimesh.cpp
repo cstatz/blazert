@@ -541,7 +541,7 @@ TEST_CASE_TEMPLATE("Trimesh : Single Triangle - Precision (double)", T, float) {
   const bool true_hit = false;
   const T true_distance = 4;
 
-  assert_traverse_bvh_hit_trimesh_temp(triangle, ray, true_hit, true_distance);
+  assert_traverse_bvh_hit_trimesh_distance(triangle, ray, true_hit, true_distance);
 }
 
 /*TEST_CASE_TEMPLATE("Trimesh : Single Triangle - Precision (double)", T, double){
@@ -618,7 +618,7 @@ TEST_CASE_TEMPLATE("Trimesh : Cube Mesh - Intersections", T, float, double) {
             const bool true_hit = true;
             const T true_distance = 4;
 
-            assert_traverse_bvh_hit_trimesh_temp(triangle_cw, ray, true_hit, true_distance);
+            assert_traverse_bvh_hit_trimesh_distance(triangle_cw, ray, true_hit, true_distance);
 
             //        const Vec3r<T> true_normal{0, 0, -1};
             //        assert_traverse_bvh_hit_trimesh(triangle_cw, ray, true_hit, true_distance, true_normal);
@@ -632,7 +632,7 @@ TEST_CASE_TEMPLATE("Trimesh : Cube Mesh - Intersections", T, float, double) {
             const bool true_hit = true;
             const T true_distance = 4;
 
-            assert_traverse_bvh_hit_trimesh_temp(triangle_cw, ray, true_hit, true_distance);
+            assert_traverse_bvh_hit_trimesh_distance(triangle_cw, ray, true_hit, true_distance);
           }
           SUBCASE("positive Y-Axis") {
             Vec3r<T> org1{0, 5, 0};
@@ -643,7 +643,7 @@ TEST_CASE_TEMPLATE("Trimesh : Cube Mesh - Intersections", T, float, double) {
             const bool true_hit = true;
             const T true_distance = 4;
 
-            assert_traverse_bvh_hit_trimesh_temp(triangle_cw, ray, true_hit, true_distance);
+            assert_traverse_bvh_hit_trimesh_distance(triangle_cw, ray, true_hit, true_distance);
           }
           SUBCASE("negativ Y-Axis") {
             Vec3r<T> org1{0, -5, 0};
@@ -654,7 +654,7 @@ TEST_CASE_TEMPLATE("Trimesh : Cube Mesh - Intersections", T, float, double) {
             const bool true_hit = true;
             const T true_distance = 4;
 
-            assert_traverse_bvh_hit_trimesh_temp(triangle_cw, ray, true_hit, true_distance);
+            assert_traverse_bvh_hit_trimesh_distance(triangle_cw, ray, true_hit, true_distance);
           }
           SUBCASE("positive X-Axis") {
             Vec3r<T> org1{5, 0, 0};
@@ -665,7 +665,7 @@ TEST_CASE_TEMPLATE("Trimesh : Cube Mesh - Intersections", T, float, double) {
             const bool true_hit = true;
             const T true_distance = 4;
 
-            assert_traverse_bvh_hit_trimesh_temp(triangle_cw, ray, true_hit, true_distance);
+            assert_traverse_bvh_hit_trimesh_distance(triangle_cw, ray, true_hit, true_distance);
           }
           SUBCASE("negativ X-Axis") {
             Vec3r<T> org1{-5, 0, 0};
@@ -676,7 +676,7 @@ TEST_CASE_TEMPLATE("Trimesh : Cube Mesh - Intersections", T, float, double) {
             const bool true_hit = true;
             const T true_distance = 4;
 
-            assert_traverse_bvh_hit_trimesh_temp(triangle_cw, ray, true_hit, true_distance);
+            assert_traverse_bvh_hit_trimesh_distance(triangle_cw, ray, true_hit, true_distance);
           }
         }
         SUBCASE("NO HIT") {
@@ -743,7 +743,7 @@ TEST_CASE_TEMPLATE("Trimesh : Cube Mesh - Intersections", T, float, double) {
                   const bool true_hit = true;
                   const T true_distance = 1;
 
-                  assert_traverse_bvh_hit_trimesh_temp(triangle_cw, ray, true_hit, true_distance);
+                  assert_traverse_bvh_hit_trimesh_distance(triangle_cw, ray, true_hit, true_distance);
                 }
                 SUBCASE("Ray-Direction: -Z") {
                   Vec3r<T> org1{0, 0, 0};
@@ -754,7 +754,7 @@ TEST_CASE_TEMPLATE("Trimesh : Cube Mesh - Intersections", T, float, double) {
                   const bool true_hit = true;
                   const T true_distance = 1;
 
-                  assert_traverse_bvh_hit_trimesh_temp(triangle_cw, ray, true_hit, true_distance);
+                  assert_traverse_bvh_hit_trimesh_distance(triangle_cw, ray, true_hit, true_distance);
                 }
                 SUBCASE("Ray-Direction: +Y") {
                   Vec3r<T> org1{0, 0, 0};
@@ -765,7 +765,7 @@ TEST_CASE_TEMPLATE("Trimesh : Cube Mesh - Intersections", T, float, double) {
                   const bool true_hit = true;
                   const T true_distance = 1;
 
-                  assert_traverse_bvh_hit_trimesh_temp(triangle_cw, ray, true_hit, true_distance);
+                  assert_traverse_bvh_hit_trimesh_distance(triangle_cw, ray, true_hit, true_distance);
                 }
                 SUBCASE("Ray-Direction: -Y") {
                   Vec3r<T> org1{0, 0, 0};
@@ -776,7 +776,7 @@ TEST_CASE_TEMPLATE("Trimesh : Cube Mesh - Intersections", T, float, double) {
                   const bool true_hit = true;
                   const T true_distance = 1;
 
-                  assert_traverse_bvh_hit_trimesh_temp(triangle_cw, ray, true_hit, true_distance);
+                  assert_traverse_bvh_hit_trimesh_distance(triangle_cw, ray, true_hit, true_distance);
                 }
                 SUBCASE("Ray-Direction: +X") {
                   Vec3r<T> org1{0, 0, 0};
@@ -787,7 +787,7 @@ TEST_CASE_TEMPLATE("Trimesh : Cube Mesh - Intersections", T, float, double) {
                   const bool true_hit = true;
                   const T true_distance = 1;
 
-                  assert_traverse_bvh_hit_trimesh_temp(triangle_cw, ray, true_hit, true_distance);
+                  assert_traverse_bvh_hit_trimesh_distance(triangle_cw, ray, true_hit, true_distance);
                 }
                 SUBCASE("Ray-Direction: -X") {
                   Vec3r<T> org1{0, 0, 0};
@@ -798,7 +798,7 @@ TEST_CASE_TEMPLATE("Trimesh : Cube Mesh - Intersections", T, float, double) {
                   const bool true_hit = true;
                   const T true_distance = 1;
 
-                  assert_traverse_bvh_hit_trimesh_temp(triangle_cw, ray, true_hit, true_distance);
+                  assert_traverse_bvh_hit_trimesh_distance(triangle_cw, ray, true_hit, true_distance);
                 }
               }
               SUBCASE("Hit : edges") {
@@ -811,7 +811,7 @@ TEST_CASE_TEMPLATE("Trimesh : Cube Mesh - Intersections", T, float, double) {
                   const bool true_hit = true;
                   const T true_distance = static_cast<T>(std::sqrt(2));
 
-                  assert_traverse_bvh_hit_trimesh_temp(triangle_cw, ray, true_hit, true_distance);
+                  assert_traverse_bvh_hit_trimesh_distance(triangle_cw, ray, true_hit, true_distance);
                 }
                 SUBCASE("center of edge = (1, -1, 0)") {
                   Vec3r<T> org1{0, 0, 0};
@@ -822,7 +822,7 @@ TEST_CASE_TEMPLATE("Trimesh : Cube Mesh - Intersections", T, float, double) {
                   const bool true_hit = true;
                   const T true_distance = static_cast<T>(std::sqrt(2));
 
-                  assert_traverse_bvh_hit_trimesh_temp(triangle_cw, ray, true_hit, true_distance);
+                  assert_traverse_bvh_hit_trimesh_distance(triangle_cw, ray, true_hit, true_distance);
                 }
                 SUBCASE("center of edge = (-1, 1, 0)") {
                   Vec3r<T> org1{0, 0, 0};
@@ -833,7 +833,7 @@ TEST_CASE_TEMPLATE("Trimesh : Cube Mesh - Intersections", T, float, double) {
                   const bool true_hit = true;
                   const T true_distance = static_cast<T>(std::sqrt(2));
 
-                  assert_traverse_bvh_hit_trimesh_temp(triangle_cw, ray, true_hit, true_distance);
+                  assert_traverse_bvh_hit_trimesh_distance(triangle_cw, ray, true_hit, true_distance);
                 }
                 SUBCASE("center of edge = (-1, -1, 0)") {
                   Vec3r<T> org1{0, 0, 0};
@@ -844,7 +844,7 @@ TEST_CASE_TEMPLATE("Trimesh : Cube Mesh - Intersections", T, float, double) {
                   const bool true_hit = true;
                   const T true_distance = static_cast<T>(std::sqrt(2));
 
-                  assert_traverse_bvh_hit_trimesh_temp(triangle_cw, ray, true_hit, true_distance);
+                  assert_traverse_bvh_hit_trimesh_distance(triangle_cw, ray, true_hit, true_distance);
                 }
 
                 SUBCASE("center of edge = (1, 0, 1)") {
@@ -856,7 +856,7 @@ TEST_CASE_TEMPLATE("Trimesh : Cube Mesh - Intersections", T, float, double) {
                   const bool true_hit = true;
                   const T true_distance = static_cast<T>(std::sqrt(2));
 
-                  assert_traverse_bvh_hit_trimesh_temp(triangle_cw, ray, true_hit, true_distance);
+                  assert_traverse_bvh_hit_trimesh_distance(triangle_cw, ray, true_hit, true_distance);
                 }
                 SUBCASE("center of edge = (1, 0, -1)") {
                   Vec3r<T> org1{0, 0, 0};
@@ -867,7 +867,7 @@ TEST_CASE_TEMPLATE("Trimesh : Cube Mesh - Intersections", T, float, double) {
                   const bool true_hit = true;
                   const T true_distance = static_cast<T>(std::sqrt(2));
 
-                  assert_traverse_bvh_hit_trimesh_temp(triangle_cw, ray, true_hit, true_distance);
+                  assert_traverse_bvh_hit_trimesh_distance(triangle_cw, ray, true_hit, true_distance);
                 }
                 SUBCASE("center of edge = (-1, 0, 1)") {
                   Vec3r<T> org1{0, 0, 0};
@@ -878,7 +878,7 @@ TEST_CASE_TEMPLATE("Trimesh : Cube Mesh - Intersections", T, float, double) {
                   const bool true_hit = true;
                   const T true_distance = static_cast<T>(std::sqrt(2));
 
-                  assert_traverse_bvh_hit_trimesh_temp(triangle_cw, ray, true_hit, true_distance);
+                  assert_traverse_bvh_hit_trimesh_distance(triangle_cw, ray, true_hit, true_distance);
                 }
                 SUBCASE("center of edge = (-1, 0, -1)") {
                   Vec3r<T> org1{0, 0, 0};
@@ -889,7 +889,7 @@ TEST_CASE_TEMPLATE("Trimesh : Cube Mesh - Intersections", T, float, double) {
                   const bool true_hit = true;
                   const T true_distance = static_cast<T>(std::sqrt(2));
 
-                  assert_traverse_bvh_hit_trimesh_temp(triangle_cw, ray, true_hit, true_distance);
+                  assert_traverse_bvh_hit_trimesh_distance(triangle_cw, ray, true_hit, true_distance);
                 }
 
                 SUBCASE("center of edge = (0, 1, 1)") {
@@ -901,7 +901,7 @@ TEST_CASE_TEMPLATE("Trimesh : Cube Mesh - Intersections", T, float, double) {
                   const bool true_hit = true;
                   const T true_distance = static_cast<T>(std::sqrt(2));
 
-                  assert_traverse_bvh_hit_trimesh_temp(triangle_cw, ray, true_hit, true_distance);
+                  assert_traverse_bvh_hit_trimesh_distance(triangle_cw, ray, true_hit, true_distance);
                 }
                 SUBCASE("center of edge = (0, 1, -1)") {
                   Vec3r<T> org1{0, 0, 0};
@@ -912,7 +912,7 @@ TEST_CASE_TEMPLATE("Trimesh : Cube Mesh - Intersections", T, float, double) {
                   const bool true_hit = true;
                   const T true_distance = static_cast<T>(std::sqrt(2));
 
-                  assert_traverse_bvh_hit_trimesh_temp(triangle_cw, ray, true_hit, true_distance);
+                  assert_traverse_bvh_hit_trimesh_distance(triangle_cw, ray, true_hit, true_distance);
                 }
                 SUBCASE("center of edge = (0, -1, 1)") {
                   Vec3r<T> org1{0, 0, 0};
@@ -923,7 +923,7 @@ TEST_CASE_TEMPLATE("Trimesh : Cube Mesh - Intersections", T, float, double) {
                   const bool true_hit = true;
                   const T true_distance = static_cast<T>(std::sqrt(2));
 
-                  assert_traverse_bvh_hit_trimesh_temp(triangle_cw, ray, true_hit, true_distance);
+                  assert_traverse_bvh_hit_trimesh_distance(triangle_cw, ray, true_hit, true_distance);
                 }
                 SUBCASE("center of edge = (0, -1, -1)") {
                   Vec3r<T> org1{0, 0, 0};
@@ -934,7 +934,7 @@ TEST_CASE_TEMPLATE("Trimesh : Cube Mesh - Intersections", T, float, double) {
                   const bool true_hit = true;
                   const T true_distance = static_cast<T>(std::sqrt(2));
 
-                  assert_traverse_bvh_hit_trimesh_temp(triangle_cw, ray, true_hit, true_distance);
+                  assert_traverse_bvh_hit_trimesh_distance(triangle_cw, ray, true_hit, true_distance);
                 }
               }
               SUBCASE("Hit : corners") {
@@ -947,7 +947,7 @@ TEST_CASE_TEMPLATE("Trimesh : Cube Mesh - Intersections", T, float, double) {
                   const bool true_hit = true;
                   const T true_distance = static_cast<T>(std::sqrt(3));
 
-                  assert_traverse_bvh_hit_trimesh_temp(triangle_cw, ray, true_hit, true_distance);
+                  assert_traverse_bvh_hit_trimesh_distance(triangle_cw, ray, true_hit, true_distance);
                 }
                 SUBCASE("corner  = (1, -1, 1)") {
                   Vec3r<T> org1{0, 0, 0};
@@ -958,7 +958,7 @@ TEST_CASE_TEMPLATE("Trimesh : Cube Mesh - Intersections", T, float, double) {
                   const bool true_hit = true;
                   const T true_distance = static_cast<T>(std::sqrt(3));
 
-                  assert_traverse_bvh_hit_trimesh_temp(triangle_cw, ray, true_hit, true_distance);
+                  assert_traverse_bvh_hit_trimesh_distance(triangle_cw, ray, true_hit, true_distance);
                 }
                 SUBCASE("corner  = (-1, 1, 1)") {
                   Vec3r<T> org1{0, 0, 0};
@@ -969,7 +969,7 @@ TEST_CASE_TEMPLATE("Trimesh : Cube Mesh - Intersections", T, float, double) {
                   const bool true_hit = true;
                   const T true_distance = static_cast<T>(std::sqrt(3));
 
-                  assert_traverse_bvh_hit_trimesh_temp(triangle_cw, ray, true_hit, true_distance);
+                  assert_traverse_bvh_hit_trimesh_distance(triangle_cw, ray, true_hit, true_distance);
                 }
                 SUBCASE("corner  = (-1, -1, 1)") {
                   Vec3r<T> org1{0, 0, 0};
@@ -980,7 +980,7 @@ TEST_CASE_TEMPLATE("Trimesh : Cube Mesh - Intersections", T, float, double) {
                   const bool true_hit = true;
                   const T true_distance = static_cast<T>(std::sqrt(3));
 
-                  assert_traverse_bvh_hit_trimesh_temp(triangle_cw, ray, true_hit, true_distance);
+                  assert_traverse_bvh_hit_trimesh_distance(triangle_cw, ray, true_hit, true_distance);
                 }
                 SUBCASE("corner  = (1, 1, -1)") {
                   Vec3r<T> org1{0, 0, 0};
@@ -991,7 +991,7 @@ TEST_CASE_TEMPLATE("Trimesh : Cube Mesh - Intersections", T, float, double) {
                   const bool true_hit = true;
                   const T true_distance = static_cast<T>(std::sqrt(3));
 
-                  assert_traverse_bvh_hit_trimesh_temp(triangle_cw, ray, true_hit, true_distance);
+                  assert_traverse_bvh_hit_trimesh_distance(triangle_cw, ray, true_hit, true_distance);
                 }
                 SUBCASE("corner  = (1, -1, -1)") {
                   Vec3r<T> org1{0, 0, 0};
@@ -1002,7 +1002,7 @@ TEST_CASE_TEMPLATE("Trimesh : Cube Mesh - Intersections", T, float, double) {
                   const bool true_hit = true;
                   const T true_distance = static_cast<T>(std::sqrt(3));
 
-                  assert_traverse_bvh_hit_trimesh_temp(triangle_cw, ray, true_hit, true_distance);
+                  assert_traverse_bvh_hit_trimesh_distance(triangle_cw, ray, true_hit, true_distance);
                 }
                 SUBCASE("corner  = (-1, 1, -1)") {
                   Vec3r<T> org1{0, 0, 0};
@@ -1013,7 +1013,7 @@ TEST_CASE_TEMPLATE("Trimesh : Cube Mesh - Intersections", T, float, double) {
                   const bool true_hit = true;
                   const T true_distance = static_cast<T>(std::sqrt(3));
 
-                  assert_traverse_bvh_hit_trimesh_temp(triangle_cw, ray, true_hit, true_distance);
+                  assert_traverse_bvh_hit_trimesh_distance(triangle_cw, ray, true_hit, true_distance);
                 }
                 SUBCASE("corner  = (-1, -1, -1)") {
                   Vec3r<T> org1{0, 0, 0};
@@ -1024,7 +1024,7 @@ TEST_CASE_TEMPLATE("Trimesh : Cube Mesh - Intersections", T, float, double) {
                   const bool true_hit = true;
                   const T true_distance = static_cast<T>(std::sqrt(3));
 
-                  assert_traverse_bvh_hit_trimesh_temp(triangle_cw, ray, true_hit, true_distance);
+                  assert_traverse_bvh_hit_trimesh_distance(triangle_cw, ray, true_hit, true_distance);
                 }
               }
             }
