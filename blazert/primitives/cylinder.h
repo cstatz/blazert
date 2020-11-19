@@ -628,6 +628,7 @@ inline std::pair<Vec2r<T>, T> find_minimizing_argument(const T a, const T b, con
 template<typename T>
 [[nodiscard]] inline T distance_to_surface(const Cylinder<T> &cylinder, const Vec3r<T> &point) noexcept {
 
+  //std::cout << "==========================\n"
   const Vec3r<T> &local_point = trans(cylinder.rotation) * (point - cylinder.center);
 
   // 0. calculate distance to top
@@ -644,9 +645,11 @@ template<typename T>
   //    - iterate until some threshold is reached (e.g. relative change, number of iterations, ...)
   //    - use solution to calculate all 4 'd' and take minimum
 
+  //std::cout << "point = " << point << "\n";
   const T x_q = local_point[0];
   const T y_q = local_point[1];
   const T z_q = local_point[2];
+  //std::cout << "x_q = " << x_q << "; y_q = " << y_q << "; z_q = " << z_q << "\n";
 
   const T a = cylinder.semi_axis_a;
   const T b = cylinder.semi_axis_b;
@@ -655,7 +658,11 @@ template<typename T>
 
   // if the points is in the center, the distance is determined by how far away each of the shells is
   if (isZero(point_xy)) {
-    return std::min({a, b, dist_top, dist_bottom});
+    if ((z_q > cylinder.height / 2) || (z_q < -cylinder.height / 2)) {
+      return std::min({dist_top, dist_bottom});
+    } else {
+      return std::min({a, b, dist_top, dist_bottom});
+    }
   }
 
   // if the query point is directly on the ellipse, the will iteration will not converge
@@ -665,7 +672,7 @@ template<typename T>
   // std::numeric_limits<T>::epsilon() is in the order of 1e-7 (single precision) and 1e-16 (double precision)
   if (std::abs(ellipse) < std::numeric_limits<T>::epsilon()) {
     if ((z_q > cylinder.height / 2) || (z_q < -cylinder.height / 2)) {
-      std::cout << "YEAAAH " << std::min(dist_top, dist_bottom)  << "\n";
+      //std::cout << "YEAAAH " << std::min(dist_top, dist_bottom)  << "\n";
       return std::min(dist_top, dist_bottom);
     } else {
       return static_cast<T>(0);
