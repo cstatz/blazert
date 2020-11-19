@@ -494,8 +494,140 @@ inline bool intersect_primitive(CylinderIntersector<T, Collection> &i, const Cyl
   return false;
 }
 
+namespace {
+
+/**
+ * This is the ellipse equation. If return value is smaller than 0, 'point' is inside, if larger than 0, point is outside.
+ * @tparam T
+ * @param a
+ * @param b
+ * @param point
+ * @return
+ */
+template<typename T>
+inline T ellipse_equation(const T a, const T b, const Vec2r<T> &point) {
+  const T x = point[0];
+  const T y = point[1];
+  return (x * x) / (a * a) + (y * y) / (b * b) - 1;
+}
+
+// formula for a single iteration step in the Newton-Raphson algorithm for 4 cases.
+// returns x - R'(x)/R''(x)
+template<typename T>
+inline T single_newton_iteration_upper_x(const T a, const T b, const Vec2r<T> &point, const T x) {
+  const T sqrt = (x * x > a * a) ? std::sqrt(x * x - a * a) : std::sqrt(a * a - x * x);
+  const T xq = point[0];
+  const T yq = point[1];
+
+  return ((a * a * a * xq - a * x * x * xq) * sqrt + b * x * x * x * yq)
+      / ((a * a * a - a * b * b - a * x * x + b * b * x * x / a) * sqrt + a * a * b * yq);
+}
+template<typename T>
+inline T single_newton_iteration_lower_x(const T a, const T b, const Vec2r<T> &point, const T x) {
+  const T sqrt = (x * x > a * a) ? std::sqrt(x * x - a * a) : std::sqrt(a * a - x * x);
+  const T xq = point[0];
+  const T yq = point[1];
+
+  return ((-a * a * a * xq + a * x * x * xq) * sqrt + b * x * x * x * yq)
+      / ((-a * a * a + a * b * b + a * x * x - b * b * x * x / a) * sqrt + a * a * b * yq);
+}
+template<typename T>
+inline T single_newton_iteration_upper_y(const T a, const T b, const Vec2r<T> &point, const T y) {
+  const T xq = point[0];
+  const T yq = point[1];
+  return single_newton_iteration_upper_x(b, a, Vec2r<T>{yq, xq}, y);
+}
+template<typename T>
+inline T single_newton_iteration_lower_y(const T a, const T b, const Vec2r<T> &point, const T y) {
+  const T xq = point[0];
+  const T yq = point[1];
+  return single_newton_iteration_lower_x(b, a, Vec2r<T>{yq, xq}, y);
+}
+
+// Newton iteration for given function
+template<typename T, typename single_iteration_fcn>
+inline T newton_iteration(const T a, const T b, const Vec2r<T> &point, const T initial_guess, single_iteration_fcn &single_iteration) {
+  T val0 = initial_guess;
+  for (unsigned int i = 0; i < 30; ++i) {
+    const T val = single_iteration(a, b, point, val0);
+    val0 = val;
+    if (std::abs(val0) == a)
+      val0 += std::numeric_limits<T>::epsilon();
+  }
+  return val0;
+}
+
+/**
+ * @brief Newton-Raphson root finding algorithm to find the minimal radius of a circle aroung 'xq' and 'yq'
+ *
+ * @tparam T floating point type
+ * @return returns std::pair<Vec2r<T>, T> (closest_point, shortest distance)
+ */
+template<typename T>
+inline std::pair<Vec2r<T>, T> find_minimizing_argument(const T a, const T b, const Vec2r<T> &point) {
+  const T xq = point[0];
+  const T yq = point[1];
+
+  constexpr T percentage = static_cast<T>(0.95);
+
+  if (((xq >= 0) && (yq >= (b / a) * xq)) || ((xq <= 0) && (yq >= (-b / a) * xq))) {
+    const T x0 = xq > 0 ? percentage*a : -percentage*a;
+    const T x_min = newton_iteration(a, b, point, x0, single_newton_iteration_upper_x<T>);
+    const T sqrt = std::sqrt(a*a - x_min*x_min);
+
+    const T y_min = b/a*sqrt;
+
+    const T min_dist = std::sqrt((xq - x_min)*(xq - x_min) + (yq - (b/a)*sqrt)*(yq - (b/a)*sqrt));
+    return {Vec2r<T>{x_min, y_min}, min_dist};
+  }
+  if (((xq >= 0) && (yq <= (-b / a) * xq)) || ((xq <= 0) && (yq <= (b / a) * xq))) {
+    const T x0 = xq > 0 ? percentage*a : -percentage*a;
+    const T x_min = newton_iteration(a, b, point, x0, single_newton_iteration_lower_x<T>);
+    const T sqrt = std::sqrt(a*a - x_min*x_min);
+
+    const T y_min = -b/a * sqrt;
+
+    const T min_dist = std::sqrt((xq - x_min)*(xq - x_min) + (yq + (b/a)*sqrt)*(yq + (b/a)*sqrt));
+    return {Vec2r<T>{x_min, y_min}, min_dist};
+  }
+  if ((xq >= 0) && (yq <= (b / a) * xq) && (yq >= (-b/a)*xq)) {
+    const T y0 = yq > 0 ? percentage*b : -percentage*b;
+
+    const T y_min = newton_iteration(a, b, point, y0, single_newton_iteration_upper_y<T>);
+    const T sqrt = std::sqrt(b*b - y_min*y_min);
+
+    const T x_min = a/b * sqrt;
+
+    const T min_dist = std::sqrt((yq - y_min)*(yq - y_min) + (xq - (a/b)*sqrt)*(xq - (a/b)*sqrt));
+    return {Vec2r<T>{x_min, y_min}, min_dist};
+  }
+  if ((xq <= 0) && (yq <= (-b / a) * xq) && (yq >= (b / a) * xq)) {
+    const T y0 = yq > 0 ? percentage*b : -percentage*b;
+    const T y_min = newton_iteration(a, b, point, y0, single_newton_iteration_lower_y<T>);
+    const T sqrt = std::sqrt(b*b - y_min*y_min);
+
+    const T x_min = -a/b * sqrt;
+
+    const T min_dist = std::sqrt((yq - y_min)*(yq - y_min) + (xq + (a/b)*sqrt)*(xq + (a/b)*sqrt));
+    return {Vec2r<T>{x_min, y_min}, min_dist};
+  }
+  return {Vec2r<T>{}, -1};
+}
+
+}// namespace
+/**
+ * @brief The distance to surface function returns the distance from a query point to the surface of the cylinder.
+ *
+ * @details
+ *
+ * @tparam T
+ * @param cylinder
+ * @param point
+ * @return
+ */
 template<typename T>
 [[nodiscard]] inline T distance_to_surface(const Cylinder<T> &cylinder, const Vec3r<T> &point) noexcept {
+
   const Vec3r<T> &local_point = trans(cylinder.rotation) * (point - cylinder.center);
 
   // 0. calculate distance to top
@@ -504,49 +636,76 @@ template<typename T>
   // 1. calculate distance to bottom
   const T dist_bottom = std::fabs(local_point[2] + cylinder.height / 2);
 
+  // idea:
+  // - distance is radius of smallest sphere around 'point'
+  // - for ellipse, we have smallest circle in a plane parallel to z
+  // - combine circle equation and ellipse equation to calculate d^2 (two solutions)
+  //    - use derivative to find minimum -> Newton-Raphson Iteration
+  //    - iterate until some threshold is reached (e.g. relative change, number of iterations, ...)
+  //    - use solution to calculate all 4 'd' and take minimum
 
-  // 2. calculate distance to shell
-  // reference sphere radius
-  const T R = 1.;
+  const T x_q = local_point[0];
+  const T y_q = local_point[1];
+  const T z_q = local_point[2];
 
   const T a = cylinder.semi_axis_a;
   const T b = cylinder.semi_axis_b;
 
-  // we are now only interested in any xy-cut
-  const Vec2r<T> &local_point_xy{local_point[0], local_point[1]};
-
-  // if z-coordinate is above or below the cylinder, only distance to the top or bottom can be correct
-  if(local_point[2] > cylinder.height/2) return dist_top;
-  if(local_point[2] < -cylinder.height/2) return dist_bottom;
+  const Vec2r<T> point_xy{x_q, y_q};
 
   // if the points is in the center, the distance is determined by how far away each of the shells is
-  if (isZero(local_point_xy)) {
-    //std::cout << "local_point_xy = " << local_point_xy << "\n";
-    //std::cout << "a = " << a << "\nb = " << b << "\ndist_top = " << dist_top << "\ndist_bottom = " << dist_bottom << "\n";
+  if (isZero(point_xy)) {
     return std::min({a, b, dist_top, dist_bottom});
   }
 
-  // transformation matrices to transform vectors from elliptical to circular and back
-  const Mat2r<T> &ellipse_to_circle{{R / a, 0}, {0, R / b}};
-  const Mat2r<T> &circle_to_ellipse{{a / R, 0}, {0, b / R}};
+  // if the query point is directly on the ellipse, the will iteration will not converge
+  const T ellipse = ellipse_equation(a, b, point_xy);
 
-  const Vec2r<T> &local_point_equivalent_circle = ellipse_to_circle * local_point_xy;
+  // if point is directly on the ellipse or very very close, it's on the surface
+  // std::numeric_limits<T>::epsilon() is in the order of 1e-7 (single precision) and 1e-16 (double precision)
+  if (std::abs(ellipse) < std::numeric_limits<T>::epsilon()) {
+    if ((z_q > cylinder.height / 2) || (z_q < -cylinder.height / 2)) {
+      std::cout << "YEAAAH " << std::min(dist_top, dist_bottom)  << "\n";
+      return std::min(dist_top, dist_bottom);
+    } else {
+      return static_cast<T>(0);
+    }
+  }
 
-  // if the query point is on the z-axis the distance is determined by the minimum of the semi_axes as well as the distance
-  // to the bottom or top of the cylinder
-  if (isZero(local_point_equivalent_circle))
-    return std::min({a, b, dist_top, dist_bottom});
+  // we inside of the ellipse
+  if (ellipse < 0) {
+    std::cout << "x_q = " << x_q << "; y_q = " << y_q << "; z_q = " << z_q << "\n";
+    // if above or below, the distance to top/bottom is the correct one
+    if (z_q >= cylinder.height / 2)
+      return dist_top;
+    if (z_q <= -cylinder.height / 2)
+      return dist_bottom;
 
-  // distance between local_point and equivalent cirlce
-  const T distance_equivalent_circle = std::fabs(norm(local_point_equivalent_circle) - R);
 
-  const Vec2r<T> &distance_vector_equivalent_circle =
-      distance_equivalent_circle * local_point_equivalent_circle / norm(local_point_equivalent_circle);
+    const auto [point, dist_shell] = find_minimizing_argument(a, b, point_xy);
+    return std::min({dist_shell, dist_bottom, dist_top});
+  }
 
-  const Vec2r<T> &distance_vector_ellipse = distance_equivalent_circle * circle_to_ellipse * local_point_equivalent_circle / norm(local_point_equivalent_circle);
-  const T dist_shell = norm(distance_vector_ellipse);
+  // we are outside the ellipse
+  if (ellipse > 0) {
+    // the point is next to the cylinder -> only the ellipse can be the closest distance
+    if ((z_q < cylinder.height / 2) || (z_q > -cylinder.height / 2)) {
+      const auto [point, dist_shell] = find_minimizing_argument(a, b, point_xy);
+      //const T min_arg = find_minimizing_argument(a, b, point_xy);
+      //const T dist_shell = std::sqrt(distance_to_ellipse(a, b, point_xy, min_arg));
+      return dist_shell;
+    } else {
+      // we are above and next to it ->  distance_to_ellipse^2 + distance_(top/bottom)^2
+      const auto [point, dist_shell] = find_minimizing_argument(a, b, point_xy);
+      //const T min_arg = find_minimizing_argument(a, b, point_xy);
+      //const T dist_shell = std::sqrt(distance_to_ellipse(a, b, point_xy, min_arg));
 
-  return std::min({dist_shell, dist_top, dist_bottom});
+      const T dist1 = std::sqrt(dist_shell * dist_shell + dist_top * dist_top);
+      const T dist2 = std::sqrt(dist_shell * dist_shell + dist_bottom * dist_bottom);
+      return std::min({dist1, dist2});
+    }
+  }
+  return -1;
 }
 
 template<typename T>

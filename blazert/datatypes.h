@@ -98,5 +98,10 @@ inline void intersection(Vec3r<T> &min_, Vec3r<T> &max_, const Vec3r<T> &min, co
   max_ = blaze::max(max, max_);
 }
 
+template <typename T> int sgn(T val) {
+  return (T(0) < val) - (val < T(0));
+}
+
+
 }// namespace blazert
 #endif// BLAZERT_DATATYPES_H_
