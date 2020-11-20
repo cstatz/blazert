@@ -588,13 +588,14 @@ inline T newton_iteration(const T a, const T b, const Vec2r<T> &point, const T i
                           single_iteration_fcn &single_iteration, stop_criterion &stop_criterion_fcn) {
   T val0 = initial_guess;
   T cnt = 0;
-  constexpr T epsilon = []() constexpr -> T {
+  constexpr T epsilon = []() constexpr->T {
     if constexpr (std::is_same_v<T, float>) {
       return static_cast<T>(1e-4);
     } else {
-     return static_cast<T>(1e-7);
+      return static_cast<T>(1e-7);
     }
-  }();
+  }
+  ();
   while ((std::abs(stop_criterion_fcn(a, b, point, val0)) >= epsilon) && (cnt < 100)) {
     const T val = single_iteration(a, b, point, val0);
     val0 = val;
@@ -628,10 +629,9 @@ inline std::pair<Vec2r<T>, T> find_minimum_distance_to_ellipse(const T a, const 
 
     const T min_dist = std::sqrt((xq - x_min) * (xq - x_min) + (yq - y_min) * (yq - y_min));
     return {Vec2r<T>{x_min, y_min}, min_dist};
-  }
-  else if (((xq >= 0) && (yq <= (-b / a) * xq)) || ((xq <= 0) && (yq <= (b / a) * xq))) {
+  } else if (((xq >= 0) && (yq <= (-b / a) * xq)) || ((xq <= 0) && (yq <= (b / a) * xq))) {
     const T x0 = xq > 0 ? percentage * a : -percentage * a;
-    const T x_min = newton_iteration(a, b, point, x0, single_newton_iteration<T, HALFSPACE::LOWER,ARGUMENT::X>,
+    const T x_min = newton_iteration(a, b, point, x0, single_newton_iteration<T, HALFSPACE::LOWER, ARGUMENT::X>,
                                      distance_derivative<T, HALFSPACE::LOWER, ARGUMENT::X>);
     const T sqrt = std::sqrt(a * a - x_min * x_min);
 
@@ -639,8 +639,7 @@ inline std::pair<Vec2r<T>, T> find_minimum_distance_to_ellipse(const T a, const 
 
     const T min_dist = std::sqrt((xq - x_min) * (xq - x_min) + (yq - y_min) * (yq - y_min));
     return {Vec2r<T>{x_min, y_min}, min_dist};
-  }
-  else if ((xq >= 0) && (yq <= (b / a) * xq) && (yq >= (-b / a) * xq)) {
+  } else if ((xq >= 0) && (yq <= (b / a) * xq) && (yq >= (-b / a) * xq)) {
     const T y0 = yq > 0 ? percentage * b : -percentage * b;
 
     const T y_min = newton_iteration(a, b, point, y0, single_newton_iteration<T, HALFSPACE::UPPER, ARGUMENT::Y>,
@@ -651,8 +650,7 @@ inline std::pair<Vec2r<T>, T> find_minimum_distance_to_ellipse(const T a, const 
 
     const T min_dist = std::sqrt((yq - y_min) * (yq - y_min) + (xq - x_min) * (xq - x_min));
     return {Vec2r<T>{x_min, y_min}, min_dist};
-  }
-  else {//if ((xq <= 0) && (yq <= (-b / a) * xq) && (yq >= (b / a) * xq)) {
+  } else {//if ((xq <= 0) && (yq <= (-b / a) * xq) && (yq >= (b / a) * xq)) {
     const T y0 = yq > 0 ? percentage * b : -percentage * b;
     const T y_min = newton_iteration(a, b, point, y0, single_newton_iteration<T, HALFSPACE::LOWER, ARGUMENT::Y>,
                                      distance_derivative<T, HALFSPACE::LOWER, ARGUMENT::Y>);

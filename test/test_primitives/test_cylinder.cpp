@@ -421,13 +421,16 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
                 cylinders, prim_id, Vec3r<T>{static_cast<T>(0.5000023919349096), static_cast<T>(0.9682455277535974), 0},
                 static_cast<T>(0.0));
             assert_distance_to_surface(
-                cylinders, prim_id, Vec3r<T>{static_cast<T>(-0.5000023919349096), static_cast<T>(0.9682455277535974), 0},
+                cylinders, prim_id,
+                Vec3r<T>{static_cast<T>(-0.5000023919349096), static_cast<T>(0.9682455277535974), 0},
                 static_cast<T>(0.0));
             assert_distance_to_surface(
-                cylinders, prim_id, Vec3r<T>{static_cast<T>(0.5000023919349096), static_cast<T>(-0.9682455277535974), 0},
+                cylinders, prim_id,
+                Vec3r<T>{static_cast<T>(0.5000023919349096), static_cast<T>(-0.9682455277535974), 0},
                 static_cast<T>(0.0));
             assert_distance_to_surface(
-                cylinders, prim_id, Vec3r<T>{static_cast<T>(-0.5000023919349096), static_cast<T>(-0.9682455277535974), 0},
+                cylinders, prim_id,
+                Vec3r<T>{static_cast<T>(-0.5000023919349096), static_cast<T>(-0.9682455277535974), 0},
                 static_cast<T>(0.0));
           }
           SUBCASE("points inside") {
@@ -452,7 +455,8 @@ TEST_CASE_TEMPLATE("cylinder", T, float, double) {
             assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1.2, 0.7, 0}, static_cast<T>(0.09337334790470499));
             assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{-1.2, 0.7, 0}, static_cast<T>(0.09337334790470499));
             assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{1.2, -0.7, 0}, static_cast<T>(0.09337334790470499));
-            assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{-1.2, -0.7, 0}, static_cast<T>(0.09337334790470499));
+            assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{-1.2, -0.7, 0},
+                                       static_cast<T>(0.09337334790470499));
           }
           SUBCASE("points outside") {
             assert_distance_to_surface(cylinders, prim_id, Vec3r<T>{0.0, 0.0, 1.5}, static_cast<T>(0.5));
