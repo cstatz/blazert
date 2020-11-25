@@ -1101,7 +1101,7 @@ TEST_CASE_TEMPLATE("Trimesh : Pyramid - Intersections", T, float, double) {
       const T true_distance = 5;
       const Vec3r<T> true_normal{0, 0, -1};
 
-      assert_traverse_bvh_hit_trimesh(triangle, ray, true_hit, true_distance, true_normal);
+      assert_traverse_bvh_hit_collection(triangle, ray, true_hit, true_distance, true_normal);
     }
     SUBCASE("xz plane") {
       two_triangle_ccw_plane_xz(center, *vertices, *indices);
@@ -1116,7 +1116,7 @@ TEST_CASE_TEMPLATE("Trimesh : Pyramid - Intersections", T, float, double) {
       const T true_distance = 5;
       const Vec3r<T> true_normal{0, 1, 0};
 
-      assert_traverse_bvh_hit_trimesh(triangle, ray, true_hit, true_distance, true_normal);
+      assert_traverse_bvh_hit_collection(triangle, ray, true_hit, true_distance, true_normal);
     }
     SUBCASE("two planes in xy") {
       two_plane_mesh(center, *vertices, *indices);
@@ -1131,7 +1131,7 @@ TEST_CASE_TEMPLATE("Trimesh : Pyramid - Intersections", T, float, double) {
       const T true_distance = 4;
       const Vec3r<T> true_normal{0, 0, -1};
 
-      assert_traverse_bvh_hit_trimesh(triangle, ray, true_hit, true_distance, true_normal);
+      assert_traverse_bvh_hit_collection(triangle, ray, true_hit, true_distance, true_normal);
     }
     SUBCASE("two planes 90 degree") {
       two_plane_mesh_90_deg(center, *vertices, *indices);
@@ -1146,7 +1146,7 @@ TEST_CASE_TEMPLATE("Trimesh : Pyramid - Intersections", T, float, double) {
       const T true_distance = 4;
       const Vec3r<T> true_normal{0, 0, -1};
 
-      assert_traverse_bvh_hit_trimesh(triangle, ray, true_hit, true_distance, true_normal);
+      assert_traverse_bvh_hit_collection(triangle, ray, true_hit, true_distance, true_normal);
     }
   }
   SUBCASE("center shifted") {
@@ -1164,7 +1164,7 @@ TEST_CASE_TEMPLATE("Trimesh : Pyramid - Intersections", T, float, double) {
       const T true_distance = 4;
       const Vec3r<T> true_normal{0, 0, -1};
 
-      assert_traverse_bvh_hit_trimesh(triangle, ray, true_hit, true_distance, true_normal);
+      assert_traverse_bvh_hit_collection(triangle, ray, true_hit, true_distance, true_normal);
     }
   }
 }*/
