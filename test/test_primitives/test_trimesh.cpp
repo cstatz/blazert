@@ -537,14 +537,14 @@ TEST_CASE_TEMPLATE("Trimesh : Single Triangle - Precision", T, float, double) {
   SUBCASE("edge (0,0,0) -> (1, 0, 0)") {
     Vec3r<T> dir1{0, 0, -1};
     const bool true_hit = false;
-    for(int i = 1; i<=10; ++i){
+    for (int i = 1; i <= 10; ++i) {
       auto i_temp = static_cast<T>(i);
-      Vec3r<T> org1{0.5, 0 - i_temp*epsilon, 5};
+      Vec3r<T> org1{0.5, 0 - i_temp * epsilon, 5};
       Ray<T> ray{org1, dir1};
       assert_traverse_bvh_hit_trimesh_precision(triangle, ray, true_hit, epsilon, i_temp);
     }
   }
-/*  SUBCASE("edge (0,0,0) -> (0, 1, 0)") {
+  /*  SUBCASE("edge (0,0,0) -> (0, 1, 0)") {
     Vec3r<T> org1{0 - epsilon, 0.5, 5};
     Vec3r<T> dir1{0, 0, -1};
     Ray<T> ray{org1, dir1};
