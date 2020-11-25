@@ -34,10 +34,9 @@ inline void assert_bounding_box(const Collection<T> &collection, const unsigned 
     @param num_prim_id : Number of prim_ids in object
 */
 template<typename T, template<typename> typename Collection>
-inline void assert_bounding_box_multi_prim_id(const Collection<T> &collection, const unsigned int prim_id,
-                                              const Vec3r<T> &true_min, const Vec3r<T> &true_max,
-                                              const unsigned int num_prim_id) {
-
+inline void assert_bounding_box_collection(const Collection<T> &collection, const unsigned int prim_id,
+                                              const Vec3r<T> &true_min, const Vec3r<T> &true_max) {
+  const auto num_prim_id = collection.centers.size();
   const auto [bmin_, bmax_] = collection.get_primitive_bounding_box(prim_id);
 
   Vec3r<T> bmin{bmin_[0], bmin_[1], bmin_[2]};
