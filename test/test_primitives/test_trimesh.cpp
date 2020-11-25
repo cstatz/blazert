@@ -590,7 +590,7 @@ TEST_CASE_TEMPLATE("Trimesh: Cube Mesh - Bounding Box", T, float, double) {
       const Vec3r<T> true_bmin{-1, -1, -1};
       const Vec3r<T> true_bmax{1, 1, 1};
 
-      assert_bounding_box_multi_prim_id(triangles_ccw, 0, true_bmin, true_bmax, 8);
+      assert_bounding_box_collection(triangles_ccw, 0, true_bmin, true_bmax);
     }
     SUBCASE("clockwise") {
       cube_mesh_cw(center, *vertices, *indices);
@@ -599,7 +599,7 @@ TEST_CASE_TEMPLATE("Trimesh: Cube Mesh - Bounding Box", T, float, double) {
       const Vec3r<T> true_bmin{-1, -1, -1};
       const Vec3r<T> true_bmax{1, 1, 1};
 
-      assert_bounding_box_multi_prim_id(triangles_cw, 0, true_bmin, true_bmax, 8);
+      assert_bounding_box_collection(triangles_cw, 0, true_bmin, true_bmax);
     }
   }
   SUBCASE("2.1.2 center shifted") {
@@ -611,7 +611,7 @@ TEST_CASE_TEMPLATE("Trimesh: Cube Mesh - Bounding Box", T, float, double) {
       const Vec3r<T> true_bmin{3, 1, -1};
       const Vec3r<T> true_bmax{5, 3, 1};
 
-      assert_bounding_box_multi_prim_id(triangles_ccw, 0, true_bmin, true_bmax, 12);
+      assert_bounding_box_collection(triangles_ccw, 0, true_bmin, true_bmax);
     }
     SUBCASE("clockwise") {
       cube_mesh_cw(center, *vertices, *indices);
@@ -620,7 +620,7 @@ TEST_CASE_TEMPLATE("Trimesh: Cube Mesh - Bounding Box", T, float, double) {
       const Vec3r<T> true_bmin{3, 1, -1};
       const Vec3r<T> true_bmax{5, 3, 1};
 
-      assert_bounding_box_multi_prim_id(triangles_cw, 0, true_bmin, true_bmax, 12);
+      assert_bounding_box_collection(triangles_cw, 0, true_bmin, true_bmax);
     }
   }
 }
