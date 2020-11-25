@@ -647,9 +647,6 @@ TEST_CASE_TEMPLATE("Trimesh : Cube Mesh - Intersections", T, float, double) {
             const T true_distance = 4;
 
             assert_traverse_bvh_hit_trimesh_distance(triangle_cw, ray, true_hit, true_distance);
-
-            //        const Vec3r<T> true_normal{0, 0, -1};
-            //        assert_traverse_bvh_hit_trimesh(triangle_cw, ray, true_hit, true_distance, true_normal);
           }
           SUBCASE("negativ Z-Axis") {
             Vec3r<T> org1{0, 0, -5};
