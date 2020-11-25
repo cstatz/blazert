@@ -537,7 +537,6 @@ TEST_CASE_TEMPLATE("Trimesh : Single Triangle - Precision", T, float, double) {
   SUBCASE("edge (0,0,0) -> (1, 0, 0)") {
     Vec3r<T> dir1{0, 0, -1};
     const bool true_hit = false;
-    // TODO: check what happens if test fails and problems that occur
     for(int i = 1; i<=10; ++i){
       auto i_temp = static_cast<T>(i);
       Vec3r<T> org1{0.5, 0 - i_temp*epsilon, 5};
