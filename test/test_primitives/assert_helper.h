@@ -99,8 +99,8 @@ inline void assert_intersect_primitive_hit(const Collection<T> &collection, cons
   * Used for trimesh, if more than one triangle is used
   */
 template<typename T, template<typename> typename Collection>
-inline void assert_traverse_bvh_hit_trimesh(const Collection<T> &collection, const Ray<T> &ray, const bool true_hit,
-                                            const T distance, const Vec3r<T> &normal) {
+inline void assert_traverse_bvh_hit_collection(const Collection<T> &collection, const Ray<T> &ray, const bool true_hit,
+                                               const T distance, const Vec3r<T> &normal) {
 
   BVH bvh(collection);
   SAHBinnedBuilder builder;
