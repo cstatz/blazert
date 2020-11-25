@@ -327,6 +327,8 @@ inline void single_triangle_ccw_flat_xy(const Vec3r<T> &center, Vec3rList<T> &ve
 
 /**
  * Pyramid mesh
+ * Generates a 3D pyramid with groundplane on z = 0, center at (0, 0, 0), edge length = 2
+ * The top of the pyramid is over the center at (0, 0, 1) -> height = 1
  */
 template<typename T>
 inline void pyramid_mesh(const Vec3r<T> &center, Vec3rList<T> &vertices, Vec3iList &indices) {
