@@ -147,12 +147,7 @@ inline void assert_traverse_bvh_hit_trimesh_precision(const Collection<T> &colle
 
   RayHit<T> rayhit;
   const bool hit = traverse(bvh, ray, rayhit);
-/*  if (hit != true_hit) {
-    std::cout << "The precision is greater than or equal " << run_var << "*epsilon. (epsilon = " << epsilon << ")"
-              << std::endl;
-  }*/
-  WARN_MESSAGE(hit == true_hit,
-               "The precision is greater than or equal " << run_var << "*epsilon. (epsilon = " << epsilon << ")");
+  WARN_MESSAGE(hit == true_hit, "The precision is greater than or equal " << run_var << "*epsilon. (epsilon = " << epsilon << ")");
 }
 
 template<typename T, template<typename> typename Collection>
