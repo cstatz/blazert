@@ -142,6 +142,10 @@ inline void cube_mesh_cw(const Vec3r<T> &center, Vec3rList<T> &vertices, Vec3iLi
   indices.emplace_back(Vec3ui{0, 1, 3});
 }
 
+/**
+ * Two planes, with 2 triangle per plane
+ * The planes are perpendicular to each other
+ */
 template<typename T>
 inline void two_plane_mesh_90_deg(const Vec3r<T> &center, Vec3rList<T> &vertices, Vec3iList &indices) {
   // BBox (-1, -1, -1) ( 1,  1,  1)
