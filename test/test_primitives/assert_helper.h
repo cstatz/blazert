@@ -36,11 +36,13 @@ inline void assert_bounding_box(const Collection<T> &collection, const unsigned 
 template<typename T, template<typename> typename Collection>
 inline void assert_bounding_box_collection(const Collection<T> &collection, const unsigned int prim_id,
                                               const Vec3r<T> &true_min, const Vec3r<T> &true_max) {
-  const auto num_prim_id = collection.centers.size();
-  const auto [bmin_, bmax_] = collection.get_primitive_bounding_box(prim_id);
 
-  Vec3r<T> bmin{bmin_[0], bmin_[1], bmin_[2]};
-  Vec3r<T> bmax{bmax_[0], bmax_[1], bmax_[2]};
+  const auto num_prim_id = collection.centers.size();
+  const auto limit_max = std::numeric_limits<T>::max();
+  const auto limit_min = std::numeric_limits<T>::min();
+
+  Vec3r<T> bmin{limit_max, limit_max, limit_max};
+  Vec3r<T> bmax{limit_min, limit_min, limit_min};
 
   for (unsigned int i = 0; i < num_prim_id; i++) {
     const auto [bmin_temp, bmax_temp] = collection.get_primitive_bounding_box(i);
