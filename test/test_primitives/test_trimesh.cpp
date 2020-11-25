@@ -1079,7 +1079,7 @@ TEST_CASE_TEMPLATE("Trimesh : Pyramid - Intersections", T, float, double) {
     const T true_distance = 4;
     const Vec3r<T> true_normal{0, 0, 1};
 
-    assert_traverse_bvh_hit_trimesh(triangle, ray, true_hit, true_distance, true_normal);
+    assert_traverse_bvh_hit_collection(triangle, ray, true_hit, true_distance, true_normal);
   }
 }
 /* TEST_CASE_TEMPLATE("Trimesh : Two Triangles - Intersections", T, float, double) {
