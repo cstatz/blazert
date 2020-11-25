@@ -134,7 +134,6 @@ inline void assert_traverse_bvh_hit_trimesh_distance(const Collection<T> &collec
   CHECK(hit == true_hit);
   CHECK(rayhit.hit_distance == Approx(static_cast<T>(distance)));
 }
-// WARN(hit == true_hit);
 
 template<typename T, template<typename> typename Collection>
 inline void assert_traverse_bvh_hit_trimesh_precision(const Collection<T> &collection, const Ray<T> &ray,
