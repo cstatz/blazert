@@ -544,36 +544,36 @@ TEST_CASE_TEMPLATE("Trimesh : Single Triangle - Precision", T, float, double) {
       assert_traverse_bvh_hit_trimesh_precision(triangle, ray, true_hit, epsilon, i_temp);
     }
   }
-  /*  SUBCASE("edge (0,0,0) -> (0, 1, 0)") {
-    Vec3r<T> org1{0 - epsilon, 0.5, 5};
-    Vec3r<T> dir1{0, 0, -1};
-    Ray<T> ray{org1, dir1};
-
-    const bool true_hit = false;
-    const T true_distance = std::numeric_limits<T>::max();
-
-    assert_traverse_bvh_hit_trimesh_distance(triangle, ray, true_hit, true_distance);
-  }
   SUBCASE("edge (0,0,0) -> (0, 1, 0)") {
-    Vec3r<T> org1{0 - epsilon, 0.5, 5};
     Vec3r<T> dir1{0, 0, -1};
-    Ray<T> ray{org1, dir1};
-
     const bool true_hit = false;
-    const T true_distance = std::numeric_limits<T>::max();
-
-    assert_traverse_bvh_hit_trimesh_distance(triangle, ray, true_hit, true_distance);
+    for (int i = 1; i <= 10; ++i) {
+      auto i_temp = static_cast<T>(i);
+      Vec3r<T> org1{0 - i_temp * epsilon, 0.5, 5};
+      Ray<T> ray{org1, dir1};
+      assert_traverse_bvh_hit_trimesh_precision(triangle, ray, true_hit, epsilon, i_temp);
+    }
   }
-  SUBCASE("corner") {
-    Vec3r<T> org1{0 - epsilon / 2, 0 - epsilon / 2, 5};
+  /*  SUBCASE("edge (1,0,0) -> (0, 1, 0)") {
     Vec3r<T> dir1{0, 0, -1};
-    Ray<T> ray{org1, dir1};
-
     const bool true_hit = false;
-    const T true_distance = std::numeric_limits<T>::max();
-
-    assert_traverse_bvh_hit_trimesh_distance(triangle, ray, true_hit, true_distance);
+    for (int i = 1; i <= 10; ++i) {
+      auto i_temp= static_cast<T>(i)*100;
+      Vec3r<T> org1{static_cast<T>(0.5), static_cast<T>(0.5) + i_temp * epsilon, 5};
+      Ray<T> ray{org1, dir1};
+      assert_traverse_bvh_hit_trimesh_precision(triangle, ray, true_hit, epsilon, i_temp);
+    }
   }*/
+//  SUBCASE("corner (1, 0, 0)") {
+//    Vec3r<T> dir1{0, 0, -1};
+//    const bool true_hit = false;
+//    for (int i = 1; i <= 10; ++i) {
+//      auto i_temp = static_cast<T>(i);
+//      Vec3r<T> org1{T(1) + i_temp * epsilon, 0, 5};
+//      Ray<T> ray{org1, dir1};
+//      assert_traverse_bvh_hit_trimesh_precision(triangle, ray, true_hit, epsilon, i_temp);
+//    }
+//  }
 }
 
 TEST_CASE_TEMPLATE("Trimesh: Cube Mesh - Bounding Box", T, float, double) {
@@ -590,7 +590,7 @@ TEST_CASE_TEMPLATE("Trimesh: Cube Mesh - Bounding Box", T, float, double) {
       const Vec3r<T> true_bmin{-1, -1, -1};
       const Vec3r<T> true_bmax{1, 1, 1};
 
-      assert_bounding_box_collection(triangles_ccw, 0, true_bmin, true_bmax);
+      assert_bounding_box_collection(triangles_ccw, true_bmin, true_bmax);
     }
     SUBCASE("clockwise") {
       cube_mesh_cw(center, *vertices, *indices);
@@ -599,7 +599,7 @@ TEST_CASE_TEMPLATE("Trimesh: Cube Mesh - Bounding Box", T, float, double) {
       const Vec3r<T> true_bmin{-1, -1, -1};
       const Vec3r<T> true_bmax{1, 1, 1};
 
-      assert_bounding_box_collection(triangles_cw, 0, true_bmin, true_bmax);
+      assert_bounding_box_collection(triangles_cw, true_bmin, true_bmax);
     }
   }
   SUBCASE("2.1.2 center shifted") {
@@ -611,7 +611,7 @@ TEST_CASE_TEMPLATE("Trimesh: Cube Mesh - Bounding Box", T, float, double) {
       const Vec3r<T> true_bmin{3, 1, -1};
       const Vec3r<T> true_bmax{5, 3, 1};
 
-      assert_bounding_box_collection(triangles_ccw, 0, true_bmin, true_bmax);
+      assert_bounding_box_collection(triangles_ccw, true_bmin, true_bmax);
     }
     SUBCASE("clockwise") {
       cube_mesh_cw(center, *vertices, *indices);
@@ -620,7 +620,7 @@ TEST_CASE_TEMPLATE("Trimesh: Cube Mesh - Bounding Box", T, float, double) {
       const Vec3r<T> true_bmin{3, 1, -1};
       const Vec3r<T> true_bmax{5, 3, 1};
 
-      assert_bounding_box_collection(triangles_cw, 0, true_bmin, true_bmax);
+      assert_bounding_box_collection(triangles_cw, true_bmin, true_bmax);
     }
   }
 }
