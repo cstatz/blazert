@@ -34,8 +34,8 @@ inline void assert_bounding_box(const Collection<T> &collection, const unsigned 
     @param num_prim_id : Number of prim_ids in object
 */
 template<typename T, template<typename> typename Collection>
-inline void assert_bounding_box_collection(const Collection<T> &collection, const unsigned int prim_id,
-                                              const Vec3r<T> &true_min, const Vec3r<T> &true_max) {
+inline void assert_bounding_box_collection(const Collection<T> &collection, const Vec3r<T> &true_min,
+                                           const Vec3r<T> &true_max) {
 
   const auto num_prim_id = collection.centers.size();
   const auto limit_max = std::numeric_limits<T>::max();
@@ -96,7 +96,6 @@ inline void assert_intersect_primitive_hit(const Collection<T> &collection, cons
   CHECK(rayhit.normal[2] == Approx(static_cast<T>(normal[2])));
 }
 
-
 /**
   * Used for trimesh, if more than one triangle is used
   */
@@ -148,7 +147,8 @@ inline void assert_traverse_bvh_hit_trimesh_precision(const Collection<T> &colle
 
   RayHit<T> rayhit;
   const bool hit = traverse(bvh, ray, rayhit);
-  WARN_MESSAGE(hit == true_hit, "The precision is greater than or equal " << run_var << "*epsilon. (epsilon = " << epsilon << ")");
+  WARN_MESSAGE(hit == true_hit,
+               "The precision is greater than or equal " << run_var << "*epsilon. (epsilon = " << epsilon << ")");
 }
 
 template<typename T, template<typename> typename Collection>
