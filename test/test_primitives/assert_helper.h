@@ -147,6 +147,10 @@ inline void assert_traverse_bvh_hit_trimesh_precision(const Collection<T> &colle
 
   RayHit<T> rayhit;
   const bool hit = traverse(bvh, ray, rayhit);
+  INFO("  This is only a WARN_MESSAGE and no fail of the test.\n"
+       "   -> Origin: ~\\blazert\\test\\test_primitives\\assert_helper.h \n"
+       "   -> Name: assert_traverse_bvh_hit_trimesh_precision(...)\n");
+
   WARN_MESSAGE(hit == true_hit,
                "The precision is greater than or equal " << run_var << "*epsilon. (epsilon = " << epsilon << ")");
 }
