@@ -1159,6 +1159,33 @@ TEST_CASE_TEMPLATE("Trimesh : Cube Mesh - Precision", T, float, double) {
       }
     }
   }
+      SUBCASE("Center shifted") {
+    const Vec3r<T> center{1, 1, 1};
+        SUBCASE("assembled ccw") {
+      cube_mesh_ccw_01(center, *vertices, *indices);
+      TriangleMesh cube(*vertices, *indices);
+          SUBCASE("tangent at edge (-1,-1,1)->(-1, 1, 1)") {
+        Vec3r<T> dir1{-1, 0, -1};
+        const bool true_hit = false;
+        for (int i = 1; i <= 10; ++i) {
+          auto i_temp = static_cast<T>(i);
+          Vec3r<T> org1{1, 1, 3 + i_temp * epsilon};
+          Ray<T> ray{org1, dir1};
+          assert_traverse_bvh_hit_trimesh_precision(cube, ray, true_hit, epsilon, i_temp);
+        }
+      }
+          SUBCASE("tangent at corner(-1, -1, 1)") {
+        Vec3r<T> dir1{-1, -1, -1};
+        const bool true_hit = false;
+        for (int i = 1; i <= 10; ++i) {
+          auto i_temp = static_cast<T>(i);
+          Vec3r<T> org1{1, 1, 3 + i_temp * epsilon};
+          Ray<T> ray{org1, dir1};
+          assert_traverse_bvh_hit_trimesh_precision(cube, ray, true_hit, epsilon, i_temp);
+        }
+      }
+    }
+  }
 }
 TEST_CASE_TEMPLATE("Trimesh : Pyramid - Intersections", T, float, double) {
   auto centers = std::make_unique<Vec3rList<T>>();
