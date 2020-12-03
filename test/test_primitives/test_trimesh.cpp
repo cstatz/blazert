@@ -526,8 +526,8 @@ TEST_CASE_TEMPLATE("Trimesh : Single Triangle - Precision", T, float, double) {
   auto centers = std::make_unique<Vec3rList<T>>();
   auto vertices = std::make_unique<Vec3rList<T>>();
   auto indices = std::make_unique<Vec3iList>();
-
   const T epsilon{std::numeric_limits<T>::epsilon()};
+
   SUBCASE("center at origin") {
     const Vec3r<T> center{0, 0, 0};
     single_triangle_cw_flat_xy(center, *vertices, *indices);
@@ -618,6 +618,28 @@ TEST_CASE_TEMPLATE("Trimesh : Single Triangle - Precision", T, float, double) {
         Ray<T> ray{org1, dir1};
         assert_traverse_bvh_hit_trimesh_precision(triangle, ray, true_hit, epsilon, i_temp);
       }
+    }
+  }
+}
+
+TEST_CASE_TEMPLATE("Trimesh : Single Triangle - Ray plane-parallel to surface", T, float, double) {
+  auto centers = std::make_unique<Vec3rList<T>>();
+  auto vertices = std::make_unique<Vec3rList<T>>();
+  auto indices = std::make_unique<Vec3iList>();
+  const T epsilon{std::numeric_limits<T>::epsilon()};
+
+  SUBCASE("ray plane-parallel to surface") {
+    const Vec3r<T> center{0, 0, 0};
+    single_triangle_cw_flat_xy(center, *vertices, *indices);
+    TriangleMesh triangle(*vertices, *indices);
+
+    Vec3r<T> dir1{1, 0, 0};
+    const bool true_hit = false;
+    for (int i = 1; i <= 10; ++i) {
+      auto i_temp = static_cast<T>(i);
+      Vec3r<T> org1{-5, T(0.5), 0 + i_temp * epsilon};
+      Ray<T> ray{org1, dir1};
+      assert_traverse_bvh_hit_trimesh_precision(triangle, ray, true_hit, epsilon, i_temp);
     }
   }
 }
@@ -1105,6 +1127,39 @@ TEST_CASE_TEMPLATE("Trimesh : Cube Mesh - Intersections", T, float, double) {
   }
 }
 
+TEST_CASE_TEMPLATE("Trimesh : Cube Mesh - Precision", T, float, double) {
+  auto centers = std::make_unique<Vec3rList<T>>();
+  auto vertices = std::make_unique<Vec3rList<T>>();
+  auto indices = std::make_unique<Vec3iList>();
+  const T epsilon{std::numeric_limits<T>::epsilon()};
+  SUBCASE("Center at origin") {
+    const Vec3r<T> center{0, 0, 0};
+    SUBCASE("assembled ccw") {
+      cube_mesh_ccw_01(center, *vertices, *indices);
+      TriangleMesh cube(*vertices, *indices);
+      SUBCASE("tangent at edge (-1,-1,1)->(-1, 1, 1)") {
+        Vec3r<T> dir1{-1, 0, -1};
+        const bool true_hit = false;
+        for (int i = 1; i <= 10; ++i) {
+          auto i_temp = static_cast<T>(i);
+          Vec3r<T> org1{0, 0, 2 + i_temp * epsilon};
+          Ray<T> ray{org1, dir1};
+          assert_traverse_bvh_hit_trimesh_precision(cube, ray, true_hit, epsilon, i_temp);
+        }
+      }
+      SUBCASE("tangent at corner(-1, -1, 1)") {
+        Vec3r<T> dir1{-1, -1, -1};
+        const bool true_hit = false;
+        for (int i = 1; i <= 10; ++i) {
+          auto i_temp = static_cast<T>(i);
+          Vec3r<T> org1{0, 0, 2 + i_temp * epsilon};
+          Ray<T> ray{org1, dir1};
+          assert_traverse_bvh_hit_trimesh_precision(cube, ray, true_hit, epsilon, i_temp);
+        }
+      }
+    }
+  }
+}
 TEST_CASE_TEMPLATE("Trimesh : Pyramid - Intersections", T, float, double) {
   auto centers = std::make_unique<Vec3rList<T>>();
   auto vertices = std::make_unique<Vec3rList<T>>();
