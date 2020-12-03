@@ -523,7 +523,6 @@ TEST_CASE_TEMPLATE("Trimesh : Single Triangle", T, float, double) {
 }
 
 TEST_CASE_TEMPLATE("Trimesh : Single Triangle - Precision", T, float, double) {
-  // TODO: Test how close a beam can be to an edge or corner to hit or miss
   auto centers = std::make_unique<Vec3rList<T>>();
   auto vertices = std::make_unique<Vec3rList<T>>();
   auto indices = std::make_unique<Vec3iList>();
@@ -625,7 +624,6 @@ TEST_CASE_TEMPLATE("Trimesh: Cube Mesh - Bounding Box", T, float, double) {
   }
 }
 
-// https://en.cppreference.com/w/cpp/types/numeric_limits
 TEST_CASE_TEMPLATE("Trimesh : Cube Mesh - Intersections", T, float, double) {
   auto centers = std::make_unique<Vec3rList<T>>();
   auto vertices = std::make_unique<Vec3rList<T>>();
@@ -1082,89 +1080,3 @@ TEST_CASE_TEMPLATE("Trimesh : Pyramid - Intersections", T, float, double) {
     assert_traverse_bvh_hit_collection(triangle, ray, true_hit, true_distance, true_normal);
   }
 }
-/* TEST_CASE_TEMPLATE("Trimesh : Two Triangles - Intersections", T, float, double) {
-  auto centers = std::make_unique<Vec3rList<T>>();
-  auto vertices = std::make_unique<Vec3rList<T>>();
-  auto indices = std::make_unique<Vec3iList>();
-  SUBCASE("center at origin") {
-    const Vec3r<T> center{0, 0, 0};
-    SUBCASE("xy plane") {
-      two_triangle_ccw_plane_xy(center, *vertices, *indices);
-      TriangleMesh triangle(*vertices, *indices);
-
-      Vec3r<T> org1{0, 0, 5};
-      Vec3r<T> dir1{0, 0, -1};
-
-      Ray<T> ray{org1, dir1};
-
-      const bool true_hit = true;
-      const T true_distance = 5;
-      const Vec3r<T> true_normal{0, 0, -1};
-
-      assert_traverse_bvh_hit_collection(triangle, ray, true_hit, true_distance, true_normal);
-    }
-    SUBCASE("xz plane") {
-      two_triangle_ccw_plane_xz(center, *vertices, *indices);
-      TriangleMesh triangle(*vertices, *indices);
-
-      Vec3r<T> org1{0, 5, 0};
-      Vec3r<T> dir1{0, -1, 0};
-
-      Ray<T> ray{org1, dir1};
-
-      const bool true_hit = true;
-      const T true_distance = 5;
-      const Vec3r<T> true_normal{0, 1, 0};
-
-      assert_traverse_bvh_hit_collection(triangle, ray, true_hit, true_distance, true_normal);
-    }
-    SUBCASE("two planes in xy") {
-      two_plane_mesh(center, *vertices, *indices);
-      TriangleMesh triangle(*vertices, *indices);
-
-      Vec3r<T> org1{0, 0, 5};
-      Vec3r<T> dir1{0, 0, -1};
-
-      Ray<T> ray{org1, dir1};
-
-      const bool true_hit = true;
-      const T true_distance = 4;
-      const Vec3r<T> true_normal{0, 0, -1};
-
-      assert_traverse_bvh_hit_collection(triangle, ray, true_hit, true_distance, true_normal);
-    }
-    SUBCASE("two planes 90 degree") {
-      two_plane_mesh_90_deg(center, *vertices, *indices);
-      TriangleMesh triangle(*vertices, *indices);
-
-      Vec3r<T> org1{0, 0, 5};
-      Vec3r<T> dir1{0, 0, -1};
-
-      Ray<T> ray{org1, dir1};
-
-      const bool true_hit = true;
-      const T true_distance = 4;
-      const Vec3r<T> true_normal{0, 0, -1};
-
-      assert_traverse_bvh_hit_collection(triangle, ray, true_hit, true_distance, true_normal);
-    }
-  }
-  SUBCASE("center shifted") {
-    const Vec3r<T> center{0, 0, -5};
-    SUBCASE("two planes 90 degree") {
-      two_plane_mesh_90_deg(center, *vertices, *indices);
-      TriangleMesh triangle(*vertices, *indices);
-
-      Vec3r<T> org1{0, 0, 0};
-      Vec3r<T> dir1{0, 0, -1};
-
-      Ray<T> ray{org1, dir1};
-
-      const bool true_hit = true;
-      const T true_distance = 4;
-      const Vec3r<T> true_normal{0, 0, -1};
-
-      assert_traverse_bvh_hit_collection(triangle, ray, true_hit, true_distance, true_normal);
-    }
-  }
-}*/
