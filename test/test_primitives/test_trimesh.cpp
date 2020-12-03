@@ -527,50 +527,97 @@ TEST_CASE_TEMPLATE("Trimesh : Single Triangle - Precision", T, float, double) {
   auto vertices = std::make_unique<Vec3rList<T>>();
   auto indices = std::make_unique<Vec3iList>();
 
-  const Vec3r<T> center{0, 0, 0};
-  single_triangle_cw_flat_xy(center, *vertices, *indices);
-  TriangleMesh triangle(*vertices, *indices);
-
   const T epsilon{std::numeric_limits<T>::epsilon()};
+  SUBCASE("center at origin") {
+    const Vec3r<T> center{0, 0, 0};
+    single_triangle_cw_flat_xy(center, *vertices, *indices);
+    TriangleMesh triangle(*vertices, *indices);
 
-  SUBCASE("edge (0,0,0) -> (1, 0, 0)") {
-    Vec3r<T> dir1{0, 0, -1};
-    const bool true_hit = false;
-    for (int i = 1; i <= 10; ++i) {
-      auto i_temp = static_cast<T>(i);
-      Vec3r<T> org1{0.5, 0 - i_temp * epsilon, 5};
-      Ray<T> ray{org1, dir1};
-      assert_traverse_bvh_hit_trimesh_precision(triangle, ray, true_hit, epsilon, i_temp);
+    SUBCASE("edge (0,0,0) -> (1, 0, 0)") {
+      Vec3r<T> dir1{0, 0, -1};
+      const bool true_hit = false;
+      for (int i = 1; i <= 10; ++i) {
+        auto i_temp = static_cast<T>(i);
+        Vec3r<T> org1{0.5, 0 - i_temp * epsilon, 5};
+        Ray<T> ray{org1, dir1};
+        assert_traverse_bvh_hit_trimesh_precision(triangle, ray, true_hit, epsilon, i_temp);
+      }
+    }
+    SUBCASE("edge (0,0,0) -> (0, 1, 0)") {
+      Vec3r<T> dir1{0, 0, -1};
+      const bool true_hit = false;
+      for (int i = 1; i <= 10; ++i) {
+        auto i_temp = static_cast<T>(i);
+        Vec3r<T> org1{0 - i_temp * epsilon, 0.5, 5};
+        Ray<T> ray{org1, dir1};
+        assert_traverse_bvh_hit_trimesh_precision(triangle, ray, true_hit, epsilon, i_temp);
+      }
+    }
+    SUBCASE("hypotenuse (1,0,0) -> (0, 1, 0)") {
+      Vec3r<T> dir1{0, 0, -1};
+      const bool true_hit = false;
+      for (int i = 1; i <= 10; ++i) {
+        auto i_temp = static_cast<T>(i);
+        Vec3r<T> org1{static_cast<T>(0.5) + i_temp * epsilon, static_cast<T>(0.5) + i_temp * epsilon, 5};
+        Ray<T> ray{org1, dir1};
+        assert_traverse_bvh_hit_trimesh_precision(triangle, ray, true_hit, epsilon, i_temp);
+      }
+    }
+    SUBCASE("corner (1, 0, 0)") {
+      Vec3r<T> dir1{0, 0, -1};
+      const bool true_hit = false;
+      for (int i = 1; i <= 10; ++i) {
+        auto i_temp = static_cast<T>(i);
+        Vec3r<T> org1{T(1.) + i_temp * epsilon, 0, 5};
+        Ray<T> ray{org1, dir1};
+        assert_traverse_bvh_hit_trimesh_precision(triangle, ray, true_hit, epsilon, i_temp);
+      }
     }
   }
-  SUBCASE("edge (0,0,0) -> (0, 1, 0)") {
-    Vec3r<T> dir1{0, 0, -1};
-    const bool true_hit = false;
-    for (int i = 1; i <= 10; ++i) {
-      auto i_temp = static_cast<T>(i);
-      Vec3r<T> org1{0 - i_temp * epsilon, 0.5, 5};
-      Ray<T> ray{org1, dir1};
-      assert_traverse_bvh_hit_trimesh_precision(triangle, ray, true_hit, epsilon, i_temp);
+  SUBCASE("center shifted") {
+    const Vec3r<T> center{1, 1, 1};
+    single_triangle_cw_flat_xy(center, *vertices, *indices);
+    TriangleMesh triangle(*vertices, *indices);
+
+    SUBCASE("edge (1,1,1) -> (1, 2, 1)") {
+      Vec3r<T> dir1{0, 0, -1};
+      const bool true_hit = false;
+      for (int i = 1; i <= 10; ++i) {
+        auto i_temp = static_cast<T>(i);
+        Vec3r<T> org1{1 - i_temp * epsilon, 1.5, 5};
+        Ray<T> ray{org1, dir1};
+        assert_traverse_bvh_hit_trimesh_precision(triangle, ray, true_hit, epsilon, i_temp);
+      }
     }
-  }
-    SUBCASE("edge (1,0,0) -> (0, 1, 0)") {
-    Vec3r<T> dir1{0, 0, -1};
-    const bool true_hit = false;
-    for (int i = 1; i <= 10; ++i) {
-      auto i_temp= static_cast<T>(i);
-      Vec3r<T> org1{static_cast<T>(0.5) + i_temp * epsilon, static_cast<T>(0.5) + i_temp * epsilon, 5};
-      Ray<T> ray{org1, dir1};
-      assert_traverse_bvh_hit_trimesh_precision(triangle, ray, true_hit, epsilon, i_temp);
+    SUBCASE("edge (1,1,1) -> (2, 1, 1)") {
+      Vec3r<T> dir1{0, 0, -1};
+      const bool true_hit = false;
+      for (int i = 1; i <= 10; ++i) {
+        auto i_temp = static_cast<T>(i);
+        Vec3r<T> org1{1.5, 1 - i_temp * epsilon, 5};
+        Ray<T> ray{org1, dir1};
+        assert_traverse_bvh_hit_trimesh_precision(triangle, ray, true_hit, epsilon, i_temp);
+      }
     }
-  }
-  SUBCASE("corner (1, 0, 0)") {
-    Vec3r<T> dir1{0, 0, -1};
-    const bool true_hit = false;
-    for (int i = 1; i <= 10; ++i) {
-      auto i_temp = static_cast<T>(i);
-      Vec3r<T> org1{T(1.) + i_temp * epsilon, 0, 5};
-      Ray<T> ray{org1, dir1};
-      assert_traverse_bvh_hit_trimesh_precision(triangle, ray, true_hit, epsilon, i_temp);
+    SUBCASE("hypotenuse (1,2,1) -> (2, 1, 1)") {
+      Vec3r<T> dir1{0, 0, -1};
+      const bool true_hit = false;
+      for (int i = 1; i <= 10; ++i) {
+        auto i_temp = static_cast<T>(i);
+        Vec3r<T> org1{T(1.5) + (i_temp * epsilon) / 2, T(1.5) + (i_temp * epsilon) / 2, 5};
+        Ray<T> ray{org1, dir1};
+        assert_traverse_bvh_hit_trimesh_precision(triangle, ray, true_hit, epsilon, i_temp);
+      }
+    }
+    SUBCASE("corner (1,1,1)") {
+      Vec3r<T> dir1{0, 0, -1};
+      const bool true_hit = false;
+      for (int i = 1; i <= 10; ++i) {
+        auto i_temp = static_cast<T>(i);
+        Vec3r<T> org1{T(1) - (i_temp * epsilon) / 2, T(1) - (i_temp * epsilon) / 2, 5};
+        Ray<T> ray{org1, dir1};
+        assert_traverse_bvh_hit_trimesh_precision(triangle, ray, true_hit, epsilon, i_temp);
+      }
     }
   }
 }
