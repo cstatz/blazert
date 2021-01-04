@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: build blazert
-      - run: "export BLAZE_INCLUDE=""
+      - run: "export BLAZE_INCLUDE=\"\"
               export BLAZE_INCLUDE=`pwd`/deps/blaze/include;
               export CXX=${TRAVIS_COMPILER};
               export CC=gcc-9;
