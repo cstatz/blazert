@@ -1,0 +1,41 @@
+name: blazertCI
+on: [push, pull_request]
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    steps:
+      - name: prepare dependencies
+      - run: echo `pwd`
+      - run: "export BLAZE_INSTALL_DIR=`pwd`/deps/blaze;
+              wget https://bitbucket.org/blaze-lib/blaze/downloads/blaze-3.7.tar.gz;
+              export BLAZE_INSTALL_DIR=`pwd`/deps/blaze;
+              echo ${BLAZE_INSTALL_DIR};
+              tar -xf blaze-3.7.tar.gz;
+              cd blaze-3.7;
+              mkdir build;
+              cd build;
+              cmake ../ -DCMAKE_INSTALL_PREFIX=$BLAZE_INSTALL_DIR;
+              cmake --build .;
+              cmake --build . -- install;
+              cd ..;
+              cd ..;"
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: build blazert
+      - run: "export BLAZE_INCLUDE=""
+              export BLAZE_INCLUDE=`pwd`/deps/blaze/include;
+              export CXX=${TRAVIS_COMPILER};
+              export CC=gcc-9;
+              export CXX=g++-9;
+              pwd
+              mkdir -p cmake_build_release
+              pushd cmake_build_release
+              cmake -DCMAKE_BUILD_TYPE=Release ../ -DBUILD_TEST:BOOL=true -DBUILD_EXAMPLES:BOOL=true -DBLAZE_INCLUDE_OVERRIDE:STRING=${BLAZE_INCLUDE} -DENABLE_OMP:BOOL=false
+              cmake --build ."
+
+  run_tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: run tests
+      - run: ctest --progress -VV
