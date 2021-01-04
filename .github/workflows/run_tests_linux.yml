@@ -5,6 +5,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: prepare dependencies
+      - uses: actions/checkout@v2
       - run: echo `pwd`
       - run: export BLAZE_INSTALL_DIR=`pwd`/deps/blaze;
       - run: wget https://bitbucket.org/blaze-lib/blaze/downloads/blaze-3.7.tar.gz;
@@ -19,12 +20,6 @@ jobs:
       - run: cmake --build . -- install;
       - run: cd ..;
       - run: cd ..;
-
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: build blazert
-      - uses: actions/checkout@v2
       - run: export BLAZE_INCLUDE=""
       - run: export BLAZE_INCLUDE=`pwd`/deps/blaze/include;
       - run: export CXX=${TRAVIS_COMPILER};
@@ -35,9 +30,4 @@ jobs:
       - run: pushd cmake_build_release
       - run: cmake -DCMAKE_BUILD_TYPE=Release ../ -DBUILD_TEST:BOOL=true -DBUILD_EXAMPLES:BOOL=true -DBLAZE_INCLUDE_OVERRIDE:STRING=${BLAZE_INCLUDE} -DENABLE_OMP:BOOL=false
       - run: cmake --build .
-
-  run_tests:
-    runs-on: ubuntu-latest
-    steps:
-      - name: run tests
       - run: ctest --progress -VV
