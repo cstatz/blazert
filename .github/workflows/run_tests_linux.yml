@@ -19,10 +19,12 @@ jobs:
       - run: cmake --build . -- install;
       - run: cd ..;
       - run: cd ..;
+
   build:
     runs-on: ubuntu-latest
     steps:
       - name: build blazert
+      - uses: actions/checkout@v2
       - run: export BLAZE_INCLUDE=""
       - run: export BLAZE_INCLUDE=`pwd`/deps/blaze/include;
       - run: export CXX=${TRAVIS_COMPILER};
