@@ -1,4 +1,8 @@
-name: CMake
+name: cmake-gcc
+
+strategy:
+  matrix:
+    compiler: [g++, clang++]
 
 on: [push]
 
@@ -17,6 +21,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - env:
+          CC: ${{matrix.compiler}}
       - name: initialize repository
         uses: actions/checkout@v2
         with:
