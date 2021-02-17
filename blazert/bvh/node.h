@@ -6,6 +6,12 @@
 
 namespace blazert {
 
+/**
+ * BVHnode describes a single node in the BVH for a certain primitive type.
+ *
+ * @tparam T floating point type
+ * @tparam Collection primitive collection type
+ */
 template<typename T, template<typename> typename Collection>
 class BLAZERTALIGN BVHNode {
 public:
@@ -37,11 +43,11 @@ public:
 template<typename T, template<typename> typename Collection>
 std::ostream &operator<<(std::ostream &stream, const BVHNode<T, Collection> &node) {
   stream << "{\n";
-  stream << "  node: " << &node << ",\n";
-  stream << "  min: [" << node.min[0] << ", " << node.min[1] << ", " << node.min[2] << "],\n";
-  stream << "  max: [" << node.max[0] << ", " << node.max[1] << ", " << node.max[2] << "],\n";
-  stream << "  leaf: " << node.leaf << ",\n";
-  stream << "  axis: " << node.axis << "\n";
+  stream << R"(  "node": )" << &node << ",\n";
+  stream << R"(  "min:" [)" << node.min[0] << ", " << node.min[1] << ", " << node.min[2] << "],\n";
+  stream << R"(  "max:" [)" << node.max[0] << ", " << node.max[1] << ", " << node.max[2] << "],\n";
+  stream << R"(  "leaf": )" << node.leaf << ",\n";
+  stream << R"(  "axis": )" << node.axis << "\n";
   stream << "}\n";
   return stream;
 }

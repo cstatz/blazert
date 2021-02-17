@@ -15,6 +15,21 @@
 
 namespace blazert {
 
+/**
+ * @brief EmbreeScene provides the high-level interface for ray tracing with embree backend.
+ *
+ * @details
+ *  EmbreeScene is responsible for the entire ray tracing process. It provides measures to add different geometry types.
+ *  Furthermore, it encapsulates the BVH for each geometry type.
+ *
+ *  @warning
+ *  - If T is a single precision type, the embree backend will be used to do the ray tracing.
+ *  - If T is a double precision type, the blazert backend will be used (embree **won't** be used in this case)
+ *
+ * @note This API is considered to be stable.
+ *
+ * @tparam T floating point type
+ */
 template<typename T>
 class EmbreeScene {
 private:
@@ -50,8 +65,15 @@ public:
                              const std::vector<T> &semi_axes_b, const std::vector<T> &heights,
                              const Mat3rList<T> &rotations);
 
-  //template<class X, ...> add_custom_primitive( ... );
-
+  /**
+   * @brief Commits the scene and builds BVH for each geometry type
+   *
+   * @details
+   * It is necessary to run this function before running the intersect functions. The bounding volume hierarchy
+   * is built for each geometry type present in the scene.
+   *
+   * @return returns true if scene has been committed
+   */
   bool commit() {
     if (!has_been_committed) {
 
@@ -66,7 +88,17 @@ public:
   };
 };
 
-// TODO: Performance critical code should not be a member function (hidden pointer *this), since the compiler will sometimes not know how to optimize.
+/**
+ * @brief  sdfsdfdsfs
+ *
+ * @details bdsdf
+ *
+ * @tparam T floating point type, which is usually float or double, but in the future, quadruple precision might be useful
+ * @param scene
+ * @param ray
+ * @param rayhit
+ * @return True if a hit is found, otherwise false
+ */
 template<typename T>
 inline bool intersect1(const EmbreeScene<T> &scene, const Ray<T> &ray, RayHit<T> &rayhit) {
 
@@ -108,22 +140,36 @@ inline bool intersect1(const EmbreeScene<T> &scene, const Ray<T> &ray, RayHit<T>
   }
 
   return hit;
-};
+}
 
+/**
+ * @brief Adds a triangular mesh to the scene
+ * @details
+ *  A triangular mesh can be used to describe any geometry. The mesh is described by vertices and a list of triangles
+ *  which describe which vertices form a triangle.
+ *  The prim_id is set in the rayhit structure by the intersection functions.
+ *
+ * @param vertices Vertices need to be allocated on the heap!
+ * @param triangles Triangles need to be allocated on the heap!
+ * @return geometry id for the mesh.
+ *
+ * @note vertices and triangles need to be allocated on the heap.
+ *
+ */
 template<typename T>
 unsigned int EmbreeScene<T>::add_mesh(const Vec3rList<T> &vertices, const Vec3iList &triangles) {
 
-  unsigned int id = -1;
+  unsigned int id = static_cast<unsigned int>(-1);
 
   if constexpr (std::is_same<float, T>::value) {
     constexpr const int bytestride_int = sizeof(Vec3ui) / 8 * sizeof(Vec3ui::ElementType);
     constexpr const int bytestride_float = sizeof(Vec3r<float>) / 8 * sizeof(Vec3r<float>::ElementType);
 
     triangle_mesh = rtcNewGeometry(device, RTC_GEOMETRY_TYPE_TRIANGLE);
-    rtcSetSharedGeometryBuffer(triangle_mesh, RTC_BUFFER_TYPE_INDEX, 0, RTC_FORMAT_UINT3, (void *) (triangles.data()),
-                               0, bytestride_int, triangles.size());
-    rtcSetSharedGeometryBuffer(triangle_mesh, RTC_BUFFER_TYPE_VERTEX, 0, RTC_FORMAT_FLOAT3, (void *) (vertices.data()),
-                               0, bytestride_float, vertices.size());
+    rtcSetSharedGeometryBuffer(triangle_mesh, RTC_BUFFER_TYPE_INDEX, 0, RTC_FORMAT_UINT3,
+                               reinterpret_cast<const void *>(triangles.data()), 0, bytestride_int, triangles.size());
+    rtcSetSharedGeometryBuffer(triangle_mesh, RTC_BUFFER_TYPE_VERTEX, 0, RTC_FORMAT_FLOAT3,
+                               reinterpret_cast<const void *>(vertices.data()), 0, bytestride_float, vertices.size());
     rtcCommitGeometry(triangle_mesh);
     auto geom_id = rtcAttachGeometry(rtcscene, triangle_mesh);
     id = geom_id;
@@ -133,10 +179,28 @@ unsigned int EmbreeScene<T>::add_mesh(const Vec3rList<T> &vertices, const Vec3iL
   return id;
 }
 
+/**
+ * @brief Adds spheres at centers with radii
+ *
+ * @details
+ *  The spheres are described by centers and radii. For \f$N\f$ spheres, each of these vectors
+ *  needs to have \f$N\f$ entries describing the corresponding sphere's center and radius.
+ *
+ *  The prim_id is set in the rayhit structure by the intersection functions.
+ *
+ * @warning currently, only one sphere can be added
+ *
+ * @param centers specifies centers of the spheres (needs to be allocated on heap)
+ * @param radii specifies radii of the spheres (needs to be allocated on heap)
+ * @return geometry id of the spheres
+ *
+ * @note centers and radii need to be allocated on the heap.
+ * @note centers and spheres should be of the same length.
+ */
 template<typename T>
 unsigned int EmbreeScene<T>::add_spheres(const Vec3rList<T> &centers, const std::vector<T> &radii) {
 
-  unsigned int id = -1;
+  unsigned int id = static_cast<unsigned int>(-1);
 
   if constexpr (std::is_same<float, T>::value) {
     // TODO: We are looking for something more like this:
@@ -155,11 +219,33 @@ unsigned int EmbreeScene<T>::add_spheres(const Vec3rList<T> &centers, const std:
   return id;
 }
 
+/**
+ * @brief Adds planes at centers with dimensions dxs and dys rotated around rotations
+ *
+ * @details
+ *  The planes are described by centers, dimensions in x and y direction as well as rotation matrices.
+ *  For \f$N\f$ planes, each of these vectors needs to have \f$N\f$ entries describing the corresponding planes'
+ *  centers, dimensions in x and y direction and rotation matrices.
+ *
+ *  The prim_id is set in the rayhit structure by the intersection functions.
+ *
+ * @warning currently, only one plane can be added
+ *
+ * @param centers center of planes
+ * @param dxs dimensions in x direction
+ * @param dys dimensions in y direction
+ * @param rotations local rotation matrices
+ *
+ * @return geometry id of the planes
+ *
+ * @note centers, dxy, dys, and rotations need to be allocated on the heap.
+ * @note centers, dxy, dys, and rotations should be of the same length.
+ */
 template<typename T>
 unsigned int EmbreeScene<T>::add_planes(const Vec3rList<T> &centers, const std::vector<T> &dxs,
                                         const std::vector<T> &dys, const Mat3rList<T> &rotations) {
 
-  unsigned int id = -1;
+  unsigned int id = static_cast<unsigned int>(-1);
 
   if constexpr (std::is_same<float, T>::value) {
     plane = std::make_unique<EmbreePlane>(device, rtcscene, centers[0], dxs[0], dys[0], rotations[0]);
@@ -180,11 +266,34 @@ unsigned int EmbreeScene<T>::add_planes(const Vec3rList<T> &centers, const std::
   return id;
 }
 
+/**
+ * @brief Adds cylinders at centers, described by two semi_axes and heights.
+ *
+ * @details
+ *  The cylinders are described by their centers, two semi-axes describing the ellipoidal shape of the top and bottom
+ *  their height and rotations. For \f$N\f$ planes, each of these vectors needs to have \f$N\f$ entries describing the
+ *  corresponding cylinderes' centers, dimensions in x and y direction and rotation matrices.
+ *
+ *  The prim_id is set in the rayhit structure by the intersection functions.
+ *
+ *  @warning currently, only one cylinder can be added
+ *
+ * @param centers centers of the cylinders
+ * @param semi_axes_a semi-axes in x-direction
+ * @param semi_axes_b semi-axes in y-direction
+ * @param heights heights of the cylinders
+ * @param rotations rotation matrices
+ *
+ * @return geometry id of the cylinders
+ *
+ * @note centers, dxy, dys, and rotations need to be allocated on the heap.
+ * @note centers, dxy, dys, and rotations should be of the same length.
+ */
 template<typename T>
 unsigned int EmbreeScene<T>::add_cylinders(const Vec3rList<T> &centers, const std::vector<T> &semi_axes_a,
                                            const std::vector<T> &semi_axes_b, const std::vector<T> &heights,
                                            const Mat3rList<T> &rotations) {
-  unsigned int id = -1;
+  unsigned int id = static_cast<unsigned int>(-1);
 
   if constexpr (std::is_same<float, T>::value) {
     cylinder = std::make_unique<EmbreeCylinder>(device, rtcscene, centers[0], semi_axes_a[0], semi_axes_b[0],

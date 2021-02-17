@@ -1,5 +1,5 @@
 # How to contribute
-We love third-party contributions to blazert. This can be anything from enhanced 
+We love third-party contributions to blazeRT. This can be anything from enhanced 
 documentation, bug fixes in general or fixes for your specific platform. 
 
 When contributing to this repository, please first discuss the change you wish 
@@ -10,7 +10,7 @@ contributing.
 
 ## Creating Issues
 If you come across any problem, we would like to know about it. Also, if you would like to 
-see a specific feature in blazert, create an issue to discuss the feature. 
+see a specific feature in blazeRT, create an issue to discuss the feature. 
 
 Currently, there are two templates for bugs and feature requests. If you feel that your issue
 does not fit either criteria, feel free to open an issue anyway.
@@ -20,14 +20,14 @@ We will try to get back to you as soon as possible.
 ## Pull Requests
 We love pull requests from everyone to make sure that blazeRT is as good as possible.
 Before creating a pull request for anything major, please file an issue to make us aware 
-of your intended work. If your pull request is a bug fix or introduces a newfeature, 
+of your intended work. If your pull request is a bug fix or introduces a new feature, 
 please reference the issue in your pull request.
 
 Fork, then clone the repo:
 ```shell script
 git clone git@github.com:your-username/blazert.git
 ```
-Set up the build directories and build blazert:
+Set up the build directories and build blazeRT:
 ```shell script
 mkdir build
 cd build 

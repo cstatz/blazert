@@ -1,4 +1,5 @@
-[![Build Status](https://travis-ci.com/cstatz/blazert.svg?token=MzD1bv55cBzChUswxdrj&branch=develop)](https://travis-ci.com/cstatz/blazert)
+[![Build Status](https://github.com/cstatz/blazert/workflows/cmake-linux/badge.svg)](https://github.com/cstatz/blazert/actions) [![Documentation Status](https://readthedocs.org/projects/blazert/badge/?version=develop)](https://blazert.readthedocs.io/en/develop/?badge=develop)
+
 
 # blazeRT
 
@@ -27,7 +28,11 @@ effort (nearly plugin-) replacement. blazeRT should work on any system and archi
 (C++17 compatible) compiler is available.
 
 We aim at providing a **simple and unambiguous high-level API** for the ray-traversal. 
-We do not aim at providing backwards-compatibility (especially to older C++ standards).
+We do not aim at providing backwards-compatibility (especially to older C++ standards). 
+
+* **Get started:** [here](https://blazert.readthedocs.io/en/develop/usage/scene/minimal_example.html)
+* **Documentation:** [ReadTheDocs](https://blazert.readthedocs.io/en/develop/)
+* **Contributing:** [Contribution guide on ReadTheDocs](https://blazert.readthedocs.io/en/develop/contributing.html)
 
 blazeRT makes use of the the [blaze](https://bitbucket.org/blaze-lib/blaze/src/master/) linear algebra
 library for its vector types. Because we rely on a well-tested and well-optimized linear algebra library
@@ -41,7 +46,9 @@ to work on polygons or more complex primitives. A template for user-defined geom
 [here](examples/geometry_template/GEOM_TEMPLATE.h). If you implement new geometries, we are more than happy to receive
 a pull request from you to include it in blazeRT.
 
-blazeRT is tested using unit tests (whose number will increase as development progresses) as well as by comparison of rendering results to reference images. Currently the unit tests cover roughly 90% of files and 69% of lines, but in the tests we try to catch as many (fringe-) cases as possible.  We try to ensure high code 
+blazeRT is tested using unit tests (whose number will increase as development progresses) as well as by comparison of 
+rendering results to reference images. Currently the unit tests cover roughly 90% of files and 69% of lines, but 
+in the tests we try to catch as many (fringe-) cases as possible.  We try to ensure high code 
 quality and a reproducible build experience via continuous integration. During the CI process we 
 build the examples and the tests, which need to run successfully in order for the CI to pass. Currently, 
 blazeRT is CI-tested on Ubuntu 18.04 and macOS with gcc and clang.
@@ -103,6 +110,9 @@ git submodule update
 This will pull doctest, [nanoRT](https://github.com/lighttransport/nanort) and [madmann91/bvh](https://github.com/madmann91/bvh) as submodules.
 
 ### Build and test
+
+For windows read this: [building on windows](https://blazert.readthedocs.io/en/latest/build_blazert/build_windows.html)
+
 This is a header-only library. No need to build anything. Just drop it in your source directory and off you go.
 The build step is solely for the examples, tests and the benchmark.
 
@@ -141,7 +151,7 @@ backend
 
 ## Usage
 To get familiar with the usage of blazeRT, look at the provided examples and test cases. To get started quickly,
-checkout the minimal examples below.
+checkout the minimal examples below. The full documentation includeing the API reference is available [here](https://blazert.readthedocs.io/en/latest/).
 
 - The [scene](blazert/scene.h) API can be considered **stable**, while the low-level API of the [BVH](blazert/bvh) 
 (```build```, ```traverse```, ...) are not to be considered stable as they might change when requirements 

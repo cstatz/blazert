@@ -4,6 +4,14 @@
 
 namespace blazert {
 
+/**
+ * This function calculates the surface area of the box specified by the two vertices min and max.
+ *
+ * @tparam T floating point type
+ * @param min one vertex of the box
+ * @param max vertex diagonally opposite from the min vertex
+ * @return surface area of the box
+ */
 template<typename T>
 inline T calculate_box_surface(const Vec3r<T> &min, const Vec3r<T> &max) {
   const Vec3r<T> box{blaze::abs(max - min)};
@@ -40,6 +48,21 @@ struct BLAZERTALIGN BinBuffer {
   unsigned int size;
 };
 
+/**
+ * This function sorts the primitives contained in the collection into bins alongside each axis
+ *
+ * @tparam T floating point type
+ * @tparam Iterator Iterator type
+ * @tparam Collection Collection type
+ * @tparam Options build options type
+ * @param p collection of primitives
+ * @param begin iterator to the beginning of the relevant primitives in the collection
+ * @param end iterator to the end of the relevant primitives in the collection
+ * @param min vertex to the mimimum extent of the boundgin box under consideration
+ * @param max vertex to the maximum extent of the bounding box under consideration
+ * @param options build options
+ * @return BinBuffer containing the bins
+ */
 template<typename T, typename Iterator, class Collection, typename Options>
 inline BinBuffer<T> sort_collection_into_bins(const Collection &p, Iterator begin, Iterator end, const Vec3r<T> &min,
                                               const Vec3r<T> &max, const Options &options) {
@@ -71,6 +94,23 @@ inline BinBuffer<T> sort_collection_into_bins(const Collection &p, Iterator begi
   return bins;
 }
 
+/**
+ * This function finds the best split along one axis for primitives in the collection within the interval [begin; end]
+ *
+ * @tparam T floating point type
+ * @tparam Iterator Iterator type
+ * @tparam Collection Collection type
+ * @tparam Options Build Options Type
+ *
+ * @param collection collection of primitives
+ * @param begin iterator to the first primitive under consideration
+ * @param end iterator to the last primitive under consideration
+ * @param min vertex to the minimum extent of the bounding box
+ * @param max vertex to the maximum extent of the bounding box
+ * @param options build options
+ *
+ * @return std::pair<unsigned int, blazert::Vec3r<T>> describing the cut_axis and the cut position.
+ */
 template<typename T, typename Iterator, template<typename> typename Collection, typename Options>
 inline std::pair<unsigned int, Vec3r<T>> find_best_split_binned(const Collection<T> &collection, Iterator begin,
                                                                 Iterator end, const Vec3r<T> &min, const Vec3r<T> &max,
@@ -81,17 +121,17 @@ inline std::pair<unsigned int, Vec3r<T>> find_best_split_binned(const Collection
   Vec3r<T> cut_pos;
   Vec3r<T> min_cost(std::numeric_limits<T>::max());
 
-  for (int j = 0; j < 3; j++) {
+  for (unsigned int j = 0; j < 3; j++) {
     // Sweep left to accumulate bounding boxes and compute the right-hand side of the cost
     size_t count = 0;
     Vec3r<T> min_(std::numeric_limits<T>::max());
     Vec3r<T> max_(-std::numeric_limits<T>::max());
 
-    for (size_t i = bins.size - 1; i > 0; i--) {
+    for (unsigned int i = bins.size - 1; i > 0; i--) {
       Bin<T> &bin = bins.bin[j * bins.size + i];
       unity(min_, max_, bin.min, bin.max);
       count += bin.count;
-      bin.cost = count * calculate_box_surface(min_, max_);
+      bin.cost = static_cast<T>(count) * calculate_box_surface(min_, max_);
     }
 
     // Sweep right to compute the full cost
@@ -101,12 +141,12 @@ inline std::pair<unsigned int, Vec3r<T>> find_best_split_binned(const Collection
 
     unsigned int min_bin = 1;
 
-    for (size_t i = 0; i < bins.size - 1; i++) {
+    for (unsigned int i = 0; i < bins.size - 1; i++) {
       Bin<T> &bin = bins.bin[j * bins.size + i];
       Bin<T> &next_bin = bins.bin[j * bins.size + i + 1];
       unity(min_, max_, bin.min, bin.max);
       count += bin.count;
-      T cost = count * calculate_box_surface(min_, max_) + next_bin.cost;
+      T cost = static_cast<T>(count) * calculate_box_surface(min_, max_) + next_bin.cost;
 
       if (cost < min_cost[j]) {
         min_cost[j] = cost;
@@ -114,7 +154,7 @@ inline std::pair<unsigned int, Vec3r<T>> find_best_split_binned(const Collection
         min_bin = i + 1;
       }
     }
-    cut_pos[j] = min_bin * ((max[j] - min[j]) / bins.size) + min[j];
+    cut_pos[j] = static_cast<T>(min_bin) * ((max[j] - min[j]) / static_cast<T>(bins.size)) + min[j];
   }
 
   unsigned int min_cost_axis = 0;
