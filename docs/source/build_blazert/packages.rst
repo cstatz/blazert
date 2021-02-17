@@ -11,7 +11,7 @@ Arch Linux
 Currently, there is a ``PKGBUILD`` available in the AUR:
 
 - `last blazert release <https://aur.archlinux.org/packages/blazert />`_.
-- `blazert develop branch <https://aur.archlinux.org/packages/blazert />`_.
+- `blazert develop branch <https://aur.archlinux.org/packages/blazert-git />`_.
 
 Clone the repositories and run ``makepkg`` and ``pacman`` after carefully inspecting the ``PKGBUILD``.
 
