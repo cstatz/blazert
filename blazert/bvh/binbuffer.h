@@ -4,6 +4,14 @@
 
 namespace blazert {
 
+/**
+ * This function calculates the surface area of the box specified by the two vertices min and max.
+ *
+ * @tparam T floating point type
+ * @param min one vertex of the box
+ * @param max vertex diagonally opposite from the min vertex
+ * @return surface area of the box
+ */
 template<typename T>
 inline T calculate_box_surface(const Vec3r<T> &min, const Vec3r<T> &max) {
   const Vec3r<T> box{blaze::abs(max - min)};
@@ -40,6 +48,21 @@ struct BLAZERTALIGN BinBuffer {
   unsigned int size;
 };
 
+/**
+ * This function sorts the primitives contained in the collection into bins alongside each axis
+ *
+ * @tparam T floating point type
+ * @tparam Iterator Iterator type
+ * @tparam Collection Collection type
+ * @tparam Options build options type
+ * @param p collection of primitives
+ * @param begin iterator to the beginning of the relevant primitives in the collection
+ * @param end iterator to the end of the relevant primitives in the collection
+ * @param min vertex to the mimimum extent of the boundgin box under consideration
+ * @param max vertex to the maximum extent of the bounding box under consideration
+ * @param options build options
+ * @return BinBuffer containing the bins
+ */
 template<typename T, typename Iterator, class Collection, typename Options>
 inline BinBuffer<T> sort_collection_into_bins(const Collection &p, Iterator begin, Iterator end, const Vec3r<T> &min,
                                               const Vec3r<T> &max, const Options &options) {
@@ -71,6 +94,23 @@ inline BinBuffer<T> sort_collection_into_bins(const Collection &p, Iterator begi
   return bins;
 }
 
+/**
+ * This function finds the best split along one axis for primitives in the collection within the interval [begin; end]
+ *
+ * @tparam T floating point type
+ * @tparam Iterator Iterator type
+ * @tparam Collection Collection type
+ * @tparam Options Build Options Type
+ *
+ * @param collection collection of primitives
+ * @param begin iterator to the first primitive under consideration
+ * @param end iterator to the last primitive under consideration
+ * @param min vertex to the minimum extent of the bounding box
+ * @param max vertex to the maximum extent of the bounding box
+ * @param options build options
+ *
+ * @return std::pair<unsigned int, blazert::Vec3r<T>> describing the cut_axis and the cut position.
+ */
 template<typename T, typename Iterator, template<typename> typename Collection, typename Options>
 inline std::pair<unsigned int, Vec3r<T>> find_best_split_binned(const Collection<T> &collection, Iterator begin,
                                                                 Iterator end, const Vec3r<T> &min, const Vec3r<T> &max,

@@ -125,7 +125,7 @@ private:
 
   [[nodiscard]] inline Vec3r<T> pre_compute_face_normal(const Vec3ui &face) const noexcept {
     const Vec3r<T> e2{vertices[face[2]] - vertices[face[0]]};
-    const Vec3r<T> e1{vertices[face[0]] - vertices[face[1]]};
+    const Vec3r<T> e1{vertices[face[1]] - vertices[face[0]]};
     return normalize(cross(e1, e2));
   }
 };

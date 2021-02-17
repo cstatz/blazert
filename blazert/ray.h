@@ -50,7 +50,6 @@ public:
    * @param any_hit If set to blazert::Ray<T>::AnyHit::yes, the first hit found in the traversal will register as the hit, which might not be the hit (default = no) closest to the ray origin.
    *
    * @todo backface culling is no implemented yet.
-   * @todo replace boolean variables by enum classes for choices
    *
    *
    */

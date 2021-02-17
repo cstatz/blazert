@@ -6,6 +6,12 @@
 
 namespace blazert {
 
+/**
+ * BVHnode describes a single node in the BVH for a certain primitive type.
+ *
+ * @tparam T floating point type
+ * @tparam Collection primitive collection type
+ */
 template<typename T, template<typename> typename Collection>
 class BLAZERTALIGN BVHNode {
 public:
