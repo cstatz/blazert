@@ -88,7 +88,7 @@ jobs:
         # Note the current convention is to use the -S and -B options here to specify source
         # and build directories, but this is only available with CMake 3.13 and higher.
         # The CMake binaries on the Github Actions machines are (as of this writing) 3.12
-        run: cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DBUILD_TEST:BOOL=true -DBUILD_EXAMPLES:BOOL=true -DBLAZE_INCLUDE_OVERRIDE:STRING=${BLAZE_INCLUDE} -DENABLE_OMP:BOOL=false -Dnlohmann_json_DIR=${NLOHMANN_JSON_INSTALL_DIR}
+        run: cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DBUILD_TEST:BOOL=true -DBUILD_EXAMPLES:BOOL=true -DBLAZE_INCLUDE_OVERRIDE:STRING=${BLAZE_INCLUDE} -DENABLE_OMP:BOOL=false -Dnlohmann_json_DIR=${NLOHMANN_JSON_INSTALL_DIR}/lib/cmake/nlohmann_json
 
       - name: Build
         working-directory: ${{github.workspace}}/build
