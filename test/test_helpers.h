@@ -29,7 +29,17 @@ inline bool is_almost_equal(const T &in_a, const T &in_b, const double eps) {
   return (std::abs(in_a - in_b) <= eps);
 }
 
-// CCW = counter clockwise
+/**
+ * Creates a triangle mesh of a cube with counterclockwise vertex count and saves the vertices and indices in the corresponding
+ * function arguments.
+ *
+ * The bounding box is for center = (0,0,0) is defined by the box spanned from (-1,-1,-1) to (1,1,1).
+ *
+ * @tparam T floating point type
+ * @param center center of the cube
+ * @param vertices Vec3rList<T> with the vertices of the cube
+ * @param indices Vec3iList<T> with the indices
+ */
 template<typename T>
 inline void cube_mesh_ccw(const Vec3r<T> &center, Vec3rList<T> &vertices, Vec3iList &indices) {
   // BBox (-1, -1, -1) ( 1,  1,  1)
@@ -115,6 +125,17 @@ inline void cube_mesh_ccw_01(const Vec3r<T> &center, Vec3rList<T> &vertices, Vec
 }
 
 // CW = clockwise
+/**
+ * Creates a triangle mesh of a cube with clockwise vertex count and saves the vertices and indices in the corresponding
+ * function arguments.
+ *
+ * The bounding box is for center = (0,0,0) is defined by the box spanned from (-1,-1,-1) to (1,1,1).
+ *
+ * @tparam T floating point type
+ * @param center center of the cube
+ * @param vertices Vec3rList<T> with the vertices of the cube
+ * @param indices Vec3iList<T> with the indices
+ */
 template<typename T>
 inline void cube_mesh_cw(const Vec3r<T> &center, Vec3rList<T> &vertices, Vec3iList &indices) {
   // BBox (-1, -1, -1) ( 1,  1,  1)
@@ -145,6 +166,17 @@ inline void cube_mesh_cw(const Vec3r<T> &center, Vec3rList<T> &vertices, Vec3iLi
 /**
  * Two planes, with 2 triangle per plane
  * The planes are perpendicular to each other
+ */
+/**
+ * Creates a single triangle with counterclockwise vertex count and saves the vertices and indices in the corresponding
+ * function arguments.
+ *
+ * The bounding box is for center = (0,0,0) is defined by the box spanned from (-1,-1,-1) to (1,1,1).
+ *
+ * @tparam T floating point type
+ * @param center center of the triangle
+ * @param vertices Vec3rList<T> with the vertices of the triangle
+ * @param indices Vec3iList<T> with the indices
  */
 template<typename T>
 inline void two_plane_mesh_90_deg(const Vec3r<T> &center, Vec3rList<T> &vertices, Vec3iList &indices) {
@@ -266,7 +298,17 @@ inline void single_triangle_ccw(const Vec3r<T> &center, Vec3rList<T> &vertices, 
   indices.emplace_back(Vec3ui{0, 2, 1});
 }
 
-// Create single triangle clockwise (Order of Indices: 0 -> 1 -> 2)
+/**
+ * Creates a single triangle with clockwise vertex count and saves the vertices and indices in the corresponding
+ * function arguments.
+ *
+ * The bounding box is for center = (0,0,0) is defined by the box spanned from (-1,-1,-1) to (1,1,1).
+ *
+ * @tparam T floating point type
+ * @param center center of the triangle
+ * @param vertices Vec3rList<T> with the vertices of the triangle
+ * @param indices Vec3iList<T> with the indices
+ */
 template<typename T>
 inline void single_triangle_cw(const Vec3r<T> &center, Vec3rList<T> &vertices, Vec3iList &indices) {
   // BBox (-1, -1, -1) ( 1,  1,  1)
@@ -361,6 +403,14 @@ inline void pyramid_mesh(const Vec3r<T> &center, Vec3rList<T> &vertices, Vec3iLi
   indices.emplace_back(Vec3ui{0, 2,  3});
 }
 
+/**
+ * Returns true if all elements of m1 and m2 are approximately equal
+ * @tparam T1 floating point type of m1
+ * @tparam T2 floating point type of m2
+ * @param m1 matrix 1
+ * @param m2 matrix 2
+ * @return true, if approx. equal
+ */
 template<typename T1, typename T2>
 bool Mat3_isApprox(Mat3r<T1> &m1, Mat3r<T2> &m2) {
   bool res = true;
