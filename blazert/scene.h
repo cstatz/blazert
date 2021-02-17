@@ -117,8 +117,8 @@ public:
   };
 };
 
-template<typename T>
-std::ostream &operator<<(std::ostream &stream, const BlazertScene<T> &scene) {
+template<typename T, template<typename, template<typename> typename> typename BVH_T, typename Builder>
+std::ostream &operator<<(std::ostream &stream, const BlazertScene<T, BVH_T, Builder> &scene) {
   /// Conveniently output the scene as JSON
   stream << "{\n";
 
