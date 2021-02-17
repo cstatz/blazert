@@ -11,12 +11,12 @@
 using ft = double;
 
 // TODO: This eats float ... we need to convert.
-void SaveImagePNG(const char *filename, const float *rgb, int width,
-                  int height) {
+void SaveImagePNG(const char *filename, const float *rgb, const unsigned int width,
+                  const unsigned int height) {
   auto *bytes = new unsigned char[width * height * 3];
-  for (int y = 0; y < height; y++) {
-    for (int x = 0; x < width; x++) {
-      const int index = y * width + x;
+  for (unsigned int y = 0; y < height; y++) {
+    for (unsigned int x = 0; x < width; x++) {
+      const unsigned int index = y * width + x;
       bytes[index * 3 + 0] = (unsigned char) std::max(
           0.0f, std::min(rgb[index * 3 + 0] * 255.0f, 255.0f));
       bytes[index * 3 + 1] = (unsigned char) std::max(
@@ -25,14 +25,14 @@ void SaveImagePNG(const char *filename, const float *rgb, int width,
           0.0f, std::min(rgb[index * 3 + 2] * 255.0f, 255.0f));
     }
   }
-  stbi_write_png(filename, width, height, 3, bytes, width * 3);
+  stbi_write_png(filename, static_cast<int>(width), static_cast<int>(height), 3, bytes, static_cast<int>(width * 3));
   delete[] bytes;
 }
 
 int main(int argc, char **argv) {
 
-  int width = 1080;
-  int height = 720;
+  unsigned int width = 1080;
+  unsigned int height = 720;
 
   // the properties of the cylinders need to be saved on the heap
   auto centers = std::make_unique<blazert::Vec3rList<ft>>();
@@ -86,8 +86,8 @@ int main(int argc, char **argv) {
 #ifdef _OPENMP
 #pragma omp parallel for schedule(dynamic, 1)
 #endif
-  for (int y = 0; y < height; y++) {
-    for (int x = 0; x < width; x++) {
+  for (unsigned int y = 0; y < height; y++) {
+    for (unsigned int x = 0; x < width; x++) {
 
       const blazert::Ray<ft> ray{{0.0, 5.0, 20.0}, {static_cast<ft>((x / ft(width)) - 0.5), static_cast<ft>((y / ft(height)) - 0.5), ft(-1.)}};
       blazert::RayHit<ft> rayhit;

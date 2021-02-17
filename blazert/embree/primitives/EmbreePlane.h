@@ -33,7 +33,7 @@ public:
               const float d2, const Mat3r<float> &rot) noexcept;
   ~EmbreePlane() = default;
 
-  inline double distance_to_surface(const Vec3r<float> &point) const { return 0.0; }
+  inline double distance_to_surface([[maybe_unused]] const Vec3r<float> &point) const { return 0.0; }
 };
 
 /***
@@ -83,7 +83,7 @@ inline EmbreePlane::EmbreePlane(const RTCDevice &device, const RTCScene &scene, 
  * will not be called directly
  */
 inline void planeBoundsFunc(const RTCBoundsFunctionArguments *args) {
-  const EmbreePlane &plane = ((EmbreePlane *) (args->geometryUserPtr))[args->primID];
+  const EmbreePlane &plane = static_cast<const EmbreePlane *>(args->geometryUserPtr)[args->primID];
 
   Mat3r<float> rot = plane.rot;
 
@@ -127,7 +127,7 @@ inline void planeBoundsFunc(const RTCBoundsFunctionArguments *args) {
  */
 inline void planeIntersectFunc(const RTCIntersectFunctionNArguments *args) {
   // load correct plane from data ptr
-  const EmbreePlane &plane = ((const EmbreePlane *) (args->geometryUserPtr))[args->primID];
+  const EmbreePlane &plane = static_cast<const EmbreePlane *>(args->geometryUserPtr)[args->primID];
 
   const Mat3r<float> &rot = plane.rot;
   const Mat3r<float> &inverse_rot = trans(rot);
@@ -142,7 +142,7 @@ inline void planeIntersectFunc(const RTCIntersectFunctionNArguments *args) {
 
   // loads the ray and hit structure for the following calculation
   // see occludedFunc to do this differently
-  RTCRayHit *rayhit = (RTCRayHit *) args->rayhit;
+  RTCRayHit *rayhit = reinterpret_cast<RTCRayHit *>(args->rayhit);
   RTCRay *ray = &(rayhit->ray);
 
   // transform to local coordinate system
@@ -222,7 +222,7 @@ inline void planeOccludedFunc(const RTCOccludedFunctionNArguments *args) {
   assert(args->N == 1);
 
   // load correct plane from data ptr
-  const EmbreePlane &plane = ((const EmbreePlane *) (args->geometryUserPtr))[args->primID];
+  const EmbreePlane &plane = static_cast<const EmbreePlane *>(args->geometryUserPtr)[args->primID];
 
   Mat3r<float> rot = plane.rot;
   transpose(rot);
@@ -233,7 +233,7 @@ inline void planeOccludedFunc(const RTCOccludedFunctionNArguments *args) {
 
   // loads the ray and hit structure for the following calculation
   // see occludedFunc to do this differently
-  RTCRay *ray = (RTCRay *) (args->ray);
+  RTCRay *ray = reinterpret_cast<RTCRay *>(args->ray);
 
   // transform to local coordinate system
   const Vec3r<float> org_tmp{ray->org_x, ray->org_y, ray->org_z};
@@ -261,6 +261,29 @@ inline void planeOccludedFunc(const RTCOccludedFunctionNArguments *args) {
       && (intercept[1] <= y_max)) {
     ray->tfar = -std::numeric_limits<float>().infinity();
   }
+}
+
+inline std::ostream &operator<<(std::ostream &stream, const EmbreePlane &plane) {
+  /// Conveniently output a single plane as JSON.
+  stream << "{\n";
+
+  stream << R"(  "EmbreePlane": )" << &plane
+         << ",\n";
+  stream << R"(  "center": [)"
+         << plane.planeCenter[0] << "," << plane.planeCenter[1] << "," << plane.planeCenter[2] << "],\n";
+  stream << R"(  "d1": )" << plane.d1
+         << "\n";
+  stream << R"(  "d2": )" << plane.d2
+         << "\n";
+  stream << R"(  "rotation": [[)" << plane.rot(0, 0) << ", " << plane.rot(0, 1) << ", " << plane.rot(0, 2)
+         << "],\n"
+         << "             [" << plane.rot(1, 0) << ", " << plane.rot(1, 1) << ", " << plane.rot(1, 2)
+         << "],\n"
+         << "             [" << plane.rot(2, 0) << ", " << plane.rot(2, 1) << ", " << plane.rot(2, 2)
+         << "]],\n";
+
+  stream << "}\n";
+  return stream;
 }
 
 }// namespace blazert

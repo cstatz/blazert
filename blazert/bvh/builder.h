@@ -32,6 +32,17 @@ public:
 
   SAHBinnedBuilder() = default;
 
+  /**
+   * This function builds the BVH with the specified BVHBuildOptions. If no BVHBuildOptions are specified the standard
+   * build options are used.
+   *
+   * @tparam T floating point type
+   * @tparam Collection primitive collection type
+   * @tparam BVH BVH type
+   * @param bvh BVH type in which the build BVH is stored
+   * @param options BVHBuildOptions
+   * @return BVHBuildStatistics structure holding data about the build process.
+   */
   template<typename T, template<typename> typename Collection,
            template<typename, template<typename> typename> typename BVH>
   BVHBuildStatistics<T> build(BVH<T, Collection> &bvh, const BVHBuildOptions<T> &options = BVHBuildOptions<T>()) {
@@ -54,6 +65,22 @@ public:
   }
 };
 
+/**
+ * Recursive build function to build the BVH from a collection of primitives.
+ * @tparam T floating point type
+ * @tparam Iterator Iterator type
+ * @tparam Collection primitive collection type
+ *
+ * @param nodes std::vector of BVHNodes to which the built nodes are attached
+ * @param collection collection of primitives which need to be stored in the BVH
+ * @param begin iterator to the first element to be considered for further construction of the BVH
+ * @param end iterator to the last element to be considered for further construction of the BVH
+ * @param depth current depth of the BVH
+ * @param statistics BVHBuildStatistics structure to keep track of the build
+ * @param options Build options
+ *
+ * @return offset/index into nodes for the current BVHNode
+ */
 template<typename T, typename Iterator, template<typename> typename Collection>
 unsigned int build_recursive(std::vector<BVHNode<T, Collection>> &nodes, const Collection<T> &collection,
                              Iterator begin, Iterator end, const unsigned int depth, BVHBuildStatistics<T> &statistics,
@@ -64,7 +91,8 @@ unsigned int build_recursive(std::vector<BVHNode<T, Collection>> &nodes, const C
   if (statistics.max_tree_depth < depth)
     statistics.max_tree_depth = depth;
 
-  const unsigned int n = std::distance(begin, end);
+  // std::distance theoretically can be negative, but it never is in this case
+  const unsigned int n = static_cast<unsigned int>(std::distance(begin, end));
   const auto [min, max] = compute_bounding_box<T>(collection, begin, end);
 
   // Leaf
@@ -86,6 +114,22 @@ unsigned int build_recursive(std::vector<BVHNode<T, Collection>> &nodes, const C
   return offset;
 }
 
+/**
+ * This functions creates a leaf node (= node cannot have children) for the BVH containing the primitves from the
+ * collection within the iterator range [begin; end]
+ *
+ * @tparam T floating point type
+ * @tparam Iterator Iterator type
+ * @tparam Collection Collection type
+ *
+ * @param collection collection of primitives
+ * @param begin iterator specifying the beginning of the primitives from the collection to insert in the leaf
+ * @param end iterator specifying the end of the primitives from the collection to insert in the leaf
+ * @param bmin vertex describing the minimum extent of the bounding box
+ * @param bmax vertex describing the maximum extent of the bounding box
+ *
+ * @return BVHNode
+ */
 template<typename T, typename Iterator, template<typename> typename Collection>
 inline BVHNode<T, Collection> create_leaf(const Collection<T> &collection, Iterator begin, Iterator end,
                                           const Vec3r<T> &bmin, const Vec3r<T> &bmax) {
@@ -94,15 +138,32 @@ inline BVHNode<T, Collection> create_leaf(const Collection<T> &collection, Itera
   node.max = bmax;
 
   node.leaf = 1;
-  node.primitives.reserve(std::distance(begin, end));
+  node.primitives.reserve(static_cast<long unsigned int>(std::distance(begin, end)));
 
   for (auto it = begin; it != end; ++it) {
     node.primitives.push_back(std::move(primitive_from_collection(collection, *it)));
   }
 
   return node;
-};
+}
 
+/**
+ * This function creates a branch node of the BVH which has two children which can either be leaf or branch nodes.
+ *
+ * @tparam T floating point type
+ * @tparam Iterator Iterator type
+ * @tparam Collection Collection type
+ *
+ * @param collection collection of primitives
+ * @param begin iterator specifying the beginning of the primitives from the collection to insert in the leaf
+ * @param end iterator specifying the end of the primitives from the collection to insert in the leaf
+ * @param bmin vertex describing the minimum extent of the bounding box
+ * @param bmax vertex describing the maximum extent of the bounding box
+ * @param statistics BVHBuildStatistics structure to keep track of the build
+ * @param options Build options
+ * @return std::pair<BVHNode<T, Collection>, Iterator> with the newly created branch node as well as the iterator to the
+ * middle of the node list.
+ */
 template<typename T, typename Iterator, template<typename> typename Collection>
 inline std::pair<BVHNode<T, Collection>, Iterator>
 create_branch(const Collection<T> &collection, Iterator begin, Iterator end, const Vec3r<T> &bmin, const Vec3r<T> &bmax,
@@ -121,6 +182,22 @@ create_branch(const Collection<T> &collection, Iterator begin, Iterator end, con
   return std::make_pair(std::move(node), std::move(mid));
 }
 
+/**
+ * This function finds the axis and the iterator position for which the next volume split needs to be done.
+ *
+ * @tparam T floating point type
+ * @tparam Iterator Iterator type
+ * @tparam Collection Collection type
+ *
+ * @param collection collection of primitives
+ * @param begin iterator specifying the beginning of the primitives from the collection to insert in the leaf
+ * @param end iterator specifying the end of the primitives from the collection to insert in the leaf
+ * @param bmin vertex describing the minimum extent of the bounding box
+ * @param bmax vertex describing the maximum extent of the bounding box
+ * @param statistics BVHBuildStatistics structure to keep track of the build
+ * @param options Build options
+ * @return std::pair<unsigned int, Iterator> describing the cut_axis and the mid position for the cut
+ */
 template<typename T, typename Iterator, template<typename> typename Collection>
 inline std::pair<unsigned int, Iterator> split(const Collection<T> &collection, Iterator begin, Iterator end,
                                                const Vec3r<T> &bmin, const Vec3r<T> &bmax,

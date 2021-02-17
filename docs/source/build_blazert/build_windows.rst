@@ -7,9 +7,12 @@ Prerequisites
  * git
  * Visual Studio Community 2019
 
-**NOTE:** building instructions should might be executed from ``VS x64 native command prompt`` or ``Powershell``
+.. note:: Building instructions should might be executed from ``VS x64 native command prompt`` or ``Powershell``
 
-**NOTE:** install vcpkg to a folder where there are no whitespace in the folder path.
+.. warning:: Install vcpkg to a folder where there are no whitespace in the folder path.
+
+.. warning:: The english language package for Visual Studio needs to be installed.
+
 
 Getting and bootstrapping vcpkg
 -------------------------------
@@ -34,7 +37,7 @@ Install the necessary dependencies for blazert:
 .. code-block:: shell
 
     vcpkg install blaze:x64-windows
-    vcpkg install embree:x64-windows
+    vcpkg install embree3:x64-windows
     vcpkg install benchmark:x64-windows
 
 
