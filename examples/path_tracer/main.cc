@@ -447,7 +447,7 @@ int main(int argc, char **argv) {
           // EMIT
           else {
             if (do_emission) {
-              color += std::max(dot(originalNorm, -ray.direction), static_cast<ft>(0.0)) * (emissiveColor * weight);
+              color += std::max(dot(originalNorm, ray.direction), static_cast<ft>(0.0)) * (emissiveColor * weight);
             }
             break;
           }
