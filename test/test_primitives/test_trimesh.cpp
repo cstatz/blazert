@@ -119,7 +119,7 @@ TEST_CASE_TEMPLATE("Trimesh : Single Triangle", T, float, double) {
               const bool true_hit = true;
               const unsigned int true_prim_id = 0;
               const T true_distance = 5;
-              const Vec3r<T> true_normal{0, 1, 0};// depending on the direction in which the triangles are assembled
+              const Vec3r<T> true_normal{0, -1, 0};// depending on the direction in which the triangles are assembled
 
               SUBCASE("intersect primitive") {
                 assert_intersect_primitive_hit(triangles, ray, true_hit, true_prim_id, true_distance, true_normal);
@@ -156,16 +156,16 @@ TEST_CASE_TEMPLATE("Trimesh : Single Triangle", T, float, double) {
             single_triangle_cw_flat_xy(center, *vertices, *indices);
             TriangleMesh triangles(*vertices, *indices);
             SUBCASE("origin above") {
+              const bool true_hit = true;
+              const unsigned int true_prim_id = 0;
+              const Vec3r<T> true_normal{0,0,-1};
               SUBCASE("perpendicular incidence on top") {
                 Vec3r<T> org1{0.25, 0.25, 5};
                 Vec3r<T> dir1{0, 0, -1};
 
                 Ray<T> ray{org1, dir1};
 
-                const bool true_hit = true;
-                const unsigned int true_prim_id = 0;
-                const T true_distance = 5;
-                const Vec3r<T> true_normal{0, 0, -1};// depending on the direction in which the triangles are assembled
+                const T true_distance = static_cast<T>(5.0);
 
                 SUBCASE("intersect primitive") {
                   assert_intersect_primitive_hit(triangles, ray, true_hit, true_prim_id, true_distance, true_normal);
@@ -180,10 +180,7 @@ TEST_CASE_TEMPLATE("Trimesh : Single Triangle", T, float, double) {
 
                 Ray<T> ray{org1, dir1};
 
-                const bool true_hit = true;
-                const unsigned int true_prim_id = 0;
                 const T true_distance = static_cast<T>(std::sqrt(1 + 2 * 0.75 * 0.75));
-                const Vec3r<T> true_normal{0, 0, -1};// depending on the direction in which the triangles are assembled
 
                 SUBCASE("intersect primitive") {
                   assert_intersect_primitive_hit(triangles, ray, true_hit, true_prim_id, true_distance, true_normal);
@@ -198,11 +195,7 @@ TEST_CASE_TEMPLATE("Trimesh : Single Triangle", T, float, double) {
 
                 Ray<T> ray{org1, dir1};
 
-                const bool true_hit = true;
-                const unsigned int true_prim_id = 0;
                 const T true_distance = static_cast<T>(5.0);
-                const Vec3r<T> true_normal{0, 0, -1};// dep
-
                 SUBCASE("intersect primitive") {
                   assert_intersect_primitive_hit(triangles, ray, true_hit, true_prim_id, true_distance, true_normal);
                 }
@@ -216,11 +209,7 @@ TEST_CASE_TEMPLATE("Trimesh : Single Triangle", T, float, double) {
 
                 Ray<T> ray{org1, dir1};
 
-                const bool true_hit = true;
-                const unsigned int true_prim_id = 0;
                 const T true_distance = static_cast<T>(5.0);
-                const Vec3r<T> true_normal{0, 0, -1};// dep
-
                 SUBCASE("intersect primitive") {
                   assert_intersect_primitive_hit(triangles, ray, true_hit, true_prim_id, true_distance, true_normal);
                 }
@@ -234,11 +223,7 @@ TEST_CASE_TEMPLATE("Trimesh : Single Triangle", T, float, double) {
 
                 Ray<T> ray{org1, dir1};
 
-                const bool true_hit = true;
-                const unsigned int true_prim_id = 0;
                 const T true_distance = static_cast<T>(5.0);
-                const Vec3r<T> true_normal{0, 0, -1};// dep
-
                 SUBCASE("intersect primitive") {
                   assert_intersect_primitive_hit(triangles, ray, true_hit, true_prim_id, true_distance, true_normal);
                 }
@@ -252,11 +237,7 @@ TEST_CASE_TEMPLATE("Trimesh : Single Triangle", T, float, double) {
 
                 Ray<T> ray{org1, dir1};
 
-                const bool true_hit = true;
-                const unsigned int true_prim_id = 0;
                 const T true_distance = static_cast<T>(5.0);
-                const Vec3r<T> true_normal{0, 0, -1};// dep
-
                 SUBCASE("intersect primitive") {
                   assert_intersect_primitive_hit(triangles, ray, true_hit, true_prim_id, true_distance, true_normal);
                 }
@@ -270,11 +251,7 @@ TEST_CASE_TEMPLATE("Trimesh : Single Triangle", T, float, double) {
 
                 Ray<T> ray{org1, dir1};
 
-                const bool true_hit = true;
-                const unsigned int true_prim_id = 0;
                 const T true_distance = static_cast<T>(5.0);
-                const Vec3r<T> true_normal{0, 0, -1};// dep
-
                 SUBCASE("intersect primitive") {
                   assert_intersect_primitive_hit(triangles, ray, true_hit, true_prim_id, true_distance, true_normal);
                 }
@@ -288,11 +265,7 @@ TEST_CASE_TEMPLATE("Trimesh : Single Triangle", T, float, double) {
 
                 Ray<T> ray{org1, dir1};
 
-                const bool true_hit = true;
-                const unsigned int true_prim_id = 0;
                 const T true_distance = static_cast<T>(5.0);
-                const Vec3r<T> true_normal{0, 0, -1};// dep
-
                 SUBCASE("intersect primitive") {
                   assert_intersect_primitive_hit(triangles, ray, true_hit, true_prim_id, true_distance, true_normal);
                 }
@@ -302,16 +275,16 @@ TEST_CASE_TEMPLATE("Trimesh : Single Triangle", T, float, double) {
               }
             }
             SUBCASE("origin below") {
+              const bool true_hit = true;
+              const unsigned int true_prim_id = 0;
+              const Vec3r<T> true_normal{0,0,-1};
               SUBCASE("perpendicular incidence from below") {
                 Vec3r<T> org1{0.25, 0.25, -5};
                 Vec3r<T> dir1{0, 0, 1};
 
                 Ray<T> ray{org1, dir1};
 
-                const bool true_hit = true;
-                const unsigned int true_prim_id = 0;
-                const T true_distance = 5;
-                const Vec3r<T> true_normal{0, 0, -1};// depending on the direction in which the triangles are assembled
+                const T true_distance = static_cast<T>(5.0);
 
                 SUBCASE("intersect primitive") {
                   assert_intersect_primitive_hit(triangles, ray, true_hit, true_prim_id, true_distance, true_normal);
@@ -326,10 +299,7 @@ TEST_CASE_TEMPLATE("Trimesh : Single Triangle", T, float, double) {
 
                 Ray<T> ray{org1, dir1};
 
-                const bool true_hit = true;
-                const unsigned int true_prim_id = 0;
                 const T true_distance = static_cast<T>(std::sqrt(1 + 2 * 0.75 * 0.75));
-                const Vec3r<T> true_normal{0, 0, -1};// depending on the direction in which the triangles are assembled
 
                 SUBCASE("intersect primitive") {
                   assert_intersect_primitive_hit(triangles, ray, true_hit, true_prim_id, true_distance, true_normal);
@@ -344,10 +314,7 @@ TEST_CASE_TEMPLATE("Trimesh : Single Triangle", T, float, double) {
 
                 Ray<T> ray{org1, dir1};
 
-                const bool true_hit = true;
-                const unsigned int true_prim_id = 0;
                 const T true_distance = static_cast<T>(5.0);
-                const Vec3r<T> true_normal{0, 0, -1};// dep
 
                 SUBCASE("intersect primitive") {
                   assert_intersect_primitive_hit(triangles, ray, true_hit, true_prim_id, true_distance, true_normal);
@@ -362,10 +329,7 @@ TEST_CASE_TEMPLATE("Trimesh : Single Triangle", T, float, double) {
 
                 Ray<T> ray{org1, dir1};
 
-                const bool true_hit = true;
-                const unsigned int true_prim_id = 0;
                 const T true_distance = static_cast<T>(5.0);
-                const Vec3r<T> true_normal{0, 0, -1};// dep
 
                 SUBCASE("intersect primitive") {
                   assert_intersect_primitive_hit(triangles, ray, true_hit, true_prim_id, true_distance, true_normal);
@@ -380,10 +344,7 @@ TEST_CASE_TEMPLATE("Trimesh : Single Triangle", T, float, double) {
 
                 Ray<T> ray{org1, dir1};
 
-                const bool true_hit = true;
-                const unsigned int true_prim_id = 0;
                 const T true_distance = static_cast<T>(5.0);
-                const Vec3r<T> true_normal{0, 0, -1};// dep
 
                 SUBCASE("intersect primitive") {
                   assert_intersect_primitive_hit(triangles, ray, true_hit, true_prim_id, true_distance, true_normal);
@@ -398,10 +359,7 @@ TEST_CASE_TEMPLATE("Trimesh : Single Triangle", T, float, double) {
 
                 Ray<T> ray{org1, dir1};
 
-                const bool true_hit = true;
-                const unsigned int true_prim_id = 0;
                 const T true_distance = static_cast<T>(5.0);
-                const Vec3r<T> true_normal{0, 0, -1};// dep
 
                 SUBCASE("intersect primitive") {
                   assert_intersect_primitive_hit(triangles, ray, true_hit, true_prim_id, true_distance, true_normal);
@@ -416,10 +374,7 @@ TEST_CASE_TEMPLATE("Trimesh : Single Triangle", T, float, double) {
 
                 Ray<T> ray{org1, dir1};
 
-                const bool true_hit = true;
-                const unsigned int true_prim_id = 0;
                 const T true_distance = static_cast<T>(5.0);
-                const Vec3r<T> true_normal{0, 0, -1};// dep
 
                 SUBCASE("intersect primitive") {
                   assert_intersect_primitive_hit(triangles, ray, true_hit, true_prim_id, true_distance, true_normal);
@@ -434,10 +389,7 @@ TEST_CASE_TEMPLATE("Trimesh : Single Triangle", T, float, double) {
 
                 Ray<T> ray{org1, dir1};
 
-                const bool true_hit = true;
-                const unsigned int true_prim_id = 0;
                 const T true_distance = static_cast<T>(5.0);
-                const Vec3r<T> true_normal{0, 0, -1};// dep
 
                 SUBCASE("intersect primitive") {
                   assert_intersect_primitive_hit(triangles, ray, true_hit, true_prim_id, true_distance, true_normal);
@@ -1187,6 +1139,7 @@ TEST_CASE_TEMPLATE("Trimesh : Cube Mesh - Precision", T, float, double) {
     }
   }
 }
+
 TEST_CASE_TEMPLATE("Trimesh : Pyramid - Intersections", T, float, double) {
   auto centers = std::make_unique<Vec3rList<T>>();
   auto vertices = std::make_unique<Vec3rList<T>>();

@@ -295,7 +295,7 @@ inline void single_triangle_ccw(const Vec3r<T> &center, Vec3rList<T> &vertices, 
   vertices.emplace_back(Vec3r<T>{center[0] + T(-1.), center[1] + T(1.), center[2] + T(1.)});
   vertices.emplace_back(Vec3r<T>{center[0] + T(1.), center[1] + T(1.), center[2] + T(-1.)});
 
-  indices.emplace_back(Vec3ui{0, 2, 1});
+  indices.emplace_back(Vec3ui{0, 2,1});
 }
 
 /**
@@ -327,7 +327,7 @@ inline void single_triangle_cw_flat_xy(const Vec3r<T> &center, Vec3rList<T> &ver
   vertices.emplace_back(Vec3r<T>{center[0] + T(1.), center[1] + T(0), center[2] + T(0)});
   vertices.emplace_back(Vec3r<T>{center[0] + T(0), center[1] + T(1.), center[2] + T(0)});
 
-  indices.emplace_back(Vec3ui{0, 1, 2});
+  indices.emplace_back(Vec3ui{0, 2, 1});
 }
 
 // Creation of triangle in xz plane / clockwise
@@ -353,7 +353,7 @@ inline void single_triangle_cw_flat_yz(const Vec3r<T> &center, Vec3rList<T> &ver
   // 2  (0, 0, 1) + center
   vertices.emplace_back(Vec3r<T>{center[0], center[1], center[2] + T(1.)});
 
-  indices.emplace_back(Vec3ui{0, 1, 2});
+  indices.emplace_back(Vec3ui{0, 2, 1});
 }
 
 // Creation of triangle in xy plane / counter clockwise
@@ -364,7 +364,7 @@ inline void single_triangle_ccw_flat_xy(const Vec3r<T> &center, Vec3rList<T> &ve
   vertices.emplace_back(Vec3r<T>{center[0] + T(1.), center[1], center[2]});
   vertices.emplace_back(Vec3r<T>{center[0], center[1] + T(1.), center[2]});
 
-  indices.emplace_back(Vec3ui{0, 2, 1});
+  indices.emplace_back(Vec3ui{0, 1, 2});
 }
 
 /**
@@ -386,21 +386,21 @@ inline void pyramid_mesh(const Vec3r<T> &center, Vec3rList<T> &vertices, Vec3iLi
   // 4 (-1, 1, 0)
   vertices.emplace_back(Vec3r<T>{center[0] + T(-1.), center[1] + T(1.), center[2] + T(0)});
 
-  // ground plane cw
-  indices.emplace_back(Vec3ui{1, 2, 3});
-  indices.emplace_back(Vec3ui{2, 3, 4});
+  // ground plane ccw
+  indices.emplace_back(Vec3ui{1, 3, 2});
+  indices.emplace_back(Vec3ui{2, 4, 3});
 
   // site x
-  indices.emplace_back(Vec3ui{0, 1, 2});
+  indices.emplace_back(Vec3ui{0, 2, 1});
 
   // side -x
-  indices.emplace_back(Vec3ui{0, 3,  4});
+  indices.emplace_back(Vec3ui{0, 4,  3});
 
   // site y
-  indices.emplace_back(Vec3ui{0, 4,  1});
+  indices.emplace_back(Vec3ui{0, 1,  4});
 
   // site -y
-  indices.emplace_back(Vec3ui{0, 2,  3});
+  indices.emplace_back(Vec3ui{0, 3,  2});
 }
 
 /**
