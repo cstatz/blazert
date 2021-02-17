@@ -7,7 +7,7 @@ env:
   BUILD_TYPE: Release
   BLAZE_INSTALL_DIR: ${{github.workspace}}/deps/blaze
   BLAZE_INCLUDE: ${{github.workspace}}/deps/blaze/include
-
+  NLOHMANN_JSON_INSTALL_DIR: ${{github.workspace}}/deps/nlohmann-json
 
 jobs:
   build:
@@ -60,13 +60,13 @@ jobs:
 
       - name: untar nlohmann-json
         run: |
-          tar -xf v3.9.1.tar.gz
+          tar -xf v3.9.1.tar.gz;
           mkdir -p deps/nlohmann-json
 
       - name: Configure CMake nlohmann-json
         shell: bash
         working-directory: ${{github.workspace}}/json-3.9.1
-        run: cmake . -DCMAKE_INSTALL_PREFIX=${BLAZE_INSTALL_DIR} -DJSON_BuildTests=OFF
+        run: cmake . -DCMAKE_INSTALL_PREFIX=${NLOHMANN_JSON_INSTALL_DIR} -DJSON_BuildTests=OFF
 
       - name: Install nlohmann-json
         working-directory: ${{github.workspace}}/json-3.9.1
@@ -88,7 +88,7 @@ jobs:
         # Note the current convention is to use the -S and -B options here to specify source
         # and build directories, but this is only available with CMake 3.13 and higher.
         # The CMake binaries on the Github Actions machines are (as of this writing) 3.12
-        run: cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DBUILD_TEST:BOOL=true -DBUILD_EXAMPLES:BOOL=true -DBLAZE_INCLUDE_OVERRIDE:STRING=${BLAZE_INCLUDE} -DENABLE_OMP:BOOL=false
+        run: cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DBUILD_TEST:BOOL=true -DBUILD_EXAMPLES:BOOL=true -DBLAZE_INCLUDE_OVERRIDE:STRING=${BLAZE_INCLUDE} -DENABLE_OMP:BOOL=false -Dnlohmann_json_DIR=${NLOHMANN_JSON_INSTALL_DIR}
 
       - name: Build
         working-directory: ${{github.workspace}}/build
