@@ -74,7 +74,7 @@ jobs:
         working-directory: ${{github.workspace}}/build
         shell: bash
         env:
-          CC: ${{matrix.compiler}}
+          CXX: ${{matrix.compiler}}
         # Execute the build.  You can specify a specific target with "--target <NAME>"
         run: cmake --build . --config $BUILD_TYPE
 
