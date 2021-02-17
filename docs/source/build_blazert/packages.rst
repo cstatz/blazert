@@ -8,11 +8,14 @@ Linux
 
 Arch Linux
 ~~~~~~~~~~
-Currently, there is a ``PKGBUILD`` available on `github <https://github.com/orgarten/pkgbuilds/>`_.
+Currently, there is a ``PKGBUILD`` available in the AUR:
 
-Clone the repository and run ``makepkg`` and ``pacman`` after carefully inspecting the ``PKGBUILD``.
+- `last blazert release <https://aur.archlinux.org/packages/blazert />`_.
+- `blazert develop branch <https://aur.archlinux.org/packages/blazert />`_.
 
-.. note:: An AUR package will be available later.
+Clone the repositories and run ``makepkg`` and ``pacman`` after carefully inspecting the ``PKGBUILD``.
+
+.. note:: This should also work for other distributions such as Manjaro.
 
 MacOS
 -----
