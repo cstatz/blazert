@@ -20,7 +20,7 @@ namespace blazert {
 /**
  * @brief 2-Child Bounding Volume Hierarchy (BVH).
  *
- * The BVH is a central part of ray tracing (bvh traversal).
+ * The BVH is an accleration structure and a central part of an efficient ray tracing algorithm. (bvh traversal).
  * It takes an input geometry (primitive collection) and builds a tree data-structure that yields
  * `O(log2 N)` complexity for ray queries (where N is the number of primitive in the collection).
  *
@@ -47,12 +47,35 @@ public:
   explicit operator BVHNode<T, Collection> *() const { return &(nodes[0]); }
 };
 
+/**
+ * This function traverses the BVH for a given ray to find a ray-primitive-intersection.
+ *
+ * @tparam T floating point type
+ * @tparam Collection primitive collection type
+ * @param bvh BVH structure that contains the primitives
+ * @param ray ray to test
+ * @param rayhit rayhit structure to safe traversal results
+ * @return true if a hit has been found
+ */
 template<typename T, template<typename> typename Collection>
 inline bool traverse(const BVH<T, Collection> &bvh, const Ray<T> &ray, RayHit<T> &rayhit) noexcept {
   typename Collection<T>::intersector intersector(bvh.collection);
   return traverse(bvh, ray, rayhit, intersector);
 }
 
+
+/**
+ * This function traverses the BVH for a given ray to find a ray-primitive-intersection. The intersector is explicitely
+ * specified.
+ *
+ * @tparam T floating point type
+ * @tparam Collection primitive collection type
+ * @param bvh BVH structure that contains the primitives
+ * @param ray ray to test
+ * @param rayhit rayhit structure to safe traversal results
+ * @param intersector intersector structure which provides the necessary information for post processing hit data.
+ * @return true if a hit has been found
+ */
 template<typename T, template<typename> typename Collection>
 inline bool traverse(const BVH<T, Collection> &bvh, const Ray<T> &ray, RayHit<T> &rayhit,
                      typename Collection<T>::intersector &intersector) noexcept {
