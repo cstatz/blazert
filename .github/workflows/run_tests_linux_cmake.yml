@@ -33,7 +33,9 @@ jobs:
         # Note the current convention is to use the -S and -B options here to specify source
         # and build directories, but this is only available with CMake 3.13 and higher.
         # The CMake binaries on the Github Actions machines are (as of this writing) 3.12
-        run: cmake . -DCMAKE_INSTALL_PREFIX=$BLAZE_INSTALL_DIR;
+        run: |
+          ls
+          cmake . -DCMAKE_INSTALL_PREFIX=${{runner.workspace}}/deps/blaze;
 
       - name: Install blaze
         working-directory: ${{runner.workspace}}/blaze-3.7
