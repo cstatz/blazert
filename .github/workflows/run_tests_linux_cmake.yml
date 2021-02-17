@@ -1,4 +1,4 @@
-name: cmake-gcc
+name: cmake-linux
 
 on: [pull_request]
 
