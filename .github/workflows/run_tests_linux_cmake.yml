@@ -17,7 +17,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - name: initialize repository
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
 
       - name: wget
         uses: wei/wget@v1
