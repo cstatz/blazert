@@ -8,6 +8,7 @@ set(BLAZE_INCLUDE_OVERRIDE "" CACHE STRING "Where to find the blaze includes. Mu
 
 message("========================================")
 message("= Configuring blazeRT:                 =")
+message(" * Build type:       ${CMAKE_BUILD_TYPE}")
 message(" * Build test:       ${BUILD_TEST}")
 message(" * Build benchmark:  ${BUILD_BENCHMARK}")
 message(" * Build examples:   ${BUILD_EXAMPLES}")
