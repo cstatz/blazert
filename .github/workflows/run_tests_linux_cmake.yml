@@ -1,9 +1,5 @@
 name: cmake-gcc
 
-strategy:
-  matrix:
-    compiler: [g++, clang++]
-
 on: [push]
 
 env:
@@ -11,6 +7,7 @@ env:
   BUILD_TYPE: Release
   BLAZE_INSTALL_DIR: ${{github.workspace}}/deps/blaze
   BLAZE_INCLUDE: ${{github.workspace}}/deps/blaze/include
+
 
 jobs:
   build:
@@ -20,6 +17,9 @@ jobs:
     # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
     runs-on: ubuntu-latest
 
+    strategy:
+     matrix:
+       compiler: [g++, clang++]
     steps:
 
       - name: initialize repository
