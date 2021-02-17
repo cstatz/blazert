@@ -266,3 +266,5 @@ which adhere to their own respective licenses (found in the included files).
 
 The rendering examples are taken from the `nanoRT` and `bvh` repos and serve as a baseline. 
 The Lucy model included in the demo scene is taken from the Stanford 3D Scanning Repository: http://graphics.stanford.edu/data/3Dscanrep/
+
+[cnpy](https://github.com/rogersce/cnpy) is licensed under the MIT license and available at: https://github.com/rogersce/cnpy
