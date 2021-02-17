@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.com/cstatz/blazert.svg?token=MzD1bv55cBzChUswxdrj&branch=develop)](https://travis-ci.com/cstatz/blazert) [![Documentation Status](https://readthedocs.org/projects/blazert/badge/?version=develop)](https://blazert.readthedocs.io/en/develop/?badge=develop)
+[![Build Status](https://github.com/cstatz/blazert/workflows/cmake-linux/badge.svg)](https://github.com/cstatz/blazert/actions) [![Documentation Status](https://readthedocs.org/projects/blazert/badge/?version=develop)](https://blazert.readthedocs.io/en/develop/?badge=develop)
 
 
 # blazeRT
