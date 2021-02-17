@@ -5,6 +5,8 @@ on: [push]
 env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
   BUILD_TYPE: Release
+  BLAZE_INSTALL_DIR: ${{github.workspace}}/deps/blaze
+  BLAZE_INCLUDE: ${{github.workspace}}/deps/blaze/include
 
 jobs:
   build:
@@ -23,18 +25,20 @@ jobs:
           args: https://bitbucket.org/blaze-lib/blaze/downloads/blaze-3.7.tar.gz
 
       - name: untar blaze
-        run: tar -xf blaze-3.7.tar.gz;
+        run: |
+          tar -xf blaze-3.7.tar.gz;
+          mkdir -p deps/blaze
 #
-#      - name: Configure CMake blaze
-#        # Use a bash shell so we can use the same syntax for environment variable
-#        # access regardless of the host operating system
-#        shell: bash
-#        working-directory: ${{runner.workspace}}/blaze-3.7
-#        # Note the current convention is to use the -S and -B options here to specify source
-#        # and build directories, but this is only available with CMake 3.13 and higher.
-#        # The CMake binaries on the Github Actions machines are (as of this writing) 3.12
-#        run: cmake . -DCMAKE_INSTALL_PREFIX=${{runner.workspace}}/deps/blaze;
-#
+      - name: Configure CMake blaze
+        # Use a bash shell so we can use the same syntax for environment variable
+        # access regardless of the host operating system
+        shell: bash
+        working-directory: ${{github.workspace}}/blaze-3.7
+        # Note the current convention is to use the -S and -B options here to specify source
+        # and build directories, but this is only available with CMake 3.13 and higher.
+        # The CMake binaries on the Github Actions machines are (as of this writing) 3.12
+        run: cmake . -DCMAKE_INSTALL_PREFIX=${BLAZE_INSTALL_DIR} #${{github.workspace}}/deps/blaze;
+
       - name: Install blaze
         working-directory: ${{github.workspace}}/blaze-3.7
         shell: bash
