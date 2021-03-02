@@ -2,7 +2,7 @@ set(BUILD_TARGET "scene_mesh")
 
 include_directories(${CMAKE_SOURCE_DIR} "${CMAKE_SOURCE_DIR}/examples/common" "/usr/local/include")
 
-file(GLOB SOURCES "*.cc" "${CMAKE_SOURCE_DIR}/examples/common/*.cc")
+file(GLOB SOURCES "*.cc" "${CMAKE_SOURCE_DIR}/examples/common/tiny_obj_loader.cc")
 add_executable(${BUILD_TARGET} ${SOURCES})
 
 if(EMBREE_FOUND)
