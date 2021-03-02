@@ -37,6 +37,7 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <string>
 
 #include "tiny_obj_loader.h"
 
@@ -95,7 +96,7 @@ static inline std::string parseString(const char *&token) {
 
 static inline int parseInt(const char *&token) {
   token += strspn(token, " \t");
-  int i = atoi(token);
+  int i = std::stoi(token);
   token += strcspn(token, " \t\r");
   return i;
 }
@@ -264,7 +265,7 @@ static vertex_index parseTriple(const char *&token, int vsize, int vnsize,
                                 int vtsize) {
   vertex_index vi(-1);
 
-  vi.v_idx = fixIndex(atoi(token), vsize);
+  vi.v_idx = fixIndex(std::stoi(token), vsize);
   token += strcspn(token, "/ \t\r");
   if (token[0] != '/') {
     return vi;
@@ -274,13 +275,13 @@ static vertex_index parseTriple(const char *&token, int vsize, int vnsize,
   // i//k
   if (token[0] == '/') {
     token++;
-    vi.vn_idx = fixIndex(atoi(token), vnsize);
+    vi.vn_idx = fixIndex(std::stoi(token), vnsize);
     token += strcspn(token, "/ \t\r");
     return vi;
   }
 
   // i/j/k or i/j
-  vi.vt_idx = fixIndex(atoi(token), vtsize);
+  vi.vt_idx = fixIndex(std::stoi(token), vtsize);
   token += strcspn(token, "/ \t\r");
   if (token[0] != '/') {
     return vi;
@@ -288,7 +289,7 @@ static vertex_index parseTriple(const char *&token, int vsize, int vnsize,
 
   // i/j/k
   token++;// skip '/'
-  vi.vn_idx = fixIndex(atoi(token), vnsize);
+  vi.vn_idx = fixIndex(std::stoi(token), vnsize);
   token += strcspn(token, "/ \t\r");
   return vi;
 }
