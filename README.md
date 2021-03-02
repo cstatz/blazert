@@ -1,7 +1,12 @@
+# blazeRT
+
+### Status
+
 [![Build Status](https://github.com/cstatz/blazert/workflows/cmake-linux/badge.svg)](https://github.com/cstatz/blazert/actions) [![Documentation Status](https://readthedocs.org/projects/blazert/badge/?version=develop)](https://blazert.readthedocs.io/en/develop/?badge=develop)
 
+[![License](https://img.shields.io/badge/License-BSD%203-brightgreen)](https://opensource.org/licenses/BSD-3-Clause)
 
-# blazeRT
+## Content
 
 1. [Introduction](#introduction)
     1. [Contributing](#contributing)
