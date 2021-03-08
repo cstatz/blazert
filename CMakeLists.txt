@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.7.0)
 project(blazert CXX)
+set(PROJECT_NAME BLAZERT)
 
 # include build option flags
 include(cmake/build_options.cmake)
@@ -51,13 +52,13 @@ else ()
     INCLUDE_DIRECTORIES(${BLAZE_INCLUDE_DIRS})
 endif ()
 
-if (EMBREE_BACKEND)
+if (${PROJECT_NAME}_EMBREE_BACKEND)
     find_package(embree 3.9)
 endif ()
 
 find_package(Threads)
 
-if (ENABLE_OMP)
+if (${PROJECT_NAME}_ENABLE_OMP)
     find_package(OpenMP)
     if (OpenMP_CXX_FOUND)
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
@@ -66,7 +67,7 @@ if (ENABLE_OMP)
     endif ()
 endif ()
 
-if (BUILD_TEST)
+if (${PROJECT_NAME}_BUILD_TEST)
     enable_testing()
     add_subdirectory(test)
 
@@ -100,11 +101,11 @@ if (BUILD_TEST)
 
 endif ()
 
-if (BUILD_EXAMPLES)
+if (${PROJECT_NAME}_BUILD_EXAMPLES)
     add_subdirectory(examples)
 endif ()
 
-if (BUILD_BENCHMARK)
+if (${PROJECT_NAME}_BUILD_BENCHMARK)
     add_subdirectory(benchmarks)
 endif ()
 

@@ -209,6 +209,10 @@ int main(int argc, char **argv) {
 
   if (config.binary_output) {
     outfile.open(config.output_fname, std::ios::trunc | std::ios::binary);
+    if(!outfile) {
+      std::cerr << "Error writing outfile.\n";
+      return -1;
+    }
 
     RayPathHeader rh;
     rh.write(outfile);
@@ -224,6 +228,11 @@ int main(int argc, char **argv) {
   }
   else {
     outfile.open (config.output_fname, std::ios::trunc);
+    if(!outfile) {
+      std::cerr << "Error writing outfile.\n";
+      return -1;
+    }
+
     outfile << "[" << std::endl;
     for (const auto &it: ray_paths) {
         outfile << it;

@@ -27,6 +27,9 @@ jobs:
         with:
           submodules: recursive
 
+      - name: Get CPU information
+        run: cat /proc/cpuinfo
+
       - name: wget
         uses: wei/wget@v1
         with:
@@ -34,7 +37,6 @@ jobs:
 
       - name: untar blaze
         run: |
-          cat /proc/cpuinfo
           tar -xf blaze-3.8.tar.gz;
           mkdir -p deps/blaze
 #
@@ -89,7 +91,7 @@ jobs:
         # Note the current convention is to use the -S and -B options here to specify source
         # and build directories, but this is only available with CMake 3.13 and higher.
         # The CMake binaries on the Github Actions machines are (as of this writing) 3.12
-        run: cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DBUILD_TEST:BOOL=true -DBUILD_EXAMPLES:BOOL=true -DBLAZE_INCLUDE_OVERRIDE:STRING=${BLAZE_INCLUDE} -DENABLE_OMP:BOOL=false -Dnlohmann_json_DIR=${NLOHMANN_JSON_INSTALL_DIR}/lib/cmake/nlohmann_json
+        run: cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DBLAZERT_BUILD_TEST:BOOL=true -DBLAZERT_BUILD_EXAMPLES:BOOL=true -DBLAZE_INCLUDE_OVERRIDE:STRING=${BLAZE_INCLUDE} -DBLAZERT_ENABLE_OMP:BOOL=false -Dnlohmann_json_DIR=${NLOHMANN_JSON_INSTALL_DIR}/lib/cmake/nlohmann_json
 
       - name: Build
         working-directory: ${{github.workspace}}/build
