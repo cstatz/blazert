@@ -53,16 +53,16 @@ public:
    *
    *
    */
-  Ray(const Vec3r<T> &origin, const Vec3r<T> &direction, T min_hit_distance = T(0.),
-      T max_hit_distance = std::numeric_limits<T>::max(), CullBackFace cull_back_face = CullBackFace::no,
-      AnyHit any_hit = AnyHit::no)
-      : origin{origin}, direction{normalize(direction)},
+  Ray(const Vec3r<T> &origin_, const Vec3r<T> &direction_, T min_hit_distance_ = T(0.),
+      T max_hit_distance_ = std::numeric_limits<T>::max(), CullBackFace cull_back_face_ = CullBackFace::no,
+      AnyHit any_hit_ = AnyHit::no)
+      : origin{origin_}, direction{normalize(direction_)},
         direction_inv{(static_cast<T>(1.) / direction)},// TODO: maybe normalize on creation?
         direction_sign{static_cast<unsigned int>(direction[0] < static_cast<T>(0.0) ? 1 : 0),
                        static_cast<unsigned int>(direction[1] < static_cast<T>(0.0) ? 1 : 0),
                        static_cast<unsigned int>(direction[2] < static_cast<T>(0.0) ? 1 : 0)},
-        min_hit_distance(min_hit_distance), max_hit_distance(max_hit_distance), cull_back_face(cull_back_face),
-        any_hit(any_hit) {}
+        min_hit_distance(min_hit_distance_), max_hit_distance(max_hit_distance_), cull_back_face(cull_back_face_),
+        any_hit(any_hit_) {}
 };
 
 /**
@@ -92,8 +92,10 @@ std::ostream &operator<<(std::ostream &stream, const Ray<T> &ray) {
   stream << "  Ray: " << &ray << ",\n";
   stream << "  origin: [" << ray.origin[0] << "," << ray.origin[1] << "," << ray.origin[2] << "],\n";
   stream << "  direction: [" << ray.direction[0] << "," << ray.direction[1] << "," << ray.direction[2] << "],\n";
-  stream << "  direction_inv: ["<< ray.direction_inv[0] << "," << ray.direction_inv[1] << "," << ray.direction_inv[2] << "],\n";
-  stream << "  direction_sign: [" << ray.direction_sign[0] << "," << ray.direction_sign[1] << "," << ray.direction_sign[2] << "],\n";
+  stream << "  direction_inv: [" << ray.direction_inv[0] << "," << ray.direction_inv[1] << "," << ray.direction_inv[2]
+         << "],\n";
+  stream << "  direction_sign: [" << ray.direction_sign[0] << "," << ray.direction_sign[1] << ","
+         << ray.direction_sign[2] << "],\n";
   stream << "  min_hit_distance: " << ray.min_hit_distance << ",\n";
   stream << "  max_hit_distance " << ray.max_hit_distance << ",\n";
   stream << "  cull_back_face " << (ray.cull_back_face == Ray<T>::CullBackFace::no ? "no" : "yes") << ",\n";
@@ -108,10 +110,10 @@ std::ostream &operator<<(std::ostream &stream, const RayHit<T> &rayhit) {
   /// Conveniently output a single cylinder as JSON.
   stream << "{\n";
 
-  stream << "  Ray: " << &rayhit << ",\n";
+  stream << "  Rayhit: " << &rayhit << ",\n";
   stream << "  normal: [" << rayhit.normal[0] << "," << rayhit.normal[1] << "," << rayhit.normal[2] << "],\n";
   stream << "  uv: [" << rayhit.uv[0] << "," << rayhit.uv[1] << "],\n";
-  stream << "  hit_distance: "<< rayhit.hit_distance << ",\n";
+  stream << "  hit_distance: " << rayhit.hit_distance << ",\n";
   stream << "  prim_id: " << rayhit.prim_id << ",\n";
   stream << "  geom_id: " << rayhit.geom_id << ",\n";
 

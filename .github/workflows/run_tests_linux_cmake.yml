@@ -34,6 +34,7 @@ jobs:
 
       - name: untar blaze
         run: |
+          cat /proc/cpuinfo
           tar -xf blaze-3.8.tar.gz;
           mkdir -p deps/blaze
 #
