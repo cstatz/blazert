@@ -4,7 +4,6 @@ include_directories(${CMAKE_SOURCE_DIR} "${CMAKE_SOURCE_DIR}/examples/common" "/
 
 file(GLOB SOURCES "*.cc" "${CMAKE_SOURCE_DIR}/examples/common/cnpy.cc")
 add_executable(${BUILD_TARGET} ${SOURCES})
-message(${SOURCES})
 
 find_package(nlohmann_json 3.2.0 REQUIRED)
 find_package(ZLIB REQUIRED)
@@ -23,3 +22,4 @@ IF (OpenMP_CXX_FOUND)
 ENDIF ()
 
 source_group("Source Files" FILES ${SOURCES})
+set_project_warnings(${BUILD_TARGET} PRIVATE ${BLAZERT_EXAMPLES_WARNINGS_AS_ERRORS})
