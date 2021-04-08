@@ -2,8 +2,10 @@
 #
 # https://github.com/lefticus/cppbestpractices/blob/master/02-Use_the_Tools_Available.md
 
-function(set_project_warnings project_name property_typ)
-    option(WARNINGS_AS_ERRORS "Treat compiler warnings as errors" TRUE)
+function(set_project_warnings project_name property_typ warnings_as_errors)
+    #option(WARNINGS_AS_ERRORS "Treat compiler warnings as errors" TRUE)
+
+    MESSAGE("Treat compiler warnings as errors for ${project_name}: ${warnings_as_errors}")
 
     set(MSVC_WARNINGS
             /W4 # Baseline reasonable warnings
@@ -49,10 +51,10 @@ function(set_project_warnings project_name property_typ)
             -Wformat=2 # warn on security issues around functions that format output (ie printf)
             )
 
-    #if(WARNINGS_AS_ERRORS)
-    #   set(CLANG_WARNINGS ${CLANG_WARNINGS} -Werror)
-    #    set(MSVC_WARNINGS ${MSVC_WARNINGS} /WX)
-    #endif()
+    if(warnings_as_errors)
+        set(CLANG_WARNINGS ${CLANG_WARNINGS} -Werror)
+        set(MSVC_WARNINGS ${MSVC_WARNINGS} /WX)
+    endif()
 
     set(GCC_WARNINGS
             ${CLANG_WARNINGS}
