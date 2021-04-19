@@ -75,7 +75,7 @@ namespace cnpy {
     template<typename T> std::vector<char>& operator+=(std::vector<char>& lhs, const T rhs) {
         //write in little endian
         for(size_t byte = 0; byte < sizeof(T); byte++) {
-            char val = *((char*)&rhs+byte); 
+            char val = *(reinterpret_cast<const char*>(&rhs)+byte);
             lhs.push_back(val);
         }
         return lhs;
@@ -121,7 +121,7 @@ namespace cnpy {
         }
 
         std::vector<char> header = create_npy_header<T>(true_data_shape);
-        size_t nels = std::accumulate(shape.begin(),shape.end(),1,std::multiplies<size_t>());
+        size_t nels = std::accumulate(shape.begin(),shape.end(),size_t(1),std::multiplies<size_t>());
 
         fseek(fp,0,SEEK_SET);
         fwrite(&header[0],sizeof(char),header.size(),fp);
@@ -168,48 +168,48 @@ namespace cnpy {
         size_t nbytes = nels*sizeof(T) + npy_header.size();
 
         //get the CRC of the data to be added
-        uint32_t crc = crc32(0L,(uint8_t*)&npy_header[0],npy_header.size());
-        crc = crc32(crc,(uint8_t*)data,nels*sizeof(T));
+        auto crc = static_cast<uint32_t>(crc32(0L,reinterpret_cast<uint8_t*>(&npy_header[0]),static_cast<unsigned int>(npy_header.size())));
+        crc = crc32(crc,reinterpret_cast<uint8_t*>(data),nels*sizeof(T));
 
         //build the local header
         std::vector<char> local_header;
         local_header += "PK"; //first part of sig
-        local_header += (uint16_t) 0x0403; //second part of sig
-        local_header += (uint16_t) 20; //min version to extract
-        local_header += (uint16_t) 0; //general purpose bit flag
-        local_header += (uint16_t) 0; //compression method
-        local_header += (uint16_t) 0; //file last mod time
-        local_header += (uint16_t) 0;     //file last mod date
-        local_header += (uint32_t) crc; //crc
-        local_header += (uint32_t) nbytes; //compressed size
-        local_header += (uint32_t) nbytes; //uncompressed size
-        local_header += (uint16_t) fname.size(); //fname length
-        local_header += (uint16_t) 0; //extra field length
+        local_header += static_cast<uint16_t>(0x0403); //second part of sig
+        local_header += static_cast<uint16_t>(20); //min version to extract
+        local_header += static_cast<uint16_t>(0); //general purpose bit flag
+        local_header += static_cast<uint16_t>(0); //compression method
+        local_header += static_cast<uint16_t>(0); //file last mod time
+        local_header += static_cast<uint16_t>(0);     //file last mod date
+        local_header += crc; //crc
+        local_header += static_cast<uint32_t>(nbytes); //compressed size
+        local_header += static_cast<uint32_t>(nbytes); //uncompressed size
+        local_header += static_cast<uint16_t>(fname.size()); //fname length
+        local_header += static_cast<uint16_t>(0); //extra field length
         local_header += fname;
 
         //build global header
         global_header += "PK"; //first part of sig
-        global_header += (uint16_t) 0x0201; //second part of sig
-        global_header += (uint16_t) 20; //version made by
+        global_header += static_cast<uint16_t>(0x0201); //second part of sig
+        global_header += static_cast<uint16_t>(20); //version made by
         global_header.insert(global_header.end(),local_header.begin()+4,local_header.begin()+30);
-        global_header += (uint16_t) 0; //file comment length
-        global_header += (uint16_t) 0; //disk number where file starts
-        global_header += (uint16_t) 0; //internal file attributes
-        global_header += (uint32_t) 0; //external file attributes
-        global_header += (uint32_t) global_header_offset; //relative offset of local file header, since it begins where the global header used to begin
+        global_header += static_cast<uint16_t>(0); //file comment length
+        global_header += static_cast<uint16_t>(0); //disk number where file starts
+        global_header += static_cast<uint16_t>(0); //internal file attributes
+        global_header += static_cast<uint32_t>(0); //external file attributes
+        global_header += static_cast<uint32_t>(global_header_offset); //relative offset of local file header, since it begins where the global header used to begin
         global_header += fname;
 
         //build footer
         std::vector<char> footer;
         footer += "PK"; //first part of sig
-        footer += (uint16_t) 0x0605; //second part of sig
-        footer += (uint16_t) 0; //number of this disk
-        footer += (uint16_t) 0; //disk where footer starts
-        footer += (uint16_t) (nrecs+1); //number of records on this disk
-        footer += (uint16_t) (nrecs+1); //total number of records
-        footer += (uint32_t) global_header.size(); //nbytes of global headers
-        footer += (uint32_t) (global_header_offset + nbytes + local_header.size()); //offset of start of global headers, since global header now starts after newly written array
-        footer += (uint16_t) 0; //zip file comment length
+        footer += static_cast<uint16_t>(0x0605); //second part of sig
+        footer += static_cast<uint16_t>(0); //number of this disk
+        footer += static_cast<uint16_t>(0); //disk where footer starts
+        footer += static_cast<uint16_t>(nrecs+1); //number of records on this disk
+        footer += static_cast<uint16_t>(nrecs+1); //total number of records
+        footer += static_cast<uint32_t>(global_header.size()); //nbytes of global headers
+        footer += static_cast<uint32_t>(global_header_offset + nbytes + local_header.size()); //offset of start of global headers, since global header now starts after newly written array
+        footer += static_cast<uint16_t>(0); //zip file comment length
 
         //write everything
         fwrite(&local_header[0],sizeof(char),local_header.size(),fp);
@@ -248,16 +248,16 @@ namespace cnpy {
         if(shape.size() == 1) dict += ",";
         dict += "), }";
         //pad with spaces so that preamble+dict is modulo 16 bytes. preamble is 10 bytes. dict needs to end with \n
-        int remainder = 16 - (10 + dict.size()) % 16;
-        dict.insert(dict.end(),remainder,' ');
+        uint8_t remainder = 16 - (10 + dict.size()) % 16;
+        dict.insert(dict.end(), remainder,' ');
         dict.back() = '\n';
 
         std::vector<char> header;
-        header += (char) 0x93;
+        header += static_cast<char>(0x93);
         header += "NUMPY";
-        header += (char) 0x01; //major version of numpy format
-        header += (char) 0x00; //minor version of numpy format
-        header += (uint16_t) dict.size();
+        header += static_cast<char>(0x01); //major version of numpy format
+        header += static_cast<char>(0x00); //minor version of numpy format
+        header += static_cast<uint16_t>(dict.size());
         header.insert(header.end(),dict.begin(),dict.end());
 
         return header;
