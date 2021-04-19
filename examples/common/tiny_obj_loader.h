@@ -51,8 +51,8 @@ typedef struct {
 
 class MaterialReader {
 public:
-  MaterialReader() {}
-  virtual ~MaterialReader() {}
+  MaterialReader() = default;
+  virtual ~MaterialReader() = default;
 
   virtual std::string operator()(const std::string &matId, std::vector<material_t> &materials,
                                  std::map<std::string, int> &matMap) = 0;
@@ -60,10 +60,10 @@ public:
 
 class MaterialFileReader : public MaterialReader {
 public:
-  MaterialFileReader(const std::string &mtl_basepath) : m_mtlBasePath(mtl_basepath) {}
-  virtual ~MaterialFileReader() {}
-  virtual std::string operator()(const std::string &matId, std::vector<material_t> &materials,
-                                 std::map<std::string, int> &matMap);
+  explicit MaterialFileReader(std::string mtl_basepath) : m_mtlBasePath(std::move(mtl_basepath)) {}
+  ~MaterialFileReader() override = default;
+  std::string operator()(const std::string &matId, std::vector<material_t> &materials,
+                                 std::map<std::string, int> &matMap) override;
 
 private:
   std::string m_mtlBasePath;
