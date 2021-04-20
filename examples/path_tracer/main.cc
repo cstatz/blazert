@@ -12,6 +12,8 @@
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "../common/stb_image_write.h"
 
+#include "../common/progress_bar.h"
+
 using ft = double;
 
 constexpr ft pi = 3.141592653589793238462643383279502884;
@@ -89,7 +91,7 @@ public:
       unsigned int mtl_id = mesh_.material_ids[face];
       const tinyobj::material_t &faceMtl = materials_[mtl_id];
 
-      if (faceMtl.emission[0] > static_cast<T>(0.0) || faceMtl.emission[1] > static_cast<T>(0.0) || faceMtl.emission[2] > static_cast<T>(0.0)) {
+      if (faceMtl.emission[0] > static_cast<float>(0.0) || faceMtl.emission[1] > static_cast<float>(0.0) || faceMtl.emission[2] > static_cast<float>(0.0)) {
         EmissiveFace ef(face, mtl_id);
         emissive_faces_.push_back(ef);
       }
@@ -97,12 +99,12 @@ public:
   }
 
   void sample_direct(const Vec3r<T> &x, T Xi1, T Xi2, Vec3r<T> &dstDir, T &dstDist, T &dstPdf, Vec3r<T> &dstRadiance) const {
-    unsigned int num_faces = emissive_faces_.size();
-    unsigned int face = std::min(static_cast<unsigned int>(std::floor(Xi1 * num_faces)), num_faces - 1);
+    std::size_t num_faces = emissive_faces_.size();
+    std::size_t face = std::min(static_cast<size_t>(std::floor(Xi1 * static_cast<double>(num_faces))), num_faces - 1);
     T lightPickPdf = static_cast<T>(1.0) / static_cast<T>(num_faces);
 
     // normalize random number
-    Xi1 = Xi1 * num_faces - face;
+    Xi1 = Xi1 * static_cast<double>(num_faces) - static_cast<double>(face);
 
     unsigned int fid = emissive_faces_[face].face_;
     unsigned int mtlid = emissive_faces_[face].mtl_;
@@ -151,12 +153,12 @@ void SaveImagePNG(const char *filename, const float *rgb, const unsigned int wid
   for (unsigned int y = 0; y < height; y++) {
     for (unsigned int x = 0; x < width; x++) {
       const unsigned int index = y * width + x;
-      bytes[index * 3 + 0] = (unsigned char) std::max(
-          0.0f, std::min(rgb[index * 3 + 0] * 255.0f, 255.0f));
-      bytes[index * 3 + 1] = (unsigned char) std::max(
-          0.0f, std::min(rgb[index * 3 + 1] * 255.0f, 255.0f));
-      bytes[index * 3 + 2] = (unsigned char) std::max(
-          0.0f, std::min(rgb[index * 3 + 2] * 255.0f, 255.0f));
+      bytes[index * 3 + 0] = static_cast<unsigned char>(std::max(
+          0.0f, std::min(rgb[index * 3 + 0] * 255.0f, 255.0f)));
+      bytes[index * 3 + 1] = static_cast<unsigned char>(std::max(
+          0.0f, std::min(rgb[index * 3 + 1] * 255.0f, 255.0f)));
+      bytes[index * 3 + 2] = static_cast<unsigned char>(std::max(
+          0.0f, std::min(rgb[index * 3 + 2] * 255.0f, 255.0f)));
     }
   }
   stbi_write_png(filename, static_cast<int>(width), static_cast<int>(height), 3, bytes, static_cast<int>(width * 3));
@@ -164,7 +166,7 @@ void SaveImagePNG(const char *filename, const float *rgb, const unsigned int wid
 }
 
 template<typename T>
-bool LoadObj(Mesh<T> &mesh, std::vector<tinyobj::material_t> &materials, const char *filename, float scale, const char *mtl_path) {
+bool LoadObj(Mesh<T> &mesh, std::vector<tinyobj::material_t> &materials, const char *filename, T scale, const char *mtl_path) {
 
   std::vector<tinyobj::shape_t> shapes;
   std::string err = tinyobj::LoadObj(shapes, materials, filename, mtl_path);
@@ -176,37 +178,41 @@ bool LoadObj(Mesh<T> &mesh, std::vector<tinyobj::material_t> &materials, const c
 
   size_t num_vertices = 0;
   size_t num_faces = 0;
-  for (size_t i = 0; i < shapes.size(); i++) {
-    num_vertices += shapes[i].mesh.positions.size() / 3;
-    num_faces += shapes[i].mesh.indices.size() / 3;
+  for (const auto &shape : shapes) { //(size_t i = 0; i < shapes.size(); i++) {
+    num_vertices += shape.mesh.positions.size() / 3;
+    num_faces += shape.mesh.indices.size() / 3;
   }
 
   size_t vertexIdxOffset = 0;
 
-  for (size_t i = 0; i < shapes.size(); i++) {
+  for (const auto &shape : shapes) { //(size_t i = 0; i < shapes.size(); i++) {
     // Faces + Mats
-    for (size_t f = 0; f < shapes[i].mesh.indices.size() / 3; f++) {
-      mesh.faces.push_back(Vec3ui{shapes[i].mesh.indices[3 * f + 0], shapes[i].mesh.indices[3 * f + 1], shapes[i].mesh.indices[3 * f + 2]} + vertexIdxOffset);
-      mesh.material_ids.push_back(static_cast<unsigned int>(shapes[i].mesh.material_ids[f]));
+    for (size_t f = 0; f < shape.mesh.indices.size() / 3; f++) {
+      mesh.faces.push_back(Vec3ui{shape.mesh.indices[3 * f + 0], shape.mesh.indices[3 * f + 1], shape.mesh.indices[3 * f + 2]} + vertexIdxOffset);
+      mesh.material_ids.push_back(static_cast<unsigned int>(shape.mesh.material_ids[f]));
     }
 
     // Vertices
-    for (size_t v = 0; v < shapes[i].mesh.positions.size() / 3; v++) {
-      mesh.vertices.push_back(scale * Vec3r<ft>{shapes[i].mesh.positions[3 * v + 0], shapes[i].mesh.positions[3 * v + 1], shapes[i].mesh.positions[3 * v + 2]});
+    for (size_t v = 0; v < shape.mesh.positions.size() / 3; v++) {
+      mesh.vertices.push_back(scale * Vec3r<ft>{
+                                  static_cast<ft>(shape.mesh.positions[3 * v + 0]),
+                                  static_cast<ft>(shape.mesh.positions[3 * v + 1]),
+                                  static_cast<ft>(shape.mesh.positions[3 * v + 2])
+                              });
     }
 
     vertexIdxOffset = mesh.vertices.size();
 
-    if (shapes[i].mesh.texcoords.size() > 0) {
-      for (size_t f = 0; f < shapes[i].mesh.indices.size() / 3; f++) {
+    if (!shape.mesh.texcoords.empty()) {
+      for (size_t f = 0; f < shape.mesh.indices.size() / 3; f++) {
 
-        const unsigned int f0 = shapes[i].mesh.indices[3 * f + 0];
-        const unsigned int f1 = shapes[i].mesh.indices[3 * f + 1];
-        const unsigned int f2 = shapes[i].mesh.indices[3 * f + 2];
+        const unsigned int f0 = shape.mesh.indices[3 * f + 0];
+        const unsigned int f1 = shape.mesh.indices[3 * f + 1];
+        const unsigned int f2 = shape.mesh.indices[3 * f + 2];
 
-        const Vec3r<ft> n0{shapes[i].mesh.texcoords[2 * f0 + 0], shapes[i].mesh.texcoords[2 * f0 + 1], 0.};
-        const Vec3r<ft> n1{shapes[i].mesh.texcoords[2 * f1 + 0], shapes[i].mesh.texcoords[2 * f1 + 1], 0.};
-        const Vec3r<ft> n2{shapes[i].mesh.texcoords[2 * f2 + 0], shapes[i].mesh.texcoords[2 * f2 + 1], 0.};
+        const Vec3r<ft> n0{static_cast<ft>(shape.mesh.texcoords[2 * f0 + 0]), static_cast<ft>(shape.mesh.texcoords[2 * f0 + 1]), 0.};
+        const Vec3r<ft> n1{static_cast<ft>(shape.mesh.texcoords[2 * f1 + 0]), static_cast<ft>(shape.mesh.texcoords[2 * f1 + 1]), 0.};
+        const Vec3r<ft> n2{static_cast<ft>(shape.mesh.texcoords[2 * f2 + 0]), static_cast<ft>(shape.mesh.texcoords[2 * f2 + 1]), 0.};
 
         Mat3r<ft> n{};
         blaze::column<0UL>(n) = n0;
@@ -243,15 +249,6 @@ template<typename T>
 inline T fresnel_schlick(const Vec3r<T> &H, const Vec3r<T> &norm, T n1) {
   const T r0 = n1 * n1;
   return r0 + (static_cast<T>(1.) - r0) * pow5(static_cast<T>(1.) - dot(H, norm));
-}
-
-void progressBar(unsigned long tick, unsigned long total, unsigned long width = 100) {
-  float ratio = 100.0f * tick / total;
-  float count = width * tick / total;
-  std::string bar(width, ' ');
-  std::fill(bar.begin(), bar.begin() + count, '+');
-  std::cout << "[ " << ratio << "%% ] [ " << bar << " ]" << (tick == total ? '\n' : '\r');
-  std::fflush(stdout);
 }
 
 /// Check for occlusion
@@ -376,7 +373,7 @@ int main(int argc, char **argv) {
           Vec3r<ft> emissiveColor(mat.emission);
           Vec3r<ft> specularColor(mat.specular);
           Vec3r<ft> refractionColor(mat.transmittance);
-          ft ior = mat.ior;
+          ft ior = static_cast<ft>(mat.ior);
 
           // Calculate fresnel factor based on ior.
           ft inside = sign(dot(ray.direction, originalNorm));// 1 for inside, -1 for outside
@@ -388,18 +385,18 @@ int main(int argc, char **argv) {
 
           // Compute probabilities for each surface interaction.
           // Specular is just regular reflectiveness * fresnel.
-          ft rhoS = dot(Vec3r<ft>{1, 1, 1} / static_cast<ft>(3.0), specularColor) * fresnel;
+          ft rhoS = dot(Vec3r<ft>{1, 1, 1} / (3.0), specularColor) * fresnel;
           // If we don't have a specular reflection, choose either diffuse or
           // transmissive
           // Mix them based on the dissolve value of the material
-          ft rhoD = dot(Vec3r<ft>{1, 1, 1} / static_cast<ft>(3.0), diffuseColor) * (static_cast<ft>(1.0) - fresnel) * (static_cast<ft>(1.0) - mat.dissolve);
-          ft rhoR = dot(Vec3r<ft>{1, 1, 1} / static_cast<ft>(3.0), refractionColor) * (static_cast<ft>(1.0) - fresnel) * mat.dissolve;
-          ft rhoE = dot(Vec3r<ft>{1, 1, 1} / static_cast<ft>(3.0), emissiveColor);
+          ft rhoD = dot(Vec3r<ft>{1, 1, 1} / (3.0), diffuseColor) * ((1.0) - fresnel) * ((1.0) - static_cast<ft>(mat.dissolve));
+          ft rhoR = dot(Vec3r<ft>{1, 1, 1} / (3.0), refractionColor) * ((1.0) - fresnel) * static_cast<ft>(mat.dissolve);
+          ft rhoE = dot(Vec3r<ft>{1, 1, 1} / (3.0), emissiveColor);
 
           // Normalize probabilities so they sum to 1.0
           ft totalrho = rhoS + rhoD + rhoR + rhoE;
           // No scattering event is likely, just stop here
-          if (totalrho < static_cast<ft>(0.0001)) {
+          if (totalrho < 0.0001) {
             break;
           }
 
@@ -418,12 +415,12 @@ int main(int argc, char **argv) {
           }
           // REFLECT diffuse
           else if (rand < (rhoS + rhoD)) {
-            Vec3r<ft> brdfEval{static_cast<ft>(1.0) / pi * diffuseColor};
+            Vec3r<ft> brdfEval{1.0 / pi * diffuseColor};
             Vec3r<ft> ldir, ll;
             ft lpdf, ldist;
             lights.sample_direct(rayOrg, uniform(0., 1.), uniform(0., 1.), ldir, ldist, lpdf, ll);
 
-            if (lpdf > static_cast<ft>(0.0)) {
+            if (lpdf > 0.0) {
               ft cosTheta = std::abs(dot(ldir, norm));
               Vec3r<ft> directLight{brdfEval * ll * cosTheta / lpdf};
               bool visible = !check_for_occluder(rayOrg, Vec3r<ft>{rayOrg + ldir * ldist}, *mesh, accel);
@@ -470,7 +467,7 @@ int main(int argc, char **argv) {
       rgb[3 * ((height - y - 1) * width + x) + 2] = float(finalColor[2]);
     }
 
-    progressBar(y + 1, height);
+    progress_bar(y + 1, height);
   }
 
   SaveImagePNG("render.png", &rgb.at(0), width, height);

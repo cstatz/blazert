@@ -18,7 +18,7 @@ file(GLOB_RECURSE BLAZERT_FILES blazert/*.h)
 target_sources(blazeRT INTERFACE ${BLAZERT_FILES})
 target_include_directories(blazeRT INTERFACE blazert/)
 include(cmake/compiler_warnings.cmake)
-set_project_warnings(blazeRT INTERFACE)
+set_project_warnings(blazeRT INTERFACE ${BLAZERT_WARNINGS_AS_ERRORS})
 
 # Compiler Flags
 set(CMAKE_CXX_STANDARD 17)
