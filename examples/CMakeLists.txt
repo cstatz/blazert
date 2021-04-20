@@ -7,3 +7,5 @@ add_subdirectory(scene_primitives)
 add_subdirectory(fillvolume)
 add_subdirectory(creep)
 add_subdirectory(deflate)
+
+add_subdirectory(em_tracer)
