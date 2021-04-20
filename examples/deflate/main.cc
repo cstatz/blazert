@@ -146,10 +146,10 @@ int main(int argc, char **argv) {
   spheres_volume *= (4./3. * emrt::constants::pi<double>);
 
   std::cout << "Spheres Volume: " << spheres_volume << std::endl;
-  std::cout << "Porosity: " << double((boundary_volume - spheres_volume)/boundary_volume) << std::endl;
+  std::cout << "Porosity: " << (boundary_volume - spheres_volume)/boundary_volume << std::endl;
 
-  cnpy::npy_save(config.points_fname, (double *) &(ss.vertices[0][0]),{ss.vertices.size(), 3},"w");
-  cnpy::npy_save(config.tris_fname, (uint32_t *) &(ss.triangles[0]),{ss.triangle_count(), 3},"w");
+  cnpy::npy_save(config.points_fname, &(ss.vertices[0][0]),{ss.vertices.size(), 3},"w");
+  cnpy::npy_save(config.tris_fname, &(ss.triangles[0]),{ss.triangle_count(), 3},"w");
 
   return 0;
 }

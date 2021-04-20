@@ -47,8 +47,8 @@ namespace tinyobj {
 
 struct vertex_index {
   int v_idx, vt_idx, vn_idx;
-  vertex_index(){};
-  vertex_index(int idx) : v_idx(idx), vt_idx(idx), vn_idx(idx){};
+  vertex_index() = default;
+  explicit vertex_index(int idx) : v_idx(idx), vt_idx(idx), vn_idx(idx){};
   vertex_index(int vidx, int vtidx, int vnidx)
       : v_idx(vidx), vt_idx(vtidx), vn_idx(vnidx){};
 };
@@ -170,7 +170,7 @@ static bool tryParseDouble(const char *s, const char *s_end, double *result) {
   // Read the integer part.
   while ((end_not_reached = (curr != s_end)) && isdigit(*curr)) {
     mantissa *= 10;
-    mantissa += static_cast<int>(*curr - 0x30);
+    mantissa += static_cast<double>(*curr - 0x30);
     curr++;
     read++;
   }
@@ -188,7 +188,7 @@ static bool tryParseDouble(const char *s, const char *s_end, double *result) {
     read = 1;
     while ((end_not_reached = (curr != s_end)) && isdigit(*curr)) {
       // NOTE: Don't use powf here, it will absolutely murder precision.
-      mantissa += static_cast<int>(*curr - 0x30) * pow(10.0, -read);
+      mantissa += static_cast<double>(*curr - 0x30) * pow(10.0, -read);
       read++;
       curr++;
     }
@@ -216,7 +216,7 @@ static bool tryParseDouble(const char *s, const char *s_end, double *result) {
     read = 0;
     while ((end_not_reached = (curr != s_end)) && isdigit(*curr)) {
       exponent *= 10;
-      exponent += static_cast<int>(*curr - 0x30);
+      exponent += (*curr - 0x30);
       curr++;
       read++;
     }
@@ -240,7 +240,7 @@ static inline float parseFloat(const char *&token) {
   const char *end = token + strcspn(token, " \t\r");
   double val = 0.0;
   tryParseDouble(token, end, &val);
-  float f = static_cast<float>(val);
+  auto f = float(val);
   token = end;
 #endif
   return f;
@@ -303,7 +303,7 @@ updateVertex(std::map<vertex_index, unsigned int> &vertexCache,
              const std::vector<float> &in_normals,
              const std::vector<float> &in_texcoords,
              const vertex_index &i) {
-  const std::map<vertex_index, unsigned int>::iterator it = vertexCache.find(i);
+  const auto it = vertexCache.find(i);
 
   if (it != vertexCache.end()) {
     // found cache
@@ -312,22 +312,22 @@ updateVertex(std::map<vertex_index, unsigned int> &vertexCache,
 
   assert(in_positions.size() > (unsigned int) (3 * i.v_idx + 2));
 
-  positions.push_back(in_positions[3 * i.v_idx + 0]);
-  positions.push_back(in_positions[3 * i.v_idx + 1]);
-  positions.push_back(in_positions[3 * i.v_idx + 2]);
+  positions.push_back(in_positions[3 * static_cast<uint32_t>(i.v_idx) + 0]);
+  positions.push_back(in_positions[3 * static_cast<uint32_t>(i.v_idx) + 1]);
+  positions.push_back(in_positions[3 * static_cast<uint32_t>(i.v_idx) + 2]);
 
   if (i.vn_idx >= 0) {
-    normals.push_back(in_normals[3 * i.vn_idx + 0]);
-    normals.push_back(in_normals[3 * i.vn_idx + 1]);
-    normals.push_back(in_normals[3 * i.vn_idx + 2]);
+    normals.push_back(in_normals[3 * static_cast<uint32_t>(i.vn_idx) + 0]);
+    normals.push_back(in_normals[3 * static_cast<uint32_t>(i.vn_idx) + 1]);
+    normals.push_back(in_normals[3 * static_cast<uint32_t>(i.vn_idx) + 2]);
   }
 
   if (i.vt_idx >= 0) {
-    texcoords.push_back(in_texcoords[2 * i.vt_idx + 0]);
-    texcoords.push_back(in_texcoords[2 * i.vt_idx + 1]);
+    texcoords.push_back(in_texcoords[2 * static_cast<uint32_t>(i.vt_idx) + 0]);
+    texcoords.push_back(in_texcoords[2 * static_cast<uint32_t>(i.vt_idx) + 1]);
   }
 
-  unsigned int idx = static_cast<unsigned int>(positions.size() / 3 - 1);
+  auto idx = static_cast<unsigned int>(positions.size() / 3 - 1);
   vertexCache[i] = idx;
 
   return idx;
@@ -368,8 +368,8 @@ static bool exportFaceGroupToShape(
   }
 
   // Flatten vertices and indices
-  for (size_t i = 0; i < faceGroup.size(); i++) {
-    const std::vector<vertex_index> &face = faceGroup[i];
+  for (const auto &face : faceGroup) { //size_t i = 0; i < faceGroup.size(); i++) {
+    //const std::vector<vertex_index> &face = faceGroup[i];
 
     vertex_index i0 = face[0];
     vertex_index i1(-1);
@@ -417,7 +417,7 @@ std::string LoadMtl(std::map<std::string, int> &material_map,
   material_t material;
   InitMaterial(material);
 
-  int maxchars = 8192;            // Alloc enough size.
+  uint16_t maxchars = 8192;            // Alloc enough size.
   std::vector<char> buf(maxchars);// Alloc enough size.
   while (inStream.peek() != -1) {
     inStream.getline(&buf[0], maxchars);
@@ -425,11 +425,11 @@ std::string LoadMtl(std::map<std::string, int> &material_map,
     std::string linebuf(&buf[0]);
 
     // Trim newline '\r\n' or '\n'
-    if (linebuf.size() > 0) {
+    if (!linebuf.empty()) {
       if (linebuf[linebuf.size() - 1] == '\n')
         linebuf.erase(linebuf.size() - 1);
     }
-    if (linebuf.size() > 0) {
+    if (!linebuf.empty()) {
       if (linebuf[linebuf.size() - 1] == '\r')
         linebuf.erase(linebuf.size() - 1);
     }
@@ -625,7 +625,7 @@ std::string LoadMtl(std::map<std::string, int> &material_map,
       _space = strchr(token, '\t');
     }
     if (_space) {
-      std::ptrdiff_t len = _space - token;
+      auto len = static_cast<unsigned long>(_space - token);
       std::string key(token, len);
       std::string value = _space + 1;
       material.unknown_parameter.insert(
@@ -646,7 +646,7 @@ std::string MaterialFileReader::operator()(const std::string &matId,
   std::string filepath;
 
   if (!m_mtlBasePath.empty()) {
-    filepath = std::string(m_mtlBasePath) + matId;
+    filepath = m_mtlBasePath + matId;
   } else {
     filepath = matId;
   }
@@ -702,7 +702,7 @@ std::string LoadObj(std::vector<shape_t> &shapes,
 
   shape_t shape;
 
-  int maxchars = 8192;            // Alloc enough size.
+  uint32_t maxchars = 8192;            // Alloc enough size.
   std::vector<char> buf(maxchars);// Alloc enough size.
   while (inStream.peek() != -1) {
     inStream.getline(&buf[0], maxchars);
@@ -710,11 +710,11 @@ std::string LoadObj(std::vector<shape_t> &shapes,
     std::string linebuf(&buf[0]);
 
     // Trim newline '\r\n' or '\n'
-    if (linebuf.size() > 0) {
+    if (!linebuf.empty()) {
       if (linebuf[linebuf.size() - 1] == '\n')
         linebuf.erase(linebuf.size() - 1);
     }
-    if (linebuf.size() > 0) {
+    if (!linebuf.empty()) {
       if (linebuf[linebuf.size() - 1] == '\r')
         linebuf.erase(linebuf.size() - 1);
     }
@@ -923,7 +923,7 @@ std::string LoadObj(std::vector<shape_t> &shapes,
 
   shape_t shape;
 
-  int maxchars = 8192;            // Alloc enough size.
+  uint16_t maxchars = 8192;            // Alloc enough size.
   std::vector<char> buf(maxchars);// Alloc enough size.
   while (inStream.peek() != -1) {
     inStream.getline(&buf[0], maxchars);
@@ -931,11 +931,11 @@ std::string LoadObj(std::vector<shape_t> &shapes,
     std::string linebuf(&buf[0]);
 
     // Trim newline '\r\n' or '\n'
-    if (linebuf.size() > 0) {
+    if (!linebuf.empty()) {
       if (linebuf[linebuf.size() - 1] == '\n')
         linebuf.erase(linebuf.size() - 1);
     }
-    if (linebuf.size() > 0) {
+    if (!linebuf.empty()) {
       if (linebuf[linebuf.size() - 1] == '\r')
         linebuf.erase(linebuf.size() - 1);
     }
@@ -959,7 +959,7 @@ std::string LoadObj(std::vector<shape_t> &shapes,
     // vertex
     if (token[0] == 'v' && isSpace((token[1]))) {
       token += 2;
-      double x, y, z;
+      float x, y, z;
       parseFloat3(x, y, z, token);
       v.push_back(x);
       v.push_back(y);
@@ -970,7 +970,7 @@ std::string LoadObj(std::vector<shape_t> &shapes,
     // normal
     if (token[0] == 'v' && token[1] == 'n' && isSpace((token[2]))) {
       token += 3;
-      double x, y, z;
+      float x, y, z;
       parseFloat3(x, y, z, token);
       vn.push_back(x);
       vn.push_back(y);
@@ -981,7 +981,7 @@ std::string LoadObj(std::vector<shape_t> &shapes,
     // texcoord
     if (token[0] == 'v' && token[1] == 't' && isSpace((token[2]))) {
       token += 3;
-      double x, y;
+      float x, y;
       parseFloat2(x, y, token);
       vt.push_back(x);
       vt.push_back(y);

@@ -12,3 +12,4 @@ if(ENABLE_OMP)
 endif()
 
 source_group("Source Files" FILES ${SOURCES})
+set_project_warnings(${BUILD_TARGET} PRIVATE ${BLAZERT_EXAMPLES_WARNINGS_AS_ERRORS})

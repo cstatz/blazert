@@ -20,4 +20,4 @@ add_test(main test_blazert)
 
 # standard compiler warnings
 include(../cmake/compiler_warnings.cmake)
-set_project_warnings(test_blazert PRIVATE)
+set_project_warnings(test_blazert PRIVATE ${BLAZERT_WARNINGS_AS_ERRORS})
