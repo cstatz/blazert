@@ -1,4 +1,4 @@
-name: ubuntu-latest
+name: ubuntu-latest_warnings-as-errors
 
 on: [pull_request, workflow_dispatch]
 
@@ -91,7 +91,7 @@ jobs:
         # Note the current convention is to use the -S and -B options here to specify source
         # and build directories, but this is only available with CMake 3.13 and higher.
         # The CMake binaries on the Github Actions machines are (as of this writing) 3.12
-        run: cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DBLAZERT_BUILD_TEST:BOOL=true -DBLAZERT_BUILD_EXAMPLES:BOOL=true -DBLAZERT_WARNINGS_AS_ERRORS:BOOL=false -DBLAZERT_EXAMPLES_WARNINGS_AS_ERRORS:BOOL=false -DBLAZERT_ENABLE_OMP:BOOL=false -DBLAZE_INCLUDE_OVERRIDE:STRING=${BLAZE_INCLUDE} -Dnlohmann_json_DIR=${NLOHMANN_JSON_INSTALL_DIR}/lib/cmake/nlohmann_json
+        run: cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DBLAZERT_BUILD_TEST:BOOL=true -DBLAZERT_BUILD_EXAMPLES:BOOL=true -DBLAZERT_WARNINGS_AS_ERRORS:BOOL=true -DBLAZERT_EXAMPLES_WARNINGS_AS_ERRORS:BOOL=false -DBLAZERT_ENABLE_OMP:BOOL=false -DBLAZE_INCLUDE_OVERRIDE:STRING=${BLAZE_INCLUDE} -Dnlohmann_json_DIR=${NLOHMANN_JSON_INSTALL_DIR}/lib/cmake/nlohmann_json
 
       - name: Build
         working-directory: ${{github.workspace}}/build
