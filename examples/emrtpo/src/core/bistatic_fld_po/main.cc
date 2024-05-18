@@ -40,15 +40,15 @@ int main(int argc, char **argv) {
   auto start = std::chrono::steady_clock::now();
 
   // get config for source
-  const std::string emrt_config_path = config. //identifier + ".json";
-  const VectorEMRTPOConfig<double> emrt_config{emrt_config_path.c_str()};
+  //const std::string emrt_config_path = config; //identifier + ".json";
+  //const VectorEMRTPOConfig<double> emrt_config{emrt_config_path.c_str()};
 
-  std::cout << "EMRT config: \n " << emrt_config << "\n";
+  //std::cout << "EMRT config: \n " << emrt_config << "\n";
 
-  const std::string temporary_output_fname = output_name + ".npy";
+  //const std::string temporary_output_fname = output_name + ".npy";
 
-  const blaze::DynamicVector<Vec3r<std::complex<double>>> field =
-      process_single_target_position(emrt_config, config, config.pattern_vector, temporary_output_fname);
+  //const blaze::DynamicVector<Vec3r<std::complex<double>>> field =
+  //    process_single_target_position(emrt_config, config, config.pattern_vector, temporary_output_fname);
 
   auto stop = std::chrono::steady_clock::now();
   auto diff = stop - start;

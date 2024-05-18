@@ -78,7 +78,7 @@ pattern_integrator(const emrt::VectorEMRTPOData<double> &em_rt_po_data, const Ve
 
   // return if ambiguous
   if ((results_config.assert_unambiguous_range)
-      && (propagation_length_to_last_surface + PO_length > speed_of_light / freq_step))
+      && (propagation_length_to_last_surface + PO_length > vacuum_speed_of_light / freq_step))
     return field_out;
 
   // origin_id, endpoint_id, pattern, triangles, offset (how and where to compute)

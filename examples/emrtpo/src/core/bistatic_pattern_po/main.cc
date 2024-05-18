@@ -1,5 +1,4 @@
 // read a file into memory
-#include "examples/em_tracer/src/third_party/cnpy.h"
 #include <complex>
 #include <iostream>
 #include <string>

@@ -72,7 +72,7 @@ inline void pattern_integrator(const Vec3r<T> &origin, const Mat3r<T> &origin_to
   const double PO_length = em_rt_po_data.physical_optics_propagation_length;
 
   // return if ambiguous
-  if ((assert_unambiguous_range) && (propagation_length_to_last_surface + PO_length > speed_of_light / frequency_step))
+  if ((assert_unambiguous_range) && (propagation_length_to_last_surface + PO_length > vacuum_speed_of_light / frequency_step))
     return;
 
   // TODO: Correct order
