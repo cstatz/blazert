@@ -13,7 +13,8 @@ else()
 endif()
 
 # add library target
-add_library(blazeRT INTERFACE)
+add_library(blazeRT INTERFACE
+        examples/emrtpo/src/data_interface/radargramm_notebook.h)
 file(GLOB_RECURSE BLAZERT_FILES blazert/*.h)
 target_sources(blazeRT INTERFACE ${BLAZERT_FILES})
 target_include_directories(blazeRT INTERFACE blazert/)
@@ -26,7 +27,9 @@ if (CMAKE_COMPILER_IS_GNUCXX)
     set(CMAKE_CXX_FLAGS "-std=c++17 -O3 -fPIC -funroll-loops -march=native ${COVERAGE_FLAGS}")
 elseif (MSVC)
     # this currently works, but is not really the way to go..
-    set(CMAKE_CXX_FLAGS "/std:c++17 /Wall /arch:AVX")
+    set(CMAKE_CXX_FLAGS "/std:c++17 /Wall /arch:AVX /openmp")
+    set(CMAKE_CXX_FLAGS_RELEASE "/std:c++17 /Wall /Ox /Zi /arch:AVX /openmp")
+
 else ()
     set(CMAKE_CXX_FLAGS "-std=c++17 -O3 -fPIC -funroll-loops -march=native -fno-finite-math-only -fno-signed-zeros -freciprocal-math -ffp-contract=fast")
 endif (CMAKE_COMPILER_IS_GNUCXX)
@@ -41,9 +44,6 @@ endif (FORCE_COLOR_OUTPUT)
 
 include(CheckCXXCompilerFlag)
 include(GNUInstallDirs)
-
-
-
 
 if (NOT ("${BLAZE_INCLUDE_OVERRIDE}" STREQUAL ""))
     INCLUDE_DIRECTORIES(${BLAZE_INCLUDE_OVERRIDE})
@@ -127,7 +127,3 @@ configure_package_config_file(
 write_basic_package_version_file(blazertConfigVersion.cmake VERSION ${BLAZERT_VERSION_NUMBER} COMPATIBILITY SameMajorVersion)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/blazertConfig.cmake ${CMAKE_CURRENT_BINARY_DIR}/blazertConfigVersion.cmake DESTINATION ${CMAKE_INSTALL_DATADIR}/blazert/cmake)
 install(DIRECTORY blazert DESTINATION include)
-
-
-
-
