@@ -2,9 +2,10 @@
 #include <cmath>
 #include <iostream>
 #include <vector>
+#include <cstdlib>
 
 #include <blazert/blazert.h>
-#include <blaze/math/Column.h>
+#include <blazert/datatypes.h>
 
 #define NOMINMAX
 #include "../common/tiny_obj_loader.h"
