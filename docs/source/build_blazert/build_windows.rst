@@ -58,4 +58,4 @@ Create a project (and/or build):
         -DBLAZE_INCLUDE_OVERRIDE:STRING=[vcpkg root]\installed\x64-windows\include \
         ..
 
-    cmake --build .
+    cmake --build . --config Release
