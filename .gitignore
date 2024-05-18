@@ -44,3 +44,6 @@ docs/source/_static
 docs/source/_templates
 docs/build
 docs/xml
+
+# Build directories
+install
