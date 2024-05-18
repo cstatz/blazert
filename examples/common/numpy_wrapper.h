@@ -1,8 +1,8 @@
 #pragma once
-#ifndef EMRTPO_NUMPY_WRAPPER_H
-#define EMRTPO_NUMPY_WRAPPER_H
+#ifndef BLAZERT_NUMPY_WRAPPER_H
+#define BLAZERT_NUMPY_WRAPPER_H
 
-#include "../third_party/cnpy.h"
+#include "cnpy.h"
 
 template<typename T, typename P>
 std::unique_ptr<T> read_1d_array(const std::string &fname) {
@@ -70,4 +70,4 @@ std::unique_ptr<T> read_3d_array(const std::string &fname) {
 
   return data;
 }
-#endif//EMRTPO_NUMPY_WRAPPER_H
+#endif//BLAZERT_NUMPY_WRAPPER_H

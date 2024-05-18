@@ -1,6 +1,6 @@
 #pragma once
-#ifndef EMRTPO_PROGRESS_BAR_H
-#define EMRTPO_PROGRESS_BAR_H
+#ifndef BLAZERT_PROGRESS_BAR_H
+#define BLAZERT_PROGRESS_BAR_H
 
 #include <string>
 #include <iostream>
@@ -15,4 +15,4 @@ void progress_bar(unsigned long tick, unsigned long total, unsigned long width =
   std::fflush(stdout);
 }
 
-#endif //EMRTPO_PROGRESS_BAR_H
+#endif //BLAZERT_PROGRESS_BAR_H
